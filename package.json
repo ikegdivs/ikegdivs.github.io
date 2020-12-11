@@ -1,0 +1,24 @@
+{
+  "name": "ikegdivs.github.io",
+  "version": "1.0.0",
+  "description": "github pages website",
+  "main": "index.html",
+  "scripts": {
+    "start": "npm run lite",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lite": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ikegdivs/ikegdivs.github.io.git"
+  },
+  "author": "Issac Gardner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ikegdivs/ikegdivs.github.io/issues"
+  },
+  "homepage": "https://github.com/ikegdivs/ikegdivs.github.io#readme",
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  }
+}
