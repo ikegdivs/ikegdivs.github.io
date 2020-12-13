@@ -1,0 +1,174 @@
+#panelboard {
+    /* Display values */
+    display: flex;
+    /* If content exceeds background size, wrap the content to the next line. */
+    flex-wrap: wrap;
+    /* Use relative positioning. */
+    position: relative;
+    /* Background */
+    background-image: linear-gradient( rgb(221, 221, 221), rgb(170, 170, 170));
+    border: 3px solid rgb(180, 180, 180);
+    box-shadow: 3px 3px 10px rgb(200, 200, 200), -3px -3px 10px rgb(200, 200, 200);
+    padding: 0px 0px 10px 0px;
+}
+
+/* Properties for the workspace. */
+#workspace {
+    /* Present objects in a flex style */
+    display: block;
+    /* If content exceeds background size, hide the content. */
+    overflow: hidden;
+    /* Use relative positioning. */
+    background-image: linear-gradient( rgb(221, 221, 221), rgb(170, 170, 170));
+    border: 3px solid rgb(180, 180, 180);
+    box-shadow: 3px 3px 10px rgb(200, 200, 200), -3px -3px 10px rgb(200, 200, 200);
+}
+
+/* Properties for the cartoon viewport. */
+.panel {
+    /* Keep the panels separate. */
+    margin: 10px 0px 0px 10px;
+    /* Display properties */
+    position: relative;
+    height: 400px;
+    width: 400px;
+    /* Border properties */
+    border: 6px solid rgb(0, 0, 0);
+    box-shadow: 6px 6px 10px;
+    /* Use a linear gradient as the background image */
+    background-image: linear-gradient(rgb(238, 238, 238), rgb(204, 204, 204));
+    /* Hide any elements that may appear outside of a panel's borders. */
+    overflow: hidden;
+}
+
+/* Properties for the workspace viewport. */
+.workview {
+    display: block;
+    /* Display properties */
+    position: relative;
+    /* Border properties */
+    border: 6px solid rgb(0, 0, 0);
+    box-shadow: 6px 6px 10px;
+    /* Use a linear gradient as the background image */
+    background-image: linear-gradient(rgb(238, 238, 238), rgb(204, 204, 204));
+    /* Hide any elements that may appear outside of a panel's borders. */
+    overflow: hidden;
+}
+
+.panel img {
+    max-width: none;
+}
+
+/* Default box sizing behavior: Borders and padding are separate when calculating box height and width */
+* {box-sizing: content-box;}
+
+/* Use specificity to override Wordpress theme styling. */
+#panelboard > *:first-child {
+    margin-top: 10px;
+}
+
+span {
+    display: inline;
+}
+
+/*
+ *
+ * chat
+ * 
+ */
+
+ .chatbubble {
+    position: absolute;
+    display: inline;
+    /*Don't let the chat bubbles grow too big. */
+    max-width: 90%;
+    /* The default chat bubble should be about 2 pixels below the start of the parent element. */
+    top: 2px;
+    background: rgb(255, 255, 255);
+    border: 6px solid rgb(0, 0, 0);
+    /* Chatbubbles tend to look bubbly */
+    border-radius: 40px;
+    /* Don't let the inner text get too close to the bubble. */
+    padding: 10px;
+    /* The font size should be just big enough to read. */
+    font-size: 20px;
+    /* Use a nice basic font */
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    /* Make the spaces between text lines just large enough to read. */
+    line-height: 1.2;
+    margin: 1px;
+}
+
+.chatarrow {
+    /* Chat arrows can be made using the triangle div hack. */
+    position: absolute;
+    /* The top of the chat arrow is just below the bottom of it's parent chat bubble. */
+    top: 105%;
+    border-top: 50px solid rgb(0, 0, 0);
+}
+
+/*
+ *
+ * media
+ *
+ */
+
+ /* Make the default panelboard width approximately wide enough to hold a single panel. */
+#panelboard {
+    width: 435px;
+    max-width: 435px;
+}
+
+/* Make the default workspace width wide enough to hold a single workview. */
+#workspace {
+}
+
+/* If the screen is large enough to display two panels at once, make the panelboard large enough
+   to comfortably hold two panels. */
+@media only screen and (min-width: 768px) {
+    #panelboard {
+        width: 435px;
+        max-width: 435px;
+    }
+
+    #workspace {
+        width: 670px;
+        height: 385px;
+        max-width: 670px;
+        max-height: 385px;
+    }
+
+    .workview {
+        width: 650px;
+        height: 365px;
+        max-width: 650px;
+        max-height: 365px;
+    }
+}
+
+
+@media only screen and (min-width: 1200px) {
+    #panelboard {
+        /* if the screen is large enough t display four panels at once, make the panelboard large enough to
+           comfortably hold four panels. */
+        width: 850px;
+        max-width: 850px;
+    }
+
+    #workspace {
+        /* if the screen is large enough t display four panels at once, make the panelboard large enough to
+           comfortably hold four panels. */
+        width: 820px;
+        max-width: 820px;
+        height: 470px;
+        max-height: 470px;
+    }
+
+    .workview {
+        width: 800px;
+        max-width: 800px;
+        height: 450px;
+        max-height: 450px;
+    }
+}
+
