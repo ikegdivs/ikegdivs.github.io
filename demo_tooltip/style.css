@@ -1,6 +1,6 @@
 /* Import generic assets file */
-@import "asset-variables.css";
-@import "assets.css";
+/*@import "asset-variables.css";
+@import "assets.css";*/
 
 /* Variables unique to this stylesheet. */
 :root {
@@ -26,7 +26,7 @@ span {
 
  .chatarrow.rightsays {
     left: 80%;
-    top: 100%;
+    top: calc(100% + 1px);
     border-right: 2px solid transparent;
     border-left: 14px solid transparent;
     border-top: 25px solid;
@@ -112,7 +112,7 @@ span {
     width: 28px;
 }
 
-.mark {
+.mark001 {
     position: absolute;
     height: 270px;
     width: 114px;
@@ -122,16 +122,16 @@ span {
 
 /*
  *
- * tooltips
+ * chat_tooltips
  *
  */
 
- .tooltip {
+.chat_tooltip {
     position: relative;
     z-index: 1;
 }
 
-.tooltip:hover:after {
+.chat_tooltip:hover:after {
     content: attr(data-text);
     background: rgb(100, 100, 100);
     color: rgb(255, 255, 255);
@@ -151,10 +151,10 @@ span {
 
  .officechair {
      position: absolute;
-     height: 100px;
-     width: 100px;
-     left: 240px;
-     top: 280px;
+     height:25%;
+     width: 25%;
+     left: 60%;
+     top: 70%;
  }
 
  .matembuary {
@@ -177,10 +177,10 @@ span {
     position: absolute;
     top: 360px;
     left: -10%;
-    height: calc(var(--panel-height) * 0.4);
-    width: calc(var(--panel-width) * 1.2);
-    background: var(--desk-color);
-    border: var(--border-composite);
+    height: 40%;
+    width: 120%;
+    background: rgba(240, 240, 220, 1);
+    border: 3px solid rgb(0, 0, 0);
     transform: rotate(15deg);
 }
 
@@ -244,7 +244,7 @@ span {
     height: 320px;
     width: 110%;
     background: rgb(150, 150, 150);
-    border: var(--border-composite);
+    border: 3px solid rgba(0, 0, 0, 1);
     position: absolute;
 }
 
