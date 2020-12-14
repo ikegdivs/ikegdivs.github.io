@@ -1,0 +1,279 @@
+/* Import generic assets file */
+@import "asset-variables.css";
+@import "assets.css";
+
+/* Variables unique to this stylesheet. */
+:root {
+}
+
+/* Default box sizing behavior: Borders and padding are separate when calculating box height and width */
+* {box-sizing: content-box;}
+
+/* Use specificity to override Wordpress theme styling. */
+#panelboard > *:first-child {
+    margin-top: 10px;
+}
+
+span {
+    display: inline;
+}
+
+/*
+ *
+ * chat
+ *
+ */
+
+ .chatarrow.rightsays {
+    left: 80%;
+    top: 100%;
+    border-right: 2px solid transparent;
+    border-left: 14px solid transparent;
+    border-top: 25px solid;
+    z-index: 0.5;
+}
+
+#panel-a .chatarrow.rightsays {
+    left: 80%;
+    border-right: 2px solid transparent;
+    border-left: 14px solid transparent;
+}
+
+.chatbubble.rightsays {
+    text-align: center;
+    top: 4px;
+    left: 40px;
+    position: absolute;
+    z-index: 1;
+}
+
+.chatbubble.leftsays {
+    text-align: center;
+    left: 10px;
+    z-index: 1;
+}
+
+.chatarrow.leftsays {
+    left: 80%;
+    top: 101%;
+    border-right: 2px solid transparent;
+    border-left: 14px solid transparent;
+    border-top: 25px solid;
+    z-index: 0.5;
+}
+
+#panel-b .chatbubble.rightsays {
+    top: 50px;
+    width: 350px;
+    max-width: 380px; 
+    left: 20px;
+}
+
+#panel-c .chatbubble.leftsays {
+    top: 130px; 
+    left: 90px;
+}
+
+#panel-d .chatbubble.leftsays {
+    max-width: 200px;
+}
+
+#panel-d .chatbubble.rightsays {
+    max-width: 140px; 
+    top: 10px; 
+    left: 240px;
+}
+
+/*
+ *
+ * characters
+ * 
+ */
+
+.stevenoarm {
+    position: absolute;
+    height: 300px;
+    width: 120px;
+    top: 200px;
+    left: 220px;
+}
+
+.stevearm {
+    position:absolute;
+    height: 80px;
+    width: 34px;
+    top: 300px;
+    left: 250px;
+    transform: rotate(60deg) scaleY(0.9);
+}
+
+.stevearm.right {
+    left: 204px;
+    width: 28px;
+}
+
+.mark {
+    position: absolute;
+    height: 270px;
+    width: 114px;
+    top: 160px;
+    left: 320px;
+}
+
+/*
+ *
+ * tooltips
+ *
+ */
+
+ .tooltip {
+    position: relative;
+    z-index: 1;
+}
+
+.tooltip:hover:after {
+    content: attr(data-text);
+    background: rgb(100, 100, 100);
+    color: rgb(255, 255, 255);
+    border: 2px solid rgb(0, 0, 0);
+    border-radius: 20%;
+    padding: 4px;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+}
+
+/*
+ *
+ * props
+ * 
+ */
+
+ .officechair {
+     position: absolute;
+     height: 100px;
+     width: 100px;
+     left: 240px;
+     top: 280px;
+ }
+
+ .matembuary {
+     position: absolute;
+     height: 100px;
+     width: 100px;
+     top: 200px;
+     left: 60px;
+ }
+
+ .computer{
+     position: absolute;
+     height: 280px;
+     width: 280px;
+     top: 220px;
+     left: -32px;
+ }
+
+ .desk {
+    position: absolute;
+    top: 360px;
+    left: -10%;
+    height: calc(var(--panel-height) * 0.4);
+    width: calc(var(--panel-width) * 1.2);
+    background: var(--desk-color);
+    border: var(--border-composite);
+    transform: rotate(15deg);
+}
+
+.clock {
+    width: 100px;
+    height: 100px;
+    top: 40px;
+    left: 200px;
+    border: 6px solid rgba(0, 0, 0);
+    border-radius: 50%;
+    position: absolute;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2) inset;
+    background: rgba(240, 240, 240, 1);
+}
+
+.clock:before, .clock:after {
+    content:"";
+    position: absolute;
+    height: 50px;
+    width: 4px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    left: 50%;
+    bottom: 50px;
+    margin: 0 0 0 -1px;
+    transform-origin: bottom;
+    animation: infinite linear;
+    animation-name: gotime;
+}
+
+.clock:before {
+    animation-duration: 720s;
+    height: 38px;
+}
+
+.clock:after {
+    animation-duration: 60s;
+    height: 46px;
+}
+
+@keyframes gotime {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+#panel-c:hover .clock::before {
+    animation-duration: 72s;
+}
+
+#panel-c:hover .clock::after {
+    animation-duration: 6s;
+}
+
+.cubewall {
+    top: 180px;
+    left: -5%;
+    height: 320px;
+    width: 110%;
+    background: rgb(150, 150, 150);
+    border: var(--border-composite);
+    position: absolute;
+}
+
+/*
+ *
+ * media
+ *
+ */
+
+ /* Make the default panelboard width approximately wide enough to hold a single panel. */
+ #panelboard {
+    width: 435px;
+    max-width: 435px;
+}
+
+/* If the screen is large enough to display two panels at once, make the panelboard large enough
+   to comfortably hold two panels. */
+@media only screen and (min-width: 768px) {
+    #panelboard {
+        width: 435px;
+        max-width: 435x;
+    }
+}
+
+/* if the screen is large enough t display four panels at once, make the panelboard large enough to
+   comfortably hold four panels. */
+@media only screen and (min-width: 1200px) {
+    #panelboard {
+        width: 850px;
+        max-width: 850px;
+    }
+}
