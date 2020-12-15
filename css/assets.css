@@ -83,7 +83,7 @@ span {
     position: absolute;
     display: inline;
     /*Don't let the chat bubbles grow too big. */
-    max-width: 90%;
+    /*max-width: 90%;*/
     /* The default chat bubble should be about 2 pixels below the start of the parent element. */
     top: 2px;
     background: rgb(255, 255, 255);
