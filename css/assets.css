@@ -10,7 +10,7 @@
     border: 3px solid rgb(180, 180, 180);
     box-shadow: 3px 3px 10px rgb(200, 200, 200), -3px -3px 10px rgb(200, 200, 200);
     padding: 0px 0px 10px 0px;
-    margin: 30px;
+    /*margin: 30px;*/
 }
 
 /* Properties for the workspace. */
