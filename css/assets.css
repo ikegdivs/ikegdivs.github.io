@@ -62,7 +62,7 @@
 
 /* Default box sizing behavior: Borders and padding are separate when calculating box height and width */
 /* This messes with some bootstrap */
-//* {box-sizing: content-box;}
+/* {box-sizing: content-box;}
 
 /* Use specificity to override Wordpress theme styling. */
 #panelboard > *:first-child {
@@ -81,6 +81,7 @@ span {
 
  .chatbubble {
     position: absolute;
+    display: inline-block;
     /*display: inline;*/
     /*Don't let the chat bubbles grow too big. */
     /*max-width: 90%;*/
