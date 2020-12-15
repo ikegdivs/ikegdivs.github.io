@@ -1,5 +1,5 @@
 screen_width = 360;
-screen_height = 180;
+screen_height = 182;
 paddle_width = 10;
 paddle_height = 50;
 paddle_buffer = 10;
@@ -52,7 +52,7 @@ function enforceVerticalBallPosition(ball, screen_height){
   }
 
   /* If the ball has hit the bottom, don't let it go any farther*/
-  if(ball.pos_y >= screen_height - ball.height){
+  if(ball.pos_y + ball.height >= screen_height ){
     ball.pos_y = screen_height - ball.height;
   }
 }
@@ -117,7 +117,7 @@ function startPlaying(){
     theBall.velocityToPosition();
     
     /* Bounce the ball if it hits the top or bottom of the screen. */
-    if(theBall.pos_y >= screen_height || theBall.pos_y <= 0){
+    if(theBall.pos_y + theBall.height >= screen_height || theBall.pos_y <= 0){
       enforceVerticalBallPosition(theBall, screen_height);
       theBall.vel_y = -theBall.vel_y;
     }
