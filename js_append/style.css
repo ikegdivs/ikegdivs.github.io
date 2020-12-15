@@ -1,0 +1,101 @@
+#panelboard {
+    box-sizing: content-box;
+}
+
+.workview{
+    display: flex;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+
+.bigscreen {
+    position: absolute;
+    left: -1%;
+    top: -1%;
+    z-index: 0;
+    height: 102%;
+    width: 102%;
+}
+
+/* Give the image some dimensions. */
+.background img {
+    height: 102%;
+    width: 102%;
+}
+
+.application {
+    position: absolute;
+    top: 6%;
+    left: 12%;
+    height: 46%;
+    width: 90%;
+    background: rgba(0, 0, 0, 0);
+    color: rgb(250, 250, 250);
+    border-radius: 10px;
+}
+
+canvas {
+    width: 320px;
+    height: 165px; 
+    background: rgba(0, 0, 0 1);
+}
+
+/*
+ *
+ * chat
+ *
+ */
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.stevesays {
+    position: absolute;
+    top: auto;
+    bottom: 1%;
+    right: 1%;
+    max-width: 90%;
+}
+
+.chatarrow.stevesays {
+    position: absolute;
+    border-right: 2px solid transparent;
+    border-left: 15px solid transparent;
+    border-top: 65px solid;
+    top: calc(0% - 1px);
+    right: 7%;
+    transform: rotateZ(180deg);
+}
+
+.chatbubble.annesays {
+    top: 60%;
+    left: 0%;
+    max-width: 80%;
+}
+
+#panel-d .chatbubble.annesays {
+    max-width: 85%;
+}
+
+.chatarrow.annesays {
+    position: absolute;
+    border-right: 25px solid transparent;
+    border-left: 2px solid transparent;
+    border-top: 25px solid rgb(0, 0, 0);
+    top: calc(0% - 1px);
+    left: 55%;
+    transform: rotateZ(180deg);
+}
+
+#panel-d .chatarrow.annesays {
+    left: 50%;
+}

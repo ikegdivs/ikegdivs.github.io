@@ -10,6 +10,7 @@
     border: 3px solid rgb(180, 180, 180);
     box-shadow: 3px 3px 10px rgb(200, 200, 200), -3px -3px 10px rgb(200, 200, 200);
     padding: 0px 0px 10px 0px;
+    margin: 30px;
 }
 
 /* Properties for the workspace. */
@@ -60,7 +61,8 @@
 }
 
 /* Default box sizing behavior: Borders and padding are separate when calculating box height and width */
-* {box-sizing: content-box;}
+/* This messes with some bootstrap */
+//* {box-sizing: content-box;}
 
 /* Use specificity to override Wordpress theme styling. */
 #panelboard > *:first-child {
@@ -89,7 +91,7 @@ span {
     /* Chatbubbles tend to look bubbly */
     border-radius: 40px;
     /* Don't let the inner text get too close to the bubble. */
-    padding: 10px;
+    padding: 2px 20px 2px 20px;
     /* The font size should be just big enough to read. */
     font-size: 20px;
     /* Use a nice basic font */
@@ -115,8 +117,8 @@ span {
 
  /* Make the default panelboard width approximately wide enough to hold a single panel. */
 #panelboard {
-    width: 435px;
-    max-width: 435px;
+    width: 420px;
+    max-width: 420px;
 }
 
 /* Make the default workspace width wide enough to hold a single workview. */
@@ -127,8 +129,8 @@ span {
    to comfortably hold two panels. */
 @media only screen and (min-width: 768px) {
     #panelboard {
-        width: 435px;
-        max-width: 435px;
+        width: 420px;
+        max-width: 420px;
     }
 
     #workspace {
@@ -151,8 +153,8 @@ span {
     #panelboard {
         /* if the screen is large enough t display four panels at once, make the panelboard large enough to
            comfortably hold four panels. */
-        width: 850px;
-        max-width: 850px;
+        width: 830px;
+        max-width: 830px;
     }
 
     #workspace {
