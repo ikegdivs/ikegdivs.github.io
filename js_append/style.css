@@ -64,6 +64,7 @@ canvas {
     bottom: 1%;
     right: 1%;
     max-width: 90%;
+    max-device-width: 90%;
 }
 
 .chatarrow.stevesays {
@@ -80,10 +81,12 @@ canvas {
     top: 60%;
     left: 0%;
     max-width: 80%;
+    max-device-width: 80%;
 }
 
 #panel-d .chatbubble.annesays {
     max-width: 85%;
+    max-device-width: 85%;
 }
 
 .chatarrow.annesays {
