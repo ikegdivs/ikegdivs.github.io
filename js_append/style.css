@@ -71,8 +71,8 @@ canvas {
     top: auto;
     bottom: 1%;
     right: 1%;
-    width: 80%;
-    max-width: 80%;
+    width: 90%;
+    max-width: 65%;
 }
 
 .chatarrow.stevesays {
@@ -81,7 +81,7 @@ canvas {
     border-left: 15px solid transparent;
     border-top: 65px solid;
     top: calc(0% - 1px);
-    right: 7%;
+    right: 30%;
     transform: rotateZ(180deg);
 }
 
@@ -89,7 +89,7 @@ canvas {
     top: 60%;
     left: 0%;
     max-width: 80%;
-    width: 80%;
+    width: 60%;
 }
 
 #panel-d .chatbubble.annesays {
@@ -103,7 +103,7 @@ canvas {
     border-left: 2px solid transparent;
     border-top: 25px solid rgb(0, 0, 0);
     top: calc(0% - 1px);
-    left: 55%;
+    left: 70%;
     transform: rotateZ(180deg);
 }
 
