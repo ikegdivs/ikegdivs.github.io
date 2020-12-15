@@ -93,7 +93,7 @@ span {
     /* Don't let the inner text get too close to the bubble. */
     padding: 2px 20px 2px 20px;
     /* The font size should be just big enough to read. */
-    font-size: 20px;
+    font-size: 18px;
     /* Use a nice basic font */
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     /* Make the spaces between text lines just large enough to read. */
