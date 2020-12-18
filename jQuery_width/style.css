@@ -1,0 +1,134 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+/*
+ *
+ * Characters
+ *
+ */
+
+ .nick {
+    position: absolute;
+    top: 40%;
+    left: 75%;
+    width: 25%;
+    height: 50%;
+    /*transform: rotateY(180deg);*/
+}
+
+.joe {
+    position: absolute;
+    bottom: 0%;
+    left: 1%;
+    width: 25%;
+    transform: rotateY(180deg);
+}
+
+.wall {
+    position: absolute;
+    top: -5%;
+    left: -5%;
+    height: 110%;
+    width: 110%;
+    background-image: linear-gradient(rgba(180, 230, 240, 1), rgba(180, 240, 240, 1));
+}
+
+.scenetable{
+    position: absolute;
+    top: 85%;
+    left: -1%;
+    width: 102%;
+    height: 30%;
+    border: 5px solid rgba(0, 0, 0, 1);
+    background: rgba(240, 220, 220, 1);
+}
+
+.shrinkray {
+    position: absolute;
+    left: 41%;
+    top: 65%;
+    width: 25%;
+}
+
+.triangleray {
+    position: absolute;
+    left: -25%;
+    top: 9%;
+    width: 80%;
+    height: 60%;
+    transform: rotateZ(22deg);
+    opacity: 0%;
+}
+
+/*
+ *
+ * chat
+ *
+ */
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.stevesays {
+    position: absolute;
+    top: auto;
+    bottom: 1%;
+    right: 1%;
+    width: 90%;
+    max-width: 65%;
+}
+
+.chatarrow.stevesays {
+    position: absolute;
+    border-right: 2px solid transparent;
+    border-left: 15px solid transparent;
+    border-top: 65px solid;
+    top: calc(0% - 1px);
+    right: 30%;
+    transform: rotateZ(180deg);
+}
+
+.chatbubble.annesays {
+    top: 60%;
+    left: 0%;
+    max-width: 80%;
+    width: 60%;
+}
+
+#panel-d .chatbubble.annesays {
+    max-width: 85%;
+    width: 85%;
+}
+
+.chatarrow.annesays {
+    position: absolute;
+    border-right: 25px solid transparent;
+    border-left: 2px solid transparent;
+    border-top: 25px solid rgb(0, 0, 0);
+    top: calc(0% - 1px);
+    left: 70%;
+    transform: rotateZ(180deg);
+}
+
+#panel-d .chatarrow.annesays {
+    left: 50%;
+}

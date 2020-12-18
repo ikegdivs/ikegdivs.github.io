@@ -294,28 +294,3 @@
   to {
     -webkit-transform: translateX(350px);
             transform: translateX(350px); } }
-/*
- * media
- *
- */
-/* Make the default panelboard width approximately wide enough to hold a single panel. */
-/* line 212, ../sass/style.sass */
-#panelboard {
-  width: 435px;
-  max-width: 435px; }
-
-/* If the screen is large enough to display two panels at once, make the panelboard large enough
- * to comfortably hold two panels. */
-@media only screen and (min-width: 768px) {
-  /* line 219, ../sass/style.sass */
-  #panelboard {
-    width: 435px;
-    max-width: 435x; } }
-/* if the screen is large enough t display four panels at once, make the panelboard large enough to
- * comfortably hold four panels. */
-@media only screen and (min-width: 1200px) {
-  /* line 226, ../sass/style.sass */
-  #panelboard {
-    width: 850px;
-    max-width: 850px; } }
-/*# sourceMappingURL=style.css.map */
