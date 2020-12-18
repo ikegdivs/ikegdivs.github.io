@@ -131,6 +131,22 @@ span {
     max-width: 420px;
 }
 
+
+@media only screen and (min-width: 100px) {
+    #workspace {
+        /* Make the workspace reactive */
+        padding: 0.5vw;
+        width: 50.25vw;
+        height: 28.375vw;
+        
+    }
+
+    .workview {
+        width: 49vw;
+        height: 27.125vw;
+    }
+}
+
 /* If the screen is large enough to display two panels at once, make the panelboard large enough
    to comfortably hold two panels. */
 @media only screen and (min-width: 768px) {
