@@ -88,47 +88,35 @@
     transform-origin: top left;
 }
 
-.chatbubble.stevesays {
+.chatbubble.nicksays {
     position: absolute;
-    top: auto;
-    bottom: 1%;
-    right: 1%;
+    top: 1%;
+    right: 10%;
     width: 90%;
-    max-width: 65%;
+    max-width: 80%;
 }
 
-.chatarrow.stevesays {
+.chatarrow.nicksays {
     position: absolute;
     border-right: 2px solid transparent;
     border-left: 15px solid transparent;
     border-top: 65px solid;
-    top: calc(0% - 1px);
-    right: 30%;
-    transform: rotateZ(180deg);
+    top: calc(100% + 1px);
+    right: 10%;
 }
 
-.chatbubble.annesays {
-    top: 60%;
-    left: 0%;
+.chatbubble.joesays {
+    top: 17%;
+    left: 22%;
     max-width: 80%;
-    width: 60%;
+    width: 35%;
 }
 
-#panel-d .chatbubble.annesays {
-    max-width: 85%;
-    width: 85%;
-}
-
-.chatarrow.annesays {
+.chatarrow.joesays {
     position: absolute;
     border-right: 25px solid transparent;
     border-left: 2px solid transparent;
     border-top: 25px solid rgb(0, 0, 0);
-    top: calc(0% - 1px);
-    left: 70%;
-    transform: rotateZ(180deg);
-}
-
-#panel-d .chatarrow.annesays {
-    left: 50%;
+    top: calc(100% + 1px);
+    left: 10%;
 }
