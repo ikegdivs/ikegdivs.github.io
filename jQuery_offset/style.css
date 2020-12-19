@@ -1,0 +1,140 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+
+.row #overlaypanel-a.workview {
+    position: absolute;
+    background-image: linear-gradient(rgba(238, 238, 238, 0), rgba(204, 204, 204, 0));
+    overflow: visible;
+}
+
+/*
+ *
+ * Characters
+ *
+ */
+
+.gnome {
+    position: absolute;
+    top: 30%;
+    left: 45%;
+    width: 10%;
+    height: 10%;
+}
+
+.patch {
+    position: absolute;
+    bottom: -10%;
+    left: 1%;
+    width: 20%;
+    transform: rotateY(180deg);
+}
+
+.maude {
+    position: absolute;
+    bottom: -10%;
+    right: 2%;
+    width: 30%;
+}
+
+.forest {
+    position: absolute;
+    top: -75%;
+    left: -2%;
+    height: 100%;
+    width: 105%;
+}
+
+/*
+ *
+ * chat
+ *
+ */
+
+.chatbubble {
+    border: 5vw solid rgb(0, 0, 0, 1);
+ }
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.patchsays {
+    position: absolute;
+    top: 2%;
+    left: 10%;
+    width: 40%;
+    max-width: 80%;
+}
+
+.chatarrow.patchsays {
+    position: absolute;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 5vw solid;
+    top: calc(100% + 1px);
+    left: 10%;
+}
+
+.chatbubble.maudesays {
+    top: 5%;
+    right: 2%;
+    width: 26%;
+}
+
+.chatarrow.maudesays {
+    position: absolute;
+    border-right: 0.4vw solid transparent;
+    border-left: 1.2vw solid transparent;
+    border-top: 2.5vw solid;
+    top: calc(100% + 1px);
+    right: 30%;
+}
+
+/*
+ * Animation classes
+ *
+ */
+/* The ghost should float up and down */
+.gnome {
+  /* mels bounce takes a second and alternates forever. */
+    -webkit-animation: ghostfloat 1s alternate infinite;
+            animation: ghostfloat 1s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; 
+    transform-origin: 90% 90% 0;
+}
+
+/* Mels keyframes for animation, just moving up and down 3vw */
+@-webkit-keyframes ghostfloat {
+  from {
+    -webkit-transform: scale(1);
+            transform: scale(1); }
+  to {
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1); } }
+@keyframes ghostfloat {
+    from {
+        -webkit-transform: scale(1);
+                transform: scale(1); }
+      to {
+        -webkit-transform: scale(1.1);
+                transform: scale(1.1); } }

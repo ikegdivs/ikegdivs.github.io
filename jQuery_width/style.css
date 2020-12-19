@@ -85,7 +85,7 @@
  */
 
  .chatbubble {
-     border: 5vw solid rgb(0, 0, 0, 1);
+    border: 4vw solid rgb(0, 0, 0, 1);
  }
 
 .chatarrow {
@@ -102,9 +102,9 @@
 
 .chatarrow.nicksays {
     position: absolute;
-    border-right: 0.2vw solid transparent;
-    border-left: 1.5vw solid transparent;
-    border-top: 5vw solid;
+    border-right: 0.4vw solid transparent;
+    border-left: 1.2vw solid transparent;
+    border-top: 7vw solid;
     top: calc(100% + 1px);
     right: 10%;
 }
@@ -112,15 +112,14 @@
 .chatbubble.joesays {
     top: 17%;
     left: 22%;
-    max-width: 80%;
-    width: 35%;
+    width: 32%;
 }
 
 .chatarrow.joesays {
     position: absolute;
-    border-right: 1.5vw solid transparent;
-    border-left: 0.2vw solid transparent;
-    border-top: 2vw solid;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 3vw solid;
     top: calc(100% + 1px);
     left: 10%;
 }

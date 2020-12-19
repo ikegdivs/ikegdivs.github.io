@@ -28,11 +28,11 @@
 
     <nav class="navbar">
     <ul>
-        <li><a href="/index.html">Home</a></li>
         <li><a href="/fonts.html">fonts</a></li>
         <li><a href="/temp.html">temp</a></li>
         <li><a href="/demo_tooltip/comic.html">demo_tooltip</a></li>
         <li><a href="/js_append/comic.html">JavaScript: append</a></li>
+        <li><a href="/jQuery_width/">jQuery: width</a></li>
         <li><a href="/restaurant01/res01.html">restaurant01</a></li>
     </ul>
     </nav>
@@ -43,11 +43,11 @@
                     <h3 class="card-header bg-primary text-white">Instructions:</h3>
                     <div class="card-body">
                         <dl class="row">
-                            Use the slider below the picture to adjust Joe's width.
+                            Use the slider below the picture to use fadeTo to adjust the ghost's opacity. fadeTo is on a tenth of a second timer, so the fade may not be immediately noticeable.
                         </dl>
                         <dl class="row">
-                            <dt class="col-3 text-right"><span class="badge badge-secondary w-200">Width</span></dt>
-                            <dd id="widthOutput" class="col-9 text-left"></dd>
+                            <dt class="col-3 text-right"><span class="badge badge-secondary w-200">Opacity</span></dt>
+                            <dd id="opacityOutput" class="col-9 text-left"></dd>
                         </dl>
                     </div>
                 </div>
@@ -58,32 +58,35 @@
                 <div id="workspace">
                     <div id="panel-a" class="workview">
                         <div class="inpanel">
-                            <div class="nick">
-                                <img src="/svg/nick.svg" />
+                            <div class="wall"></div>
+                            <div class="floor"></div>
+                            <div class="wallcrack">
+                                <img src="/svg/wallcrack01.svg" />
                             </div>
-                            <div class="joe">
-                                <img src="/svg/joe.svg" />
+                            <div class="spiderweb">
+                                <img src="/svg/spiderweb.svg" />
                             </div>
-                            <div class="chatbubble workbubble nicksays">What do you call it when your boss uses a shrink ray on you?
-                                <div class="chatarrow nicksays"></div>
+                            <div class="ghost">
+                                <img src="/svg/ghost01.svg" />
                             </div>
-                            <div class="chatbubble workbubble joesays">Micromanagement.
-                                <div class="chatarrow joesays"></div>
-                            </div>  
-                            <div class="scenetable"></div>
-                            
-                            <div class="triangleray">
-                                <img src="/svg/triangle-ray.svg" />
+                            <div class="patch">
+                                <img src="/svg/patch.svg" />
                             </div>
-                            <div class="shrinkray">
-                                <img src="/svg/shrink-ray.svg" />
+                            <div class="maude">
+                                <img src="/svg/maude.svg" />
+                            </div>
+                            <div class="chatbubble workbubble patchsays">Why are ghosts so predictable?
+                                <div class="chatarrow patchsays"></div>
+                            </div>
+                            <div class="chatbubble workbubble maudesays">Because you can see right through them.
+                                <div class="chatarrow maudesays"></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <form>
                     <div class="form-group" style="margin-top: 10px; width:50%">
-                        <label for="formControlRange">Adjust Joe's Width</label>
+                        <label for="formControlRange">Adjust the Ghost's opacity.</label>
                         <input type="range" class="form-control-range" id="formControlRange">
                     </div>
                 </form>
@@ -99,5 +102,5 @@
 <script src="/node_modules/jquery/dist/jquery.min.js"></script>
 <script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
 <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="/jQuery_width/script.js"></script>
+<script src="./script.js"></script>
 </html>

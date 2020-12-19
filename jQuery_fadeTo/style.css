@@ -1,0 +1,159 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+/*
+ *
+ * Characters
+ *
+ */
+
+ .ghost {
+    position: absolute;
+    top: 10%;
+    left: 70%;
+    width: 25%;
+    height: 50%;
+    opacity: 0.5;
+}
+
+.patch {
+    position: absolute;
+    bottom: -10%;
+    left: 1%;
+    width: 20%;
+    transform: rotateY(180deg);
+}
+
+.maude {
+    position: absolute;
+    bottom: -10%;
+    left: 22%;
+    width: 18%;
+    transform: rotateY(180deg);
+}
+
+.wall {
+    position: absolute;
+    top: -5%;
+    left: -5%;
+    height: 110%;
+    width: 110%;
+    background-image: linear-gradient(rgba(180, 230, 240, 1), rgba(180, 240, 240, 1));
+}
+
+.floor {
+    position: absolute;
+    top: 80%;
+    left: -5%;
+    height: 110%;
+    width: 110%;
+    border: 0.5vw solid rgba(0, 0, 0, 1);
+    background-image: linear-gradient(rgba(120, 120, 80, 1), rgba(110, 110, 80, 1));
+}
+
+.wallcrack {
+    position: absolute;
+    left: 85%;
+    top: 42%;
+    width: 5%;
+}
+
+.spiderweb {
+    position: absolute;
+    left: 92%;
+    top: 0%;
+    width: 8%;
+    opacity: 0.2;
+}
+
+/*
+ *
+ * chat
+ *
+ */
+
+ .chatbubble {
+    border: 5vw solid rgb(0, 0, 0, 1);
+ }
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.patchsays {
+    position: absolute;
+    top: 2%;
+    left: 10%;
+    width: 50%;
+    max-width: 80%;
+}
+
+.chatarrow.patchsays {
+    position: absolute;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 5vw solid;
+    top: calc(100% + 1px);
+    left: 10%;
+}
+
+.chatbubble.maudesays {
+    top: 15%;
+    left: 22%;
+    width: 35%;
+}
+
+.chatarrow.maudesays {
+    position: absolute;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 2.5vw solid;
+    top: calc(100% + 1px);
+    left: 30%;
+}
+
+/*
+ * Animation classes
+ *
+ */
+/* The ghost should float up and down */
+.ghost {
+  /* mels bounce takes a second and alternates forever. */
+  -webkit-animation: ghostfloat 1s alternate infinite;
+          animation: ghostfloat 1s alternate infinite;
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/* Mels keyframes for animation, just moving up and down 3vw */
+@-webkit-keyframes ghostfloat {
+  from {
+    -webkit-transform: translateY(0vw);
+            transform: translateY(0vw); }
+  to {
+    -webkit-transform: translateY(2vw);
+            transform: translateY(2vw); } }
+@keyframes ghostfloat {
+    from {
+        -webkit-transform: translateY(0vw);
+                transform: translateY(0vw); }
+      to {
+        -webkit-transform: translateY(2vw);
+                transform: translateY(2vw); } }

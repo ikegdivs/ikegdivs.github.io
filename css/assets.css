@@ -106,7 +106,7 @@ span {
 }
 
 .workbubble {
-    font-size: 1.3vw;
+    font-size: 2.1vw;
 }
 
 .chatarrow {
@@ -130,17 +130,21 @@ span {
 }
 
 
-/* Make the workspace reactive */
 #workspace {
-    padding: 0.5vw;
-    width: 50.25vw;
-    height: 28.375vw;
-    
+    /* Make the workspace responsive */
+    /*padding: 0.5vw;
+    width: 90vw;
+    height: 50.625vw;*/
+    padding: 0.4vw;
+    width: 72vw;
+    height: 40.5vw;
 }
 
 .workview {
-    width: 49vw;
-    height: 27.125vw;
+    /*width: 88.5vw;
+    height: 49.25vw;*/
+    width: 70.8vw;
+    height: 39.4vw;
 }
 
 
@@ -153,16 +157,20 @@ span {
     }
 
     #workspace {
-        /* Make the workspace reactive */
-        padding: 0.5vw;
-        width: 50.25vw;
-        height: 28.375vw;
-        
+        /* Make the workspace responsive */
+        /*padding: 0.5vw;
+        width: 90vw;
+        height: 50.625vw;*/
+        padding: 0.4vw;
+        width: 72vw;
+        height: 40.5vw;
     }
 
     .workview {
-        width: 49vw;
-        height: 27.125vw;
+        /*width: 88.5vw;
+        height: 49.25vw;*/
+        width: 70.8vw;
+        height: 39.4vw;
     }
 }
 
@@ -176,16 +184,20 @@ span {
     }
 
     #workspace {
-        /* Make the workspace reactive */
-        padding: 0.5vw;
-        width: 50.25vw;
-        height: 28.375vw;
-        
+        /* Make the workspace responsive */
+        /*padding: 0.5vw;
+        width: 90vw;
+        height: 50.625vw;*/
+        padding: 0.4vw;
+        width: 72vw;
+        height: 40.5vw;
     }
 
     .workview {
-        width: 49vw;
-        height: 27.125vw;
+        /*width: 88.5vw;
+        height: 49.25vw;*/
+        width: 70.8vw;
+        height: 39.4vw;
     }
 }
 
