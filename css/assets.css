@@ -96,7 +96,7 @@ span {
     /* Chatbubbles tend to look bubbly */
     border-radius: 5vw;
     /* Don't let the inner text get too close to the bubble. */
-    padding: 0.5vw 1vw 0.5vw 1vw;
+    padding: .5vw 1.5vw .5vw 1.5vw;
     /* The font size should be just big enough to read. */
     font-size: 18px;
     /* Use a nice basic font */

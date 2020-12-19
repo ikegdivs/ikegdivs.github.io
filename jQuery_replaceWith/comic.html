@@ -44,15 +44,7 @@
                     <h3 class="card-header bg-primary text-white">Instructions:</h3>
                     <div class="card-body">
                         <dl class="row">
-                            The sliders below the picture invoke jQuery's offset() to adjust the gnome's position. Offset is based on the coordinates of the document, so I've allowed the sliders to cause the gnome to 'pop out' of the singlet frame.
-                        </dl>
-                        <dl class="row">
-                            <dt class="col-3 text-right"><span class="badge badge-secondary w-200">X Offset</span></dt>
-                            <dd id="Xoffset" class="col-9 text-left"></dd>
-                        </dl>
-                        <dl class="row">
-                            <dt class="col-3 text-right"><span class="badge badge-secondary w-200">Y Offset</span></dt>
-                            <dd id="Yoffset" class="col-9 text-left"></dd>
+                            Use the button at the bottom of the image to invoke jQuery's replaceWith() command. This command will be used to replace the chatbubble text and the image objects. The command will also store the replaced objects and use them for the next time the button is pressed.
                         </dl>
                     </div>
                 </div>
@@ -63,38 +55,26 @@
                 <div id="workspace">
                     <div id="panel-a" class="workview">
                         <div class="inpanel">
-                            <div class="forest">
-                                <img src="/svg/woods01.svg" />
+                            <div class="cavewall"></div>
+                            <div class="cavefloor"></div>
+                            <div class="rocks">
+                                <img src="/svg/rockpile01.svg" />
                             </div>
-                            <div class="floor"></div>
                             <div class="patch">
                                 <img src="/svg/patch.svg" />
                             </div>
                             <div class="maude">
-                                <img src="/svg/maudewand.svg" />
+                                <img src="/svg/maude.svg" />
                             </div>
-                            <div class="chatbubble workbubble patchsays">Whats the hardest part of wizard school?
+                            <div class="chatbubble workbubble patchsays">Ugh. I sure wish this pile of rocks was a stack of gold.
                                 <div class="chatarrow patchsays"></div>
-                            </div>
-                            <div class="chatbubble workbubble maudesays">Definitely the gnomework.
-                                <div class="chatarrow maudesays"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="overlaypanel-a" class="workview">
-                        <div class="inpanel">
-                            <div class="gnome">
-                                <img src="/svg/gnome01.svg" />
                             </div>
                         </div>
                     </div>
                 </div>
                 <form>
                     <div class="form-group" style="margin-top: 10px; width:50%">
-                        <label for="formControlRangeX">Adjust the X position of the gnome.</label>
-                        <input type="range" class="form-control-range" id="formControlRangeX">
-                        <label for="formControlRangeY">Adjust the Y position of the gnome.</label>
-                        <input type="range" class="form-control-range" id="formControlRangeY">
+                        <input type="button" id="replaceBtn" value="replaceWith">
                     </div>
                 </form>
             </div>
