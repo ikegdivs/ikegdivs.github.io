@@ -1,0 +1,177 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+/*
+ *
+ * Characters
+ *
+ */
+
+.patch {
+    position: absolute;
+    bottom: -10%;
+    left: 1%;
+    width: 20%;
+    transform: rotateY(180deg);
+}
+
+.maude {
+    position: absolute;
+    bottom: -10%;
+    left: 30%;
+    width: 18%;
+    transform: rotateY(180deg);
+}
+
+.background {
+    position: absolute;
+    top: -12%;
+    left: -9%;
+    height: 104%;
+    width: 140%;
+}
+
+.dogcontainer {
+    position: absolute;
+    bottom: 30%;
+    left: -20%;
+    width: 15%;
+    height: 10%;
+}
+
+.dog1 {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+}
+
+.dog2 {
+    position: absolute;
+    bottom: -5%;
+    left: -40%;
+    width: 30%;
+    height: 30%;
+}
+
+/*
+ *
+ * chat
+ *
+ */
+
+ .chatbubble {
+    border: 5vw solid rgb(0, 0, 0, 1);
+ }
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.patchsays {
+    position: absolute;
+    top: 8%;
+    left: 4%;
+    width: 16vw;
+}
+
+.chatarrow.patchsays {
+    position: absolute;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 3vw solid;
+    top: calc(100% + 1px);
+    left: 25%;
+}
+
+.chatbubble.maudesays {
+    top: 10%;
+    left: 30%;
+    width: 27vw;
+}
+
+.chatarrow.maudesays {
+    position: absolute;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 2.5vw solid;
+    top: calc(100% + 1px);
+    left: 30%;
+}
+
+/*
+ *
+ * animations
+ * 
+ */
+.dogrun {
+    -webkit-animation: movedog 2s linear infinite;
+            animation: movedog 2s linear infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+
+/* give a little bit of delay for the second dog */
+.dog2 {
+    animation-delay: 300ms;
+}
+
+@-webkit-keyframes movedog {
+from {
+    left: 120%; }
+to {
+    left: -50%; } }
+
+@keyframes movedog {
+from {
+    left: 120%; }
+to {
+    left: -50%; } }
+    
+.dog1 {
+-webkit-animation: dogfetch 0.75s infinite;
+        animation: dogfetch 0.75s infinite;
+-webkit-animation-play-state: running;
+        animation-play-state: running; }
+
+.dog1 {
+-webkit-animation-play-state: running;
+        animation-play-state: running; }
+
+@-webkit-keyframes dogfetch {
+0% {
+    top: 120px; }
+25%, 75% {
+    top: 100px; }
+50% {
+    top: 90px; }
+100% {
+    top: 140px; } }
+
+@keyframes dogfetch {
+0% {
+    top: 120px; }
+25%, 75% {
+    top: 100px; }
+50% {
+    top: 90px; }
+100% {
+    top: 140px; } }
