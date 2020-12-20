@@ -43,7 +43,7 @@
                     <h3 class="card-header bg-primary text-white">Instructions:</h3>
                     <div class="card-body">
                         <dl class="row">
-                            The button below the drawing uses JQuery's Class Selector ('.class') to toggle the chatbubble animation.
+                            The button below the drawing uses JQuery's ID Selector ('#id') to toggle the pirate's spinning animation.
                         </dl>
                     </div>
                 </div>
@@ -54,16 +54,23 @@
                 <div id="workspace">
                     <div id="panel-a" class="workview">
                         <div class="inpanel">
-                            <div class="background">
-                                <img src="/svg/mountaingiant_back.svg" />
+                            <div class="wall">
                             </div>
-                            <div class="foreground foreground-motion">
-                                <img src="/svg/mountaingiant_fore.svg" />
+                            <div class="floor">
                             </div>
-                            <div class="chatbubble workbubble patchsays">Mountaineering.
+                            <div id="pirate01" class="pirate piratespin">
+                                <img src="/svg/pirate01.svg" />
+                            </div>
+                            <div class="maude">
+                                <img src="/svg/maudewand.svg" />
+                            </div>
+                            <div class="patch">
+                                <img src="/svg/patch.svg" />
+                            </div>
+                            <div class="chatbubble workbubble patchsays">What's the name of the spell you use to make people spin around?
                                 <div class="chatarrow patchsays"></div>
                             </div>
-                            <div class="chatbubble workbubble maudesays">What kind of jewelry do you find on a mountain giant's ear?
+                            <div class="chatbubble workbubble maudesays">Oh, that's just a dizzy spell.
                                 <div class="chatarrow maudesays"></div>
                             </div>
                         </div>
@@ -72,7 +79,7 @@
                 <form>
                     <div class="form-group" style="margin-top: 10px; width:50%">
                         <div class="form-group" style="margin-top: 10px; width:50%">
-                            <input type="button" id="toggleBtn" value="Toggle chatbubble movement.">
+                            <input type="button" id="toggleBtn" value="Toggle spinning pirate.">
                         </div>
                     </div>
                 </form>

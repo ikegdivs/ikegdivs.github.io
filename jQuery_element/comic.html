@@ -43,7 +43,7 @@
                     <h3 class="card-header bg-primary text-white">Instructions:</h3>
                     <div class="card-body">
                         <dl class="row">
-                            The button below the drawing uses JQuery's Class Selector ('.class') to toggle the chatbubble animation.
+                            The button below the drawing uses JQuery's element Selector ('element') on a custom xml 'boggle' element type to toggle the stolen watches' hands.
                         </dl>
                     </div>
                 </div>
@@ -54,17 +54,56 @@
                 <div id="workspace">
                     <div id="panel-a" class="workview">
                         <div class="inpanel">
-                            <div class="background">
-                                <img src="/svg/mountaingiant_back.svg" />
+                            <div class="watchshop">
+                                <img src="/svg/watchshop.svg" />
                             </div>
-                            <div class="foreground foreground-motion">
-                                <img src="/svg/mountaingiant_fore.svg" />
+                            <div class="shopkeeper">
+                                <img src="/svg/shopkeeper01.svg" />
                             </div>
-                            <div class="chatbubble workbubble patchsays">Mountaineering.
+                            <div class="shopcounter">
+                                <img src="/svg/shopcounter.svg" />
+                            </div>
+                            <div class="maude">
+                                <img src="/svg/maude.svg" />
+                            </div>
+                            <div class="patch">
+                                <img src="/svg/patchwatches.svg" />
+                            </div>
+                            <boggle class="boggle b01">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b02">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b03">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b04">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b05">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b06">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b07">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b08">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b09">
+                                <div class="clock"></div>
+                            </boggle>
+                            <boggle class="boggle b10">
+                                <div class="clock"></div>
+                            </boggle>
+                            <div class="chatbubble workbubble patchsays">Can you make us a belt out of these watches?
                                 <div class="chatarrow patchsays"></div>
                             </div>
-                            <div class="chatbubble workbubble maudesays">What kind of jewelry do you find on a mountain giant's ear?
-                                <div class="chatarrow maudesays"></div>
+                            <div class="chatbubble workbubble keepersays">No, that would be a waist of time.
+                                <div class="chatarrow keepersays"></div>
                             </div>
                         </div>
                     </div>
@@ -72,7 +111,7 @@
                 <form>
                     <div class="form-group" style="margin-top: 10px; width:50%">
                         <div class="form-group" style="margin-top: 10px; width:50%">
-                            <input type="button" id="toggleBtn" value="Toggle chatbubble movement.">
+                            <input type="button" id="toggleBtn" value="Toggle watch hands.">
                         </div>
                     </div>
                 </form>

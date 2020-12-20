@@ -1,0 +1,146 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Characters
+ *
+ */
+
+ .pirate {
+  position: absolute;
+  bottom: -10%;
+  left: 63%;
+  width: 30%;
+  transform-origin: 50% 0%;
+}
+
+.patch {
+  position: absolute;
+  bottom: -10%;
+  left: 1%;
+  width: 20%;
+  transform: rotateY(180deg);
+}
+
+.maude {
+  position: absolute;
+  bottom: -10%;
+  left: 22%;
+  width: 30%;
+  transform: rotateY(180deg);
+}
+
+.wall {
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  height: 110%;
+  width: 110%;
+  background-image: linear-gradient(rgba(180, 230, 240, 1), rgba(180, 240, 240, 1));
+}
+
+.floor {
+  position: absolute;
+  top: 80%;
+  left: -5%;
+  height: 110%;
+  width: 110%;
+  border: 0.5vw solid rgba(0, 0, 0, 1);
+  background-image: linear-gradient(rgba(120, 120, 80, 1), rgba(110, 110, 80, 1));
+}
+
+.wallcrack {
+  position: absolute;
+  left: 85%;
+  top: 42%;
+  width: 5%;
+}
+
+.spiderweb {
+  position: absolute;
+  left: 92%;
+  top: 0%;
+  width: 8%;
+  opacity: 0.2;
+}
+
+/*
+*
+* chat
+*
+*/
+
+.chatbubble {
+  border: 5vw solid rgb(0, 0, 0, 1);
+}
+
+.chatarrow {
+  transform-origin: top left;
+}
+
+.chatbubble.patchsays {
+  position: absolute;
+  top: 2%;
+  left: 10%;
+  width: 55%;
+  max-width: 80%;
+}
+
+.chatarrow.patchsays {
+  position: absolute;
+  border-right: 1.2vw solid transparent;
+  border-left: 0.4vw solid transparent;
+  border-top: 5vw solid;
+  top: calc(100% + 1px);
+  left: 10%;
+}
+
+.chatbubble.maudesays {
+  top: 21%;
+  left: 24%;
+  width: 48%;
+}
+
+.chatarrow.maudesays {
+  position: absolute;
+  border-right: 1.2vw solid transparent;
+  border-left: 0.4vw solid transparent;
+  border-top: 2.5vw solid;
+  top: calc(100% + 1px);
+  left: 30%;
+}
+
+/*
+ *
+ * animations
+ *
+ */
+ .piratespin {
+  /* The pirate spins forever. */
+  -webkit-animation: piratespin 1s linear infinite;
+          animation: piratespin 1s linear infinite;
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/* pirate keyframes for animation*/
+@-webkit-keyframes piratespin {
+  0% {
+    -webkit-transform: rotateY(0deg) rotateX(0deg); 
+      transform: rotateY(0deg) rotateX(0deg); }
+  50% {
+    -webkit-transform: rotateY(360deg) rotateX(-10deg); 
+      transform: rotateY(360deg) rotateX(-10deg) ; }
+  100% {
+    -webkit-transform: rotateY(0deg) rotateX(0deg) ;
+      transform: rotateY(0deg) rotateX(0deg) ; }}
+

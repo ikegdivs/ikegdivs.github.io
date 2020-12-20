@@ -1,5 +1,5 @@
 
 $('#toggleBtn').on('click', function(){
     // Stop or start the chatbubble animation
-    $('.chatbubble').toggleClass('foreground-motion');
+    $('#pirate01').toggleClass('piratespin');
 })

@@ -89,7 +89,7 @@
  * animations
  *
  */
- .foreground {
+ .foreground-motion {
     /* The face of the giant moves and alternates forever. */
     -webkit-animation: fg 1s alternate infinite;
             animation: fg 1s alternate infinite;
