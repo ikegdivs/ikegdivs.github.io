@@ -1,0 +1,96 @@
+<!doctype html>
+
+<!-- this is a comment for human! -->
+
+<html lang="en">
+
+  <header>
+    <title>PJ Divs</title><!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/css/assets.css">
+    <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="name" content="PJ Divs">
+    <meta name="robots" content="noindex, nofollow">
+  </header>
+
+  <body>
+    <div class="jumbotron">
+      <div class="col-sm-12">
+        <img style="display: block; margin-right: auto; margin-left: auto;"src="/images/divsfrontpage-01.jpg" width="75%" alt="banner">
+        <h1 style="text-align: center">PJ Divs</h1>
+      </div>
+    </div>
+    <hr>
+
+    <nav class="navbar">
+    <ul>
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/fonts.html">fonts</a></li>
+        <li><a href="/temp.html">temp</a></li>
+        <li><a href="/demo_tooltip/comic.html">demo_tooltip</a></li>
+        <li><a href="/js_append/comic.html">JavaScript: append</a></li>
+        <li><a href="/restaurant01/res01.html">restaurant01</a></li>
+    </ul>
+    </nav>
+    <div class="container nomargin">
+        <div class="row">
+            <div class="col-12 col-sm-12">
+                <div class="card">
+                    <h3 class="card-header bg-primary text-white">Instructions:</h3>
+                    <div class="card-body">
+                        <dl class="row">
+                            Use the button below the picture to display the width of the 'foreground' class in pixels.
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-3 text-right"><span class="badge badge-secondary w-200">Width</span></dt>
+                            <dd class="widthOutput col-9 text-left"></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-12 col-sm-12">
+                <div id="workspace">
+                    <div id="panel-a" class="workview">
+                        <div class="inpanel">
+                            <div class="background">
+                                <img src="/svg/mountaingiant_back.svg" />
+                            </div>
+                            <div class="foreground">
+                                <img src="/svg/mountaingiant_fore.svg" />
+                            </div>
+                            <div class="chatbubble workbubble patchsays">Mountaineering.
+                                <div class="chatarrow patchsays"></div>
+                            </div>
+                            <div class="chatbubble workbubble maudesays">What kind of jewelry do you find on a mountain giant's ear?
+                                <div class="chatarrow maudesays"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form>
+                    <div class="form-group" style="margin-top: 10px; width:50%">
+                        <div class="form-group" style="margin-top: 10px; width:50%">
+                            <input type="button" id="widthBtn" value="access 'foreground' class">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </body>
+
+<footer class="row footer justify-content-center">
+  <code>Copyright (c) 2020 Issac Gardner</code>
+</footer>
+<!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="./script.js"></script>
+</html>

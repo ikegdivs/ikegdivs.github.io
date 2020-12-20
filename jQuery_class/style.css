@@ -1,0 +1,136 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+
+/* background is the hills */
+.background {
+    position: absolute;
+    top: -5%;
+    left: -44%;
+    height: 150%;
+    width: 150%;
+}
+
+/* foreground is the giant and patch and maude */
+.foreground {
+    position: absolute;
+    top: -6%;
+    left: 30%;
+    height: 100%;
+    width: 108%;
+}
+
+
+/*
+ *
+ * chat
+ *
+ */
+
+ .chatbubble {
+    border: 4vw solid rgb(0, 0, 0, 1);
+ }
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.maudesays {
+    position: absolute;
+    top: 1%;
+    left: 1%;
+    width: 52%;
+}
+
+.chatarrow.maudesays {
+    position: absolute;
+    border-right: 0.4vw solid transparent;
+    border-left: 1.2vw solid transparent;
+    border-top: 3vw solid;
+    top: calc(100% + 1px);
+    right: 30%;
+}
+
+.chatbubble.patchsays {
+    top: 55%;
+    left: 20%;
+    width: 30%;
+}
+
+.chatarrow.patchsays {
+    position: absolute;
+    border-right: 0.4vw solid transparent;
+    border-left: 1.2vw solid transparent;
+    border-top: 3vw solid;
+    top: calc(100% + 1px);
+    right: 10%;
+}
+
+/*
+ *
+ * animations
+ *
+ */
+ .foreground {
+    /* The face of the giant moves and alternates forever. */
+    -webkit-animation: fg 1s alternate infinite;
+            animation: fg 1s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+
+.background {
+    /* The hills in the background alternate forever. */
+    -webkit-animation: bg 1.5s alternate infinite;
+            animation: bg 1.5s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+  
+  /* Foreground keyframes for animation*/
+  @-webkit-keyframes fg {
+    from {
+      -webkit-transform: translateY(0%) rotateZ(0deg) scale(1); 
+        transform: translateY(0%) rotateZ(0deg) scale(1); }
+    to {
+      -webkit-transform: translateY(2%) rotateZ(0.25deg) scale 1.01;
+        transform: translateY(2%) rotateZ(0.25deg) scale 1.01; }}
+  @keyframes fg {
+    from {
+        -webkit-transform: translateY(0%) rotateZ(0deg) scale(1);
+          transform: translateY(0%) rotateZ(0deg) scale(1); }
+      to {
+        -webkit-transform: translateY(2%) rotateZ(0.25deg) scale(1.01);
+          transform: translateY(2%) rotateZ(0.25deg) scale(1.01); }}
+
+  /* Background keyframes for animation*/
+  @-webkit-keyframes bg {
+    from {
+      -webkit-transform: translateX(0%) rotateZ(0deg);
+        transform: translateX(0%) rotateZ(0deg); }
+    to {
+      -webkit-transform: translateX(2%) rotateZ(0.25deg);
+        transform: translateX(2%) rotateZ(0.25deg); }}
+  @keyframes bg {
+    from {
+        -webkit-transform: translateX(0%) rotateZ(0deg);
+          transform: translateX(0%) rotateZ(0deg); }
+      to {
+        -webkit-transform: translateX(2%) rotateZ(0.25deg);
+          transform: translateX(2%) rotateZ(0.25deg); }}
