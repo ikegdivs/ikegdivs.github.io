@@ -136,13 +136,13 @@
  */
 /* The ghost should float up and down */
 .ghost {
-  /* mels bounce takes a second and alternates forever. */
+  /* Ghost's bounce takes a second and alternates forever. */
   -webkit-animation: ghostfloat 1s alternate infinite;
           animation: ghostfloat 1s alternate infinite;
   -webkit-animation-play-state: running;
           animation-play-state: running; }
 
-/* Mels keyframes for animation, just moving up and down 3vw */
+/* The ghosts keyframes for animation, just moving up and down 2vw */
 @-webkit-keyframes ghostfloat {
   from {
     -webkit-transform: translateY(0vw);

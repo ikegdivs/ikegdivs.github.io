@@ -1,0 +1,124 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+
+.background {
+    position: absolute;
+    top: -2%;
+    left: -2%;
+    height: 104%;
+    width: 104%;
+}
+
+.nachowindow {
+    position: absolute;
+    overflow: hidden;
+    top: 32%;
+    left: 77.5%;
+    width: 2%;
+    height: 13%;
+    border: 3px solid rgba(0, 0, 0, 0);
+}
+
+.nachodrop {
+    position: absolute;
+    top: -100%;
+    left: 1%;
+    height: 60%;
+    width: 95%;
+    border: 0.18vw solid rgba( 0, 0, 0, 1);
+    border-radius: 0.5vw;
+    background: rgba( 255, 180, 50, 1);
+}
+
+
+/*
+ *
+ * chat
+ *
+ */
+
+ .chatbubble {
+    border: 4vw solid rgb(0, 0, 0, 1);
+ }
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.maudesays {
+    position: absolute;
+    top: 7%;
+    right: 30%;
+    width: 25%;
+}
+
+.chatarrow.maudesays {
+    position: absolute;
+    border-right: 0.4vw solid transparent;
+    border-left: 1.2vw solid transparent;
+    border-top: 3vw solid;
+    top: calc(100% + 1px);
+    right: 40%;
+}
+
+.chatbubble.patchsays {
+    top: 5%;
+    left: 5%;
+    width: 32%;
+}
+
+.chatarrow.patchsays {
+    position: absolute;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 3vw solid;
+    top: calc(100% + 1px);
+    left: 50%;
+}
+
+/*
+ *
+ * animations
+ *
+ */
+ .nachodrop {
+    /* nacho drop alternates forever. */
+    -webkit-animation: nachodrop 1s linear infinite;
+            animation: nachodrop 1s linear infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+  
+  /* Nacho drop keyframes for animation, just moving down 140%*/
+  @-webkit-keyframes nachodrop {
+    from {
+      -webkit-transform: translateY(0vw);
+              transform: translateY(0vw); }
+    to {
+      -webkit-transform: translateY(350%);
+              transform: translateY(350%); } }
+  @keyframes ghostfloat {
+      from {
+          -webkit-transform: translateY(0vw);
+                  transform: translateY(0vw); }
+        to {
+          -webkit-transform: translateY(350%);
+                  transform: translateY(350%); } }
