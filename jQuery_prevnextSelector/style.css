@@ -32,19 +32,22 @@
 }
 
 .maude {
+    position: absolute;
     top: 30%;
     right: 30%;
     width: 18%;
 }
 
 .background {
-    top: -12%;
+    position: absolute;
+    top: -15%;
     left: -9%;
     height: 104%;
-    width: 140%;
+    width: 125%;
 }
 
 .waterfall {
+    position: absolute;
     top: -8%;
     left: -5%;
     height: 3000%;
@@ -52,6 +55,7 @@
 }
 
 .lightning {
+    position: absolute;
     top: 0%;
     left: 0%;
     width: 100%;
