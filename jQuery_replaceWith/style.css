@@ -70,16 +70,14 @@
 }
 
 .patch {
-    position: absolute;
-    bottom: -10%;
+    top: 33%;
     left: 1%;
     width: 20%;
     transform: rotateY(180deg);
 }
 
 .maude {
-    position: absolute;
-    bottom: -10%;
+    top: 30%;
     right: 2%;
     width: 18%;
 }

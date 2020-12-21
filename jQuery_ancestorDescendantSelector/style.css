@@ -3,7 +3,6 @@
 }
 
 .inpanel {
-    position: absolute;
     top: 0%;
     left: 0%;
     height: 100%;
@@ -27,22 +26,20 @@
 
 .patch {
     position: absolute;
-    bottom: -10%;
+    top: 37%;
     left: 1%;
     width: 20%;
     transform: rotateY(180deg);
 }
 
 .maude {
-    position: absolute;
-    bottom: -10%;
+    top: 30%;
     left: 30%;
     width: 18%;
     transform: rotateY(180deg);
 }
 
 .background {
-    position: absolute;
     top: -12%;
     left: -9%;
     height: 104%;
@@ -50,11 +47,10 @@
 }
 
 .nest {
-    position: absolute;
-    top: 16.2vw;
-    left: -5vw;
+    top: 16.7vw;
+    left: -1vw;
     height: 5vw;
-    width: 120%;
+    width: 112%;
 }
 
 /*
@@ -72,14 +68,12 @@
 }
 
 .chatbubble.patchsays {
-    position: absolute;
-    top: 8%;
-    left: 1vw;
-    width: 20vw;
+    top: 1%;
+    left: 1%;
+    width: 24%;
 }
 
 .chatarrow.patchsays {
-    position: absolute;
     border-right: 1.2vw solid transparent;
     border-left: 0.4vw solid transparent;
     border-top: 3vw solid;
@@ -88,13 +82,12 @@
 }
 
 .chatbubble.maudesays {
-    top: 3vw;
-    left: 21vw;
-    width: 22vw;
+    top: 10%;
+    left: 28%;
+    width: 30%;
 }
 
 .chatarrow.maudesays {
-    position: absolute;
     border-right: 1.2vw solid transparent;
     border-left: 0.4vw solid transparent;
     border-top: 2.5vw solid;
@@ -108,19 +101,17 @@
  *
  */
 .eggs {
-    position: absolute;
-    top: 0vw;
-    left: 0vw;
+    top: 0%;
+    left: 0%;
     height: 100%;
     width: 100%;
 }
 
 .egg {
-    position: absolute;
     top: 0%;
     left: 0%;
-    width: 4.5vw;
-    height: 3vw;
+    width: 6%;
+    height: 2%;
     animation: shake 0ms -800ms linear infinite alternate;
 }
 
@@ -135,11 +126,11 @@
  *
  */
 
-.egg:nth-child(1) { animation-duration: 612ms; top: 16.2vw; left: -3vw;}
-.egg:nth-child(2) { animation-duration: 645ms; top: 16vw; left: 9.7vw;}
-.egg:nth-child(3) { animation-duration: 682ms; top: 43%; left: 16.6vw;}
-.egg:nth-child(4) { animation-duration: 629ms; top: 41%; left: 82%;}
-.egg:nth-child(5) { animation-duration: 644ms; top: 15vw; left: 66vw;}
+.egg:nth-child(1) { animation-duration: 612ms; top: 44%; left: -1%;}
+.egg:nth-child(2) { animation-duration: 645ms; top: 44%; left: 15%;}
+.egg:nth-child(3) { animation-duration: 682ms; top: 43.5%; left: 26%;}
+.egg:nth-child(4) { animation-duration: 629ms; top: 42%; left: 82%;}
+.egg:nth-child(5) { animation-duration: 644ms; top: 16vw; left: 66vw;}
 .egg:nth-child(6) { animation-duration: 674ms; top: 16.5vw; left: 72vw;}
 .egg:nth-child(7) { animation-duration: 664ms; top: 18vw; left: 80vw;}
  
@@ -169,7 +160,7 @@
         transform: scale(1);
     }
     100% {
-        transform: scale(1.1);
+        transform: scale(1.2);
     }
 }
  

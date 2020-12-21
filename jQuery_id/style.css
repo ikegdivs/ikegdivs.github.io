@@ -17,24 +17,21 @@
  */
 
  .pirate {
-  position: absolute;
-  bottom: -10%;
+  top: 30%;
   left: 63%;
   width: 30%;
   transform-origin: 50% 0%;
 }
 
 .patch {
-  position: absolute;
-  bottom: -10%;
+  top: 33%;
   left: 1%;
   width: 20%;
   transform: rotateY(180deg);
 }
 
 .maude {
-  position: absolute;
-  bottom: -10%;
+  top: 30%;
   left: 22%;
   width: 30%;
   transform: rotateY(180deg);
@@ -108,7 +105,7 @@
 .chatbubble.maudesays {
   top: 21%;
   left: 24%;
-  width: 48%;
+  width: 41%;
 }
 
 .chatarrow.maudesays {

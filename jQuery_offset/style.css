@@ -40,17 +40,13 @@
     height: 10%;
 }
 
-.patch {
-    position: absolute;
-    bottom: -10%;
+.patch {top: 33%;
     left: 1%;
     width: 20%;
     transform: rotateY(180deg);
 }
 
-.maude {
-    position: absolute;
-    bottom: -10%;
+.maude {top: 30%;
     right: 2%;
     width: 30%;
 }
@@ -79,8 +75,8 @@
 
 .chatbubble.patchsays {
     position: absolute;
-    top: 2%;
-    left: 10%;
+    top: 4%;
+    left: 15%;
     width: 40%;
     max-width: 80%;
 }
@@ -95,7 +91,7 @@
 }
 
 .chatbubble.maudesays {
-    top: 5%;
+    top: 14%;
     right: 2%;
     width: 26%;
 }

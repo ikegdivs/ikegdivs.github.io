@@ -16,24 +16,21 @@
  *
  */
 
- .shopkeeper {
-  position: absolute;
-  bottom: -10%;
+.shopkeeper {
+  top: 33%;
   right: 0%;
   width: 18%;
 }
 
 .patch {
-  position: absolute;
-  bottom: -10%;
+  top: 33%;
   left: 22%;
   width: 30%;
   transform: rotateY(180deg);
 }
 
 .maude {
-  position: absolute;
-  bottom: -10%;
+  top: 30%;
   left: 1%;
   width: 18%;
   transform: rotateY(180deg);
@@ -49,10 +46,10 @@
 
 .shopcounter {
   position: absolute;
-  top: 47.0%;
+  top: 46%;
   left: 50%;
   height: 55%;
-  width: 49%;
+  width: 52%;
 }
 
 /*
@@ -73,8 +70,7 @@
   position: absolute;
   top: 15%;
   right: 1%;
-  width: 35%;
-  max-width: 80%;
+  width: 31%;
 }
 
 .chatarrow.keepersays {
@@ -89,7 +85,7 @@
 .chatbubble.patchsays {
   top: 5%;
   left: 15%;
-  width: 48%;
+  width: 36%;
 }
 
 .chatarrow.patchsays {
@@ -115,49 +111,51 @@
 
 /* Different watches */
 .b01 {
-  top: 69%;
+  top: 62.6%;
   left: 44.3%;
 }
 .b02 {
-  top: 69%;
+  /*top: 69%;
+  left: 41.7%;*/
+  top: 62.6%;
   left: 41.7%;
 }
 .b03 {
-  top: 70.7%;
+  top: 64.3%;
   left: 39.1%;
 }
 .b04 {
-  top: 68%;
+  top: 61.6%;
   left: 46.8%;
 }
 .b05 {
-  top: 78%;
+  top: 71.6%;
   left: 43.1%;
 }
 .b06 {
-  top: 78%;
+  top: 71.6%;
   left: 46.3%;
 }
 .b07 {
-  top: 78.9%;
+  top: 72.5%;
   left: 39.7%;
 }
 .b08 {
-  top: 86.1%;
+  top: 79.7%;
   left: 40.2%;
 }
 .b09 {
-  top: 86%;
+  top: 79.6%;
   left: 42.7%;
 }
 .b10 {
-  top: 86.2%;
+  top: 79.8%;
   left: 45.6%;
 }
 
 .clock {
-  width: 1.5vw;
-  height: 1.5vw;
+  width: 1.2vw;
+  height: 1.2vw;
   top: 0px;
   left: 0px;
   border: 0.2vw solid rgba(0, 0, 0);

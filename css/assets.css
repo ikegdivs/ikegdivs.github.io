@@ -15,6 +15,7 @@
 
 /* Properties for the workspace. */
 #workspace {
+    box-sizing: content-box;
     /* Present objects in a flex style */
     display: flex;
     /* If content exceeds background size, hide the content. */
@@ -23,6 +24,11 @@
     background-image: linear-gradient( rgb(221, 221, 221), rgb(170, 170, 170));
     border: 3px solid rgb(180, 180, 180);
     box-shadow: 3px 3px 10px rgb(200, 200, 200), -3px -3px 10px rgb(200, 200, 200);
+}
+
+#workspace * {
+    position: absolute;
+    box-sizing: content-box;
 }
 
 /* Do not want the #workspaces to be centered */
@@ -53,8 +59,8 @@
     /* Display properties */
     position: absolute;
     /* Border properties */
-    border: 6px solid rgb(0, 0, 0);
-    box-shadow: 6px 6px 10px;
+    border: 0.5vw solid rgb(0, 0, 0);
+    box-shadow: 0.5vw 0.5vw 0.75vw;
     /* Use a linear gradient as the background image */
     background-image: linear-gradient(rgb(238, 238, 238), rgb(204, 204, 204));
     /* Hide any elements that may appear outside of a panel's borders. */
@@ -67,9 +73,7 @@
 
 /* Default box sizing behavior: Borders and padding are separate when calculating box height and width */
 /* This messes with some bootstrap */
-/* {box-sizing: content-box;}
-
-/* Use specificity to override Wordpress theme styling. */
+/* {box-sizing: content-box;} */
 #panelboard > *:first-child {
     margin-top: 10px;
 }
@@ -86,7 +90,7 @@ span {
 
  .chatbubble {
     position: absolute;
-    display: inline-block;
+    /*display: inline-block;*/
     /*display: inline;*/
     /*Don't let the chat bubbles grow too big. */
     /*max-width: 90%;*/
@@ -123,26 +127,20 @@ span {
  *
  */
 
- /* Make the default panelboard width approximately wide enough to hold a single panel. */
+/* Make the default panelboard width approximately wide enough to hold a single panel. */
 #panelboard {
     width: 420px;
     max-width: 420px;
 }
 
-
+/* Make the workspace responsive */
 #workspace {
-    /* Make the workspace responsive */
-    /*padding: 0.5vw;
-    width: 90vw;
-    height: 50.625vw;*/
     padding: 0.4vw;
     width: 72vw;
     height: 40.5vw;
 }
 
 .workview {
-    /*width: 88.5vw;
-    height: 49.25vw;*/
     width: 70.8vw;
     height: 39.4vw;
 }
@@ -156,22 +154,17 @@ span {
         max-width: 420px;
     }
 
-    #workspace {
-        /* Make the workspace responsive */
-        /*padding: 0.5vw;
-        width: 90vw;
-        height: 50.625vw;*/
+     /* Make the workspace responsive */
+    /*#workspace {
         padding: 0.4vw;
         width: 72vw;
         height: 40.5vw;
     }
 
     .workview {
-        /*width: 88.5vw;
-        height: 49.25vw;*/
         width: 70.8vw;
         height: 39.4vw;
-    }
+    }*/
 }
 
 
@@ -183,21 +176,16 @@ span {
         max-width: 850px;
     }
 
-    #workspace {
-        /* Make the workspace responsive */
-        /*padding: 0.5vw;
-        width: 90vw;
-        height: 50.625vw;*/
+    /* Make the workspace responsive */
+    /*#workspace {
         padding: 0.4vw;
         width: 72vw;
         height: 40.5vw;
     }
 
     .workview {
-        /*width: 88.5vw;
-        height: 49.25vw;*/
         width: 70.8vw;
         height: 39.4vw;
-    }
+    }*/
 }
 
