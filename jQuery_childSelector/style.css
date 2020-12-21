@@ -1,0 +1,146 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+/*
+ *
+ * Characters
+ *
+ */
+
+.patch {
+    position: absolute;
+    bottom: -10%;
+    left: 1%;
+    width: 20%;
+    transform: rotateY(180deg);
+}
+
+.maude {
+    position: absolute;
+    bottom: -10%;
+    left: 30%;
+    width: 18%;
+    transform: rotateY(180deg);
+}
+
+.background {
+    position: absolute;
+    top: -12%;
+    left: -9%;
+    height: 104%;
+    width: 140%;
+}
+
+/*
+ *
+ * chat
+ *
+ */
+
+ .chatbubble {
+    border: 5vw solid rgb(0, 0, 0, 1);
+ }
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.patchsays {
+    position: absolute;
+    top: 8%;
+    left: 1vw;
+    width: 20vw;
+}
+
+.chatarrow.patchsays {
+    position: absolute;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 3vw solid;
+    top: calc(100% + 1px);
+    left: 25%;
+}
+
+.chatbubble.maudesays {
+    top: 3vw;
+    left: 21vw;
+    width: 22vw;
+}
+
+.chatarrow.maudesays {
+    position: absolute;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 2.5vw solid;
+    top: calc(100% + 1px);
+    left: 30%;
+}
+
+/*
+ *
+ * sprites
+ *
+ */
+.sprites {
+    position: absolute;
+    top: 5vw;
+    left: 30vw;
+}
+
+.sprite {
+    background-image: radial-gradient( rgba(255, 230, 0, 1) 0%,  rgba(255, 230, 0, 0) 40%,  rgba(255, 2300, 0, 0) 100%);
+    position: absolute;
+    top: 30vw;
+    width: 0.2vw;
+    height: 0.2vw;
+    animation: pulse 0ms -800ms linear infinite alternate;
+    border-radius: 50%;
+    margin-left: 1px;
+}
+
+/*
+ *
+ * animations
+ *
+ */
+
+.sprite:nth-child(1) { animation-duration: 612ms; top: 1vw; left: 20vw;}
+.sprite:nth-child(2) { animation-duration: 645ms; top: 20vw; left: 14vw;}
+.sprite:nth-child(3) { animation-duration: 682ms; top: 12vw; left: 20vw;}
+.sprite:nth-child(4) { animation-duration: 629ms; top: 4vw; left: 32vw;}
+.sprite:nth-child(5) { animation-duration: 644ms; top: 16vw; left: 24vw;}
+.sprite:nth-child(6) { animation-duration: 674ms; top: 18vw; left: 36vw;}
+.sprite:nth-child(7) { animation-duration: 664ms; top: 22vw; left: 20vw;}
+.sprite:nth-child(8) { animation-duration: 655ms; top: 26vw; left: 37vw;}
+.sprite:nth-child(9) { animation-duration: 633ms; top: 24vw; left: 31vw;}
+.sprite:nth-child(10) { animation-duration: 621ms; top: 28vw; left: 25vw;}
+ 
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(100);
+    }
+}
+ 

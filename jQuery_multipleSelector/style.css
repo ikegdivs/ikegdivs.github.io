@@ -51,7 +51,7 @@
 
 .dogcontainer {
     position: absolute;
-    bottom: 30%;
+    bottom: 2vw;
     left: -20%;
     width: 15%;
     height: 10%;
@@ -147,8 +147,8 @@ to {
     left: -50%; } }
     
 .dog1 {
--webkit-animation: dogfetch 0.75s infinite;
-        animation: dogfetch 0.75s infinite;
+-webkit-animation: dogfetch 0.5s infinite;
+        animation: dogfetch 0.5s infinite;
 -webkit-animation-play-state: running;
         animation-play-state: running; }
 
@@ -158,20 +158,20 @@ to {
 
 @-webkit-keyframes dogfetch {
 0% {
-    top: 120px; }
+    top: 2.4vw; }
 25%, 75% {
-    top: 100px; }
+    top: 0.8vw; }
 50% {
-    top: 90px; }
+    top: 0vw; }
 100% {
-    top: 140px; } }
+    top: 4.0vw; } }
 
 @keyframes dogfetch {
-0% {
-    top: 120px; }
-25%, 75% {
-    top: 100px; }
-50% {
-    top: 90px; }
-100% {
-    top: 140px; } }
+    0% {
+        top: 2.4vw; }
+    25%, 75% {
+        top: 0.8vw; }
+    50% {
+        top: 0vw; }
+    100% {
+        top: 4.0vw; } }
