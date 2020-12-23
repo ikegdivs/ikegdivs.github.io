@@ -26,16 +26,18 @@
 
 .patch {
     position: absolute;
-    top: 37%;
-    right: 1%;
-    width: 20%;
+    top: 68%;
+    left: 10%;
+    width: 10%;
+    transform: rotateY(180deg);
 }
 
 .maude {
     position: absolute;
-    top: 30%;
-    right: 30%;
-    width: 18%;
+    top: 65%;
+    left: 30%;
+    width: 9%;
+    transform: rotateY(180deg);
 }
 
 .bgd {

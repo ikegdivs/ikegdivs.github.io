@@ -33,35 +33,19 @@
 
 .maude {
     position: absolute;
-    top: 30%;
-    right: 30%;
-    width: 18%;
+    top: 38%;
+    left: 5%;
+    width: 25%;
 }
 
 .background {
     position: absolute;
-    top: -15%;
-    left: -9%;
-    height: 104%;
-    width: 125%;
+    top: -2%;
+    left: -2%;
+    height: 105%;
+    width: 105%;
 }
 
-.waterfall {
-    position: absolute;
-    top: -8%;
-    left: -5%;
-    height: 3000%;
-    width: 30%;
-}
-
-.lightning {
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 1);
-}
 
 /*
  *
@@ -78,23 +62,23 @@
 }
 
 .chatbubble.patchsays {
-    top: 8%;
-    right: 1%;
-    width: 22%;
+    top: 39%;
+    right: 20%;
+    width: 10%;
 }
 
 .chatarrow.patchsays {
-    border-right: 1.2vw solid transparent;
-    border-left: 0.4vw solid transparent;
+    border-right: 0.4vw solid transparent;
+    border-left: 1.2vw solid transparent;
     border-top: 3vw solid;
     top: calc(100% + 1px);
     right: 25%;
 }
 
 .chatbubble.maudesays {
-    top: 8%;
-    right: 30%;
-    width: 23%;
+    top: 20%;
+    left: 5%;
+    width: 40%;
 }
 
 .chatarrow.maudesays {
@@ -102,7 +86,7 @@
     border-left: 0.4vw solid transparent;
     border-top: 2.5vw solid;
     top: calc(100% + 1px);
-    right: 30%;
+    left: 22%;
 }
 
 

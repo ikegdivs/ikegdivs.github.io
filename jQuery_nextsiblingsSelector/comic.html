@@ -44,7 +44,7 @@
                     <h3 class="card-header bg-primary text-white">Instructions:</h3>
                     <div class="card-body">
                         <dl class="row">
-                            The button below the drawing uses JQuery's prev + next selector ('prev + next') on the 'background' class and '.lightning' class to cause the lightning change color from white to yellow.
+                            The slider below the drawing uses JQuery's next siblings selector ('prev ~ nextsiblings') on the '.chatbubble' and '.maude' classes to move both simultaneously.
                         </dl>
                     </div>
                 </div>
@@ -56,31 +56,25 @@
                     <div id="panel-a" class="workview">
                         <div class="inpanel">
                             <div class="background">
-                                <img src="/svg/waterfallcave.svg" />
+                                <img src="/svg/bar01.svg" />
                             </div>
-                            <div class="lightning">
-                            </div>
-                            <div class="waterfall">
-                                <img src="/svg/waterfall.svg" />
-                            </div>
-                            <div class="patch">
-                                <img src="/svg/patch.svg" />
-                            </div>
-                            <div class="maude">
-                                <img src="/svg/maude.svg" />
-                            </div>
-                            <div class="chatbubble workbubble patchsays">Because it doesn't know how to conduct itself?
+                            <div class="chatbubble workbubble patchsays">Burple.
                                 <div class="chatarrow patchsays"></div>
                             </div>
-                            <div class="chatbubble workbubble maudesays">Do you know why lightning is so shocking?
+                            <div class="maude">
+                                <img src="/svg/maudebeers.svg" />
+                            </div>
+                            <div class="chatbubble workbubble maudesays">If buttercups are yellow, what color are hiccups?
                                 <div class="chatarrow maudesays"></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <form>
+                    
                     <div class="form-group" style="margin-top: 10px; width:50%">
-                        <input type="button" id="toggleBtn" value="Change the lightning.">
+                        <label for="formControlRangeX">Move Maude towards Patch.</label>
+                        <input type="range" class="form-control-range" id="formControlRangeX" value="0">
                     </div>
                 </form>
             </div>
