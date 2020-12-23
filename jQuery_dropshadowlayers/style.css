@@ -1,0 +1,258 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+ *
+ * Scenery
+ *
+ */
+
+.panel {
+    background: rgba(220, 230, 255, 1.0);
+}
+/*
+ *
+ * Characters
+ *
+ */
+
+.patch {
+    position: absolute;
+    top: 37%;
+    right: 1%;
+    width: 20%;
+}
+
+.maude {
+    position: absolute;
+    top: 30%;
+    right: 30%;
+    width: 18%;
+}
+
+.bgd {
+    position: absolute;
+    top: -2%;
+    left: -19%;
+    height: 104%;
+    width: 135%;
+}
+
+.waterfall {
+    position: absolute;
+    top: -8%;
+    left: -5%;
+    height: 3000%;
+    width: 30%;
+}
+
+.lightning {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+/*
+ *
+ * chat
+ *
+ */
+
+.chatbubble {
+    border: 5vw solid rgb(0, 0, 0, 1);
+ }
+
+.chatarrow {
+    transform-origin: top left;
+}
+
+.chatbubble.patchsays {
+    top: 8%;
+    right: 1%;
+    width: 22%;
+}
+
+.chatarrow.patchsays {
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 3vw solid;
+    top: calc(100% + 1px);
+    right: 25%;
+}
+
+.chatbubble.maudesays {
+    top: 8%;
+    right: 30%;
+    width: 23%;
+}
+
+.chatarrow.maudesays {
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
+    border-top: 2.5vw solid;
+    top: calc(100% + 1px);
+    right: 30%;
+}
+
+
+/*
+ *
+ * animations
+ * 
+ */
+ .bgd01 {
+    /* Ghost's bounce takes a second and alternates forever. */
+    -webkit-animation: bgd01 2.5s alternate infinite;
+            animation: bgd01 2.5s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+  
+  /* The ghosts keyframes for animation, just moving up and down 2vw */
+  @-webkit-keyframes bgd01 {
+    from {
+      -webkit-transform: rotateZ(0deg);
+      transform: rotateZ(0deg); } 
+    to {
+      -webkit-transform: rotateZ(5deg);
+              transform: rotateZ(5deg); } }
+  @keyframes bgd01 {
+      from {
+        -webkit-transform: rotateZ(0deg);
+        transform: rotateZ(0deg); } 
+    to {
+    -webkit-transform: rotateZ(5deg);
+            transform: rotateZ(5deg); } }
+.bgd02 {
+    /* Ghost's bounce takes a second and alternates forever. */
+    -webkit-animation: bgd02 3s alternate infinite;
+            animation: bgd02 3s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+    
+    /* The ghosts keyframes for animation, just moving up and down 2vw */
+    @-webkit-keyframes bgd02 {
+    from {
+        -webkit-transform: rotateZ(0deg);
+        transform: rotateZ(0deg); } 
+    to {
+        -webkit-transform: rotateZ(3deg);
+                transform: rotateZ(3deg); } }
+    @keyframes bgd02 {
+        from {
+        -webkit-transform: rotateZ(0deg);
+        transform: rotateZ(0deg); } 
+    to {
+    -webkit-transform: rotateZ(3deg);
+            transform: rotateZ(3deg); } }
+.bgd03 {
+    /* Ghost's bounce takes a second and alternates forever. */
+    -webkit-animation: bgd03 4s alternate infinite;
+            animation: bgd03 4s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+    
+    /* The ghosts keyframes for animation, just moving up and down 2vw */
+    @-webkit-keyframes bgd03 {
+    from {
+        -webkit-transform: rotateZ(0deg);
+        transform: rotateZ(0deg); } 
+    to {
+        -webkit-transform: rotateZ(1deg);
+                transform: rotateZ(1deg); } }
+    @keyframes bgd03 {
+        from {
+        -webkit-transform: rotateZ(0deg);
+        transform: rotateZ(0deg); } 
+    to {
+    -webkit-transform: rotateZ(1deg);
+            transform: rotateZ(1deg); } }
+ /*.bgd01 {
+    -webkit-animation: ghostfloat 1s alternate infinite;
+            animation: ghostfloat 1s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+  
+  @-webkit-keyframes ghostfloat {
+    from {
+      -webkit-transform: translateY(0vw);
+              transform: translateY(0vw); }
+    to {
+      -webkit-transform: translateY(2vw);
+              transform: translateY(2vw); } }
+  @keyframes ghostfloat {
+      from {
+          -webkit-transform: translateY(0vw);
+                  transform: translateY(0vw); }
+        to {
+          -webkit-transform: translateY(2vw);
+                  transform: translateY(2vw); } }
+*/
+/*.bgd01 {
+    -webkit-animation: tilt 5s alternate infinite;
+            animation: tilt 5s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+
+@-webkit-keyframes tilt {
+    0% {
+        transform: rotateZ(0deg); }
+    100% {
+        transform: rotateZ(0deg); }}
+    
+@keyframes tilt {
+    0% {
+        transform: rotateZ(10deg); }
+    100% {
+        transform: rotateZ(10deg); }
+}
+
+
+.bgd02 {
+    -webkit-animation: bgd02 5s alternate infinite;
+            animation: bgd02 5s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; 
+}
+
+@-webkit-keyframes bgd02 {
+    0% {
+        transform: rotateZ(0deg); }
+    100% {
+        transform: rotateZ(0deg); }}
+    
+@keyframes bgd02 {
+    0% {
+        transform: rotateZ(5deg); }
+    100% {
+        transform: rotateZ(5deg); }}
+
+
+.bgd03 {
+    -webkit-animation: bg03 5s alternate infinite;
+            animation: bg03 5s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+
+@-webkit-keyframes bgd03 {
+    0% {
+        transform: rotateZ(0deg); }
+    100% {
+        transform: rotateZ(0deg); }}
+    
+@keyframes bgd03 {
+    0% {
+        transform: rotateZ(2deg); }
+    100% {
+        transform: rotateZ(2deg); }}
+*/
