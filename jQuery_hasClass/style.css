@@ -26,44 +26,26 @@
 
 .patch {
     position: absolute;
-    top: 68%;
-    left: 10%;
-    width: 10%;
-    transform: rotateY(180deg);
+    top: 37%;
+    right: 1%;
+    width: 20%;
 }
 
 .maude {
     position: absolute;
-    top: 65%;
-    left: 30%;
-    width: 9%;
-    transform: rotateY(180deg);
+    top: 38%;
+    left: 5%;
+    width: 25%;
 }
 
 .bgd {
     position: absolute;
-    top: -2%;
-    left: -19%;
+    top: -36%;
+    left: -14%;
     height: 104%;
-    width: 135%;
+    width: 167%;
 }
 
-.waterfall {
-    position: absolute;
-    top: -8%;
-    left: -5%;
-    height: 3000%;
-    width: 30%;
-}
-
-.lightning {
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 1);
-}
 
 /*
  *
@@ -80,23 +62,23 @@
 }
 
 .chatbubble.patchsays {
-    top: 8%;
-    right: 1%;
-    width: 22%;
+    top: 20%;
+    left: 25%;
+    width: 25%;
 }
 
 .chatarrow.patchsays {
-    border-right: 1.2vw solid transparent;
-    border-left: 0.4vw solid transparent;
-    border-top: 3vw solid;
+    border-right: 0.4vw solid transparent;
+    border-left: 1.2vw solid transparent;
+    border-top: 2vw solid;
     top: calc(100% + 1px);
-    right: 25%;
+    left: 25%;
 }
 
 .chatbubble.maudesays {
-    top: 8%;
-    right: 30%;
-    width: 23%;
+    top: 5%;
+    left: 10%;
+    width: 40%;
 }
 
 .chatarrow.maudesays {
@@ -104,7 +86,7 @@
     border-left: 0.4vw solid transparent;
     border-top: 2.5vw solid;
     top: calc(100% + 1px);
-    right: 30%;
+    left: 22%;
 }
 
 
@@ -113,14 +95,14 @@
  * animations
  * 
  */
-.bgd01 {
-    /* rotate the background a little and alternate forever. */
+ .bgd01 {
+    /* rotate the boat a little and alternate forever. */
     -webkit-animation: bgd01 2.5s alternate infinite;
             animation: bgd01 2.5s alternate infinite;
     -webkit-animation-play-state: running;
             animation-play-state: running; }
   
-  /* rotate the background a little and alternate forever. */
+    /* rotate the boat a little and alternate forever. */
   @-webkit-keyframes bgd01 {
     from {
       -webkit-transform: rotateZ(0deg);
@@ -136,13 +118,13 @@
     -webkit-transform: rotateZ(5deg);
             transform: rotateZ(5deg); } }
 .bgd02 {
-    /* rotate the background a little and alternate forever. */
+    /* rotate the boat a little and alternate forever. */
     -webkit-animation: bgd02 3s alternate infinite;
             animation: bgd02 3s alternate infinite;
     -webkit-animation-play-state: running;
             animation-play-state: running; }
     
-    /* rotate the background a little and alternate forever. */
+    /* rotate the boat a little and alternate forever. */
     @-webkit-keyframes bgd02 {
     from {
         -webkit-transform: rotateZ(0deg);
@@ -158,24 +140,26 @@
     -webkit-transform: rotateZ(3deg);
             transform: rotateZ(3deg); } }
 .bgd03 {
-    /* rotate the background a little and alternate forever. */
-    -webkit-animation: bgd03 4s alternate infinite;
-            animation: bgd03 4s alternate infinite;
+    /* Make the width just a little bit larger */
+    width:170%;
+    /* rotate the boat a little and alternate forever. */
+    -webkit-animation: bgd03 1.5s alternate infinite;
+            animation: bgd03 1.5s alternate infinite;
     -webkit-animation-play-state: running;
             animation-play-state: running; }
     
-    /* rotate the background a little and alternate forever. */
+    /* rotate the boat a little and alternate forever. */
     @-webkit-keyframes bgd03 {
     from {
         -webkit-transform: rotateZ(0deg);
         transform: rotateZ(0deg); } 
     to {
-        -webkit-transform: rotateZ(1deg);
-                transform: rotateZ(1deg); } }
+        -webkit-transform: rotateZ(5deg);
+                transform: rotateZ(5deg); } }
     @keyframes bgd03 {
         from {
         -webkit-transform: rotateZ(0deg);
         transform: rotateZ(0deg); } 
     to {
-    -webkit-transform: rotateZ(1deg);
-            transform: rotateZ(1deg); } }
+    -webkit-transform: rotateZ(51deg);
+            transform: rotateZ(5deg); } }
