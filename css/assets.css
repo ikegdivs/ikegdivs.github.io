@@ -107,6 +107,7 @@ span {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     /* Make the spaces between text lines just large enough to read. */
     line-height: 1.2;
+    text-align: center;
 }
 
 .workbubble {
