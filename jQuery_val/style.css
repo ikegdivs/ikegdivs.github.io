@@ -32,7 +32,7 @@
     position: absolute;
     overflow: hidden;
     top: 31.5%;
-    left: 76.7%;
+    left: 77.3%;
     width: 2.2%;
     height: 13%;
     border: 3px solid rgba(0, 0, 0, 0);
@@ -56,7 +56,7 @@
  *
  */
 
- .chatbubble {
+.chatbubble {
     border: 4vw solid rgb(0, 0, 0, 1);
  }
 
