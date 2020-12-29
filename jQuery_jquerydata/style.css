@@ -37,14 +37,6 @@
     background: rgba(220, 230, 255, 1.0);
 }
 
-.birds {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
 /*
  *
  * Characters
@@ -53,18 +45,34 @@
 
 .patch {
     position: absolute;
-    top: 38%;
+    top: 50%;
     left: 2%;
     width: 15%;
 }
 
 .maude {
     position: absolute;
-    top: 35%;
-    left: 60%;
+    top: 47%;
+    left: 18%;
     width: 14%;
-    transform: rotateY(180deg);
 }
+
+.leopard {
+    position: absolute;
+    height: 30%;
+    width: 35%;
+    left: 40%;
+    top: 50%;
+}
+
+.lion {
+    position: absolute;
+    height: 30%;
+    width: 35%;
+    left: 70%;
+    top: 40%;
+}
+
 
 .bgd {
     position: absolute;
@@ -76,6 +84,7 @@
     left: -2%;
     height: 105%;
     width: 105%;
+    background-color: rgba(250, 220, 220, 1);
 }
 
 .bgd01 {
@@ -88,25 +97,25 @@
 
 .bgd02 {
     position: absolute;
-    top: -5%;
-    left: 40%;
-    height: 105%;
-    width: 70%;
+    top: 10%;
+    left: -50%;
+    height: 210%;
+    width: 210%;
 }
 
 .bgd03 {
     position: absolute;
     top: 20%;
-    left: 20%;
-    height: 20%;
-    width: 20%;
+    left: -40%;
+    height: 180%;
+    width: 180%;
 }
 
 .bgd04 {
     position: absolute;
-    top: 70%;
+    top: 60%;
     left: -5%;
-    height: 150%;
+    height: 105%;
     width: 110%;
 }
 
@@ -132,25 +141,25 @@
 }
 
 .chatarrow.patchsays {
-    border-right: 0.8vw solid transparent;
+    border-right: 1.2vw solid transparent;
     border-left: 0.4vw solid transparent;
-    border-top: 4vw solid;
+    border-top: 5vw solid;
     top: calc(100% + 1px);
     left: 15%;
 }
 
 .chatbubble.maudesays {
-    top: 25%;
-    left: 52%;
-    width: 20%;
+    top: 39%;
+    left: 15%;
+    width: 50%;
 }
 
 .chatarrow.maudesays {
-    border-right: 0.4vw solid transparent;
-    border-left: 1.2vw solid transparent;
+    border-right: 1.2vw solid transparent;
+    border-left: 0.4vw solid transparent;
     border-top: 2.5vw solid;
     top: calc(100% + 1px);
-    left: 50%;
+    left: 15%;
 }
 
 
@@ -159,6 +168,29 @@
  * animations
  * 
  */
+.pig {
+    animation: stampede 20s linear infinite;
+}
+.pig:nth-child(1) { animation-duration: 5s; top: 25vw; left: 10vw;}
+.pig:nth-child(2) { animation-duration: 4s; top: 27vw; left: 14vw;}
+.pig:nth-child(3) { animation-duration: 6s; top: 29vw; left: 20vw;}
+.pig:nth-child(4) { animation-duration: 5.5s; top: 31vw; left: 32vw;}
+.pig:nth-child(5) { animation-duration: 4.5s; top: 26vw; left: 37vw;}
+.pig:nth-child(6) { animation-duration: 3.5s; top: 28vw; left: 25vw;}
+.pig:nth-child(7) { animation-duration: 1664ms; top: 22vw; left: 20vw;}
+.pig:nth-child(8) { animation-duration: 1655ms; top: 26vw; left: 37vw;}
+.pig:nth-child(9) { animation-duration: 1633ms; top: 24vw; left: 31vw;}
+.pig:nth-child(10) { animation-duration: 1621ms; top: 28vw; left: 25vw;}
+ 
+@keyframes stampede {
+    0% {
+        left: 110%;
+    }
+    100% {
+        left: -50%;
+    }
+}
+
 
 .bgd01 {
     /* move the clouds to the right. */
@@ -182,7 +214,7 @@
     to {
         -webkit-transform: translateX(2.6%);
         transform: translateX(2.6%); }  }
-.bgd01 {
+.bgd02 {
     /* rotate the background a little and alternate forever. */
     -webkit-animation: bgd02 3s alternate infinite;
             animation: bgd02 3s alternate infinite;
@@ -204,3 +236,26 @@
     to {
     -webkit-transform: rotateZ(-0.1deg);
             transform: rotateZ(-0.1deg); } }
+
+.bgd03 {
+    /* rotate the background a little and alternate forever. */
+    -webkit-animation: bgd03 4s alternate infinite;
+            animation: bgd03 4s alternate infinite;
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+    
+    /* rotate the background a little and alternate forever. */
+    @-webkit-keyframes bgd03 {
+    from {
+        -webkit-transform: rotateZ(0deg);
+        transform: rotateZ(0deg); } 
+    to {
+        -webkit-transform: rotateZ(1deg);
+                transform: rotateZ(1deg); } }
+    @keyframes bgd03 {
+        from {
+        -webkit-transform: rotateZ(0deg);
+        transform: rotateZ(0deg); } 
+    to {
+    -webkit-transform: rotateZ(1deg);
+            transform: rotateZ(1deg); } }
