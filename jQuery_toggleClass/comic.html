@@ -19,11 +19,13 @@
 
   <body>
     <div class="jumbotron">
-      <div class="col-sm-12">
-        <img style="display: block; margin-right: auto; margin-left: auto;"src="/images/divsfrontpage-01.jpg" width="75%" alt="banner">
-        <h1 style="text-align: center">PJ Divs</h1>
+        <div id="particles-js" class="particles-js"></div>
+        <div class="col-sm-12">
+          <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
+          <h1 style="text-align: center">Issac Gardner's Portal</h1>
+        </div>
       </div>
-    </div>
+      
     <hr>
 
     <nav class="navbar">
@@ -103,5 +105,9 @@
 <script src="/node_modules/jquery/dist/jquery.min.js"></script>
 <script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
 <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/particles/particles.js"></script>
+<script> particlesJS.load('particles-js', '/particles/particles.json', function() {
+  console.log('callback - particles.js config loaded');
+});</script>
 <script src="./script.js"></script>
 </html>
