@@ -70,6 +70,7 @@
 }
 
 .patch {
+    position: absolute;
     top: 33%;
     left: 1%;
     width: 20%;
@@ -77,6 +78,7 @@
 }
 
 .maude {
+    position: absolute;
     top: 30%;
     right: 2%;
     width: 18%;

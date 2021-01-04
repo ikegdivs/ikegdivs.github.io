@@ -17,12 +17,14 @@
  */
 
 .shopkeeper {
+  position: absolute;
   top: 33%;
   right: 0%;
   width: 18%;
 }
 
 .patch {
+  position: absolute;
   top: 33%;
   left: 22%;
   width: 30%;
@@ -30,6 +32,7 @@
 }
 
 .maude {
+  position: absolute;
   top: 30%;
   left: 1%;
   width: 18%;

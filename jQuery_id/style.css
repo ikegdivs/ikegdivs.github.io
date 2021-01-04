@@ -17,6 +17,7 @@
  */
 
  .pirate {
+  position: absolute;
   top: 30%;
   left: 63%;
   width: 30%;
@@ -24,6 +25,7 @@
 }
 
 .patch {
+  position: absolute;
   top: 33%;
   left: 1%;
   width: 20%;
@@ -31,6 +33,7 @@
 }
 
 .maude {
+  position: absolute;
   top: 30%;
   left: 22%;
   width: 30%;

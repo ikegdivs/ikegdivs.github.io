@@ -1,0 +1,325 @@
+#panelboard {
+    /*box-sizing: content-box;*/
+}
+
+.inpanel {
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+
+.paperroll{
+    width: 100vw;
+    height: 100px;
+    padding: 0;
+    background-color: rgba(230, 230, 180, 0.5);
+    background-image: url('/png/beige-paper.png');
+}
+
+.paperroll.top{
+    box-shadow: 0vw 1vw 1vw rgba(0, 0, 0, 0.45) ;
+    margin: 0vw 0px 2vw -15px;
+}
+
+.paperroll.bottom{
+    box-shadow: 0vw -1vw 1vw rgba(0, 0, 0, 0.45) ;
+    margin: 2vw 0px 0px -15px;
+}
+
+/* Import generic assets file */
+@import url(assets.css);
+/* Default box sizing behavior: Borders and padding are separate when calculating box height and width */
+/* line 8, ../sass/style.sass */
+* {
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box; }
+
+/* Use specificity to override Wordpress theme styling. */
+/* line 12, ../sass/style.sass */
+#panelboard > *:first-child {
+  margin-top: 10px; }
+
+/*
+ * chat
+ *
+ */
+/* line 21, ../sass/style.sass */
+.chatbubble.stevesays {
+  top: auto;
+  bottom: 55%;
+  right: 1%;
+  max-width: 80%;
+  position: absolute; }
+
+/* line 26, ../sass/style.sass */
+.chatarrow.stevesays {
+  left: 80%;
+  border-right: 2px solid transparent;
+  border-left: 14px solid transparent; }
+
+/* line 31, ../sass/style.sass */
+.chatbubble.annesays {
+  top: auto;
+  bottom: 50%;
+  right: 2%;
+}
+
+/* line 35, ../sass/style.sass */
+.chatarrow.annesays {
+  left: 60%;
+  border-right: 2px solid transparent;
+  border-left: 14px solid transparent;
+  border-top: 40px solid; }
+
+/*
+ * props
+ * 
+ */
+ *
+ * /* The park background. */
+/* line 48, ../sass/style.sass */
+.park {
+  position: absolute;
+  height: 800px;
+  width: 1200px;
+  left: -365px;
+  top: -120px; }
+
+/* line 55, ../sass/style.sass */
+.steve {
+  position: absolute;
+  height: 200px;
+  width: 80px;
+  top: 230px;
+  left: 300px; }
+
+/* line 62, ../sass/style.sass */
+.anne {
+  position: absolute;
+  height: 180px;
+  width: 90px;
+  top: 260px;
+  left: 210px; }
+
+/* line 69, ../sass/style.sass */
+.ballcontainer {
+  top: 0px;
+  left: -60px;
+  height: 400px;
+  width: 400px;
+  position: absolute;
+  background: transparent; }
+
+/* line 77, ../sass/style.sass */
+.ball {
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  background: #e11919;
+  border-radius: 50%;
+  border: 3px solid black; }
+
+/* line 85, ../sass/style.sass */
+.dogcontainer {
+  position: absolute;
+  top: 0px;
+  left: -60px;
+  height: 400px;
+  width: 400px;
+  background: transparent; }
+
+.dog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: transparent; }
+
+/* line 93, ../sass/style.sass */
+.bench {
+  position: absolute;
+  top: 114px;
+  left: -120px;
+  height: 150px;
+  width: 150px; }
+
+/* line 100, ../sass/style.sass */
+.chatbubble.annesays {
+  font-family: "OCR A"; }
+
+/* line 103, ../sass/style.sass */
+.chatbubble.stevesays {
+  font-family: "Comic Sans MS"; }
+
+/* line 106, ../sass/style.sass */
+.panel .park {
+  -webkit-animation: walk 5s linear infinite;
+          animation: walk 5s linear infinite;
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/* line 110, ../sass/style.sass */
+.panel:hover .park, .panel .park.hover .park {
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+@-webkit-keyframes walk {
+  from {
+    -webkit-transform: translateX(0px);
+            transform: translateX(0px); }
+  to {
+    -webkit-transform: translateX(298px);
+            transform: translateX(298px); } }
+
+@keyframes walk {
+  from {
+    -webkit-transform: translateX(0px);
+            transform: translateX(0px); }
+  to {
+    -webkit-transform: translateX(298px);
+            transform: translateX(298px); } }
+/* line 119, ../sass/style.sass */
+#panel-b .ballcontainer {
+  -webkit-animation: moveball 2s linear infinite;
+          animation: moveball 2s linear infinite;
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/* line 123, ../sass/style.sass */
+#panel-b:hover .ballcontainer {
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+@-webkit-keyframes moveball {
+  from {
+    left: -60px; }
+  to {
+    left: 460px; } }
+
+@keyframes moveball {
+  from {
+    left: -60px; }
+  to {
+    left: 460px; } }
+/* line 132, ../sass/style.sass */
+#panel-b .ball {
+  -webkit-animation: bounceball 0.75s infinite;
+          animation: bounceball 0.75s infinite;
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/* line 136, ../sass/style.sass */
+#panel-b:hover .ball {
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/*constants of motion */
+/* % of frames for ball to bounce */
+/*factor of animated gravity */
+@-webkit-keyframes bounceball {
+  0% {
+    top: 300px; }
+  17%, 83% {
+    top: 271.8px; }
+  22%, 78% {
+    top: 265.7px; }
+  50% {
+    top: 250px; }
+  100% {
+    top: 300px; } }
+@keyframes bounceball {
+  0% {
+    top: 300px; }
+  17%, 83% {
+    top: 271.8px; }
+  22%, 78% {
+    top: 265.7px; }
+  50% {
+    top: 250px; }
+  100% {
+    top: 300px; } }
+/* line 160, ../sass/style.sass */
+#panel-c .dogcontainer {
+  -webkit-animation: movedog 2s linear infinite;
+          animation: movedog 2s linear infinite;
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/* line 164, ../sass/style.sass */
+#panel-c:hover .dogcontainer {
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+@-webkit-keyframes movedog {
+  from {
+    left: 400px; }
+  to {
+    left: -300px; } }
+
+@keyframes movedog {
+  from {
+    left: 400px; }
+  to {
+    left: -300px; } }
+/* line 173, ../sass/style.sass */
+#panel-c .dog {
+  -webkit-transform: scale(0.2);
+          transform: scale(0.2);
+  -webkit-animation: dogfetch 0.75s infinite;
+          animation: dogfetch 0.75s infinite;
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/* line 178, ../sass/style.sass */
+#panel-c:hover .dog {
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+@-webkit-keyframes dogfetch {
+  0% {
+    top: 120px; }
+  25%, 75% {
+    top: 100px; }
+  50% {
+    top: 90px; }
+  100% {
+    top: 140px; } }
+
+@keyframes dogfetch {
+  0% {
+    top: 120px; }
+  25%, 75% {
+    top: 100px; }
+  50% {
+    top: 90px; }
+  100% {
+    top: 140px; } }
+/* line 191, ../sass/style.sass */
+#panel-d .bench {
+  -webkit-animation: bench 5s linear infinite;
+          animation: bench 5s linear infinite;
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+/* line 195, ../sass/style.sass */
+#panel-d:hover .bench, #panel-d .bench.hover .bench {
+  -webkit-animation-play-state: running;
+          animation-play-state: running; }
+
+@-webkit-keyframes bench {
+  from {
+    -webkit-transform: translateX(0px);
+            transform: translateX(0px); }
+  to {
+    -webkit-transform: translateX(350px);
+            transform: translateX(350px); } }
+
+@keyframes bench {
+  from {
+    -webkit-transform: translateX(0px);
+            transform: translateX(0px); }
+  to {
+    -webkit-transform: translateX(350px);
+            transform: translateX(350px); } }

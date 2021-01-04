@@ -1,0 +1,127 @@
+<!doctype html>
+
+<!-- this is a comment for human! -->
+
+<html lang="en">
+
+  <header>
+    <title>PJ Divs</title><!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/css/assets.css">
+    <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="name" content="PJ Divs">
+    <meta name="robots" content="noindex, nofollow">
+  </header>
+
+  <body>
+    <div class="jumbotron">
+        <div id="particles-js" class="particles-js"></div>
+        <div class="col-sm-12">
+          <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
+          <h1 style="text-align: center">Issac Gardner's Portal</h1>
+        </div>
+      </div>
+      
+    <hr>
+    
+    <div class='paperroll top'></div>
+    <div class="container">
+        <div class="row row-content">
+            <div class="col-12 col-sm-3">
+                <div class="card">
+                  <h3 class="card-header bg-primary text-white">Instructions:</h3>
+                  <div class="card-body">
+                      <dl class="row">
+                          <dt class="col-3 text-right"><span class="badge badge-secondary w-100">W</span></dt>
+                          <dd class="col-9">Move paddle up</dd>
+                          <dt class="col-3 text-right"><span class="badge badge-secondary w-100">S</span></dt>
+                          <dd class="col-9">Move paddle down</dt>
+                          <dt class="col-3 text-right"><span class="badge badge-secondary w-100">ESC</span></dt>
+                          <dd class="col-9">Reset score</dd>
+                      </dl>
+                  </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div id="panelboard">
+                  <div id="panel-a" class="panel">
+                      <div class="inpanel">
+                          <div class="bigscreen">
+                              <img src="/svg/bigscreen.svg" />
+                          </div>
+                          <div class="application">
+                              <canvas id="app-a" class="gamescreen" width="360"height="180"style="background:#000"></canvas>
+                          </div>
+                          <div class="chatbubble annesays">We should write our own game.
+                              <div class="chatarrow annesays"></div>
+                          </div>
+                          <div class="chatbubble stevesays">I don't know the first thing about writing games.
+                              <div class="chatarrow stevesays"></div>
+                          </div>  
+                      </div>
+                  </div>
+                  <div id="panel-b" class="panel">
+                      <div class="inpanel">
+                          <div class="bigscreen">
+                              <img src="/svg/bigscreen.svg" />
+                          </div>
+                          <div class="application">
+                              <canvas id="app-b" class="gamescreen" width="360"height="180"style="background:#000"></canvas>
+                          </div>
+                          <div class="chatbubble annesays">We could start with something simple, like Pong.
+                              <div class="chatarrow annesays"></div>
+                          </div>
+                      </div>
+                  </div>
+                  <div id="panel-c" class="panel">
+                      <div class="inpanel">
+                          <div class="bigscreen">
+                              <img src="/svg/bigscreen.svg" />
+                          </div>
+                          <div class="application">
+                              <canvas id="app-c" class="gamescreen" width="360"height="180"style="background:#000"></canvas>
+                          </div>
+                          <div class="chatbubble annesays">Then expand on it, into like a massive multiplayer game.
+                              <div class="chatarrow annesays"></div>
+                          </div>
+                          <div class="chatbubble stevesays">You make it sound so easy.
+                              <div class="chatarrow stevesays"></div>
+                          </div> 
+                      </div>
+                  </div>
+                  <div id="panel-d" class="panel">
+                      <div class="inpanel">
+                          <div class="bigscreen">
+                              <img src="/svg/bigscreen.svg" />
+                          </div>
+                          <div class="application">
+                              <canvas id="app-d" class="gamescreen" width="360"height="180"style="background:#000"></canvas>
+                          </div>
+                          <div class="chatbubble stevesays">I can't wait to play Grand Theft Pong with you.
+                              <div class="chatarrow stevesays"></div>
+                          </div> 
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+
+<footer class="row footer justify-content-center">
+  <code>Copyright (c) 2020 Issac Gardner</code>
+</footer>
+<!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/particles/particles.js"></script>
+<script> particlesJS.load('particles-js', '/particles/particles.json', function() {
+  console.log('callback - particles.js config loaded');
+});</script>
+<script src="./script.js"></script>
+</html>

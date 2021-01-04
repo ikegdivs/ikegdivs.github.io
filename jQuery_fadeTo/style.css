@@ -35,6 +35,7 @@
 }
 
 .patch {
+    position: absolute;
     top: 35%;
     left: 1%;
     width: 20%;
@@ -42,6 +43,7 @@
 }
 
 .maude {
+    position: absolute;
     top: 30%;
     left: 22%;
     width: 18%;
