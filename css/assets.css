@@ -122,12 +122,18 @@ span {
     border-top: 50px solid rgb(0, 0, 0);
 }
 
+.jumbotron {
+    margin: 0px;
+    padding: 0px 0px;
+    background: #9575CD;
+    color: floralwhite; 
+}
+
 #jumboimage {
     position: relative;
-    margin-top: -18%;
-    left: -23%;
-    width: 155%;
-    height: 100%;
+    left: -5%;
+    width: 110%;
+    height: 110%;
 }
 
 .particles-js {
