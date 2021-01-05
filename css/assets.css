@@ -134,7 +134,7 @@ span {
     position: relative;
     left: -5%;
     width: 110%;
-    height: 110%;
+    height: 10%;
 }
 
 .particles-js {
@@ -179,18 +179,6 @@ span {
         width: 420px;
         max-width: 420px;
     }
-
-     /* Make the workspace responsive */
-    /*#workspace {
-        padding: 0.4vw;
-        width: 72vw;
-        height: 40.5vw;
-    }
-
-    .workview {
-        width: 70.8vw;
-        height: 39.4vw;
-    }*/
 }
 
 
@@ -201,17 +189,5 @@ span {
         width: 850px;
         max-width: 850px;
     }
-
-    /* Make the workspace responsive */
-    /*#workspace {
-        padding: 0.4vw;
-        width: 72vw;
-        height: 40.5vw;
-    }
-
-    .workview {
-        width: 70.8vw;
-        height: 39.4vw;
-    }*/
 }
 
