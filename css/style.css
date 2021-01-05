@@ -27,6 +27,17 @@
     right: 0px;
     bottom: 0px;
   }*/
-  #thedivscarousel img {
-    margin: auto;
-  }
+#patchmaudecarousel img {
+  margin: auto;
+}
+#thedivscarousel img {
+  margin: auto;
+}
+
+#vizcarousel img {
+  margin: auto;
+}
+
+.carousel .carousel-item img {
+  max-height: 300px;
+}
