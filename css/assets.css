@@ -127,6 +127,7 @@ span {
     padding: 0px 0px;
     background: #9575CD;
     color: floralwhite; 
+    overflow: hidden;
 }
 
 #jumboimage {
