@@ -22,32 +22,26 @@ jQuery(function(){dataObj = [];
     makeTable('d3viz001', dataObj, ['x', 'y']);
 
     representData(d3viz002, dataObj);
-    
-    dataObj = dataObj.slice(0, -1);
-    dataObj = dataObj.slice(0, -1);
-
-    makeTable('d3viz001', dataObj, ['x', 'y']);
-
-    representData(d3viz002, dataObj);
 })
 
 function representData(location, data){
-    // Do some visualization tasks
-    let join = location
-        .selectAll('div')
-        // Bind the dataObjects to the divs
-        .data(data);
+    let max = d3.max(data, d => d.y)
+    let scale = d3.scaleLinear()
+                    .range([0,100])
+                    .domain([0,max])
+    
+    let join = location.selectAll('div').data(data);
 
-    // Using any new data (any element of join that does not have a div)
     join.enter()
-        // Make a new div
         .append('div')
-        // Add the value to the div
-        .text(d => d.y);
-
-    // If any element loses its data, it should be removed
-    join.exit()
-        .remove()
+        /* Represent the data value as a scaled text*/
+        .text(d => d.x + ': ' + scale(d.y).toFixed(2))
+        .style('background-color', 'lightblue')
+        .style('white-space', 'nowrap')
+        .style('margin', '5px')
+        .style('color', 'black')
+        /* Adjust the width of the div based upon the value */
+        .style('width', d => scale(d.y) + 'px');
 }
 
 function makeTable(locationid, data, columns){
