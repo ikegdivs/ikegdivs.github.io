@@ -26,10 +26,15 @@
     box-shadow: 3px 3px 10px rgb(200, 200, 200), -3px -3px 10px rgb(200, 200, 200);
 }
 
-#workspace * {
-    /*position: absolute;*/
+/*Anything in the workspace that is not a bootstrap container is content-box*/
+#workspace :not(.container *) {
     box-sizing: content-box;
 }
+
+#workspace .container {
+    box-sizing: border-box;
+}
+
 
 /* Do not want the #workspaces to be centered */
 .container.nomargin {

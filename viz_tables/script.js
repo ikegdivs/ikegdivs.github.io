@@ -1,13 +1,45 @@
 
 
 let d3viz001 = d3.select("#d3viz001");
+let data = null;
 
-d3.csv('./data/RAW_us_confirmed_cases.csv').then(function (data) {
+d3.csv('./data/RAW_us_confirmed_cases.csv').then(function (file) {
+    // Add state names to drop down
+    populateDropDown("dropdown_states", file);
+    data = file;
     // trim data to Oregon
-    trimdata = trimData(data, 'Province_State', 'Oregon');
+    trimdata = trimData(file, 'Province_State', 'Oregon');
     sortData(trimdata, 'Admin2');
     makeTable(trimdata);
+    dropdownitemPrep();
 })
+
+/* Populating the drop-down */
+function populateDropDown(idString, data){
+    /*Get a list of unique states. */
+    let options = [...new Set(data.map(d => d.Province_State))].sort();
+    
+    /*for every unique entry of 'Province_State', add an entry to the drop down. */
+    options.forEach(function makeDropEntry(item, index){
+        document.getElementById(idString).insertAdjacentHTML('beforeend', '<a class="dropdown-item" href="#">'+item+'</a>');
+    } )
+}
+
+/*When the dropdown for the states is selected, update the main table and the dropdown text*/
+function dropdownitemPrep(){
+    $('.dropdown-item').on('click', function(event){
+        /* Don't let the default screen refresh happen */
+        event.preventDefault();
+        var btnObj = $(this).parent().siblings('button');
+        $(btnObj).text($(this).text());
+        $(btnObj).val($(this).text());
+
+        trimdata = trimData(data, 'Province_State', $(this).text());
+        sortData(trimdata, 'Admin2');
+        makeTable(trimdata);
+    })
+
+}
 
 /*Trimming the data by state*/
 function trimData(data, key, value){
@@ -26,6 +58,9 @@ function sortData(data, key){
 
 function makeTable(data){
     function tabulate(data, columns) {
+        /*Clear out the d3viz001 object*/
+        document.getElementById('d3viz001').innerHTML = '';
+        /*Create the table and add it to the viz object */
         var table = d3.select('#d3viz001').append('table');
         var thead = table.append('thead');
         var tbody = table.append('tbody');
