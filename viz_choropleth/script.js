@@ -9,34 +9,59 @@ jQuery(function(){dataObj = [];
     let viz002svg001 = d3.select("#viz002svg001");
 
     // dataElements are classes for data row/objects.
-    function dataElement(category, sales){
-        this.category = category;
-        this.sales = sales;
+    function dataElement(country, value){
+        this.country = country;
+        this.value = value;
     }
 
-    // Create a set of 10 dataElements.
-    for(i = 1; i < 11; i++){
-        // Use a translation of number to letter for category
-        category = 'a' + i;
-        dataObj.push(new dataElement(category, 10 + i));
-    }
-
+    // Asynchronously load the data
     d3.json('/data/countries.geojson').then(function(data){
-        representData(data, viz002svg001);
-        // Create a table for the source data.
-        //"ADMIN": "Aruba", "ISO_A3": "ABW"
+        // Create and opulate the  descriptive data
+        i = 0;
+        for (let c of data.features){
+            let country = c.properties.ADMIN;
+            dataObj.push(new dataElement(country, i++));
+        }
         console.log(data);
-        makeTable('d3viz001', dataObj, ['category', 'sales']);
+        // Create the chart
+        representData(data, dataObj, viz002svg001);
+        // Create the table
+        makeTable('d3viz001', dataObj, ['country', 'value']);
     } )
 })
 
 
 
-function representData(data, location){
+function representData(mapData, descriptiveData, location){
     location.attr('height', '600px');
     location.attr('width', '600px');
     let body = d3.select('#body')
-    
+
+    // Create a pairing of descriptive data and country name
+    let dataIndex = {};
+    for (let c of descriptiveData){
+        let country = c.country;
+        dataIndex[country] = c.value;
+    }
+
+    // Combine the map and descriptive data
+    mapData.features = mapData.features.map(d => {
+        let country = d.properties.ADMIN;
+        let magnitude = dataIndex[country];
+        d.properties.Magnitude = magnitude;
+        return d;
+    })
+
+    //Calculate statistics
+    let maxVal = d3.max(mapData.features, d => d.properties.Magnitude);
+    let medVal = d3.median(mapData.features, d => d.properties.Magnitude);
+
+    // Create a color scale for the choropleth
+    // Separate by median.
+    let cScale = d3.scaleLinear()
+        .domain([0, medVal, maxVal])
+        .range(['white','orange', 'red'])
+
     let bodyHeight = 400;
     let bodyWidth = 400;
 
@@ -49,16 +74,19 @@ function representData(data, location){
 
 
 
+
     let path = d3.geoPath()
         .projection(projection)
 
     body.selectAll('path')
-        .data(data.features)
+        .data(mapData.features)
         .enter()
         .append('path')
         .attr('d', d => path(d))
         .attr('stroke', 'rgba(0, 0, 0, 1)')
-        .attr('fill', 'rgba(255, 255, 255, 1)')
+        // Color the countries according to the magnitude
+        // if there is data available
+        .attr('fill', d => d.properties.Magnitude ? cScale(d.properties.Magnitude) : 'white')
 
 }
 
