@@ -1,88 +1,87 @@
 /*When the document is loaded*/
-jQuery(function(){dataObj = [];
+jQuery(function(){
+    dataObj = [];
     mapObj = [];
     statsObj = [];
+    pointsObj = [];
     data = null;
 
     let d3viz001 = d3.select("#d3viz001");
     let d3viz002 = d3.select("#d3viz002");
     let viz002svg001 = d3.select("#viz002svg001");
 
-    // dataElements are classes for data row/objects.
-    function dataElement(country, value){
-        this.country = country;
-        this.value = value;
-    }
-
     // Asynchronously load the data
-    d3.json('/data/countries.geojson').then(function(data){
-        // Create and opulate the  descriptive data
-        i = 0;
-        for (let c of data.features){
-            let country = c.properties.ADMIN;
-            dataObj.push(new dataElement(country, i++));
-        }
-        console.log(data);
+    d3.json('./data/network.json').then(function(data){
+        // Copy data.links (kept for testing)
+        //linksCopy = data.links.map(d => Object.assign({}, d));
+        // Create the table using data.links
+        makeTable('d3viz001', data.links, ['source', 'target']);
         // Create the chart
-        representData(data, dataObj, viz002svg001);
-        // Create the table
-        makeTable('d3viz001', dataObj, ['country', 'value']);
+        representData(data, viz002svg001);
     } )
 })
 
-function representData(mapData, descriptiveData, location){
-    location.attr('height', '600px');
-    location.attr('width', '600px');
-    let body = d3.select('#body')
-
-    // Create a pairing of descriptive data and country name
-    let dataIndex = {};
-    for (let c of descriptiveData){
-        let country = c.country;
-        dataIndex[country] = c.value;
-    }
-
-    // Combine the map and descriptive data
-    mapData.features = mapData.features.map(d => {
-        let country = d.properties.ADMIN;
-        let magnitude = dataIndex[country];
-        d.properties.Magnitude = magnitude;
-        return d;
-    })
-
-    //Calculate statistics
-    let maxVal = d3.max(mapData.features, d => d.properties.Magnitude);
-    let medVal = d3.median(mapData.features, d => d.properties.Magnitude);
-
-    // Create a color scale for the choropleth
-    // Separate by median.
-    let cScale = d3.scaleLinear()
-        .domain([0, medVal, maxVal])
-        .range(['white','orange', 'red'])
-
+function representData(data, location){
     let bodyHeight = 400;
     let bodyWidth = 400;
+    location.attr('height', bodyHeight + 'px');
+    location.attr('width', bodyWidth + 'px');
+    let body = d3.select('#body');
 
-    // Create the projection
-    let projection = d3.geoMercator()
-        // scale the projection
-        .scale(50)
-        // move the projection to the center
-        .translate([bodyWidth/2, bodyHeight/2]);
+    // Create the network data elements
+    createElements(body, data);
 
-    let path = d3.geoPath()
-        .projection(projection)
+    // To create a network force diagram
+    let simulation = d3.forceSimulation()
+        // Apply forceLink to the links to pull them together
+        .force('link', d3.forceLink()
+        // Designate the id of one node for the force
+        .id((d) => d.id))
+        // Apply force to push apart elements
+        .force('charge', d3.forceManyBody())
+        // Results should be towards the center of the diagram
+        .force('center', d3.forceCenter(bodyWidth/2, bodyHeight/2))
+    
+    simulation.nodes(data.nodes)
+        // When the simulation is run, data is updated
+        .on('tick', updateElements);
 
-    body.selectAll('path')
-        .data(mapData.features)
+    simulation.force('link').links(data.links);
+}
+
+// Creating the network visualization
+function createElements(body, data) {
+    let nodes = body.append('g')
+        .attr('class', 'nodes')
+        .selectAll('circle')
+        .data(data.nodes)
         .enter()
-        .append('path')
-        .attr('d', d => path(d))
-        .attr('stroke', 'rgba(0, 0, 0, 1)')
-        // Color the countries according to the magnitude
-        // if there is data available
-        .attr('fill', d => d.properties.Magnitude ? cScale(d.properties.Magnitude) : 'white')
+        .append('circle')
+        .attr('r', 5)
+        .attr('fill', 'red')
 
+    let links = body.append('g')
+        .attr('class', 'links')
+        .selectAll('line')
+        .data(data.links)
+        .enter()
+        .append('line')
+        .attr('stroke', 'black')
+}
+
+// Updating the network visualization
+function updateElements() {
+    d3.select('.nodes')
+        .selectAll('circle')
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+
+    d3.select('.links')
+        .selectAll('line')
+        .attr('x1', d => d.source.x )
+        .attr('y1', d => d.source.y )
+        .attr('x2', d => d.target.x )
+        .attr('y2', d => d.target.y )
 }
 
 function makeTable(locationid, data, columns){
@@ -94,6 +93,7 @@ function makeTable(locationid, data, columns){
         var thead = table.append('thead');
         var tbody = table.append('tbody');
 
+        
         // append header row
         thead.append('tr')
             .selectAll('th')
