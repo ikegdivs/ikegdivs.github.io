@@ -24,26 +24,30 @@ jQuery(function(){
     // modelData contains the main parameters for the financial model.
     // sd: start date
     // ed: end date
-    // fv: future value
     // ir: interest rate
+    // pa: annuity payment
 
     class modelData{
-        constructor(sd, ed, fv, ir){
+        constructor(sd, ed, ir, pa){
             this.sd = sd;
             this.ed = ed;
-            this.fv = fv;
             this.ir = ir;
+            this.pa = pa;
             // Base values for slider adjusments
             this.sd_base = sd;
             this.ed_base = ed;
-            this.fv_base = fv;
             this.ir_base = ir;
+            this.pa_base = pa;
         }
         // calcVal should be thought of as the main output of this model:
         // the yearly value (or other time-based) of the asset(s).
         // This is the value called on by the non-complex charting methods.
         // input: The current total of years in use.
-        calcVal(input){ return this.fv / ( Math.pow(1 + this.ir, input)); }
+        calcVal(input){ 
+            let r1rn = (this.ir * Math.pow(1 + this.ir, input));
+            let val = this.pa * ( 1 / this.ir - 1 / r1rn) 
+            return val;
+        }
 
         // Present value at the starting year
         pv() { 
@@ -56,8 +60,8 @@ jQuery(function(){
     // Create a mockup of the model
     thisModel = new modelData(  new Date(2010, 0, 1), 
                             new Date(2020, 0, 1), 
-                            100, 
-                            0.05);
+                            0.05, 
+                            100);
 
     // Run the model using the default parameters
     dataObj = runModel(thisModel);
@@ -105,21 +109,20 @@ jQuery(function(){
         drawModel(dataObj, thisModel);
     })
 
-    // If the user changes the future value slider, change the future value
-    $('#formRangeFutureValue').on('input', function(event){
-        thisVal = thisModel.fv_base;
-        sliderVal = parseFloat((event.currentTarget.value)).toFixed(2);
-        thisModel.fv = thisVal * sliderVal/50;
+    // If the user changes the annuity payment slider, change the annuity payment
+    $('#formRangeAnnuityPayment').on('input', function(event){
+        thisVal = parseFloat(thisModel.pa_base);
+        sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
+        thisModel.pa = thisVal + sliderVal/500;
         dataObj = runModel(thisModel);
         drawModel(dataObj, thisModel);
     })
 
-    // If the user changes the future value, update the model
-    $('#futureValue').on('input', function(event){
+    // If the user changes the annuity payment, update the model
+    $('#annuityPayment').on('input', function(event){
         // Change both the base and the model
-        thisModel.fv = parseFloat(event.currentTarget.value);
-        thisModel.fv_base = thisModel.fv;
-        $('#formRangeFutureValue').val(50);
+        thisModel.pa = parseFloat(event.currentTarget.value);
+        thisModel.pa_base = thisModel.pa;
         dataObj = runModel(thisModel);
         drawModel(dataObj, thisModel);
     })
@@ -155,8 +158,8 @@ jQuery(function(){
 
         for(i = interval; i >= 0; i--){
             // Create a new date i years from the model start
-            var theDate = new Date(model.sd.getTime());
-            theDate.setYear(theDate.getFullYear() + i);
+            var theDate = new Date(model.ed.getTime());
+            theDate.setYear(theDate.getFullYear() - i);
             // Set the value for this asset
             val = model.calcVal(i);
             data.push(new dataElement(theDate, parseFloat(val.toFixed(2))));
@@ -172,7 +175,6 @@ jQuery(function(){
         // Draw the chart
         representData(viz002svg001, data);
 
-        
         $('#presentValue').val(parseFloat(model.pv()).toFixed(2));
     }
 })
