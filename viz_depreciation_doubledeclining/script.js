@@ -27,7 +27,8 @@ jQuery(function(){
     // pc: purchasing costs
     // sv: salvage value
     // al: asset lifespan
-    // ad: annual depreciation
+    // dr: depreciation ratio
+
     class modelData{
         constructor(sd, ed, pc, sv, al){
             this.sd = sd;
@@ -42,7 +43,16 @@ jQuery(function(){
             this.sv_base = sv;
             this.al_base = al;
         }
-        ad(){ return ( this.pc - this.sv)/this.al; }
+        // Double declining balance equation:
+        // 2 * 1 / (asset lifespan)
+        dr(){ return 2 * 1 / this.al; }
+
+        // calcVal should be thought of as the main output of this model:
+        // the yearly value (or other time-based) of the asset(s).
+        // This is the value called on by the non-complex charting methods.
+        // input: The current total of years in use.
+        calcVal(input){ return this.pc * ( Math.pow(1 - this.dr(), i)); }
+        
     }
 
     // Create a mockup of the model
@@ -169,7 +179,7 @@ jQuery(function(){
             var theDate = new Date(model.sd.getTime());
             theDate.setYear(theDate.getFullYear() + i);
             // Set the value for this asset
-            val = model.pc - model.ad() * i;
+            val = model.calcVal(i);
             data.push(new dataElement(theDate, parseFloat(val.toFixed(2))));
         }
 
@@ -183,9 +193,9 @@ jQuery(function(){
         // Draw the chart
         representData(viz002svg001, data);
 
-        // Update the form
-        $('#annualDepreciation').val(model.ad());
-        $('#annualDepreciation').text(model.ad());
+        // Update the form's annual depreciation (here a ratio).
+        $('#annualDepreciation').val(model.dr());
+        $('#annualDepreciation').text(model.dr());
     }
 })
 

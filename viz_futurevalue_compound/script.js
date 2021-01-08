@@ -25,32 +25,32 @@ jQuery(function(){
     // sd: start date
     // ed: end date
     // pc: purchasing costs
-    // sv: salvage value
-    // al: asset lifespan
-    // ad: annual depreciation
+    // ir: interest rate
+
     class modelData{
-        constructor(sd, ed, pc, sv, al){
+        constructor(sd, ed, pc, ir){
             this.sd = sd;
             this.ed = ed;
             this.pc = pc;
-            this.sv = sv;
-            this.al = al;
+            this.ir = ir;
             // Base values for slider adjusments
             this.sd_base = sd;
             this.ed_base = ed;
             this.pc_base = pc;
-            this.sv_base = sv;
-            this.al_base = al;
+            this.ir_base = ir;
         }
-        ad(){ return ( this.pc - this.sv)/this.al; }
+        // calcVal should be thought of as the main output of this model:
+        // the yearly value (or other time-based) of the asset(s).
+        // This is the value called on by the non-complex charting methods.
+        // input: The current total of years in use.
+        calcVal(input){ return this.pc * ( Math.pow(1 + this.ir, i)); }
     }
 
     // Create a mockup of the model
     thisModel = new modelData(  new Date(2010, 0, 1), 
                             new Date(2020, 0, 1), 
                             100, 
-                            5,
-                            5);
+                            0.05);
 
     // Run the model using the default parameters
     dataObj = runModel(thisModel);
@@ -118,37 +118,19 @@ jQuery(function(){
     })
 
     // If the user changes the salvage value slider, change the salvage value
-    $('#formRangeSalvageValue').on('input', function(event){
-        thisVal = thisModel.sv_base;
+    $('#formRangeInterestRate').on('input', function(event){
+        thisVal = parseFloat(thisModel.ir_base);
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        thisModel.sv = thisVal + sliderVal;
+        thisModel.ir = thisVal + sliderVal/500;
         dataObj = runModel(thisModel);
         drawModel(dataObj, thisModel);
     })
 
     // If the user changes the salvage value, update the model
-    $('#salvageValue').on('input', function(event){
+    $('#interestRate').on('input', function(event){
         // Change both the base and the model
-        thisModel.sv = event.currentTarget.value;
-        thisModel.sv_base = thisModel.sv;
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
-    })
-
-    // If the user changes the expected lifespan slider, change the expected lifespan
-    $('#formRangeAssetLifespan').on('input', function(event){
-        thisVal = thisModel.al_base;
-        sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        thisModel.al = thisVal + sliderVal;
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
-    })
-
-    // If the user changes the expected lifespan, update the model
-    $('#assetLifespan').on('input', function(event){
-        // Change both the base and the model
-        thisModel.al = event.currentTarget.value;
-        thisModel.sd_base = thisModel.sd;
+        thisModel.ir = parseFloat(event.currentTarget.value);
+        thisModel.ir_base = thisModel.ir;
         dataObj = runModel(thisModel);
         drawModel(dataObj, thisModel);
     })
@@ -169,7 +151,7 @@ jQuery(function(){
             var theDate = new Date(model.sd.getTime());
             theDate.setYear(theDate.getFullYear() + i);
             // Set the value for this asset
-            val = model.pc - model.ad() * i;
+            val = model.calcVal(i);
             data.push(new dataElement(theDate, parseFloat(val.toFixed(2))));
         }
 
@@ -182,10 +164,6 @@ jQuery(function(){
 
         // Draw the chart
         representData(viz002svg001, data);
-
-        // Update the form
-        $('#annualDepreciation').val(model.ad());
-        $('#annualDepreciation').text(model.ad());
     }
 })
 

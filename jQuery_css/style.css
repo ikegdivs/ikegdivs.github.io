@@ -64,7 +64,7 @@
 }
 
 .chatbubble.patchsays {
-    top: 26%;
+    top: 15%;
     left: 1%;
     width: 39%;
 }
@@ -72,13 +72,13 @@
 .chatarrow.patchsays {
     border-right: 1.2vw solid transparent;
     border-left: 0.4vw solid transparent;
-    border-top: 3vw solid;
+    border-top: 5vw solid;
     top: calc(100% + 1px);
     left: 15%;
 }
 
 .chatbubble.maudesays {
-    top: 45%;
+    top: 40%;
     left: 20%;
     width: 41%;
 }
