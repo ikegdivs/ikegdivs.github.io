@@ -70,11 +70,7 @@ jQuery(function(){
     drawModel(dataObj, thisModel);
 
     // *********************************************
-    // Data entry table
-    // *********************************************
-
-    // *********************************************
-    // Form input - basic
+    // Form input
     // *********************************************
 
     // If the user changes the slider, change the start date
