@@ -21,39 +21,105 @@ jQuery(function(){
         }
     }
 
+    // An asset will hold the model representation of 
+    // a specific thing. Assets will be charted several at a time.
+    // sd: start date
+    // ed: end date
+    // pc: purchase cost
+    // interest rate and annuity payment may need to be optional or part
+    // of a secondary asset characteristics set
+    // ir: interest rate
+    // pa: annuity payment
+    // vp: valuation profile
+    // A group of assets can be sent to a model, 
+    // and the model will provide that asset with a
+    // valuation profile. A valuation profile is a group of 
+    // data elements (date, val)
+    class assetData {
+        constructor(sd, ed, pc, ir = 0, pa = 0, vp = []){
+            this.sd = sd;
+            this.ed = ed;
+            this.pc = pc;
+            this.ir = ir;
+            this.pa = pa;
+            this.vp = vp;
+            // Base values for slider adjusments
+            this.sd_base = sd;
+            this.ed_base = ed;
+            this.pc_base = pc;
+            this.ir_base = ir;
+            this.pa_base = pa;
+        }
+
+        // vpInsert pushes a new valuation profile entry onto the valuationProfile
+        vpInsert(date, val){
+            let data = new dataElement(date, val);
+            this.vp.push(data);
+        }
+
+        //vpClear empties the current valuationProfile information
+        vpClear(){
+            this.vp = [];
+        }
+    }
+
+    // An asset group is a group of assetData objects
+    class assetGroup {
+        constructor(assets = []){
+            this.assets = assets;
+        }
+        
+        assetInsert(asset){
+            this.assets.push(asset);
+        }
+
+    }
+
     // modelData contains the main parameters for the financial model.
     // sd: start date
     // ed: end date
-    // ir: interest rate
-    // pa: annuity payment
-
     class modelData{
         constructor(sd, ed, ir, pa){
             this.sd = sd;
             this.ed = ed;
-            this.ir = ir;
-            this.pa = pa;
             // Base values for slider adjusments
             this.sd_base = sd;
-            this.ed_base = ed;
-            this.ir_base = ir;
             this.pa_base = pa;
         }
         // calcVal should be thought of as the main output of this model:
         // the yearly value (or other time-based) of the asset(s).
         // This is the value called on by the non-complex charting methods.
         // input: The current total of years in use.
-        calcVal(input){ 
-            let r1rn = (this.ir * Math.pow(1 + this.ir, input));
-            let val = this.pa * ( 1 / this.ir - 1 / r1rn) 
+        calcVal(asset, input){ 
+            let r1rn = (asset.ir * Math.pow(1 + asset.ir, input));
+            let val = asset.pa * ( 1 / asset.ir - 1 / r1rn) 
             return val;
         }
 
         // Present value at the starting year
-        pv() { 
-            let years = thisModel.ed.getFullYear() - thisModel.sd.getFullYear();
-            let val = this.calcVal(years);
+        pv(asset) { 
+            let years = asset.ed.getFullYear() - asset.sd.getFullYear();
+            let val = this.calcVal(asset, years);
             return val;
+        }
+
+        runModel(asset){
+            // Create a set of dataElements with a count equal to the number of years in the model.
+            let startYear = asset.sd.getFullYear();
+            let endYear = asset.ed.getFullYear();
+            let interval = endYear - startYear;
+            
+            // Empty any previous data in the valuation profile.
+            asset.vpClear();
+    
+            for(let i = interval; i >= 0; i--){
+                // Create a new date i years from the model start
+                let theDate = new Date(asset.ed.getTime());
+                theDate.setYear(theDate.getFullYear() - i);
+                // Set the value for this asset
+                let val = this.calcVal(asset, i);
+                asset.vpInsert(theDate, val);
+            }
         }
     }
 
@@ -63,11 +129,26 @@ jQuery(function(){
                             0.05, 
                             100);
 
-    // Run the model using the default parameters
-    dataObj = runModel(thisModel);
+    // Create some new assets
+    asset_01 = new assetData( new Date(2010, 0, 1), new Date(2015, 0, 1), 1000, 0.05, 100);
+    asset_02 = new assetData( new Date(2010, 0, 1), new Date(2013, 0, 1), 2000, 0.1,  200);
 
-    // Create the graphic representation of the model
-    drawModel(dataObj, thisModel);
+    // Create an assetGroup
+    ag = new assetGroup();
+    ag.assetInsert(asset_01);
+    ag.assetInsert(asset_02);
+
+    refreshInfo();
+
+    // Run the model using the default parameters
+    function refreshInfo(){
+        ag.assets.forEach((asset) => {
+            thisModel.runModel(asset);
+            makeTable('d3viz001', asset, ['year', 'val']);
+        })
+        // Create the graphic representation of the model
+        drawModel(ag, thisModel);
+    }
 
     // *********************************************
     // Form input
@@ -75,121 +156,105 @@ jQuery(function(){
 
     // If the user changes the slider, change the start date
     $('#formRangeModelStart').on('input', function(event){
-        thisYear = thisModel.sd_base.getFullYear();
+        thisYear = asset_01.sd_base.getFullYear();
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        thisModel.sd = new Date(thisYear + sliderVal, 0, 1);
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
+        asset_01.sd = new Date(thisYear + sliderVal, 0, 1);
+        refreshInfo();
     })
 
     // If the user changes the model start year update the model
     $('#modelStart').on('input', function(event){
         // Change both the base and the model
-        thisModel.sd = new Date(event.currentTarget.value, 0, 1);
-        thisModel.sd_base = thisModel.sd;
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
+        asset_01.sd = new Date(event.currentTarget.value, 0, 1);
+        asset_01.sd_base = asset_01.sd;
+        refreshInfo();
     })
 
     // If the user changes the end date slider, change the end date
     $('#formRangeModelEnd').on('input', function(event){
-        thisYear = thisModel.ed_base.getFullYear();
+        thisYear = asset_01.ed_base.getFullYear();
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        thisModel.ed = new Date(thisYear + sliderVal, 0, 1);
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
+        asset_01.ed = new Date(thisYear + sliderVal, 0, 1);
+        refreshInfo();
     })
 
     // If the user changes the model end year update the model
     $('#modelEnd').on('input', function(event){
         // Change both the base and the model
-        thisModel.ed = new Date(event.currentTarget.value, 0, 1);
-        thisModel.ed_base = thisModel.ed;
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
+        asset_01.ed = new Date(event.currentTarget.value, 0, 1);
+        asset_01.ed_base = asset_01.ed;
+        refreshInfo();
     })
 
     // If the user changes the annuity payment slider, change the annuity payment
     $('#formRangeAnnuityPayment').on('input', function(event){
-        thisVal = parseFloat(thisModel.pa_base);
+        thisVal = parseFloat(asset_01.pa_base);
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        thisModel.pa = thisVal + sliderVal/500;
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
+        asset_01.pa = thisVal + sliderVal/500;
+        refreshInfo();
     })
 
     // If the user changes the annuity payment, update the model
     $('#annuityPayment').on('input', function(event){
         // Change both the base and the model
-        thisModel.pa = parseFloat(event.currentTarget.value);
-        thisModel.pa_base = thisModel.pa;
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
+        asset_01.pa = parseFloat(event.currentTarget.value);
+        asset_01.pa_base = asset_01.pa;
+        refreshInfo();
     })
 
     // If the user changes the salvage value slider, change the salvage value
     $('#formRangeInterestRate').on('input', function(event){
-        thisVal = parseFloat(thisModel.ir_base);
+        thisVal = parseFloat(asset_01.ir_base);
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        thisModel.ir = thisVal + sliderVal/500;
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
+        asset_01.ir = thisVal + sliderVal/500;
+        refreshInfo();
     })
 
     // If the user changes the salvage value, update the model
     $('#interestRate').on('input', function(event){
         // Change both the base and the model
-        thisModel.ir = parseFloat(event.currentTarget.value);
-        thisModel.ir_base = thisModel.ir;
-        dataObj = runModel(thisModel);
-        drawModel(dataObj, thisModel);
+        asset_01.ir = parseFloat(event.currentTarget.value);
+        asset_01.ir_base = asset_01.ir;
+        refreshInfo();
     })
 
     // *********************************************
     // Internal functions
     // *********************************************
 
-    function runModel(model){
-        data = [];
-        // Create a set of dataElements with a count equal to the number of years in the model.
-        startYear = model.sd.getFullYear();
-        endYear = model.ed.getFullYear();
-        interval = endYear - startYear;
+    
 
-        for(i = interval; i >= 0; i--){
-            // Create a new date i years from the model start
-            var theDate = new Date(model.ed.getTime());
-            theDate.setYear(theDate.getFullYear() - i);
-            // Set the value for this asset
-            val = model.calcVal(i);
-            data.push(new dataElement(theDate, parseFloat(val.toFixed(2))));
-        }
-
-        return data;
-    }
-
-    function drawModel(data, model){
-        // Create a table for the source data.
-        makeTable('d3viz001', data, ['year', 'val']);
-
+    function drawModel(assetgroup, model){
         // Draw the chart
-        representData(viz002svg001, data);
-
-        $('#presentValue').val(parseFloat(model.pv()).toFixed(2));
+        representData(viz002svg001, assetgroup, model);
     }
 })
 
 
 
-function representData(location, data){
+function representData(location, assetgroup, model){
     location.attr('viewBox', '0 0 500 500');
     let body = d3.select('#body')
     
     let bodyHeight = 400;
     let bodyWidth = 400;
-    let maxValue = d3.max(data, d => d.val);
     let yAxisWidth = 30;
     let xAxisHeight = 30;
+    let maxValue = 0;
+
+    // Create a table for the focused asset
+    assetgroup.assets.forEach((asset) => {
+        thisModel.runModel(asset);
+        makeTable('d3viz001', asset, ['year', 'val']);
+    })
+
+    // Get the maximum value of asset valuations
+    assetgroup.assets.forEach(function(asset){
+        thisMax = d3.max(asset.vp, d => d.val);
+        if (thisMax > maxValue){
+            maxValue = thisMax;
+        }
+    })
 
     // clear out the groups
     document.getElementById('body').innerHTML = "";
@@ -280,9 +345,19 @@ function representData(location, data){
     chartBG
         .style('filter', 'url(#outline)')
 
-    let xScale = d3.scaleTime()
-    .domain(d3.extent(data, d => d.date))
-    .range([0, bodyWidth])
+    /*let xScale = d3.scaleTime()
+    //.domain(d3.extent(data, d => d.date))
+    .domain(d3.extent(
+        function(assetgroup.assets){
+        var res = [];
+        assetgroup.assets.forEach(function(item){
+            res = res.concat(item[date]);
+        });
+
+        return res;
+    })
+    )
+    .range([0, bodyWidth])*/
 
     // Create the line
     valueline = d3.line()
@@ -325,8 +400,6 @@ function representData(location, data){
         .selectAll('path')
         .attr('stroke', 'rgba(50, 50, 50, 0.7)')
         .attr('stroke-width', '1px')
-
-    
 
     body.append('g')
         .attr('transform', 'translate(0, ' + bodyHeight + ')')
