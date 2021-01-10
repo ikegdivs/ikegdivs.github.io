@@ -109,16 +109,16 @@ jQuery(function(){
     // Tabulator
     // *****************************************************
     //define some sample data
-    var tabledata = [
+    /*var tabledata = [
         {id:1, name:"Oli Bob", age:"12", col:"red", dob:""},
         {id:2, name:"Mary May", age:"1", col:"blue", dob:"14/05/1982"},
         {id:3, name:"Christine Lobowski", age:"42", col:"green", dob:"22/05/1982"},
         {id:4, name:"Brendon Philips", age:"125", col:"orange", dob:"01/08/1980"},
         {id:5, name:"Margret Marmajuke", age:"16", col:"yellow", dob:"31/01/1999"},
-    ];
+    ];*/
 
     //create Tabulator on DOM element with id "example-table"
-    var table = new Tabulator("#example-table", {
+    /*var table = new Tabulator("#example-table", {
         height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
         data:tabledata, //assign data to table
         layout:"fitColumns", //fit columns to width of table (optional)
@@ -131,7 +131,7 @@ jQuery(function(){
         rowClick:function(e, row){ //trigger an alert message when the row is clicked
             alert("Row " + row.getData().id + " Clicked!!!!");
         },
-    });
+    });*/
 
     // ******************************************************
     // Initialization
@@ -146,7 +146,7 @@ jQuery(function(){
     // Add the assets the the asset group
     theseAssets.assets.push(asset01);
     theseAssets.assets.push(asset02);
-
+    // Set the current asset for the model
     currentAsset = theseAssets.assets[0];
 
     // Run the model using the default parameters
@@ -155,6 +155,22 @@ jQuery(function(){
         asset.series = [];
         thisModel.calcVals(asset);
     })
+
+    
+    var table = new Tabulator("#example-table", {
+        height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+        data:theseAssets.assets, //assign data to table
+        layout:"fitColumns", //fit columns to width of table (optional)
+        columns:[ //Define Table Columns
+            {title:"Start Date", field:"sd", sorter:"date", width:150},
+            {title:"End Date", field:"ed", sorter:"date"},
+            {title:"Payment", field:"pa"},
+            {title:"Interest Rate", field:"ir"},
+        ],
+        rowClick:function(e, row){ //trigger an alert message when the row is clicked
+            alert("Row " + row.getData().id + " Clicked!!!!");
+        },
+    });
 
     // Create the graphic representation of the model
     drawModel(theseAssets.assets, thisModel);
@@ -362,8 +378,6 @@ function representData(location, data){
         .attr('stroke', 'rgba(50, 50, 50, 0.7)')
         .attr('stroke-width', '1px')
 
-    
-
     body.append('g')
         .attr('transform', 'translate(0, ' + bodyHeight + ')')
         .call(d3.axisBottom(xScale)
@@ -374,7 +388,6 @@ function representData(location, data){
         .attr('fill', 'rgba(50, 50, 50, 0.9)')
         .attr('x', bodyWidth/2)
         .attr('y', 40)
-
         
     // ********************************************
     // SVG filter definitions
@@ -446,7 +459,6 @@ function makeTable(locationid, data, columns){
         var thead = table.append('thead');
         var tbody = table.append('tbody');
 
-        
         // append header row
         thead.append('tr')
             .selectAll('th')
