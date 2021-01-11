@@ -26,33 +26,58 @@ jQuery(function(){
         }
     }
 
-    // assetData contains the main parameters for the asset within the financial model.
+    // AssetData contains the main parameters for the asset within the financial model.
     // This is an annuity asset, with annual payments
     // sd: start date
     // ed: end date
     // pa: payment
     // ir: interest rate
     class AssetData{
-        constructor(sd, ed, pa, ir, series = []){
+        constructor(id, sd, ed, pa, ir){//series = []){
+            this.id = id;
             this.sd = sd;
             this.ed = ed;
             this.pa = pa;
             this.ir = ir;
-            this.series = series;
             // Base values for slider adjusments
             this.sd_base = sd;
             this.ed_base = ed;
             this.pa_base = pa;
             this.ir_base = ir;
         }
+
+        resetBase(){
+            this.sd_base = this.sd;
+            this.ed_base = this.ed;
+            this.pa_base = this.pa;
+            this.ir_base = this.ir;
+        }
     }
 
-    // An assetGroup holds assets. For this program, an assetGroup
-    // can be used to iterate through assets and place them in a model.
-    class AssetGroup{
-        constructor(id, assets = []){
+    // AssetModelData is an association of assets and models
+    // and the resulting data of those assets and models
+    class AssetModelData{
+        constructor(assetid, modelid, series = []){
+            this.assetid = assetid;
+            this.modelid = modelid;
+            this.series = series;
+        }
+    }
+
+    // AssetModelDataGroup is a storage container for 
+    // AssetModelData objects, handling CRUD activities
+    class AssetModelDataGroup{
+        constructor(id = 0, amdArray = []){
             this.id = id;
-            this.assets = assets;
+            this.amdArray = amdArray;
+        }
+
+        // insertAMD 
+        // This should:
+        // Check for and replace any amds with the same asset and group id
+        insertAMD(amd){
+            this.updateAMD(amd);
+            this.amdArray.push(amd);
         }
     }
 
@@ -82,7 +107,8 @@ jQuery(function(){
             let interval = endYear - startYear;
 
             // Clear out any asset series data
-            asset.series = [];
+            //asset.series = [];
+            let assetModelData = [];
 
             for(let i = 0; i <= interval; i++){
                 // Create a new date i years from the model start
@@ -90,8 +116,11 @@ jQuery(function(){
                 theDate.setYear(theDate.getFullYear() + i);
                 // Set the value for this asset
                 let val = this.pva(asset.ir, asset.pa, interval - i);
-                asset.series.push(new dataElement(theDate, parseFloat(val.toFixed(2))));
+                //asset.series.push(new dataElement(theDate, parseFloat(val.toFixed(2))));
+                assetModelData.push(new dataElement(theDate, parseFloat(val.toFixed(2))));
             }
+
+            return assetModelData;
         }
 
         // Calculate the present value of an annuity
@@ -105,75 +134,277 @@ jQuery(function(){
         }
     }
 
-    // *****************************************************
-    // Tabulator
-    // *****************************************************
-    //define some sample data
-    /*var tabledata = [
-        {id:1, name:"Oli Bob", age:"12", col:"red", dob:""},
-        {id:2, name:"Mary May", age:"1", col:"blue", dob:"14/05/1982"},
-        {id:3, name:"Christine Lobowski", age:"42", col:"green", dob:"22/05/1982"},
-        {id:4, name:"Brendon Philips", age:"125", col:"orange", dob:"01/08/1980"},
-        {id:5, name:"Margret Marmajuke", age:"16", col:"yellow", dob:"31/01/1999"},
-    ];*/
+    // AssetModelingSystem
+    // An AssetModelingSystem holds a series of models and assets
+    // and is used to perform actions that reference both the assets and the models.
+    class AssetModelingSystem{
+        constructor(id = 0, assets = [], models = [], assetModelDataGroup = []){
+            this.id = id;
+            this.assets = assets;
+            this.models = models;
+            this.assetModelDataGroup = assetModelDataGroup;
+        }
 
-    //create Tabulator on DOM element with id "example-table"
-    /*var table = new Tabulator("#example-table", {
-        height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-        data:tabledata, //assign data to table
-        layout:"fitColumns", //fit columns to width of table (optional)
-        columns:[ //Define Table Columns
-            {title:"Name", field:"name", width:150},
-            {title:"Age", field:"age", hozAlign:"left", formatter:"progress"},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", sorter:"date", hozAlign:"center"},
-        ],
-        rowClick:function(e, row){ //trigger an alert message when the row is clicked
-            alert("Row " + row.getData().id + " Clicked!!!!");
-        },
-    });*/
+        // insertAssetModelData
+        // checks to make sure an AssetModelData object has a 
+        // unique pair of model id and asset id.
+        // inserts AssetModelData with unique ids into the 
+        // assetModelDataGroup array.
+        // input:
+        //   assetModelData: computed asset/model data
+        // output:
+        //   returns:
+        //     0: insert successful
+        //     1: insert failed
+        insertAssetModelData(assetModelData){
+            // Look for an AssetModelData object with the same ids
+            let idsTaken = this.assetModelDataGroup.find(obj => { return obj.assetid === assetModelData.assetid && obj.modelid === tassetModelData.modelid}) || [];
+            // If there is no other AssetModelData with matching asset and model ids
+            // insert the asset into assetModelDataGroup
+            if(idsTaken.length == 0){
+                this.assetModelDataGroup.push(assetModelData);
+
+                return 0;
+            }
+
+            // If there is another assetModelData object with this id, return 1;
+            return 1;
+        }
+
+        // runAssetModelData
+        // runs a model on a given asset.
+        // the asset and the model must both exist in the AssetModelingSystem
+        // and they must be paired into an AssetModelData object and
+        // exist in the assetModelDataGroup array.
+        // input:
+        //   asset id: the id of the asset to run the model on
+        //   model id: the id of the model the asset will be calculated against
+        // output:
+        //   returns:
+        //     0: update successful
+        //     1: update failed
+        runAssetModelData(assetId, modelId){
+            // Look for an AssetModelData object with the same ids
+            let thisAmd = this.assetModelDataGroup.find(obj => { return obj.assetid === assetId && obj.modelid === modelId}) || [];
+            let thisAsset = this.assets.find(obj => { return obj.id === assetId; }) || [];
+            let thisModel = this.models.find(obj => { return obj.id === modelId; }) || [];
+            
+            // If there is no other AssetModelData with matching asset and model ids
+            // or no models or assets with matching ids, return 1 (error).
+            if(thisAmd.length == 0 || thisAsset.length == 0 || thisModel.length == 0){
+                //this.assetModelDataGroup.push(assetModelData);
+                return 1;
+            }
+
+            thisAmd.series = thisModel.calcVals(thisAsset); 
+            return 0;
+        }
+
+        // insertAsset
+        // checks to make sure an asset has a unique id
+        // inserts assets with unique ids into the assets array
+        // input:
+        //   asset: an asset of type AssetData
+        // output:
+        //   returns:
+        //     0: insert successful
+        //     1: insert failed
+        insertAsset(asset){
+            // Look for an asset with the same id
+            let idTaken = this.assets.find(obj => { return obj.id === asset.id }) || [];
+            // If there is no other asset with this id
+            // insert the asset into assets
+            if(idTaken.length == 0){
+                this.assets.push(asset);
+
+                return 0;
+            }
+
+            // If there is another asset with this id, return 1;
+            return 1;
+        }
+
+        // getAssetById
+        // finds an asset in the assets array using the asset id
+        // input:
+        //   integer: an id of an asset of type AssetData
+        // output:
+        //   returns:
+        //     null: no asset with this id
+        //     object of type AssetData mathing given id
+        getAssetById(assetid){
+            // Look for an asset with the same id
+            let asset = this.assets.find(obj => { return obj.id === assetid }) || [];
+            // If there is no other asset with this id
+            // return null
+            if(asset.length == 0){
+                return null;
+            }
+
+            // If there is an asset with this id, return this asset;
+            return asset;
+        }
+
+        // insertModel
+        // checks to make sure a model has a unique id
+        // inserts models with unique ids into the models array
+        // input:
+        //   model: a model of type PresentValueModel (this should be less restrictive)
+        // output:
+        //   returns:
+        //     0: insert successful
+        //     1: insert failed
+        insertModel(model){
+            // Look for a model with the same id
+            let idTaken = this.models.find(obj => { return obj.id === model.id } ) || [];
+            // If there is no other model with this id
+            // insert the model into models
+            if(idTaken.length == 0){
+                this.models.push(model);
+
+                return 0;
+            }
+
+            // If there is another model with this id, return 1;
+            return 1;
+        }
+
+        // getUniqueAssetId
+        // looks through the assets array for a new id.
+        // input: none
+        // output: 
+        //  integer for unique id of asset
+        getUniqueAssetId(){
+            // If there are no objects in the array, 
+            // return 0;
+            if(this.assets.length == 0){
+                return 0;
+            }
+            // If there are assets in the array, return the maximum id + 1
+            let maxid = Math.max.apply(Math, this.assets.map(function(d){ return d.id; }));
+            return maxid + 1;
+        }
+
+        // getUniqueModelId
+        // looks through the models array for a new id.
+        // input: none
+        // output: 
+        //  integer for unique id of model
+        getUniqueModelId(){
+            // If there are no objects in the array, 
+            // return 0;
+            
+            if(this.models.length == 0){
+                return 0;
+            }
+            // If there are models in the array, return the maximum id + 1
+            let maxid = Math.max.apply(Math, models.map(function(d){ return d.id; }));
+            return maxid + 1;
+        }
+    }
 
     // ******************************************************
     // Initialization
     // ******************************************************
 
-    // Create a mockup of the model and assets
-    thisModel = new PresentValueModel( 0, new Date(2010, 0, 1), new Date( 2020, 0, 1));
-    theseAssets = new AssetGroup(0);
-    asset01 = new AssetData(  new Date(2011, 0, 1), new Date(2019, 0, 1), 100, 0.15 );
-    asset02 = new AssetData(  new Date(2009, 0, 1), new Date(2025, 0, 1), 200, 0.2 );
+    // Create a new AssetModelingSystem
+    ams = new AssetModelingSystem(0);
+
+    // Create a sample model
+    thisModel = new PresentValueModel( ams.getUniqueModelId(), new Date(2010, 0, 1), new Date( 2020, 0, 1));
+    ams.insertModel(thisModel);
+
+    // Create some sample assets
+    asset01 = new AssetData(ams.getUniqueAssetId(),  new Date(2011, 0, 1), new Date(2019, 0, 1), 100, 0.15 );
+    ams.insertAsset(asset01);
+    asset02 = new AssetData(ams.getUniqueAssetId(),  new Date(2009, 0, 1), new Date(2025, 0, 1), 200, 0.2 );
+    ams.insertAsset(asset02);
+
+    // Create new groups of asset-model data
+    amd1 = new AssetModelData(asset01.id, thisModel.id);
+    ams.insertAssetModelData(amd1);
+    amd2 = new AssetModelData(asset02.id, thisModel.id);
+    ams.insertAssetModelData(amd2);
+
     workspace = new UserWorkspace(0, 0);
     // Add the assets the the asset group
-    theseAssets.assets.push(asset01);
-    theseAssets.assets.push(asset02);
     // Set the current asset for the model
-    currentAsset = theseAssets.assets[0];
+    currentAsset = ams.getAssetById(workspace.currentAssetId);
 
     // Run the model using the default parameters
-    // on the assets in the AssetGroup
-    theseAssets.assets.forEach(function(asset){
-        asset.series = [];
-        thisModel.calcVals(asset);
+    // on the assets in the ams.assets
+    ams.assets.forEach(function(asset){
+        ams.models.forEach(function(model){
+            //let thisSeries = model.calcVals(asset);
+            //ams.assetModelDataGroup.find(obj => { return obj.assetid === asset.id && obj.modelid === thisModel.id}).series = thisSeries;
+            ams.runAssetModelData(asset.id, model.id);
+        })
     })
 
-    
+    // *****************************************************
+    // Tabulator
+    // *****************************************************
     var table = new Tabulator("#example-table", {
         height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-        data:theseAssets.assets, //assign data to table
+        //reactiveData:true, // enable reactive data
+        data:ams.assets, //assign data to table
         layout:"fitColumns", //fit columns to width of table (optional)
         columns:[ //Define Table Columns
             {title:"Start Date", field:"sd", sorter:"date", width:150},
             {title:"End Date", field:"ed", sorter:"date"},
-            {title:"Payment", field:"pa"},
+            {title:"Payment", field:"pa", editor:"number", editorParams:{min:0, elementAttributes:{maxLength:"16",}, verticalNavigation:"table",}},
             {title:"Interest Rate", field:"ir"},
         ],
-        rowClick:function(e, row){ //trigger an alert message when the row is clicked
-            alert("Row " + row.getData().id + " Clicked!!!!");
+        // If the user edits the data, update the charts
+        dataChanged:function(data){
+            data.forEach(function(el){
+                ams.assets[el.id].pa = el.pa;
+                ams.assets[el.id].ir = el.ir;
+                ams.assets[el.id].sd = el.sd;
+                ams.assets[el.id].ed = el.ed;
+            })
+            
+            currentAsset.resetBase();
+            thisModel.calcVals(currentAsset, ams.assetModelDataGroup);
+            drawModel(ams.assetModelDataGroup);
+            resetRangeSliders();
+        },
+        // If the user clicks on a row, set that row as the current asset (currentAsset).
+        rowClick:function(e, row){ 
+            currentAsset = ams.assets[row.getData().id];
+            currentAsset.resetBase();
+            // Selecting an asset should change the color of the selected asset:
+            // Both the row and the line on the chart.
+            //let body = d3.select('#body');
+            //let lines = body.selectAll('.lines');
+
+            thisModel.calcVals(currentAsset, ams.assetModelDataGroup);
+            drawModel(ams.assetModelDataGroup);
+            resetRangeSliders();
         },
     });
 
+    $("#addAsset").on('click', function(event){
+        event.preventDefault();
+        // Create the new asset
+        assetx = new AssetData(ams.assets.length,  new Date(2010, 0, 1), new Date(2015, 0, 1), 1000, 0.3 );
+        ams.assets.push(assetx);
+        // Assign the new asset as the current asset
+        currentAsset = assetx;
+        table.addRow({id: assetx.id, sd:assetx.sd, ed:assetx.ed, pa:assetx.pa, ir:assetx.ir}, true);
+        
+        // Create assetModelData for this new asset
+        amd2 = new AssetModelData(assetx.id, thisModel.id);
+        // Insert the assetModelData into the asset modeling system
+        ams.insertAssetModelData(amd2);
+        // Run the model on the asset
+        ams.runAssetModelData(assetx.id, thisModel.id)
+        
+        drawModel(ams.assetModelDataGroup);
+    })
+    
     // Create the graphic representation of the model
-    drawModel(theseAssets.assets, thisModel);
+    drawModel(ams.assetModelDataGroup);
 
     // *********************************************
     // Form input
@@ -184,17 +415,8 @@ jQuery(function(){
         thisYear = currentAsset.sd_base.getFullYear();
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.sd = new Date(thisYear + sliderVal, 0, 1);
-        thisModel.calcVals(currentAsset);
-        drawModel(theseAssets.assets, thisModel);
-    })
-
-    // If the user changes the model start year update the model
-    $('#modelStart').on('input', function(event){
-        // Change both the base and the model
-        currentAsset.sd = new Date(event.currentTarget.value, 0, 1);
-        currentAsset.sd_base = currentAsset.sd;
-        thisModel.calcVals(currentAsset);
-        drawModel(theseAssets.assets, thisModel);
+        ams.runAssetModelData(currentAsset.id, thisModel.id)
+        drawModel(ams.assetModelDataGroup);
     })
 
     // If the user changes the end date slider, change the end date
@@ -202,17 +424,8 @@ jQuery(function(){
         thisYear = currentAsset.ed_base.getFullYear();
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.ed = new Date(thisYear + sliderVal, 0, 1);
-        thisModel.calcVals(currentAsset);
-        drawModel(theseAssets.assets, thisModel);
-    })
-
-    // If the user changes the model end year update the model
-    $('#modelEnd').on('input', function(event){
-        // Change both the base and the model
-        currentAsset.ed = new Date(event.currentTarget.value, 0, 1);
-        currentAsset.ed_base = currentAsset.ed;
-        thisModel.calcVals(currentAsset);
-        drawModel(theseAssets.assets, thisModel);
+        ams.runAssetModelData(currentAsset.id, thisModel.id)
+        drawModel(ams.assetModelDataGroup);
     })
 
     // If the user changes the interest rate slider, change the interest rate
@@ -220,17 +433,8 @@ jQuery(function(){
         thisVal = parseFloat(currentAsset.ir_base);
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.ir = thisVal + sliderVal/500;
-        thisModel.calcVals(currentAsset);
-        drawModel(theseAssets.assets, thisModel);
-    })
-
-    // If the user changes the interest rate, update the model
-    $('#interestRate').on('input', function(event){
-        // Change both the base and the model
-        currentAsset.ir = parseFloat(event.currentTarget.value);
-        currentAsset.ir_base = currentAsset.ir;
-        thisModel.calcVals(currentAsset);
-        drawModel(theseAssets.assets, thisModel);
+        ams.runAssetModelData(currentAsset.id, thisModel.id)
+        drawModel(ams.assetModelDataGroup);
     })
 
     // If the user changes the annuity payment slider, change the annuity payment
@@ -238,58 +442,40 @@ jQuery(function(){
         thisVal = parseFloat(currentAsset.pa_base);
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.pa = thisVal * (1 + sliderVal/50);
-        thisModel.calcVals(currentAsset);
-        drawModel(theseAssets.assets, thisModel);
-    })
-
-    // If the user changes the annuity payment, update the model
-    $('#annuityPayment').on('input', function(event){
-        // Change both the base and the model
-        currentAsset.pa = parseFloat(event.currentTarget.value);
-        currentAsset.pa_base = currentAsset.pa;
-        thisModel.calcVals(currentAsset);
-        drawModel(theseAssets.assets, thisModel);
-    })
-
-    // If the user clicks the 'next asset' button, change currentAsset to the next asset in 'theseAssets'
-    $('#nextAsset').on('click', function(event){
-        event.preventDefault();
-        thisAssetId = workspace.currentAssetId;
-        // If thisAssetId + 1 is greater than or equal to the number of assets in 
-        // theseAssets, thisAssetId = 0, otherwise add 1 to thisAssetId
-        if(thisAssetId + 1 >= theseAssets.assets.length){
-            thisAssetId = 0;
-        } else {
-            thisAssetId++;
-        }
-
-        workspace.currentAssetId = thisAssetId;
-        currentAsset = theseAssets.assets[thisAssetId];
-
-        drawModel(theseAssets.assets, thisModel);
+        ams.runAssetModelData(currentAsset.id, thisModel.id)
+        drawModel(ams.assetModelDataGroup);
     })
 
     // *********************************************
     // Internal functions
     // *********************************************
 
-    function drawModel(data, model){
+    function drawModel(amsassetModelDataGroup){
         // Create a table for the source data.
-        makeTable('d3viz001', currentAsset.series, ['year', 'val']);
+        //makeTable('d3viz001', currentAsset.series, ['year', 'val']);
 
-        representData(viz002svg001, data);
+        representData(viz002svg001, amsassetModelDataGroup, currentAsset.id);
     }
+
+    // Reset range sliders
+    function resetRangeSliders(){
+        $('#formRangeModelStart').val('50');
+        $('#formRangeModelEnd').val('50');
+        $('#formRangeInterestRate').val('50');
+        $('#formRangeAnnuityPayment').val('50');
+    }
+
 })
 
 
 
-function representData(location, data){
+function representData(location, data, selectedid = 0){
     location.attr('viewBox', '0 0 500 500');
     let body = d3.select('#body')
     
     let bodyHeight = 400;
     let bodyWidth = 400;
-    let maxValue = d3.max(data, d => d.val);
+    //let maxValue = d3.max(data, d => d.val);
     let yAxisWidth = 30;
     let xAxisHeight = 30;
 
@@ -302,9 +488,9 @@ function representData(location, data){
 
     // Invert the range in order to start from high values and
     // move to low values. 
-    let x = data[0].series;
+    //let x = data[0].series;
 
-    let thismax = d3.max(data[0].series, d => d.val);
+    //let thismax = d3.max(data[0].series, d => d.val);
 
     // Find the max of all of the y values in order to set the y scale
     let yScale = d3.scaleLinear()
@@ -347,8 +533,17 @@ function representData(location, data){
         .append('path')
         .attr('class', 'chartLine')
         .attr('d', d => valueline(d.series))
+        .attr('nodeid', d => d.assetid)
         .style('stroke', 'black')
         //.style('stroke', (d, i) => color(i))
+
+    // If a specific asset is selected, color it blue
+    lines.selectAll('.line-group')
+        .selectAll('[nodeid="'+selectedid+'"]')
+        .attr('selected', 'true')
+        .style('stroke', 'blue')
+        .style('stroke-width', '5px');
+
 
     // Create the axes background
     // y axes background
