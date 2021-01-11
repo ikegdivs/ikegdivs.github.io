@@ -52,6 +52,13 @@ jQuery(function(){
             this.pa_base = this.pa;
             this.ir_base = this.ir;
         }
+
+        reapplyBase(){
+            this.sd = this.sd_base;
+            this.ed = this.ed_base;
+            this.pa = this.pa_base;
+            this.ir = this.ir_base;
+        }
     }
 
     // AssetModelData is an association of assets and models
@@ -364,25 +371,48 @@ jQuery(function(){
                 ams.assets[el.id].ed = el.ed;
             })
             
-            currentAsset.resetBase();
-            thisModel.calcVals(currentAsset, ams.assetModelDataGroup);
+            //thisModel.calcVals(currentAsset, ams.assetModelDataGroup);
+            ams.runAssetModelData(currentAsset.id, thisModel.id);
             drawModel(ams.assetModelDataGroup);
-            resetRangeSliders();
         },
         // If the user clicks on a row, set that row as the current asset (currentAsset).
         rowClick:function(e, row){ 
+            resetChanges();
             currentAsset = ams.assets[row.getData().id];
-            currentAsset.resetBase();
+            //currentAsset.resetBase();
             // Selecting an asset should change the color of the selected asset:
             // Both the row and the line on the chart.
             //let body = d3.select('#body');
             //let lines = body.selectAll('.lines');
 
-            thisModel.calcVals(currentAsset, ams.assetModelDataGroup);
-            drawModel(ams.assetModelDataGroup);
+            //thisModel.calcVals(currentAsset, ams.assetModelDataGroup);
+            ams.runAssetModelData(currentAsset.id, thisModel.id);
             resetRangeSliders();
+            
+            drawModel(ams.assetModelDataGroup);
         },
     });
+
+    $('#resetChanges').on('click', function(event){
+        event.preventDefault();
+        resetChanges();
+    })
+
+    function resetChanges(){
+        resetRangeSliders();
+        currentAsset.reapplyBase();
+        currentAsset = ams.getAssetById(currentAsset.id);
+        ams.runAssetModelData(currentAsset.id, thisModel.id);
+        drawModel(ams.assetModelDataGroup);
+    }
+
+    $('#confirmChanges').on('click', function(event){
+        event.preventDefault();
+        resetRangeSliders();
+        currentAsset.resetBase();
+        ams.runAssetModelData(currentAsset.id, thisModel.id);
+        drawModel(ams.assetModelDataGroup);
+    })
 
     $("#addAsset").on('click', function(event){
         event.preventDefault();
@@ -415,7 +445,9 @@ jQuery(function(){
         thisYear = currentAsset.sd_base.getFullYear();
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.sd = new Date(thisYear + sliderVal, 0, 1);
-        ams.runAssetModelData(currentAsset.id, thisModel.id)
+        ams.runAssetModelData(currentAsset.id, thisModel.id);
+        // Change the table data too
+        //table.updateData(ams.assets);
         drawModel(ams.assetModelDataGroup);
     })
 
@@ -424,7 +456,7 @@ jQuery(function(){
         thisYear = currentAsset.ed_base.getFullYear();
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.ed = new Date(thisYear + sliderVal, 0, 1);
-        ams.runAssetModelData(currentAsset.id, thisModel.id)
+        ams.runAssetModelData(currentAsset.id, thisModel.id);
         drawModel(ams.assetModelDataGroup);
     })
 
@@ -433,7 +465,7 @@ jQuery(function(){
         thisVal = parseFloat(currentAsset.ir_base);
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.ir = thisVal + sliderVal/500;
-        ams.runAssetModelData(currentAsset.id, thisModel.id)
+        ams.runAssetModelData(currentAsset.id, thisModel.id);
         drawModel(ams.assetModelDataGroup);
     })
 
@@ -442,7 +474,7 @@ jQuery(function(){
         thisVal = parseFloat(currentAsset.pa_base);
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.pa = thisVal * (1 + sliderVal/50);
-        ams.runAssetModelData(currentAsset.id, thisModel.id)
+        ams.runAssetModelData(currentAsset.id, thisModel.id);
         drawModel(ams.assetModelDataGroup);
     })
 
