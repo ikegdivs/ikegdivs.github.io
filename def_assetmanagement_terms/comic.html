@@ -1,0 +1,90 @@
+<!doctype html>
+
+<!-- this is a comment for human! -->
+
+<html lang="en">
+
+  <header>
+    <title>PJ Divs</title><!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/css/assets.css">
+    <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="name" content="PJ Divs">
+    <meta name="robots" content="noindex, nofollow">
+  </header>
+
+  <body>
+    <div class="jumbotron">
+        <div id="particles-js" class="particles-js"></div>
+        <div class="col-sm-12">
+          <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
+          <h1 style="text-align: center">Issac Gardner's Portal</h1>
+        </div>
+      </div>
+      
+    <hr>
+
+    <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
+      <div class="container">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <a class="navbar-brand mr-auto" href="#"><img src="images/logo.png" height="30" width="41"></a>
+          <div class="collapse navbar-collapse" id="Navbar">
+              <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active"><a class="nav-link" href="index.html"><span class="fa fa-home fa-lg"></span> Home</a></li>
+                  <li class="nav-item"><a class="nav-link" href="divs_pong/comic.html"><span class="fa fa-info fa-lg"></span> Divs</a></li>
+                  <li class="nav-item"><a class="nav-link" href="jQuery_fadeto/comic.html"><span class="fa fa-list fa-lg"></span> Patch &amp; Maude</a></li>
+                  <li class="nav-item"><a class="nav-link" href="viz_tables/comic.html"><span class="fa fa-address-card fa-lg"></span> Visualizations</a></li>
+                  <li class="nav-item"><a class="nav-link" href="def_assetmanagement_terms/comic.html"><span class="fa fa-address-card fa-lg"></span> Asset Management</a></li>
+              </ul>
+          </div>
+      </div>
+    </nav>
+    <div class="container nomargin">
+        <div class="row">
+            <div class="col-12 col-sm-12">
+                <div class="card">
+                    <h3 class="card-header bg-primary text-white">Terms:</h3>
+                    <div class="card-body">
+                        <div class="row">
+                          <ul>
+                            <li><a href="/def_discountrate/comic.html">Discount Rate</a></li>
+                            <li><a href="/ikeg_react/public/index.html">React</a></li>
+                          </ul>
+                        </div>
+                        <!-- React Components Start -->
+                        <div id="like_button_container"></div>
+                        
+                        <!-- React Components End-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- React Scripts Start -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="like_button.js" ></script>
+    <!-- React Scripts End -->
+  </body>
+
+<footer class="row footer justify-content-center">
+  <code>Copyright (c) 2020 Issac Gardner</code>
+</footer>
+<!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/particles/particles.js"></script>
+<script> particlesJS.load('particles-js', '/particles/particles.json', function() {
+  console.log('callback - particles.js config loaded');
+});</script>
+<script src="./script.js"></script>
+<script src="/script.js"></script>
+</html>

@@ -85,49 +85,53 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-12">
+        <div class="col-md-2 col-sm-12">
+            <div class="legendBox">
+                <div class="card-header bg-primary" style="margin: 0.75vw">
+                    <h3 class="text-white" >Legend</h3>
+                </div>
+                <div id="legend" class="legend"></div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12">
             <div class="sliderBox">
                 <form>
-                    <div class="form-group" style="margin-top: 10px">
+                    <div class="form-group" style="margin: 0.75vw;">
                     <div class="card-header bg-primary">
-                        <h3 class="text-white">Controls for Selected Asset</h3>
+                        <h3 class="text-white" style="font-size:1.2vw;">Controls for Selected Asset</h3>
                     </div>
-                        <div class="row">
+                        <div class="row"  style="margin: 0.75vw;">
                             <div class="col">
                                 <label for="formRangeModelStart">Adjust asset start.</label>
                                 <input type="range" class="form-control-range" id="formRangeModelStart" value="50">
                             </div>
                         </div>
-
-                        <div class="row">
+                        <div class="row"  style="margin: 0.75vw;">
                             <div class="col">
                                 <label for="formRangeModelEnd">Adjust asset end.</label>
                                 <input type="range" class="form-control-range" id="formRangeModelEnd" value="50">
                             </div>
                         </div>
-
-                        <div class="row">
+                        <div class="row"  style="margin: 0.75vw;">
                             <div class="col">
-                                <label for="formRangeInterestRate">Adjust interest rate.</label>
-                                <input type="range" class="form-control-range" id="formRangeInterestRate" value="50">
+                                <label for="formRangeDiscountRate">Adjust discount rate.</label>
+                                <input type="range" class="form-control-range" id="formRangeDiscountRate" value="50">
                             </div>
                         </div>
-
-                        <div class="row">
+                        <div class="row"  style="margin: 0.75vw;">
                             <div class="col">
                                 <label for="formRangeAnnuityPayment">Adjust annuity payment.</label>
                                 <input type="range" class="form-control-range" id="formRangeAnnuityPayment" value="50">
                             </div>
                         </div>
-                        <div class="row" style="margin: 1.5vw;">
+                        <div class="row" style="margin: 0.75vw;">
                                 <button id="addAsset" class="btn btn-primary">Add Asset</button>
                         </div>
-                        <div class="row" style="margin: 1.5vw;">
+                        <div class="row" style="margin: 0.75vw;">
                                 <button id="resetChanges" class="btn btn-primary">Reset Changes</button>
                         </div>
-                        <div class="row" style="margin: 1.5vw;">
+                        <div class="row" style="margin: 0.75vw;">
                                 <button id="confirmChanges" class="btn btn-primary">Confirm Changes</button>
-                            
                         </div>
                     </div>
                 </form>

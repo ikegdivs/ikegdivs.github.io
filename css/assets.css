@@ -58,6 +58,23 @@
     box-shadow: 0vw 0vw 0.5vw 0.5vw rgba(238, 238, 238, 1);
 }
 
+.legendBox {
+    padding: 1vw;
+    border: 1px solid rgba(160, 160, 160, 0.7);
+    border-radius: 1vw;
+    box-shadow: 0vw 0vw 0.5vw 0.5vw rgba(238, 238, 238, 1);
+    height: 100%;
+}
+
+.legend {
+    height: 100%;
+    overflow: auto;
+}
+
+.legend svg {
+    height: 100%;
+}
+
 /* Properties for the cartoon viewport. */
 .panel {
     /* Keep the panels separate. */
