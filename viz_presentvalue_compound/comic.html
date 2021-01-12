@@ -65,29 +65,43 @@
                             <div class="showcase viz002">
                                 <div class="container">
                                     <div class="row row-content">
-                                        <div id="d3viz002" class="d3viz">
-                                            <svg id="viz002svg001">
-                                                <g id="body"></g>
-                                            </svg>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="row row-content" style="margin:1vw">
+        <div class="col-md-8 col-sm-12">
+            <div class="chartBox">
+                <div id="d3viz002" class="d3viz">
+                    <svg id="viz002svg001">
+                        <g id="body"></g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <div class="sliderBox">
                 <form>
-                    <div class="form-group" style="margin-top: 10px; width:50%">
+                    <div class="form-group" style="margin-top: 10px">
+                    <div class="card-header bg-primary">
+                        <h3 class="text-white">Controls for Selected Asset</h3>
+                    </div>
                         <div class="row">
                             <div class="col">
-                                <label for="formRangeModelStart">Adjust model start.</label>
+                                <label for="formRangeModelStart">Adjust asset start.</label>
                                 <input type="range" class="form-control-range" id="formRangeModelStart" value="50">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col">
-                                <label for="formRangeModelEnd">Adjust model end.</label>
+                                <label for="formRangeModelEnd">Adjust asset end.</label>
                                 <input type="range" class="form-control-range" id="formRangeModelEnd" value="50">
                             </div>
                         </div>
@@ -105,31 +119,29 @@
                                 <input type="range" class="form-control-range" id="formRangeAnnuityPayment" value="50">
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <label for="presentValue">Present value of asset(s).</label>
-                                <input type="number" class="form-control" id="presentValue" value="100">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <div id="example-table"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
+                        <div class="row" style="margin: 1.5vw;">
                                 <button id="addAsset" class="btn btn-primary">Add Asset</button>
-                            </div>
-                            <div class="col">
+                        </div>
+                        <div class="row" style="margin: 1.5vw;">
                                 <button id="resetChanges" class="btn btn-primary">Reset Changes</button>
-                            </div>
-                            <div class="col">
+                        </div>
+                        <div class="row" style="margin: 1.5vw;">
                                 <button id="confirmChanges" class="btn btn-primary">Confirm Changes</button>
-                            </div>
+                            
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="container nomargin">
+        <div class="row row-content">
+            <div class="col-12 col-sm-12">
+                <div class="row">
+                    <div class="col">
+                        <div id="example-table"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

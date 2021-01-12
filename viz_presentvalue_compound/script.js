@@ -379,11 +379,8 @@ jQuery(function(){
         rowClick:function(e, row){ 
             resetChanges();
             currentAsset = ams.assets[row.getData().id];
-            //currentAsset.resetBase();
             // Selecting an asset should change the color of the selected asset:
             // Both the row and the line on the chart.
-            //let body = d3.select('#body');
-            //let lines = body.selectAll('.lines');
 
             //thisModel.calcVals(currentAsset, ams.assetModelDataGroup);
             ams.runAssetModelData(currentAsset.id, thisModel.id);
@@ -428,7 +425,8 @@ jQuery(function(){
         // Insert the assetModelData into the asset modeling system
         ams.insertAssetModelData(amd2);
         // Run the model on the asset
-        ams.runAssetModelData(assetx.id, thisModel.id)
+        ams.runAssetModelData(assetx.id, thisModel.id);
+        resetRangeSliders();
         
         drawModel(ams.assetModelDataGroup);
     })
@@ -447,8 +445,8 @@ jQuery(function(){
         currentAsset.sd = new Date(thisYear + sliderVal, 0, 1);
         ams.runAssetModelData(currentAsset.id, thisModel.id);
         // Change the table data too
-        //table.updateData(ams.assets);
         drawModel(ams.assetModelDataGroup);
+        //table.updateData(ams.assets);
     })
 
     // If the user changes the end date slider, change the end date
@@ -483,9 +481,6 @@ jQuery(function(){
     // *********************************************
 
     function drawModel(amsassetModelDataGroup){
-        // Create a table for the source data.
-        //makeTable('d3viz001', currentAsset.series, ['year', 'val']);
-
         representData(viz002svg001, amsassetModelDataGroup, currentAsset.id);
     }
 
@@ -502,13 +497,13 @@ jQuery(function(){
 
 
 function representData(location, data, selectedid = 0){
-    location.attr('viewBox', '0 0 500 500');
+    location.attr('viewBox', '0 0 500 300');
     let body = d3.select('#body')
     
-    let bodyHeight = 400;
+    let bodyHeight = 200;
     let bodyWidth = 400;
     //let maxValue = d3.max(data, d => d.val);
-    let yAxisWidth = 30;
+    let yAxisWidth = 45;
     let xAxisHeight = 30;
 
     // clear out the groups
@@ -517,12 +512,6 @@ function representData(location, data, selectedid = 0){
     // ********************************************
     // Chart creation
     // ********************************************
-
-    // Invert the range in order to start from high values and
-    // move to low values. 
-    //let x = data[0].series;
-
-    //let thismax = d3.max(data[0].series, d => d.val);
 
     // Find the max of all of the y values in order to set the y scale
     let yScale = d3.scaleLinear()
@@ -540,9 +529,6 @@ function representData(location, data, selectedid = 0){
         .attr('height', bodyHeight + xAxisHeight * 3)
         .style('fill', chartColor)
         .attr('transform', `translate(-${yAxisWidth * 2}, -${xAxisHeight})`)
-    // Apply merge filter to axes backgrounds
-    chartBG
-        .style('filter', 'url(#outline)')
 
     // Find the max and min of all of the x values in order to set the x scale
     let xScale = d3.scaleTime()
@@ -553,6 +539,11 @@ function representData(location, data, selectedid = 0){
     var valueline = d3.line()
     .x(d => xScale(d.date))
     .y(d => yScale(d.val))
+
+    // Color gradient
+    let cScale = d3.scaleOrdinal()
+        .domain([d => d.assetid])
+        .range(d3.schemeSet1)
 
     let lines = body.append('g')
         .attr('class', 'lines')
@@ -566,15 +557,15 @@ function representData(location, data, selectedid = 0){
         .attr('class', 'chartLine')
         .attr('d', d => valueline(d.series))
         .attr('nodeid', d => d.assetid)
-        .style('stroke', 'black')
-        //.style('stroke', (d, i) => color(i))
+        //.style('stroke', 'black')
+        .style('stroke', d => d.assetid > -1 ? cScale(d.assetid) : 'white')
 
     // If a specific asset is selected, color it blue
     lines.selectAll('.line-group')
         .selectAll('[nodeid="'+selectedid+'"]')
         .attr('selected', 'true')
         .style('stroke', 'blue')
-        .style('stroke-width', '5px');
+        .style('stroke-width', '2px');
 
 
     // Create the axes background
@@ -583,38 +574,48 @@ function representData(location, data, selectedid = 0){
     axesBG
         .append('rect')
         .attr('width', yAxisWidth)
-        .attr('height', bodyHeight)
+        .attr('height', bodyHeight + yAxisWidth)
         .style('fill', axesColor)
-        .attr('transform', `translate(-${yAxisWidth}, 0)`)
+        .attr('transform', `translate(-${yAxisWidth}, -${yAxisWidth * 0.5})`)
     // y axes background
     axesBG
         .append('rect')
-        .attr('width', bodyWidth + yAxisWidth)
+        .attr('width', bodyWidth + yAxisWidth * 1.5)
         .attr('height', yAxisWidth)
         .style('fill', axesColor)
         .attr('transform', `translate(-${yAxisWidth}, ${bodyHeight})`)
     // Apply merge filter to axes backgrounds
     axesBG
-        .style('filter', 'url(#outline)')
-        .style('filter', 'url(#shadow01)')
+        .style('filter', 'url(#axesFilter)')
 
-    // Create the y axis
-    body.append('g')
+    // Create the y axis and label
+    yAxis = body.append('g')
         .call(d3.axisLeft(yScale))
-        .selectAll('path')
+    yAxis.selectAll('path')
         .attr('stroke', 'rgba(50, 50, 50, 0.7)')
         .attr('stroke-width', '1px')
+    yAxis.append('text')
+        .attr('class', 'axis-label')
+        .text('Value ($)')
+        .attr('font-weight', '800')
+        .attr('fill', 'rgba(50, 50, 50, 0.9)')
+        .attr('x', -bodyHeight/2)
+        .attr('y', -33)
+        .attr('transform', 'rotate(-90)')
 
+    // X axis and label
     body.append('g')
         .attr('transform', 'translate(0, ' + bodyHeight + ')')
         .call(d3.axisBottom(xScale)
             .tickFormat(d3.timeFormat('%Y')))
         .append('text')
         .attr('class', 'axis-label')
+        .attr('font-weight', '800')
         .text('Year')
         .attr('fill', 'rgba(50, 50, 50, 0.9)')
         .attr('x', bodyWidth/2)
         .attr('y', 40)
+
         
     // ********************************************
     // SVG filter definitions
@@ -675,6 +676,50 @@ function representData(location, data, selectedid = 0){
         .attr('stdDeviation', '5')
         .attr('flood-color', 'rgba(150, 150, 150, 0.8')
         .attr('flood-opacity', '0.35')
+
+    // Axes filter
+    var axesFilter = defs.append('filter')
+        .attr('id', 'axesFilter')
+        .attr('filterUnits', 'userSpaceOnUse')
+    axesFilter.append('feDropShadow')
+        .attr('dx', '10')
+        .attr('dy', '10')
+        .attr('stdDeviation', '5')
+        .attr('flood-color', 'rgba(150, 150, 150, 0.8')
+        .attr('flood-opacity', '0.35')
+        .attr('result', 'out3')
+    axesFilter.append('feMorphology')
+        .attr('in', 'SourceAlpha')
+        .attr('operator', 'dilate')
+        // This border is 2 pixels wide
+        .attr('radius', '1')
+        .attr('result', 'e1')
+    axesFilter.append('feMorphology')
+        .attr('in', 'SourceAlpha')
+        .attr('operator', 'dilate')
+        // This border starts at the edges of the group
+        .attr('radius', '0')
+        .attr('result', 'e2')
+    axesFilter.append('feComposite')
+        .attr('in', 'e1')
+        .attr('in2', 'e2')
+        .attr('operator', 'xor')
+        .attr('result', 'outline')
+    axesFilter.append('feColorMatrix')
+        .attr('type', 'matrix')
+        .attr('in', 'outline')
+        .attr('values', '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.3 0')
+        .attr('result', 'outline2')
+    axesFilter.append('feComposite')
+        .attr('in', 'outline2')
+        .attr('in2', 'SourceGraphic')
+        .attr('operator', 'over')
+        .attr('result', 'output')
+    axesFilter.append('feComposite')
+        .attr('in', 'outline2')
+        .attr('in2', 'out3')
+        .attr('operator', 'over')
+        .attr('result', 'output2')
 }
 
 function makeTable(locationid, data, columns){

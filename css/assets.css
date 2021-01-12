@@ -39,6 +39,23 @@
 /* Do not want the #workspaces to be centered */
 .container.nomargin {
     margin-left: 0;
+    margin-right: 0;
+}
+
+.sliderBox {
+    padding: 1vw;
+    border: 1px solid rgba(160, 160, 160, 0.7);
+    border-radius: 1vw;
+    box-shadow: 0vw 0vw 0.5vw 0.5vw rgba(238, 238, 238, 1);
+    height: 100%;
+}
+
+.chartBox {
+    height: 100%;
+    padding: 1vw;
+    border: 1px solid rgba(160, 160, 160, 0.7);
+    border-radius: 1vw;
+    box-shadow: 0vw 0vw 0.5vw 0.5vw rgba(238, 238, 238, 1);
 }
 
 /* Properties for the cartoon viewport. */
