@@ -1,3 +1,4 @@
+
 #panelboard {
     /* Display values */
     display: flex;
@@ -50,7 +51,15 @@
     height: 100%;
 }
 
+/*
+ *
+ * Chart styles
+ *
+*/
+
 .chartBox {
+    display: flex;
+    align-items: center;
     height: 100%;
     padding: 1vw;
     border: 1px solid rgba(160, 160, 160, 0.7);
@@ -73,6 +82,45 @@
 
 .legend svg {
     height: 100%;
+}
+
+.yAxisLabel {
+    float: left;
+    writing-mode:tb-rl;
+    transform: rotate(-180deg);
+    
+}
+
+.chart {
+    float: right;
+    width: 90%;
+}
+
+
+
+/*
+ *
+ * Divider elements
+ *
+*/
+
+.paperroll{
+    width: 100vw;
+    height: 20px;
+    padding: 0;
+    background-color: rgba(230, 230, 180, 0.5);
+    background-image: url('/png/beige-paper.png');
+    border: 1px solid rgba(200, 200, 200, 0.5);
+}
+
+.paperroll.top{
+    box-shadow: 0vw 0.75vw 1vw rgba(0, 0, 0, 0.05) ;
+    margin: 0vw 0px 2vw -15px;
+}
+
+.paperroll.bottom{
+    box-shadow: 0vw -0.75vw 1vw rgba(0, 0, 0, 0.05) ;
+    margin: 1vw 0px 0px -15px;
 }
 
 /* Properties for the cartoon viewport. */
@@ -162,28 +210,37 @@ span {
 }
 
 .jumbotron {
-    margin: 0px;
-    padding: 0px 0px;
-    background: #9575CD;
-    color: floralwhite; 
+    position: relative;
+    margin: -3vw 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    color:  rgba(120, 30, 120, 1);
     overflow: hidden;
+    width: 100%;
+    z-index: -1;
 }
 
 #jumboimage {
     position: relative;
-    left: -5%;
-    width: 110%;
+    left: -3.5%;
+    width: 107%;
     height: 10%;
 }
 
 .particles-js {
     position: absolute;
+    top: 3vw;
+    margin: 0px 0px 0px 0px;
     width: 100%;
-    height: 30%;
+    height: 70%;
 }
 
 .navbar-dark {
     background-color: rgba(120, 30, 120, 1);
+    padding: 0px;
+}
+
+.navbar-brand {
+    padding: 0px;
 }
 
 /*

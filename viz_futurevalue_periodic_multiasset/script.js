@@ -20,26 +20,29 @@ jQuery(function(){
         constructor(date, val){
             this.date = date;
             this.val = val;
-            this.year = this.date.getFullYear();
+            //this.year = moment(date, "DD/MM/YYYY").year();
         }
     }
 
     // AssetData contains the main parameters for the asset within the financial model.
-    // This is an annuity asset, with annual payments
+    // Assets should be more mixable.
+    // pp: initial purchasce price
     // sd: start date
     // ed: end date
     // pa: payment
     // dr: discount rate
     class AssetData{
-        constructor(id, sd, ed, pa, dr){//series = []){
+        constructor(id, sd, ed, pp, pa, dr){
             this.id = id;
             this.sd = sd;
             this.ed = ed;
+            this.pp = pp;
             this.pa = pa;
             this.dr = dr;
             // Base values for slider adjusments
             this.sd_base = sd;
             this.ed_base = ed;
+            this.pp_base = pp;
             this.pa_base = pa;
             this.dr_base = dr;
         }
@@ -47,6 +50,7 @@ jQuery(function(){
         resetBase(){
             this.sd_base = this.sd;
             this.ed_base = this.ed;
+            this.pp_base = this.pp;
             this.pa_base = this.pa;
             this.dr_base = this.dr;
         }
@@ -54,6 +58,7 @@ jQuery(function(){
         reapplyBase(){
             this.sd = this.sd_base;
             this.ed = this.ed_base;
+            this.pp = this.pp_base;
             this.pa = this.pa_base;
             this.dr = this.dr_base;
         }
@@ -69,6 +74,75 @@ jQuery(function(){
         }
     }
 
+    // A periodic compounding model is applied to assets in order to modify or create
+    // series data associated with both the model and the asset.
+    // For periodic compounding, the interest is maintained as a yearly
+    // rate, while the periods are identified as the count of periods
+    // per year.
+    class PeriodicCompoundingModel{
+        constructor(id, sd, ed, pd){
+            // Model ID
+            this.id = id;
+            // Model start date
+            this.sd = sd;
+            // Model end date
+            this.ed = ed;
+            // Model yearly periods (0 for continuously compounded)
+            this.pd = pd;
+            // Base values for sliders. This should be a separate class
+            this.pd_base = pd;
+        }
+
+        // calcVals is the prototype output of a model:
+        // input: 
+        //   asset: the asset being examined by the model
+        // output: 
+        //   assetModelData: an array that will be placed in an AssetModelData class.
+        calcVals(asset){
+            // Prepare the model parameters for the asset.
+            // Since this is a compounding model, it may
+            // be a good idea to consider the month and date of 
+            // the asset start and asset end. I'll need to modify this a little for that to work.
+            // This means that while the previous models used startYear, endYear,
+            // this one should just stick with asset.sd and asset.ed (startDate and endDate).
+            let startDate = moment(asset.sd);
+            let endDate = moment(asset.ed);
+            let interval = endDate.diff(startDate, 'years', true);
+
+            // Testing moment.js fractional year difference.
+            console.log(interval);
+
+            // Prepare the output object
+            let assetModelData = [];
+
+            for(let i = 0; i <= interval; i++){
+                // Create a new date i years from the model start
+                let theDate = moment(asset.sd, "MM/DD/YYYY").add('years', i);
+                
+                // Set the value for this asset using the present value perpetuity function
+                let val = this.fvperiodic(asset.pp, asset.dr, this.pd, i);
+                assetModelData.push(new dataElement(theDate.format('MM/DD/YYYY'), parseFloat(val.toFixed(2))));
+            }
+
+            return assetModelData;
+        }
+
+        // Calculate the periodic compounding of an asset
+        // pp: initial purchase price
+        // dr: discount rate
+        // pd: number of counpounding periods per year
+        // i: the current year number (assuming the first year i == 0)
+        fvperiodic(pp, dr, pd, i){ 
+            let val = 0;
+            // If the interest is continually compounded (period is 0), use the continuous compounding formula.
+            if(pd < 1){
+                val = pp * Math.exp(dr * i)
+            }else{
+                val = pp * Math.pow(1 + dr/pd, pd*i);
+            }
+            return val;
+        }
+    }
     // A perpetuity model is applied to assets in order to modify or create series data
     // assiciated with both the model and the asset.
     class PerpetuityModel{
@@ -90,11 +164,11 @@ jQuery(function(){
             // Prepare the model parameters for the asset
             // A perpetuity is forever, but a model is not.
             // And neither is a perpetuity, anyway.
-            let startYear = asset.sd.getFullYear();
-            let endYear = asset.ed.getFullYear();
-            let interval = endYear - startYear;
-            
-            // Testing moment.js ability to fractionalize year differences:
+            let startYear = moment(asset.sd);
+            let endYear = moment(asset.ed);
+            let interval = endYear.diff(startYear, 'years', true);
+
+            // Testing moment.js fractional year difference.
             console.log(interval);
 
             // Prepare the output object
@@ -102,12 +176,11 @@ jQuery(function(){
 
             for(let i = 0; i <= interval; i++){
                 // Create a new date i years from the model start
-                var theDate = new Date(asset.sd.getTime());
-                theDate.setYear(theDate.getFullYear() + i);
-
+                let theDate = moment(asset.sd, "MM/DD/YYYY").add('years', i);
+                
                 // Set the value for this asset using the present value perpetuity function
                 let val = this.pvp(asset.dr, asset.pa);
-                assetModelData.push(new dataElement(theDate, parseFloat(val.toFixed(2))));
+                assetModelData.push(new dataElement(theDate.format('MM/DD/YYYY'), parseFloat(val.toFixed(2))));
             }
 
             return assetModelData;
@@ -343,13 +416,13 @@ jQuery(function(){
     ams = new AssetModelingSystem(0);
 
     // Create a sample model
-    thisModel = new PerpetuityModel( ams.getUniqueModelId(), new Date(2010, 0, 1), new Date( 2020, 0, 1));
+    thisModel = new PeriodicCompoundingModel( ams.getUniqueModelId(), "01/04/2010", "01/05/2020", 0);
     ams.insertModel(thisModel);
 
     // Create some sample assets
-    asset01 = new AssetData(ams.getUniqueAssetId(),  new Date(2011, 0, 1), new Date(2019, 0, 1), 100, 0.15 );
+    asset01 = new AssetData(ams.getUniqueAssetId(),  "06/01/2011", "08/01/2019", 100, 0, 0.15 );
     ams.insertAsset(asset01);
-    asset02 = new AssetData(ams.getUniqueAssetId(),  new Date(2009, 0, 1), new Date(2025, 0, 1), 200, 0.2 );
+    asset02 = new AssetData(ams.getUniqueAssetId(),  "07/01/2009", "09/01/2025", 200, 0, 0.2 );
     ams.insertAsset(asset02);
 
     // Create new groups of asset-model data
@@ -374,21 +447,22 @@ jQuery(function(){
     // *****************************************************
     // Tabulator
     // *****************************************************
+
     var table = new Tabulator("#example-table", {
         height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
         //reactiveData:true, // enable reactive data
         data:ams.assets, //assign data to table
         layout:"fitColumns", //fit columns to width of table (optional)
         columns:[ //Define Table Columns
-            {title:"Start Date", field:"sd", sorter:"date", width:150},
-            {title:"End Date", field:"ed", sorter:"date"},
-            {title:"Payment", field:"pa", editor:"number", editorParams:{min:0, elementAttributes:{maxLength:"16",}, verticalNavigation:"table",}},
+            {title:"Start Date (m/d/yyyy)", field:"sd", sorter:"date", editor:"input", formatter:"datetime", formatterParams:{inputFormat:"DD/MM/YYYY",outputFormat:"DD/MM/YYYY", invalidPlaceholder:"(invalid date)",}},
+            {title:"End Date (m/d/yyyy)", field:"ed", sorter:"date", editor: "input", formatter:"datetime", formatterParams:{inputFormat:"DD/MM/YYYY",outputFormat:"DD/MM/YYYY", invalidPlaceholder:"(invalid date)",}},
+            {title:"Initial Value", field:"pp", editor:"number", editorParams:{min:0, elementAttributes:{maxLength:"16",}, verticalNavigation:"table",}},
             {title:"Discount Rate", field:"dr", editor:"number", editorParams:{min:0, elementAttributes:{maxLength:"16",}, verticalNavigation:"table",}},
         ],
         // If the user edits the data, update the charts
         dataChanged:function(data){
             data.forEach(function(el){
-                ams.assets[el.id].pa = el.pa;
+                ams.assets[el.id].pp = el.pp;
                 ams.assets[el.id].dr = el.dr;
                 ams.assets[el.id].sd = el.sd;
                 ams.assets[el.id].ed = el.ed;
@@ -409,6 +483,12 @@ jQuery(function(){
             drawModel(ams.assetModelDataGroup);
         },
     });
+
+
+    
+    // *****************************************************
+    // Chart slider buttons
+    // *****************************************************
 
     $('#resetChanges').on('click', function(event){
         event.preventDefault();
@@ -439,11 +519,11 @@ jQuery(function(){
         resetChanges();
         event.preventDefault();
         // Create the new asset
-        assetx = new AssetData(ams.assets.length,  new Date(2010, 0, 1), new Date(2015, 0, 1), 1000, 0.3 );
+        assetx = new AssetData(ams.assets.length,  "01/01/2010", "01/01/2015", 1000, 0, 0.3 );
         ams.assets.push(assetx);
         // Assign the new asset as the current asset
         currentAsset = assetx;
-        table.addRow({id: assetx.id, sd:assetx.sd, ed:assetx.ed, pa:assetx.pa, dr:assetx.dr}, true);
+        table.addRow({id: assetx.id, sd:assetx.sd, ed:assetx.ed, pp:assetx.pp, dr:assetx.dr}, true);
         
         // Create assetModelData for this new asset
         amd2 = new AssetModelData(assetx.id, thisModel.id);
@@ -465,20 +545,39 @@ jQuery(function(){
 
     // If the user changes the slider, change the start date
     $('#formRangeModelStart').on('input', function(event){
-        thisYear = currentAsset.sd_base.getFullYear();
+        // Get and interpret the value of the slider.
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        currentAsset.sd = new Date(thisYear + sliderVal, 0, 1);
+
+        // Get a relative year based upon the crrent base (sd_base)
+        let theDate = moment(currentAsset.sd_base, "MM/DD/YYYY").add('years', sliderVal).format('MM/DD/YYYY');
+
+        // Update the currentAsset sd value
+        currentAsset.sd = theDate;
+
+        // Rerun the model
         ams.runAssetModelData(currentAsset.id, thisModel.id);
+
         // Change the table data too
+        table.replaceData(ams.assets);
         drawModel(ams.assetModelDataGroup);
     })
 
     // If the user changes the end date slider, change the end date
     $('#formRangeModelEnd').on('input', function(event){
-        thisYear = currentAsset.ed_base.getFullYear();
+        // Get and interpret the value of the slider.
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        currentAsset.ed = new Date(thisYear + sliderVal, 0, 1);
+
+        // Get a relative year based upon the crrent base (sd_base)
+        let theDate = moment(currentAsset.ed_base, "MM/DD/YYYY").add('years', sliderVal).format('MM/DD/YYYY');
+
+        // Update the currentAsset sd value
+        currentAsset.ed = theDate;
+
+        // Rerun the model
         ams.runAssetModelData(currentAsset.id, thisModel.id);
+
+        // Change the table data too
+        table.replaceData(ams.assets);
         drawModel(ams.assetModelDataGroup);
     })
 
@@ -488,16 +587,25 @@ jQuery(function(){
         sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
         currentAsset.dr = thisVal + sliderVal/500;
         ams.runAssetModelData(currentAsset.id, thisModel.id);
+        // Change the table data too
+        table.replaceData(ams.assets);
         drawModel(ams.assetModelDataGroup);
     })
 
-    // If the user changes the annuity payment slider, change the annuity payment
-    $('#formRangeAnnuityPayment').on('input', function(event){
-        thisVal = parseFloat(currentAsset.pa_base);
-        sliderVal = parseFloat((event.currentTarget.value)).toFixed(2) - 50;
-        currentAsset.pa = thisVal * (1 + sliderVal/50);
-        ams.runAssetModelData(currentAsset.id, thisModel.id);
+    // If the user changes the periods per year slider, change the number o periods in the model
+    $('#formRangeModelPeriods').on('input', function(event){
+        thisVal = parseFloat(thisModel.pd_base);
+        sliderVal = parseFloat(Math.floor(event.currentTarget.value/5)).toFixed(2);
+        thisModel.pd = thisVal + sliderVal;
+        // Since we are changing the model, rerun all of the assets through the model
+        ams.assets.forEach(function(asset){
+            ams.runAssetModelData(asset.id, thisModel.id);
+            console.log(ams.assetModelDataGroup[0].series);
+        })
+        // Change the table data too
+        table.replaceData(ams.assets);
         drawModel(ams.assetModelDataGroup);
+        console.log(thisModel.pd);
     })
 
     // *********************************************
@@ -513,9 +621,8 @@ jQuery(function(){
         $('#formRangeModelStart').val('50');
         $('#formRangeModelEnd').val('50');
         $('#formRangeDiscountRate').val('50');
-        $('#formRangeAnnuityPayment').val('50');
+        $('#formRangeModelPeriods').val('0');
     }
-
 })
 
 
@@ -562,7 +669,7 @@ function representData(location, data, selectedid = 0){
 
     // Find the max and min of all of the x values in order to set the x scale
     let xScale = d3.scaleTime()
-        .domain([d3.min(data, d => d3.min(d.series, d => d.date)), d3.max(data, d => d3.max(d.series, d => d.date))]).nice()
+        .domain([d3.min(data, d => d3.min(d.series, d => Date.parse(d.date))), d3.max(data, d => d3.max(d.series, d => Date.parse(d.date)))]).nice()
         .range([0, bodyWidth]);
 
     // Create the legend svg object
@@ -591,7 +698,7 @@ function representData(location, data, selectedid = 0){
 
     // Create the line
     var valueline = d3.line()
-    .x(d => xScale(d.date))
+    .x(d => xScale(Date.parse(d.date)))
     .y(d => yScale(d.val))
 
     let lines = body.append('g')
