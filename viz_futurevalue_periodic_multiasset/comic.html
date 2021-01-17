@@ -52,82 +52,91 @@
             </div>
         </div>
         <div class='paperroll bottom'></div>
-        <div class="row row-content">
-            <div class="col-12 col-sm-12">
-            </div>
-        </div>
     </div>
     <div class="row row-content" style="margin:1vw">
-        <div class="col-md-8 col-sm-12">
+        <div class="col-md-6 col-sm-12">
             <div class="chartBox">
-                <div id="d3viz002" class="d3viz">
-                    <svg id="viz002svg001" class="chart">
-                        <g id="body"></g>
-                    </svg>
+                <div class="chartBorder">
+                    <div id="d3viz002" class="d3viz chartcontainer">
+                        <svg id="viz002svg001" class="chart">
+                            <g id="body"></g>
+                        </svg>
+                    </div>
                     <div id="viz002yAxisLabel" class="yAxisLabel">Present Value ($)</div>
+                    <div id="viz002xAxisLabel" class="xAxisLabel">Year</div>
                 </div>
             </div>
         </div>
         <div class="col-md-2 col-sm-12">
             <div class="legendBox">
-                <div class="card-header bg-primary" style="margin: 0.75vw">
-                    <h3 class="text-white" >Legend</h3>
+                <div class="legendBorder">
+                    <div class="card-header" style="padding: 0.2vw; background-color:rgb(130, 10, 120); border-radius: 10px; border: 1px solid rgba(0, 0, 0, 0.2);">
+                        <h5 class="text-white" >Legend</h5>
+                    </div>
+                    <div id="legend" class="legend"></div>
                 </div>
-                <div id="legend" class="legend"></div>
             </div>
         </div>
         <div class="col-md-2 col-sm-12">
-            <div class="sliderBox">
-                <form>
-                    <div class="form-group" style="margin: 0.75vw;">
-                    <div class="card-header bg-primary">
-                        <h3 class="text-white" style="font-size:1.2vw;">Controls for Selected Asset</h3>
+            <div class="legendBox">
+                <div class="legendBorder">
+                    <div class="card-header" style="padding: 0.2vw; background-color:rgb(130, 10, 120); border-radius: 10px; border: 1px solid rgba(0, 0, 0, 0.2);">
+                        <h5 class="text-white" >Model Info</h5>
                     </div>
-                        <div class="row"  style="margin: 0.75vw;">
-                            <div class="col">
-                                <label for="formRangeModelStart">Adjust asset start.</label>
-                                <input type="range" class="form-control-range" id="formRangeModelStart" value="50">
-                            </div>
-                        </div>
-                        <div class="row"  style="margin: 0.75vw;">
-                            <div class="col">
-                                <label for="formRangeModelEnd">Adjust asset end.</label>
-                                <input type="range" class="form-control-range" id="formRangeModelEnd" value="50">
-                            </div>
-                        </div>
-                        <div class="row"  style="margin: 0.75vw;">
-                            <div class="col">
-                                <label for="formRangeDiscountRate">Adjust discount rate.</label>
-                                <input type="range" class="form-control-range" id="formRangeDiscountRate" value="50">
-                            </div>
-                        </div>
-                        <div class="row"  style="margin: 0.75vw;">
-                            <div class="col">
-                                <label for="formRangeModelPeriods">Adjust periods per year.</label>
-                                <input type="range" class="form-control-range" id="formRangeModelPeriods" value="0">
-                            </div>
-                        </div>
-                        <div class="row" style="margin: 0.75vw;">
-                                <button id="addAsset" class="btn btn-primary">Add Asset</button>
-                        </div>
-                        <div class="row" style="margin: 0.75vw;">
-                                <button id="resetChanges" class="btn btn-primary">Reset Changes</button>
-                        </div>
-                        <div class="row" style="margin: 0.75vw;">
-                                <button id="confirmChanges" class="btn btn-primary">Confirm Changes</button>
-                        </div>
-                    </div>
-                </form>
+                    <div id="legend" class="legend"></div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="container nomargin">
-        <div class="row row-content">
-            <div class="col-12 col-sm-12">
-                <div class="row">
-                    <div class="col">
-                        <div id="example-table"></div>
-                    </div>
+    <div class="row row-content" style="margin:1vw">
+        <div class="col-md-5 col-sm-12">
+            <div class="legendBox">
+                <div class="legendBorder">
+                    <form>
+                        <div class="form-group">
+                        <div class="card-header" style="padding: 0.2vw; background-color:rgb(130, 10, 120); border-radius: 10px; border: 1px solid rgba(0, 0, 0, 0.2);">
+                            <h3 class="text-white" style="font-size:1.2vw;">Controls for Selected Asset</h3>
+                        </div>
+                            <div class="row"  style="margin: 0.5vw;">
+                                <div class="col">
+                                    <label for="formRangeModelStart">Adjust asset start.</label>
+                                    <input type="range" class="form-control-range theme-purple" id="formRangeModelStart" value="50">
+                                </div>
+                                <div class="col">
+                                    <label for="formRangeModelEnd">Adjust asset end.</label>
+                                    <input type="range" class="form-control-range theme-purple" id="formRangeModelEnd" value="50">
+                                </div>
+                            </div>
+                            <div class="row"  style="margin: 0.5vw;">
+                                <div class="col">
+                                    <label for="formRangeDiscountRate">Adjust discount rate.</label>
+                                    <input type="range" class="form-control-range theme-purple" id="formRangeDiscountRate" value="50">
+                                </div>
+                                <div class="col">
+                                    <label for="formRangeModelPeriods">Adjust periods per year.</label>
+                                    <input type="range" class="form-control-range theme-purple" id="formRangeModelPeriods" value="0">
+                                </div>
+                            </div>
+                            <div class="row" style="margin: 0.5vw;">
+                                <div class="col">
+                                    <button id="addAsset" class="btn btn-primary" style="background-color:rgb(130, 10, 120);">Add Asset</button>
+                                </div>
+                                <div class="col">
+                                    <button id="resetChanges" class="btn btn-primary" style="background-color:rgb(130, 10, 120);">Reset Changes</button>
+                                </div>
+                                <div class="col">
+                                    <button id="confirmChanges" class="btn btn-primary" style="background-color:rgb(130, 10, 120);">Confirm Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-sm-12">
+            <div class="legendBox">
+                <div class="legendBorder">
+                    <div id="example-table"></div>
                 </div>
             </div>
         </div>

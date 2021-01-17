@@ -484,8 +484,6 @@ jQuery(function(){
         },
     });
 
-
-    
     // *****************************************************
     // Chart slider buttons
     // *****************************************************
@@ -634,8 +632,12 @@ function representData(location, data, selectedid = 0){
     let bodyHeight = 200;
     let bodyWidth = 400;
     //let maxValue = d3.max(data, d => d.val);
-    let yAxisWidth = 45;
-    let xAxisHeight = 30;
+    let yAxisWidth = 75;
+    let xAxisHeight = 60;
+
+    // Adjust the body to show the axes, etc.
+    body.style('transform', `translate(${yAxisWidth*1.01}px, ${xAxisHeight*0.5
+    }px)`);
 
     // clear out the groups
     document.getElementById('body').innerHTML ='';
@@ -655,17 +657,17 @@ function representData(location, data, selectedid = 0){
         .domain([0, d3.max(data, d => d3.max(d.series, d => d.val))]).nice()
         .range([bodyHeight, 0]);
 
-    let axesColor = 'rgba(240, 240, 235, 1)'
-    let chartColor = 'rgba(250, 250, 245, 1)'
+    let axesColor = 'rgba(245, 245, 250, 1)'
+    let chartColor = 'rgba(245, 250, 245, 1)'
 
     // Create the chart background
     chartBG = body.append('g');
     chartBG
         .append('rect')
-        .attr('width', bodyWidth + yAxisWidth * 3)
-        .attr('height', bodyHeight + xAxisHeight * 3)
+        .attr('width', bodyWidth + yAxisWidth * 1.21)
+        .attr('height', bodyHeight + xAxisHeight * 1.21)
         .style('fill', chartColor)
-        .attr('transform', `translate(-${yAxisWidth * 2}, -${xAxisHeight})`)
+        .attr('transform', `translate(-${yAxisWidth }, ${xAxisHeight * -0.35})`)
 
     // Find the max and min of all of the x values in order to set the x scale
     let xScale = d3.scaleTime()
@@ -681,7 +683,7 @@ function representData(location, data, selectedid = 0){
         .enter()
         .append('circle')
         .attr('cx', 10)
-        .attr('cy', function(d, i) { return 100 + i * 25})
+        .attr('cy', function(d, i) { return 20 + i * 25})
         .attr('r', 7)
         .style('fill', d => d.assetid > -1 ? cScale(d.assetid) : 'white')
     legendSVG
@@ -690,7 +692,7 @@ function representData(location, data, selectedid = 0){
         .enter()
         .append('text')
         .attr('x', 30)
-        .attr('y', function(d, i){ return 100 + i * 25})
+        .attr('y', function(d, i){ return 20 + i * 25})
         .text( d => d.assetid )
         .attr('color', 'black')
         .attr('text-anchor', 'left')
@@ -728,50 +730,34 @@ function representData(location, data, selectedid = 0){
     axesBG = body.append('g');
     axesBG
         .append('rect')
-        .attr('width', yAxisWidth)
-        .attr('height', bodyHeight + yAxisWidth)
+        .attr('width', yAxisWidth * 1 )
+        .attr('height', bodyHeight * 1.1)
         .style('fill', axesColor)
-        .attr('transform', `translate(-${yAxisWidth}, -${yAxisWidth * 0.5})`)
-    // y axes background
+        .attr('transform', `translate(-${yAxisWidth}, -${bodyHeight * 0.1})`)
+    // x axes background
     axesBG
         .append('rect')
-        .attr('width', bodyWidth + yAxisWidth * 1.5)
-        .attr('height', yAxisWidth)
+        .attr('width', bodyWidth + yAxisWidth * 1.2)
+        .attr('height', xAxisHeight)
         .style('fill', axesColor)
         .attr('transform', `translate(-${yAxisWidth}, ${bodyHeight})`)
     // Apply merge filter to axes backgrounds
     axesBG
         .style('filter', 'url(#axesFilter)')
 
-    // Create the y axis and label
+    // Create the y axis
     yAxis = body.append('g')
         .call(d3.axisLeft(yScale))
     yAxis.selectAll('path')
         .attr('stroke', 'rgba(50, 50, 50, 0.7)')
         .attr('stroke-width', '1px')
-    yAxis.append('text')
-        .attr('class', 'axis-label')
-        .text('Present Value ($)')
-        .attr('font-weight', '800')
-        .attr('fill', 'rgba(50, 50, 50, 0.9)')
-        .attr('x', -bodyHeight/2)
-        .attr('y', -33)
-        .attr('transform', 'rotate(-90)')
 
     // X axis and label
     body.append('g')
         .attr('transform', 'translate(0, ' + bodyHeight + ')')
         .call(d3.axisBottom(xScale)
             .tickFormat(d3.timeFormat('%Y')))
-        .append('text')
-        .attr('class', 'axis-label')
-        .attr('font-weight', '800')
-        .text('Year')
-        .attr('fill', 'rgba(50, 50, 50, 0.9)')
-        .attr('x', bodyWidth/2)
-        .attr('y', 40)
 
-        
     // ********************************************
     // SVG filter definitions
     // ********************************************
@@ -825,6 +811,10 @@ function representData(location, data, selectedid = 0){
     var filter3 = defs.append('filter')
         .attr('id', 'shadow01')
         .attr('filterUnits', 'userSpaceOnUse')
+        .attr('width', '200%')
+        .attr('height', '200%')
+        .attr('x', '-50%')
+        .attr('y', '-50%')
     filter3.append('feDropShadow')
         .attr('dx', '10')
         .attr('dy', '10')
@@ -836,6 +826,11 @@ function representData(location, data, selectedid = 0){
     var axesFilter = defs.append('filter')
         .attr('id', 'axesFilter')
         .attr('filterUnits', 'userSpaceOnUse')
+        .attr('width', '200%')
+        .attr('height', '200%')
+        .attr('x', '-50%')
+        .attr('y', '-50%')
+
     axesFilter.append('feDropShadow')
         .attr('dx', '10')
         .attr('dy', '10')
@@ -869,12 +864,12 @@ function representData(location, data, selectedid = 0){
         .attr('in', 'outline2')
         .attr('in2', 'SourceGraphic')
         .attr('operator', 'over')
-        .attr('result', 'output')
-    axesFilter.append('feComposite')
-        .attr('in', 'outline2')
-        .attr('in2', 'out3')
-        .attr('operator', 'over')
         .attr('result', 'output2')
+    axesFilter.append('feComposite')
+        .attr('in', 'out3')
+        .attr('in2', 'output2')
+        .attr('operator', 'over')
+        .attr('result', 'output')
 }
 
 function makeTable(locationid, data, columns){
