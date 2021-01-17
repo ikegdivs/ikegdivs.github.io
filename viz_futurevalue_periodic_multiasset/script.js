@@ -454,6 +454,7 @@ jQuery(function(){
         data:ams.assets, //assign data to table
         layout:"fitColumns", //fit columns to width of table (optional)
         columns:[ //Define Table Columns
+            {title:"Asset ID", field:"id"},
             {title:"Start Date (m/d/yyyy)", field:"sd", sorter:"date", editor:"input", formatter:"datetime", formatterParams:{inputFormat:"DD/MM/YYYY",outputFormat:"DD/MM/YYYY", invalidPlaceholder:"(invalid date)",}},
             {title:"End Date (m/d/yyyy)", field:"ed", sorter:"date", editor: "input", formatter:"datetime", formatterParams:{inputFormat:"DD/MM/YYYY",outputFormat:"DD/MM/YYYY", invalidPlaceholder:"(invalid date)",}},
             {title:"Initial Value", field:"pp", editor:"number", editorParams:{min:0, elementAttributes:{maxLength:"16",}, verticalNavigation:"table",}},
@@ -623,8 +624,6 @@ jQuery(function(){
     }
 })
 
-
-
 function representData(location, data, selectedid = 0){
     location.attr('viewBox', '0 0 500 300');
     let body = d3.select('#body')
@@ -677,13 +676,30 @@ function representData(location, data, selectedid = 0){
     // Create the legend svg object
     let legendSVG = d3.select('#legend')
         .append('svg')
+    
+    /*body.append('g')
+        .attr('transform', 'translate(0, ' + bodyHeight + ')')
+        .append('text')
+        .attr('class', 'axis-label')
+        .text('Year')
+        .attr('fill', 'rgba(50, 50, 50, 0.9)')
+        .attr('x', bodyWidth/2)
+        .attr('y', 40)*/
+
+    legendSVG
+        .append('text')
+        .attr('x', 30)
+        .attr('y', 20)
+        .text( 'Asset ID:' )
+        .attr('fill', 'rgba(50, 50, 50, 0.9)')
+
     legendSVG
         .selectAll('colorBars')
         .data(data)
         .enter()
         .append('circle')
         .attr('cx', 10)
-        .attr('cy', function(d, i) { return 20 + i * 25})
+        .attr('cy', function(d, i) { return 50 + i * 25})
         .attr('r', 7)
         .style('fill', d => d.assetid > -1 ? cScale(d.assetid) : 'white')
     legendSVG
@@ -692,7 +708,7 @@ function representData(location, data, selectedid = 0){
         .enter()
         .append('text')
         .attr('x', 30)
-        .attr('y', function(d, i){ return 20 + i * 25})
+        .attr('y', function(d, i){ return 50 + i * 25})
         .text( d => d.assetid )
         .attr('color', 'black')
         .attr('text-anchor', 'left')
@@ -706,6 +722,37 @@ function representData(location, data, selectedid = 0){
     let lines = body.append('g')
         .attr('class', 'lines')
 
+        
+    // Create a 'background outline' for stylistic purposes.
+    lines.selectAll('.line-group-bg-ol')
+        .data(data)
+        .enter()
+        .append('g')
+        .attr('class', 'line-group-bg-ol')
+        .append('path')
+        .attr('class', 'chartLine-bg-ol')
+        .attr('d', d => valueline(d.series))
+        .attr('nodeid', d => d.assetid)
+        .style('stroke', 'black')
+        .style('stroke-width', '0.55vw')
+        .style('stroke-linecap', 'round')
+        .style('fill', 'none')
+
+    // Create a 'background line' for stylistic purposes.
+    lines.selectAll('.line-group-bg')
+        .data(data)
+        .enter()
+        .append('g')
+        .attr('class', 'line-group-bg')
+        .append('path')
+        .attr('class', 'chartLine-bg')
+        .attr('d', d => valueline(d.series))
+        .attr('nodeid', d => d.assetid)
+        .style('stroke', 'white')
+        .style('stroke-width', '0.5vw')
+        .style('stroke-linecap', 'round')
+        .style('fill', 'none')
+
     lines.selectAll('.line-group')
         .data(data)
         .enter()
@@ -716,13 +763,17 @@ function representData(location, data, selectedid = 0){
         .attr('d', d => valueline(d.series))
         .attr('nodeid', d => d.assetid)
         .style('stroke', d => d.assetid > -1 ? cScale(d.assetid) : 'white')
+        .style('stroke-width', '0.3vw')
+        .style('stroke-linecap', 'round')
+        .style('fill', 'none')
+        
 
-    // If a specific asset is selected, color it blue
-    lines.selectAll('.line-group')
+    // If a specific asset is selected, color it 
+    // with a blue outline
+    lines.selectAll('.line-group-bg')
         .selectAll('[nodeid="'+selectedid+'"]')
         .attr('selected', 'true')
-        .style('stroke', 'blue')
-        .style('stroke-width', '2px');
+        .style('stroke', 'cyan');
 
 
     // Create the axes background
