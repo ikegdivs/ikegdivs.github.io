@@ -130,6 +130,7 @@
 .yAxisLabel {
     position: absolute;
     top: 30%;
+    left: 8%;
     writing-mode:tb-rl;
     transform: rotate(-180deg);
     vertical-align: middle;
