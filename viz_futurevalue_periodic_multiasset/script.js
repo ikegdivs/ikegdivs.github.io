@@ -634,6 +634,9 @@ function representData(location, data, selectedid = 0){
     let yAxisWidth = 75;
     let xAxisHeight = 60;
 
+    // Get the count of objects that need to go into the legend
+    let legendObjects = data.length;
+
     // Adjust the body to show the axes, etc.
     body.style('transform', `translate(${yAxisWidth*1.01}px, ${xAxisHeight*0.5
     }px)`);
@@ -688,8 +691,8 @@ function representData(location, data, selectedid = 0){
 
     legendSVG
         .append('text')
-        .attr('x', 30)
-        .attr('y', 20)
+        .attr('x', 0)
+        .attr('y', 25)
         .text( 'Asset ID:' )
         .attr('fill', 'rgba(50, 50, 50, 0.9)')
 
@@ -702,6 +705,7 @@ function representData(location, data, selectedid = 0){
         .attr('cy', function(d, i) { return 50 + i * 25})
         .attr('r', 7)
         .style('fill', d => d.assetid > -1 ? cScale(d.assetid) : 'white')
+
     legendSVG
         .selectAll('legendLabels')
         .data(data)
@@ -713,6 +717,8 @@ function representData(location, data, selectedid = 0){
         .attr('color', 'black')
         .attr('text-anchor', 'left')
         .style('alignment-baseline', 'middle')
+
+    legendSVG.attr('height', 50 + legendObjects * 25);
 
     // Create the line
     var valueline = d3.line()
