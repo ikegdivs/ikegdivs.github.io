@@ -1,47 +1,37 @@
 <!doctype html>
-
-<!-- this is a comment for human! -->
-
 <html lang="en">
 
   <header>
     <title>Issac Gardner's Portal</title><!-- Bootstrap CSS -->
-    <!-- build:css css/main.css -->
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/assets.css">
     <link rel="stylesheet" href="/css/style.css">
-    <!-- endbuild -->
-    <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
-    <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="name" content="Issac Gardner's Portal">
-    <meta name="robots" content="noindex, nofollow">
   </header>
 
   <body>
-    <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
+    <nav class="navbar navbar-dark navbar-expand-sm navbar-static-top">
       <div class="container">
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
               <span class="navbar-toggler-icon"></span>
           </button>
-          <a class="navbar-brand mr-auto" href="#"><img src="/images/logo.png" height="30" width="30"></a>
+          <a class="navbar-brand mr-auto" href="#"><img src="/images/logo.PNG" height="30" width="30" style="margin-bottom: 0.2vw"></a>
           <div class="collapse navbar-collapse" id="Navbar">
               <ul class="navbar-nav mr-auto">
                   <li class="nav-item active"><a class="nav-link" href="/index.html"><span class="fa fa-home fa-lg"></span> Home</a></li>
-                  <li class="nav-item"><a class="nav-link" href="/divs_pong/comic.html"><span class="fa fa-info fa-lg"></span> Divs</a></li>
-                  <li class="nav-item"><a class="nav-link" href="/jQuery_fadeto/comic.html"><span class="fa fa-list fa-lg"></span> Patch &amp; Maude</a></li>
-                  <li class="nav-item"><a class="nav-link" href="/viz_tables/comic.html"><span class="fa fa-address-card fa-lg"></span> Visualizations</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/divs_index.html"><span class="fa fa-info fa-lg"></span> Divs</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/patchandmaude_index.html"><span class="fa fa-list fa-lg"></span> Patch &amp; Maude</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/don3ts_index.html"><span class="fa fa-address-card fa-lg"></span> don3ts</a></li>
                   <li class="nav-item"><a class="nav-link" href="/def_assetmanagement_terms/comic.html"><span class="fa fa-address-card fa-lg"></span> Asset Management</a></li>
               </ul>
           </div>
       </div>
     </nav>
-
     <div class="jumbotron">
       <div id="particles-js" class="particles-js"></div>
       <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
     </div>
-    
     <hr>
 
     <div class="container">
@@ -576,14 +566,13 @@
     <code>Copyright (c) 2020 Issac Gardner</code>
   </footer>
   <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
-  <!-- build:js js/main.js -->
   <script src="/node_modules/jquery/dist/jquery.slim.min.js"></script>
   <script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
   <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script src="/script.js"></script>
   <script src="/particles/particles.js"></script>
   <script> particlesJS.load('particles-js', '/particles/particles.json', function() {
     console.log('callback - particles.js config loaded');
   });</script>
+  <script src="/script.js"></script>
   <!-- endbuild -->
 </html>
