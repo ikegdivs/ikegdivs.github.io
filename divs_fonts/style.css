@@ -50,6 +50,7 @@
   bottom: 55%;
   right: 1%;
   max-width: 80%;
+  border: 0.4vw solid rgba(0, 0, 0, 1);
   position: absolute; }
 
 /* line 26, ../sass/style.sass */
@@ -63,6 +64,7 @@
   top: auto;
   bottom: 50%;
   right: 2%;
+  border: 0.4vw solid rgba(0, 0, 0, 1);
 }
 
 /* line 35, ../sass/style.sass */

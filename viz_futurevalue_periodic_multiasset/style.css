@@ -13,49 +13,6 @@ body{
     width: 100%;
 }
 
-
-.showcase.viz001 {
-    position: absolute;
-    top: 10%;
-    left: 5%;
-    width: 40%;
-    height: 80%;
-    overflow: scroll;
-    transform: rotateY(5deg) rotateZ(0.2deg) rotateX(-1deg);
-    border: 3px solid rgba(0, 0, 0, 1);
-    box-shadow: 0px 0px 0px 20px rgba(255, 245, 245, 1),
-                0px 0px 0px 21px rgba(0, 0, 0, 1),
-                0px 0px 30px 10px rgba(0, 0, 0, 1);
-}
-
-.showcase.viz002 {
-    position: absolute;
-    top: 10%;
-    left: 50%;
-    width: 40%;
-    height: 80%;
-    overflow: scroll;
-    transform: rotateY(5deg) rotateZ(0.2deg) rotateX(-1deg);
-    border: 3px solid rgba(0, 0, 0, 1);
-    box-shadow: 0px 0px 0px 20px rgba(255, 245, 245, 1),
-                0px 0px 0px 21px rgba(0, 0, 0, 1),
-                0px 0px 30px 10px rgba(0, 0, 0, 1);
-}
-
-.showcase.viz003 {
-    position: absolute;
-    top: 10%;
-    left: 65%;
-    width: 25%;
-    height: 80%;
-    overflow: scroll;
-    transform: rotateY(5deg) rotateZ(0.2deg) rotateX(-1deg);
-    border: 3px solid rgba(0, 0, 0, 1);
-    box-shadow: 0px 0px 0px 20px rgba(255, 245, 245, 1),
-                0px 0px 0px 21px rgba(0, 0, 0, 1),
-                0px 0px 30px 10px rgba(0, 0, 0, 1);
-}
-
 .d3viz {
     position: relative;
     top: 0%;
@@ -101,11 +58,6 @@ body{
     left: 2vw;
     overflow: hidden;*/
 }
-
-.showcase {
-    background: rgba(255, 255, 255, 1);
-}
-
 
 /*
  *

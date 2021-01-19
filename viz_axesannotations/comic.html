@@ -52,39 +52,19 @@
             <div class="col-12 col-sm-12">
                 <div id="workspace">
                     <div id="panel-a" class="workview">
-                        <div class="inpanel">
-                            <div class="showcase viz001">
-                                <div class="container">
-                                    <div class="row row-content">
-                                        <div id="d3viz001" class="d3viz">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="showcase viz002">
-                                <div class="container">
-                                    <div class="row row-content">
-                                        <div id="d3viz002" class="d3viz">
-                                            <svg id="viz002svg001">
-                                                <g id="body" style="transform:translate(50px,0px)"></g>
-                                                <g id="yAxis"></g>
-                                                <g id="xAxis"></g>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div id="d3viz002" class="d3viz chartcontainer">
+                            <svg id="viz002svg001" class="chart">
+                                <g id="body" style="transform:translate(50px,0px)"></g>
+                                <g id="yAxis"></g>
+                                <g id="xAxis"></g>
+                            </svg>
                         </div>
                     </div>
                 </div>
                 <form>
                     <div class="form-group" style="margin-top: 10px; width:50%">
-                        <label for="formControlRangeX">Move Patch and Maude.</label>
+                        <label for="formControlRangeX">Adjust the data</label>
                         <input type="range" class="form-control-range" id="formControlRangeX" value="0">
-                        <h2>Flatten on hover from raised</h2>
-                        <a href="" class="btn paper paper-raise-flatten">Try Me</a>
-                        <h2>Curl right corner on hover</h2>
-                        <a href="" class="btn paper paper-curl-right">Try Me</a>
                     </div>
                 </form>
             </div>
@@ -105,4 +85,5 @@
   console.log('callback - particles.js config loaded');
 });</script>
 <script src="./script.js"></script>
+<script src="/script.js"></script>
 </html>
