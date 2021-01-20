@@ -22,7 +22,7 @@
         <div id="particles-js" class="particles-js"></div>
         <div class="col-sm-12">
           <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
-          <h1 style="text-align: center">Issac Gardner's Portal</h1>
+          <h1 style="text-align: center">don3ts: D3 line chart.</h1>
         </div>
       </div>
       
@@ -33,14 +33,15 @@
     <div class="container nomargin">
         <div class="row">
             <div class="col-12 col-sm-12">
-                <div class="card">
-                    <h3 class="card-header bg-primary text-white">Instructions:</h3>
-                    <div class="card-body">
-                        <dl class="row">
-                            The slider below the drawing uses JQuery's prop() to get the value property of the slider when it is moved.
-                        </dl>
-                    </div>
-                </div>
+                <h1>Goals:</h1>
+                <ul>
+                    <li>Gather data for the line chart.</li>
+                    <li>Create a location for the line chart.</li>
+                    <li>Develop the basic parameters for the chart.</li>
+                    <li>Generate scaling functions for the X and Y axes.</li>
+                    <li>Create grouping objects for the scales and the chart.</li>
+                    <li>Define and add the line to the display.</li>
+                </ul>
             </div>
         </div>
         <div class='paperroll bottom'></div>
@@ -49,44 +50,232 @@
             </div>
         </div>
         <div class="row row-content">
-            <div class="col-12 col-sm-12">
+            <div class="col-12 col-sm-12 d-flex justify-content-center">
                 <div id="workspace">
                     <div id="panel-a" class="workview">
-                        <div class="inpanel">
-                            <div class="showcase viz001">
-                                <div class="container">
-                                    <div class="row row-content">
-                                        <div id="d3viz001" class="d3viz">
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="wall"></div>
+                        <div class="floor"></div>
+                        <div class="whiteboard">
+                            <div id="d3viz002" class="d3viz chartcontainer">
+                                <svg id="viz_svg01" class="chart"></svg>
                             </div>
-                            <div class="showcase viz002">
-                                <div class="container">
-                                    <div class="row row-content">
-                                        <div id="d3viz002" class="d3viz">
-                                            <svg id="viz002svg001">
-                                                <g id="body"></g>
-                                                <g id="yAxis"></g>
-                                                <g id="xAxis"></g>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="strawberryDonut">
+                            <img src="/svg/don3ts/donut_strawberry.svg">
+                        </div>
+                        <div class="chocolateDonut">
+                            <img src="/svg/don3ts/donut_chocolate.svg">
+                        </div>
+                        <div class="chatbubble workbubble strawberrysays">How does a ship captain navigate Gibraltar?
+                            <div class="chatarrow strawberrysays"></div>
+                        </div>
+                        <div class="chatbubble workbubble chocolatesays">With a strait line.
+                            <div class="chatarrow chocolatesays"></div>
                         </div>
                     </div>
                 </div>
-                <form>
-                    <div class="form-group" style="margin-top: 10px; width:50%">
-                        <label for="formControlRangeX">Move Patch and Maude.</label>
+            </div>
+            <div class="col-12 col-sm-12 d-flex justify-content-center">
+                <form style="width: 50%;">
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label for="formControlRangeX">Adjust the data</label>
                         <input type="range" class="form-control-range" id="formControlRangeX" value="0">
-                        <h2>Flatten on hover from raised</h2>
-                        <a href="" class="btn paper paper-raise-flatten">Try Me</a>
-                        <h2>Curl right corner on hover</h2>
-                        <a href="" class="btn paper paper-curl-right">Try Me</a>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row row-content">
+            <h1>D3 line charts</h1>
+            <p>A line chart is a very common, easy to understand chart that displays data as a line in a cartesian system.
+                The line represents a category of data, and this data is usually presented with the independent variable on
+                the horizontal (x) axis and the dependent variable on the vertical (y) axis. Line charts can easily represent
+                many categories of data, and the cartesian nature allows for multiple types of charts to overlap in meaningful ways.
+            </p>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Gather data for the line chart</h3>
+                <p>In order to create a representation of data, it is a good idea to start with the data that we
+                    want to represent. If you don't happen to have any data, then creating data is exceptionally easy.
+                    Place the following code in a javascript file to create a linear set of coordinates to practice with:
+                </p>
+                <pre><code>
+    // When the document is loaded:
+    // Create some data
+    // Draw a line chart with the data.
+    document.addEventListener("DOMContentLoaded", function(){
+        // dataObj is an array of dataElement objects.
+        dataObj = [];
+        let viz_svg01 = d3.select("#viz_svg01");
+    
+        // dataElements are classes for data row/objects.
+        // properties:
+        //   date: a dateTime object
+        //   y: a numeric value
+        function dataElement(date, y){
+            this.date = date;
+            this.y = y;
+        }
+    
+        // Create a set of 10 dataElements.
+        for(i = 0; i < 10; i++){
+            // Create a new date
+            theDate = new Date(2021, 0, 1)
+            // Add i months to the date
+            theDate.setMonth(theDate.getMonth() + i);
+            dataObj.push(new dataElement(theDate, i));
+        }
+    
+        representData(viz_svg01, dataObj);
+    })
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Create a location for the line chart</h3>
+                <p>We will need a spot in our html in order to draw our line chart. This can easily be done by adding an
+                    svg element to an html document:
+                </p>
+                <pre><code>
+                    &lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
+                </code></pre>
+                <p>Place this code in the body of an html document. D3 will identify this svg using the 'id' attribute.
+                    Once D3 has identified the svg, we can start to build chart elements inside.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Develop the basic parameters for the chart</h3>
+                <p>Drawing a chart can get messy. With all of the parameters that will be changed throughout the life
+                    of the chart, it is a good idea to place them all up front:
+                </p>
+                <pre><code>
+    function representData(location, data){
+        // Establish the basic parameters of the display
+        // The starting position of the chart.
+        chartBodyX = 50;
+        chartBodyY = 0;
+        // The relative size of the axes.
+        xScaleWidth = 300;
+        yScaleHeight = 200;
+        // The number of tick marks on the x axis.
+        numTicks = 5;
+        // The amount of space to allocate for text,e etc. on the x and y axes.
+        textBuffer = 20;
+        topMargin = 10;
+
+        // Create the viewbox. This viewbox helps define the visible portions
+        // of the chart, but it also helps when making the chart responsive.
+        location.attr('viewBox', `0 0 ${xScaleWidth + chartBodyX + textBuffer} ${yScaleHeight + textBuffer + topMargin}`);
+        
+        // Use d3 to find the maximum dependent value for the data.
+        let maxValue = d3.max(data, d => d.y);
+                </code></pre>
+                <p>Append this code to your javascript file. Nothing special should happen just yet - we still have a bit more 
+                    defining to do.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Generate scaling functions for the X and Y axes.</h3>
+                <p>In order to create a scale for the axis, we ask D3 to build <code>scaleLinear</code> and <code>scaleTime</code> 
+                    objects that can take
+                    care of all of the messy tasks involved with calculating beginnings and ends, distributing graphic elements
+                    evenly, and determining the best ways to represent our data on an axis.
+                </p>
+                <pre><code>
+    // Use d3 to create a linear scale of y values.
+    // The y scale should have the following values:
+    //   range: y pixel distance of the end of the y axis.
+    //          y pixel position of the strt of the y axis.
+    //   domain: value represented at the start of the y axis.
+    //           value represented at the end of the y axis.
+    // Invert the range in order to start from high values and move to low values. 
+    let scaleY = d3.scaleLinear()
+                    .range([yScaleHeight, 0])
+                    .domain([0, maxValue]);
+
+    // Use d3 to create a linear scale of x values.
+    // The x scale should have the following values:
+    //   range: x pixel distance of the start of the y axis.
+    //          y pixel distance of the end of the y axis.
+    //   domain: mapped independent values
+    let scaleX = d3.scaleTime()
+                    .range([0, xScaleWidth])
+                    .domain(d3.extent(data, d => d.date))
+                </code></pre>
+                <p>Appending this code to the javascript file, we can now move on to preparing the svg to draw the chart.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Create grouping objects for the scales and the chart.</h3>
+                <p>We want to draw the line chart and scales as different objects, so we will use D3 to 
+                    append a 'g' grouping element to the svg for each the body and axes elements.
+                </p>
+                <pre><code>
+    // Add groups to the svg for the body of the chart, the x axis, and the y axis.
+    body = location.append('g')
+        .attr('id', 'chartBody')
+        .attr('transform', `translate(${chartBodyX}, ${topMargin})`);
+    location.append('g')
+        .attr('id', 'yAxis')
+        .call(d3.axisLeft(scaleY))
+        .attr('transform', `translate(${chartBodyX}, ${topMargin})`);
+    location.append('g')
+        .attr('id', 'xAxis')
+        .call(d3.axisBottom(scaleX)
+            .tickFormat(d3.timeFormat('%b')))
+        .attr('transform', `translate(${chartBodyX}, ${yScaleHeight + topMargin})`);
+                </code></pre>
+                <p>Once that code has been placed into the javascript file, we can actually start drawing the line chart.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Define and add the chart line to the display.</h3>
+                <p>In order to create the line for the chart, we first need to establish the following details:
+                </p>
+                <ul>
+                    <li>Where we want to place the line (in the body element).</li>
+                    <li>How we want to represent the line ('path').</li>
+                    <li>What data the line is representing (data passed into this function).</li>
+                </ul> 
+                <p>In the following code, we use d3.select to state where we want the line to be drawn. Then we use append('path')
+                    to indicate that we want to use a path (line) to represent our data, then we
+                    indicate that we want the incoming data (we called it 'data') to be used as our chart's source data.</p>
+                    <p>Inside of the section of 'attr' functions below, notice that the fill is set to 'none'. This setting 
+                        helps to ensure that the path does not fill the area it covers with a color. 'stroke' and 'stroke-width'
+                        are also important attributes. The 'stroke' of a path refers to its color, while the 'stroke-width' refers
+                        to the size of the line created.
+                    </p>
+                <pre><code>
+    // Create the line points
+    valueline = d3.line()
+        .x(d => scaleX(d.date))
+        .y(d => scaleY(d.y))
+
+    // Bind the data and add the line to the chart
+    body.append('path')
+        .datum(data)
+        .attr('d', d => valueline(d))
+        // Don't let path close
+        .attr("class", "chartLine")
+        .attr('fill', 'none')
+        .attr('stroke', 'rgba(255, 0, 0, 1)')
+        .attr('stroke-width', '0.2vw')
+}
+                </code></pre>
+                <p>Adding this code to the end of your javascript file should complete this line chart demo. If you have any
+                    troubles, you can check the source code for the image at the top of this article <a href="#">here</a>.
+                </p>
             </div>
         </div>
     </div>
@@ -105,4 +294,5 @@
   console.log('callback - particles.js config loaded');
 });</script>
 <script src="./script.js"></script>
+<script src="/script.js"></script>
 </html>

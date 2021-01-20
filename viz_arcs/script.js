@@ -15,40 +15,55 @@ jQuery(function(){dataObj = [];
     }
 
     // Create a set of 10 dataElements.
-    for(i = 0; i < 10; i++){
+    for(i = 1; i < 11; i++){
         // Use a translation of number to letter for category
         category = 'a' + i;
-        dataObj.push(new dataElement(category, i));
+        dataObj.push(new dataElement(category, 10 + i));
     }
 
     // Create a table for the source data.
-    makeTable('d3viz001', dataObj, ['x', 'y']);
+    makeTable('d3viz001', dataObj, ['category', 'sales']);
 
     representData(viz002svg001, dataObj);
 })
 
 function representData(location, data){
     location.attr('height', '300px');
+    location.attr('left', '100px');
+    location.attr('top', '100px');
     let body = d3.select('#body')
     
     let bodyHeight = 200;
     let bodyWidth = 400;
-    let maxValue = d3.max(data, d => d.y);
 
-    console.log(data);
-
-    // Create a pie chart
+    // Create a pie function to translate values into arcs
     let pie = d3.pie()
         .value(d => d.sales)
-
-    console.log(pie(data));
 
     // set colors for chart
     let colorScale = d3.scaleOrdinal()
         .range(d3.schemeCategory10)
         .domain(data.map(d => d.category))
+
+    // Create the arcs for the pie chart
+    let arc = d3.arc()
+        .outerRadius(bodyHeight/2)
+        .innerRadius(50);
     
-    console.log(colorScale('a2'));
+    console.log(data);
+    console.log(pie(data));
+    
+    // Create the groups
+    let g = body.selectAll('.arc')
+        .data(pie(data))
+        //only append g on new data
+        .enter()
+        .append('g')
+
+    g.append('path')
+        .attr('d', arc)
+        .attr('fill', d => { return colorScale(d.data.category)})
+
 }
 
 function makeTable(locationid, data, columns){

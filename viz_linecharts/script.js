@@ -1,14 +1,15 @@
-/*When the document is loaded*/
-jQuery(function(){dataObj = [];
-    mapObj = [];
-    statsObj = [];
-    data = null;
-
-    let d3viz001 = d3.select("#d3viz001");
-    let d3viz002 = d3.select("#d3viz002");
-    let viz002svg001 = d3.select("#viz002svg001");
+// When the document is loaded:
+// Create some data
+// Draw a line chart with the data.
+document.addEventListener("DOMContentLoaded", function(){
+    // dataObj is an array of dataElement objects.
+    dataObj = [];
+    let viz_svg01 = d3.select("#viz_svg01");
 
     // dataElements are classes for data row/objects.
+    // properties:
+    //   date: a dateTime object
+    //   y: a numeric value
     function dataElement(date, y){
         this.date = date;
         this.y = y;
@@ -18,96 +19,81 @@ jQuery(function(){dataObj = [];
     for(i = 0; i < 10; i++){
         // Create a new date
         theDate = new Date(2021, 0, 1)
-        // Add i days to the date
-        //theDate.setDate(theDate.getDate() + i);
         // Add i months to the date
         theDate.setMonth(theDate.getMonth() + i);
         dataObj.push(new dataElement(theDate, i));
     }
 
-    // Create a table for the source data.
-    makeTable('d3viz001', dataObj, ['x', 'y']);
-
-    representData(viz002svg001, dataObj);
+    representData(viz_svg01, dataObj);
 })
 
 function representData(location, data){
-    location.attr('height', '300px');
-    let body = d3.select('#body')
+    // Establish the basic parameters of the display
+    // The starting position of the chart.
+    chartBodyX = 50;
+    chartBodyY = 0;
+    // The relative size of the axes.
+    xScaleWidth = 300;
+    yScaleHeight = 200;
+    // The number of tick marks on the x axis.
+    numTicks = 5;
+    // The amount of space to allocate for text,e etc. on the x and y axes.
+    textBuffer = 20;
+    topMargin = 10;
+
+    // Create the viewbox. This viewbox helps define the visible portions
+    // of the chart, but it also helps when making the chart responsive.
+    location.attr('viewBox', `0 0 ${xScaleWidth + chartBodyX + textBuffer} ${yScaleHeight + textBuffer + topMargin}`);
     
-    let bodyHeight = 200;
-    let bodyWidth = 400;
+    // Use d3 to find the maximum dependent value for the data.
     let maxValue = d3.max(data, d => d.y);
 
-    /* Invert the range in order to start from high values and
-       move to low values. */
-    let yScale = d3.scaleLinear()
-        .range([bodyHeight, 0])
-        .domain([0, maxValue]);
+    // Use d3 to create a linear scale of y values.
+    // The y scale should have the following values:
+    //   range: y pixel distance of the end of the y axis.
+    //          y pixel position of the strt of the y axis.
+    //   domain: value represented at the start of the y axis.
+    //           value represented at the end of the y axis.
+    // Invert the range in order to start from high values and move to low values. 
+    let scaleY = d3.scaleLinear()
+                    .range([yScaleHeight, 0])
+                    .domain([0, maxValue]);
 
-    body.style('transform', 'translate(50px,0px)');
+    // Use d3 to create a linear scale of x values.
+    // The x scale should have the following values:
+    //   range: x pixel distance of the start of the y axis.
+    //          y pixel distance of the end of the y axis.
+    //   domain: mapped independent values
+    let scaleX = d3.scaleTime()
+                    .range([0, xScaleWidth])
+                    .domain(d3.extent(data, d => d.date))
 
-    body.append('g')
-        .call(d3.axisLeft(yScale))
-
-    let xScale = d3.scaleTime()
-        .domain(d3.extent(data, d => d.date))
-        .range([0, bodyWidth])
-
-    body.append('g')
-        .attr('transform', 'translate(0, ' + bodyHeight + ')')
-        .call(d3.axisBottom(xScale)
+    // Add groups to the svg for the body of the chart, the x axis, and the y axis.
+    body = location.append('g')
+        .attr('id', 'chartBody')
+        .attr('transform', `translate(${chartBodyX}, ${topMargin})`);
+    location.append('g')
+        .attr('id', 'yAxis')
+        .call(d3.axisLeft(scaleY))
+        .attr('transform', `translate(${chartBodyX}, ${topMargin})`);
+    location.append('g')
+        .attr('id', 'xAxis')
+        .call(d3.axisBottom(scaleX)
             .tickFormat(d3.timeFormat('%b')))
+        .attr('transform', `translate(${chartBodyX}, ${yScaleHeight + topMargin})`);
 
+    // Create the line points
+    valueline = d3.line()
+        .x(d => scaleX(d.date))
+        .y(d => scaleY(d.y))
 
-}
-
-function makeTable(locationid, data, columns){
-    function tabulate(data, columns) {
-        /*Clear out the viz object*/
-        document.getElementById(locationid).innerHTML = '';
-        /*Create the table and add it to the viz object */
-        var table = d3.select('#' + locationid).append('table');
-        var thead = table.append('thead');
-        var tbody = table.append('tbody');
-
-        
-        // append header row
-        thead.append('tr')
-            .selectAll('th')
-            .data(columns).enter()
-            .append('th')
-                .text(function(column) {return column;});
-
-        // create a row for each object in the data
-        var rows = tbody.selectAll('tr')
-                        .data(data)
-                        .enter()
-                        .append('tr');
-        
-        // Create a cell in each row for each column
-        var cells = rows.selectAll('td')
-                        .data(function (row) {
-                            return columns.map(function (column) {
-                                return {column: column, value: row[column]};
-                            });
-                        })
-                        .enter()
-                        .append('td')
-                            .text(function (d) { return d.value; });
-
-        /* Add the appropriate bootstrap classes */
-        d3.select('#'+locationid+' table').node().classList.add('table');
-        /* Alternate colors of rows. */
-        d3.select('#'+locationid+' table').node().classList.add('table-striped');
-        /* Color rows when hovered */
-        d3.select('#'+locationid+' table').node().classList.add('table-hover');
-        /* Ensure column headers are given column scope */
-        d3.selectAll('#'+locationid+' thead tr th').attr('scope', 'col');
-
-        return table;
-    }
-
-    // render the tables
-    tabulate(data, columns);
+    // Bind the data and add the line to the chart
+    body.append('path')
+        .datum(data)
+        .attr('d', d => valueline(d))
+        // Don't let path close
+        .attr("class", "chartLine")
+        .attr('fill', 'none')
+        .attr('stroke', 'rgba(255, 0, 0, 1)')
+        .attr('stroke-width', '0.2vw')
 }

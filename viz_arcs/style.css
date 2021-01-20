@@ -107,9 +107,10 @@
  * Chart specific
  *
  */
-.chartLine {
-    fill: none;
-    stroke: rgba( 125, 125, 200, 1);
+#d3viz002 #body{
+    left: 50%;
+    top: 50%;
+    transform: translate(150px, 150px);
 }
 
 /*
