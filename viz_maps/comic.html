@@ -1,0 +1,278 @@
+<!doctype html>
+
+<!-- this is a comment for human! -->
+
+<html lang="en">
+
+  <header>
+    <title>PJ Divs</title><!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/css/assets.css">
+    <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="name" content="PJ Divs">
+    <meta name="robots" content="noindex, nofollow">
+  </header>
+
+  <body>
+    <div class="jumbotron">
+        <div id="particles-js" class="particles-js"></div>
+        <div class="col-sm-12">
+          <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
+          <h1 style="text-align: center">don3ts: D3 donut/pie charts.</h1>
+        </div>
+      </div>
+      
+    <hr>
+    
+    <div class='paperroll top'></div>
+
+    <div class="container nomargin">
+        <div class="row">
+            <div class="col-12 col-sm-12">
+                <h1>Goals:</h1>
+                <ul>
+                    <li>Gather geoJSON data for the donut chart.</li>
+                    <li>Create a location for the donut chart.</li>
+                    <li>Develop the basic parameters for the map.</li>
+                    <li>Generate a global projection for the map.</li>
+                    <li>Using D3 geopath, create a destination for the map.</li>
+                    <li>Draw the map using the features from geoJSON.</li>
+                </ul>
+            </div>
+        </div>
+        <div class='paperroll bottom'></div>
+        <div class="row row-content">
+            <div class="col-12 col-sm-12">
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-12 col-sm-12 d-flex justify-content-center">
+                <div id="workspace">
+                    <div id="panel-a" class="workview">
+                        <div class="wall"></div>
+                        <div class="floor"></div>
+                        <div class="whiteboard">
+                            <div id="d3viz002" class="d3viz chartcontainer">
+                                <svg id="viz_svg01" class="chart"></svg>
+                            </div>
+                        </div>
+                        <div class="strawberryDonut">
+                            <img src="/svg/don3ts/donut_strawberry.svg">
+                        </div>
+                        <div class="chocolateDonut">
+                            <img src="/svg/don3ts/donut_chocolate.svg">
+                        </div>
+                        <div class="chatbubble workbubble strawberrysays">How do you learn Assembly?
+                            <div class="chatarrow strawberrysays"></div>
+                        </div>
+                        <div class="chatbubble workbubble chocolatesays">A bit here, a bit there.
+                            <div class="chatarrow chocolatesays"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 d-flex justify-content-center">
+                <form style="width: 50%;">
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label for="formControlRangeX">Adjust the data</label>
+                        <input type="range" class="form-control-range" id="formControlRangeX" value="0">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row row-content">
+            <h1>D3 donut/pie charts</h1>
+            <p>A donut/pie chart is quite possibly one of the easiest ways to quickly convey proportional data. While the donut/pie chart
+                suffers from many drawbacks and abuses, this is the type of chart that can speak across education and familiarity barriers.
+                The simplicity of the donut/pie chart means that extra effort must be taken to explain whatever aggregate intricacies the chart
+                may be hiding.
+            </p>
+            </p>
+                Each 'slice' of a donut/pie chart represents a category of data.  The size of that slice translates to the percent overall 
+                represented by the category within the descriptive set. The categories themselves are identified within a legend using 
+                colors and symbols, or those categories can be written directly on the slices.
+            </p>
+            <p>The following steps can be taken to build a simple donut/pie chart like the once in the image above.</p>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Gather data for the donut chart</h3>
+                <p>In order to create a representation of data, it is a good idea to start with the data that we
+                    want to represent. If you don't happen to have any data, then creating data is exceptionally easy.
+                    Place the following code in a javascript file to create a donut/pie set of data to practice with:
+                </p>
+                <pre><code>
+// When the document is loaded:
+// Create some data
+// Draw a donut chart with the data.
+document.addEventListener("DOMContentLoaded", function(){
+    // dataObj is an array of dataElement objects.
+    dataObj = [];
+    let viz_svg01 = d3.select("#viz_svg01");
+
+    // dataElements are classes for data row/objects.
+    // properties:
+    //   category: a string object
+    //   sales: a numeric value
+    function dataElement(category, sales){
+        this.category = category;
+        this.sales = sales;
+    }
+
+    // Create a set of 10 dataElements.
+    for(i = 1; i &lt; 11; i++){
+        // Use a translation of number to letter for category
+        category = 'a' + i;
+        dataObj.push(new dataElement(category, 10 + i));
+    }
+
+    // Draw the chart
+    representData(viz_svg01, dataObj);
+})
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Create a location for the donut chart</h3>
+                <p>We will need a spot in our html in order to draw our donut chart. This can easily be done by adding an
+                    svg element to an html document:
+                </p>
+                <pre><code>
+                    &lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
+                </code></pre>
+                <p>Place this code in the body of an html document. D3 will identify this svg using the 'id' attribute.
+                    Once D3 has identified the svg, we can start to build chart elements inside.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Develop the basic parameters for the chart</h3>
+                <p>Drawing a chart can get messy. With all of the parameters that will be changed throughout the life
+                    of the chart, it is a good idea to place them all up front:
+                </p>
+                <pre><code>
+    function representData(location, data){
+        // Establish the basic parameters of the display
+        // The starting position of the chart.
+        chartBodyX = 100;
+        chartBodyY = 100;
+        // The relative size of the axes.
+        xScaleWidth = 200;
+        yScaleHeight = 200;
+        // The number of tick marks on the x axis.
+        numTicks = 5;
+        // The amount of space to allocate for text,e etc. on the x and y axes.
+        textBuffer = 20;
+        topMargin = 10;
+    
+        // Create the viewbox. This viewbox helps define the visible portions
+        // of the chart, but it also helps when making the chart responsive.
+        location.attr('viewBox', `0 0 ${xScaleWidth + chartBodyX + textBuffer} ${yScaleHeight + textBuffer + topMargin}`);
+                </code></pre>
+                <p>Append this code to your javascript file. Nothing special should happen just yet - we still have a bit more 
+                    defining to do.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Generate a pie-style scaling function and color scale.</h3>
+                <p>In order to create a scale for the axis, we ask D3 to build <code>pie</code> and <code>scaleOrdinal</code> 
+                    objects that can take
+                    care of all of the messy tasks involved with calculating beginnings and ends, distributing graphic elements
+                    evenly, and determining the best ways to represent our data by color.
+                </p>
+                <pre><code>
+    // Create a pie function to translate values into arcs
+    let pie = d3.pie()
+        .value(d => d.sales)
+
+    // set colors for chart
+    let colorScale = d3.scaleOrdinal()
+        .range(d3.schemeCategory10)
+        .domain(data.map(d => d.category))
+                </code></pre>
+                <p>Appending this code to the javascript file, we can now move on to preparing the svg to draw the chart.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Create grouping objects for the chart.</h3>
+                <p>We want to draw the donut chart with the opportunity for scaling later as different objects, 
+                    so we will use D3 to 
+                    append a 'g' grouping element to the svg for each the body and axes elements.
+                </p>
+                <pre><code>
+    // Add groups to the svg for the body of the chart.
+    body = location.append('g')
+                .attr('id', 'chartBody')
+                .attr('transform', `translate(${chartBodyX}, ${chartBodyY})`);
+                </code></pre>
+                <p>Once that code has been placed into the javascript file, we can actually start drawing the donut chart.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Define and add the donut to the display.</h3>
+                <p>In order to create the donut for the chart, we first need to establish the following details:
+                </p>
+                <ul>
+                    <li>Where we want to place the donut (in the body element).</li>
+                    <li>How we want to represent the donut ('path').</li>
+                    <li>What data the donut is representing (data passed into this function).</li>
+                </ul> 
+                <p>In the following code, we use d3.select to state where we want the arc to be drawn. Then we use append('path')
+                    to indicate that we want to use a path to represent our data, then we
+                    indicate that we want the incoming data (we called it 'data') to be used as our chart's source data.</p>
+                <pre><code>
+    // Create the arcs for the pie chart
+    let arc = d3.arc()
+        .outerRadius(yScaleHeight/2)
+        .innerRadius(yScaleHeight/6);
+    
+    // Create the groups
+    let g = body.selectAll('.arc')
+        .data(pie(data))
+        //only append g on new data
+        .enter()
+        .append('g')
+
+    g.append('path')
+        .attr('d', arc)
+        .attr('fill', d => { return colorScale(d.data.category)})
+
+}
+                </code></pre>
+                <p>Adding this code to the end of your javascript file should complete this donut chart demo. If you have any
+                    troubles, you can check the source code for the image at the top of this article <a href="#">here</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+  </body>
+
+<footer class="row footer justify-content-center">
+  <code>Copyright (c) 2021 Issac Gardner</code>
+</footer>
+<!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/js/d3.v6.min.js"></script>
+<script src="/particles/particles.js"></script>
+<script> particlesJS.load('particles-js', '/particles/particles.json', function() {
+  console.log('callback - particles.js config loaded');
+});</script>
+<script src="./script.js"></script>
+<script src="/script.js"></script>
+</html>
