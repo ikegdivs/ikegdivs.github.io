@@ -11,8 +11,9 @@ body{
 
 .d3viz {
     position: relative;
-    top: 1%;
+    top: 5%;
     left: 1%;
+    height: 90%;
     width: 98%;
 }
 
@@ -124,8 +125,6 @@ body{
 * Animations
 *
 */
-
-
 .whiteboard {
     /* move the clouds to the right. */
     -webkit-animation: bgd01 20s alternate infinite;

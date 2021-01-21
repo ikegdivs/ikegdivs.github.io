@@ -24,9 +24,14 @@ document.addEventListener("DOMContentLoaded", function(){
 
     // Draw the chart
     representData(viz_svg01, dataObj);
+
+    // If the user changes the X slider, adjust the radius of the donut's inner circle.
+    $('#formControlRangeX').on('input', function(event){
+        representData(viz_svg01, dataObj, parseFloat($(event.currentTarget).prop('value'))/250);
+    })
 })
 
-function representData(location, data){
+function representData(location, data, innerRadiusFactor = 0.2){
     // Establish the basic parameters of the display
     // The starting position of the chart.
     chartBodyX = 100;
@@ -39,6 +44,9 @@ function representData(location, data){
     // The amount of space to allocate for text,e etc. on the x and y axes.
     textBuffer = 20;
     topMargin = 10;
+
+    // Clear out the display svg
+    location.selectAll('*').remove();
 
     // Create the viewbox. This viewbox helps define the visible portions
     // of the chart, but it also helps when making the chart responsive.
@@ -61,7 +69,7 @@ function representData(location, data){
     // Create the arcs for the pie chart
     let arc = d3.arc()
         .outerRadius(yScaleHeight/2)
-        .innerRadius(yScaleHeight/6);
+        .innerRadius(yScaleHeight * innerRadiusFactor);
     
     // Create the groups
     let g = body.selectAll('.arc')
@@ -75,3 +83,4 @@ function representData(location, data){
         .attr('fill', d => { return colorScale(d.data.category)})
 
 }
+

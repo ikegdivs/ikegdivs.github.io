@@ -24,30 +24,22 @@ jQuery(function(){dataObj = [];
     } )
 })
 
-
-
 function representData(data, location){
     // Establish the basic parameters of the display
     // The starting position of the chart.
-    chartBodyX = 10;
-    chartBodyY = 20;
+    chartBodyX = 0;
+    chartBodyY = 25;
     // The relative size of the axes.
-    xScaleWidth = 550;
-    yScaleHeight = 215;
-    // The number of tick marks on the x axis.
-    numTicks = 5;
-    // The amount of space to allocate for text,e etc. on the x and y axes.
-    textBuffer = 20;
-    topMargin = 10;
+    xScaleWidth = 420;
+    yScaleHeight = 170;
 
     // Create the viewbox. This viewbox helps define the visible portions
     // of the chart, but it also helps when making the chart responsive.
-    location.attr('viewBox', `0 0 ${xScaleWidth + chartBodyX + textBuffer} ${yScaleHeight + textBuffer + topMargin}`);
+    location.attr('viewBox', `0 0 ${xScaleWidth + chartBodyX} ${yScaleHeight}`);
 
     // Add groups to the svg for the body of the chart.
     body = location.append('g')
                 .attr('id', 'chartBody')
-                //.attr('transform', `0, 0)`)
                 .attr('transform', `translate(${chartBodyX}, ${chartBodyY})`)
 
     // Create the projection

@@ -14,19 +14,6 @@
     /*margin: 30px;*/
 }
 
-/* Properties for the workspace. */
-#workspace {
-    box-sizing: content-box;
-    /* Present objects in a flex style */
-    display: flex;
-    /* If content exceeds background size, hide the content. */
-    overflow: hidden;
-    /* Use relative positioning. */
-    background-image: linear-gradient( rgb(221, 221, 221), rgb(170, 170, 170));
-    border: 3px solid rgb(180, 180, 180);
-    box-shadow: 3px 3px 10px rgb(200, 200, 200), -3px -3px 10px rgb(200, 200, 200);
-}
-
 /*Anything in the workspace that is not a bootstrap container is content-box*/
 #workspace :not(.container *) {
     box-sizing: content-box;
@@ -165,14 +152,16 @@ input[type="range"].theme-purple{
     margin-bottom: 2vw;
 }
 
+input[type="range"].theme-purple:focus{
+    outline-width: 0;
+}
+
 input[type="range"].theme-purple::-webkit-slider-runnable-track{
     -webkit-appearance: none;
     appearance: none;
     height: 3px;
     background:rgb(170, 50, 160);
-    ;
 }
-
 
 input[type="range"].theme-purple::-webkit-slider-thumb{
     -webkit-appearance: none;
@@ -229,8 +218,29 @@ input[type="range"].theme-purple::-webkit-slider-thumb{
     overflow: hidden;
 }
 
+/* Properties for the workspace. */
+#workspace {
+    position: relative;
+    top: 0;
+    left: 0;
+    padding: 0.5%;
+    width: 72vw;
+    height: 40.5vw;
+    box-sizing: content-box;
+    /* Present objects in a flex style */
+    display: flex;
+    /* If content exceeds background size, hide the content. */
+    overflow: hidden;
+    /* Use relative positioning. */
+    background-image: linear-gradient( rgb(221, 221, 221), rgb(170, 170, 170));
+    border: 3px solid rgb(180, 180, 180);
+    box-shadow: 3px 3px 10px rgb(200, 200, 200), -3px -3px 10px rgb(200, 200, 200);
+}
+
 /* Properties for the workspace viewport. */
 .workview {
+    width: 99%;
+    height: 99%;
     /*display: block;*/
     /* Display properties */
     position: absolute;
@@ -344,24 +354,6 @@ span {
     max-width: 420px;
 }
 
-/* Make the workspace responsive */
-#workspace {
-    position: relative;
-    top: 0;
-    left: 0;
-    padding: 0.5%;
-    width: 72vw;
-    height: 40.5vw;
-}
-
-.workview {
-    /*width: 70.8vw;
-    height: 39.4vw;*/
-    width: 99%;
-    height: 99%;
-}
-
-
 /* If the screen is large enough to display two panels at once, make the panelboard large enough
    to comfortably hold two panels. */
 @media only screen and (min-width: 768px) {
@@ -370,7 +362,6 @@ span {
         max-width: 420px;
     }
 }
-
 
 @media only screen and (min-width: 1200px) {
     #panelboard {
