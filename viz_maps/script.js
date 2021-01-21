@@ -1,9 +1,5 @@
 /*When the document is loaded*/
-jQuery(function(){dataObj = [];
-    mapObj = [];
-    statsObj = [];
-    data = null;
-
+jQuery(function(){
     let viz_svg01 = d3.select("#viz_svg01");
 
     // dataElements are classes for data row/objects.
@@ -12,19 +8,17 @@ jQuery(function(){dataObj = [];
         this.sales = sales;
     }
 
-    // Create a set of 10 dataElements.
-    for(i = 1; i < 11; i++){
-        // Use a translation of number to letter for category
-        category = 'a' + i;
-        dataObj.push(new dataElement(category, 10 + i));
-    }
-
     d3.json('/data/countries.geojson').then(function(data){
         representData(data, viz_svg01);
+
+        // If the user changes the X slider, adjust the color of the map elements
+        $('#formControlRangeX').on('input', function(event){
+            representData(data, viz_svg01, parseFloat($(event.currentTarget).prop('value')) * 2.5);
+        })
     } )
 })
 
-function representData(data, location){
+function representData(data, location, elementcolor=0){
     // Establish the basic parameters of the display
     // The starting position of the chart.
     chartBodyX = 0;
@@ -36,6 +30,9 @@ function representData(data, location){
     // Create the viewbox. This viewbox helps define the visible portions
     // of the chart, but it also helps when making the chart responsive.
     location.attr('viewBox', `0 0 ${xScaleWidth + chartBodyX} ${yScaleHeight}`);
+
+    // clean out the location:
+    location.innerHTML = '';
 
     // Add groups to the svg for the body of the chart.
     body = location.append('g')
@@ -49,8 +46,6 @@ function representData(data, location){
         // move the projection to the center
         .translate([xScaleWidth/2, yScaleHeight/2]);
 
-
-
     let path = d3.geoPath()
         .projection(projection)
 
@@ -60,6 +55,6 @@ function representData(data, location){
         .append('path')
         .attr('d', d => path(d))
         .attr('stroke', 'rgba(0, 0, 0, 1)')
-        .attr('fill', 'rgba(255, 255, 255, 1)')
+        .attr('fill', `rgba(${255 - elementcolor}, ${elementcolor}, 255, 1)`)
 
 }
