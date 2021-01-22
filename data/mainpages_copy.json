@@ -1,0 +1,193 @@
+[
+    {
+        "id": 1,
+        "name": "jQuery: fadeTo",
+        "href": "jQuery_fadeto/comic.html",
+        "src": "images/jQuery_fadeto.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude meet a ghost."
+    },
+    {
+        "id": 2,
+        "name": "jQuery: offset",
+        "href": "jQuery_offset/comic.html",
+        "src": "images/jQuery_offset.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude catch a gnome.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 3,
+        "name": "jQuery: replaceWith",
+        "href": "jQuery_replaceWith/comic.html",
+        "src": "images/jQuery_replaceWith.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude find treasure."
+    },
+    {
+        "id": 4,
+        "name": "jQuery: val",
+        "href": "jQuery_val/comic.html",
+        "src": "images/jQuery_val.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude search for value at a convenience store."
+    },
+    {
+        "id": 5,
+        "name": "jQuery: class",
+        "href": "jQuery_class/comic.html",
+        "src": "images/jQuery_class.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude climb a giant."
+    },
+    {
+        "id": 6,
+        "name": "jQuery: id",
+        "href": "jQuery_id/comic.html",
+        "src": "images/jQuery_id.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude meet a pirate."
+    },
+    {
+        "id": 7,
+        "name": "jQuery: element",
+        "href": "jQuery_element/comic.html",
+        "src": "images/jQuery_element.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude fence watches."
+    },
+    {
+        "id": 8,
+        "name": "jQuery: multiple selector",
+        "href": "jQuery_multipleSelector/comic.html",
+        "src": "images/jQuery_multipleSelector.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude get some bread."
+    },
+    {
+        "id": 9,
+        "name": "jQuery: childSelector",
+        "href": "jQuery_childSelector/comic.html",
+        "src": "images/jQuery_childSelector.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude see sprites."
+    },
+    {
+        "id": 10,
+        "name": "jQuery: ancestor descendant selector",
+        "href": "jQuery_ancestorDescendantSelector/comic.html",
+        "src": "images/jQuery_ancestorDescendantSelector.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude shop for dragon eggs."
+    },
+    {
+        "id": 11,
+        "name": "jQuery: prev next selector",
+        "href": "jQuery_prevnextSelector/comic.html",
+        "src": "images/jQuery_prevnextSelector.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude escape the rain."
+    },
+    {
+        "id": 12,
+        "name": "jQuery: prev siblings selector",
+        "href": "jQuery_prevSiblingsSelector/comic.html",
+        "src": "images/jQuery_prevSiblingsSelector.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude visit a tavern."
+    },
+    {
+        "id": 13,
+        "name": "jQuery: hasClass",
+        "href": "jQuery_hasClass/comic.html",
+        "src": "images/jQuery_hasClass.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude at sea."
+    },
+    {
+        "id": 14,
+        "name": "jQuery: css",
+        "href": "jQuery_css/comic.html",
+        "src": "images/jQuery_css.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude cross a rope bridge."
+    },
+    {
+        "id": 15,
+        "name": "jQuery: attr",
+        "href": "jQuery_attr/comic.html",
+        "src": "images/jQuery_attr.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude spy a coven."
+    },
+    {
+        "id": 16,
+        "name": "jQuery: removeAttr",
+        "href": "jQuery_removeAttr/comic.html",
+        "src": "images/jQuery_removeAttr.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude in the desert."
+    },
+    {
+        "id": 17,
+        "name": "jQuery: height",
+        "href": "jQuery_height/comic.html",
+        "src": "images/jQuery_height.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude get tea."
+    },
+    {
+        "id": 18,
+        "name": "jQuery: addClass",
+        "href": "jQuery_addClass/comic.html",
+        "src": "images/jQuery_addClass.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude see swine."
+    },
+    {
+        "id": 19,
+        "name": "jQuery: removeClass",
+        "href": "jQuery_removeClass/comic.html",
+        "src": "images/jQuery_removeClass.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude watch birds."
+    },
+    {
+        "id": 20,
+        "name": "jQuery: toggleClass",
+        "href": "jQuery_toggleClass/comic.html",
+        "src": "images/jQuery_toggleClass.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude at the library."
+    },
+    {
+        "id": 21,
+        "name": "jQuery: data",
+        "href": "jQuery_jquerydata/comic.html",
+        "src": "images/jQuery_data.JPG",
+        "category": "jQuery",
+        "series": "Patch and Maude find some cats."
+    }
+]
+
+<div class="carousel-item active" >
+
+href: address of page source html file.
+    <a href="jQuery_fadeto/comic.html">
+
+src: address of image for link to page.
+alt: alternate text (use "name" attribute)
+    <img class="d-block img-fluid"  src="images/jQuery_fadeto.JPG"  alt="jQuery: fadeto">
+
+        <div class="carousel-caption d-none d-md-block">
+                            
+Replace jQuery: fadeTo with "name"
+        <h2 class="mt-0">jQuery: fadeto <span class="badge badge-pill badge-secondary">jQuery</span></h2>
+
+
+
+
+                            <p class="d-none d-sm-block">Patch and Maude meet a ghost.</p>
+                        </div>
+                      </a>
+                    </div>

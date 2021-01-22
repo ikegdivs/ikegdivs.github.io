@@ -229,8 +229,6 @@ input[type="range"].theme-purple::-webkit-slider-thumb{
     box-sizing: content-box;
     /* Present objects in a flex style */
     display: flex;
-    /* If content exceeds background size, hide the content. */
-    overflow: hidden;
     /* Use relative positioning. */
     background-image: linear-gradient( rgb(221, 221, 221), rgb(170, 170, 170));
     border: 3px solid rgb(180, 180, 180);

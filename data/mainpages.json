@@ -1,0 +1,191 @@
+[
+    {
+        "id": 1,
+        "name": "jQuery: fadeTo",
+        "href": "jQuery_fadeto/comic.html",
+        "src": "images/jQuery_fadeto.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude meet a ghost.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 2,
+        "name": "jQuery: offset",
+        "href": "jQuery_offset/comic.html",
+        "src": "images/jQuery_offset.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude catch a gnome.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 3,
+        "name": "jQuery: replaceWith",
+        "href": "jQuery_replaceWith/comic.html",
+        "src": "images/jQuery_replaceWith.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude find treasure.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 4,
+        "name": "jQuery: val",
+        "href": "jQuery_val/comic.html",
+        "src": "images/jQuery_val.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude search for value at a convenience store.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 5,
+        "name": "jQuery: class",
+        "href": "jQuery_class/comic.html",
+        "src": "images/jQuery_class.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude climb a giant.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 6,
+        "name": "jQuery: id",
+        "href": "jQuery_id/comic.html",
+        "src": "images/jQuery_id.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude meet a pirate.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 7,
+        "name": "jQuery: element",
+        "href": "jQuery_element/comic.html",
+        "src": "images/jQuery_element.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude fence watches.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 8,
+        "name": "jQuery: multiple selector",
+        "href": "jQuery_multipleSelector/comic.html",
+        "src": "images/jQuery_multipleSelector.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude get some bread.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 9,
+        "name": "jQuery: childSelector",
+        "href": "jQuery_childSelector/comic.html",
+        "src": "images/jQuery_childSelector.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude see sprites.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 10,
+        "name": "jQuery: ancestor descendant selector",
+        "href": "jQuery_ancestorDescendantSelector/comic.html",
+        "src": "images/jQuery_ancestorDescendantSelector.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude shop for dragon eggs.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 11,
+        "name": "jQuery: prev next selector",
+        "href": "jQuery_prevnextSelector/comic.html",
+        "src": "images/jQuery_prevnextSelector.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude escape the rain.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 12,
+        "name": "jQuery: prev siblings selector",
+        "href": "jQuery_prevSiblingsSelector/comic.html",
+        "src": "images/jQuery_prevSiblingsSelector.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude visit a tavern.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 13,
+        "name": "jQuery: hasClass",
+        "href": "jQuery_hasClass/comic.html",
+        "src": "images/jQuery_hasClass.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude at sea.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 14,
+        "name": "jQuery: css",
+        "href": "jQuery_css/comic.html",
+        "src": "images/jQuery_css.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude cross a rope bridge.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 15,
+        "name": "jQuery: attr",
+        "href": "jQuery_attr/comic.html",
+        "src": "images/jQuery_attr.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude spy a coven.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 16,
+        "name": "jQuery: removeAttr",
+        "href": "jQuery_removeAttr/comic.html",
+        "src": "images/jQuery_removeAttr.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude in the desert.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 17,
+        "name": "jQuery: height",
+        "href": "jQuery_height/comic.html",
+        "src": "images/jQuery_height.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude get tea.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 18,
+        "name": "jQuery: addClass",
+        "href": "jQuery_addClass/comic.html",
+        "src": "images/jQuery_addClass.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude see swine.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 19,
+        "name": "jQuery: removeClass",
+        "href": "jQuery_removeClass/comic.html",
+        "src": "images/jQuery_removeClass.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude watch birds.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 20,
+        "name": "jQuery: toggleClass",
+        "href": "jQuery_toggleClass/comic.html",
+        "src": "images/jQuery_toggleClass.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude at the library.",
+        "series": "Patch and Maude"
+    },
+    {
+        "id": 21,
+        "name": "jQuery: data",
+        "href": "jQuery_jquerydata/comic.html",
+        "src": "images/jQuery_data.JPG",
+        "category": "jQuery",
+        "description": "Patch and Maude find some cats.",
+        "series": "Patch and Maude"
+    }
+]

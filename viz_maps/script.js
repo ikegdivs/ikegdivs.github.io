@@ -1,19 +1,17 @@
-/*When the document is loaded*/
-jQuery(function(){
+// When the document is loaded:
+// Load some geodata
+// Draw a map with the data.
+document.addEventListener("DOMContentLoaded", function(){
     let viz_svg01 = d3.select("#viz_svg01");
-
-    // dataElements are classes for data row/objects.
-    function dataElement(category, sales){
-        this.category = category;
-        this.sales = sales;
-    }
 
     d3.json('/data/countries.geojson').then(function(data){
         representData(data, viz_svg01);
 
         // If the user changes the X slider, adjust the color of the map elements
         $('#formControlRangeX').on('input', function(event){
-            representData(data, viz_svg01, parseFloat($(event.currentTarget).prop('value')) * 2.5);
+            elementcolor =  Math.round(parseFloat($(event.currentTarget).prop('value')) * 2.5);
+            viz_svg01.selectAll('path')
+                .attr('fill', `rgba(10, ${elementcolor}, ${255 - elementcolor}, 1)`)
         })
     } )
 })
@@ -54,7 +52,6 @@ function representData(data, location, elementcolor=0){
         .enter()
         .append('path')
         .attr('d', d => path(d))
-        .attr('stroke', 'rgba(0, 0, 0, 1)')
-        .attr('fill', `rgba(${255 - elementcolor}, ${elementcolor}, 255, 1)`)
+        .attr('fill', `rgba(125, ${elementcolor}, ${255 - elementcolor}, 1)`)
 
 }

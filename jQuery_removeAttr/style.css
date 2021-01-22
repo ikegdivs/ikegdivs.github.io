@@ -158,8 +158,8 @@
 
 .chatbubble.maudesays {
     top: 34%;
-    left: 20%;
-    width: 28%;
+    left: 15%;
+    width: 32%;
 }
 
 .chatarrow.maudesays {
@@ -167,7 +167,7 @@
     border-left: 0.4vw solid transparent;
     border-top: 2.5vw solid;
     top: calc(100% + 1px);
-    left: 15%;
+    left: 25%;
 }
 
 

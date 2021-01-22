@@ -76,17 +76,17 @@
 }
 
 .chatbubble.maudesays {
-    top: 5%;
-    left: 10%;
-    width: 40%;
+    top: 1%;
+    left: 1%;
+    width: 43%;
 }
 
 .chatarrow.maudesays {
-    border-right: 1.2vw solid transparent;
+    border-right: 1.0vw solid transparent;
     border-left: 0.4vw solid transparent;
-    border-top: 2.5vw solid;
+    border-top: 4.0vw solid;
     top: calc(100% + 1px);
-    left: 22%;
+    left: 40%;
 }
 
 

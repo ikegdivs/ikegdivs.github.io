@@ -24,11 +24,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
     // Draw the chart
     representData(viz_svg01, dataObj);
-
-    // If the user changes the X slider, adjust the radius of the donut's inner circle.
-    $('#formControlRangeX').on('input', function(event){
-        representData(viz_svg01, dataObj, parseFloat($(event.currentTarget).prop('value'))/250);
-    })
 })
 
 function representData(location, data, innerRadiusFactor = 0.2){
@@ -82,5 +77,17 @@ function representData(location, data, innerRadiusFactor = 0.2){
         .attr('d', arc)
         .attr('fill', d => { return colorScale(d.data.category)})
 
+    // If the user changes the X slider, adjust the radius of the donut's inner circle.
+    $('#formControlRangeX').on('input', function(event){
+        innerRadiusFactor = parseFloat($(event.currentTarget).prop('value'))/250;
+        
+        // Recreate the donut's inner and outer radius values
+        let arc = d3.arc()
+            .outerRadius(yScaleHeight/2)
+            .innerRadius(yScaleHeight * innerRadiusFactor)
+
+        location.selectAll('path')
+            .attr('d', arc)
+    })
 }
 
