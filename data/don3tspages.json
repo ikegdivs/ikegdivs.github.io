@@ -1,0 +1,146 @@
+[
+    {
+        "id": 0,
+        "name": "Future value with periodic compounding on mulitple assets",
+        "href": "viz_futurevalue_periodic_multiasset/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of future value with periodic compounding on mulitple assets.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Compound present value with perpetuity on mulitple assets",
+        "href": "viz_presentvalue_perpetuity_multiasset/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of compound interest present value with perpetuity on mulitple assets.",
+        "series": "don3ts"
+    },
+    {
+        "id": 2,
+        "name": "Compound present value with annuity on mulitple assets",
+        "href": "viz_presentvalue_annuity_multiasset/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of compound interest present value with annuity on mulitple assets.",
+        "series": "don3ts"
+    },
+    {
+        "id": 3,
+        "name": "Compound present value with annuity",
+        "href": "viz_presentvalue_annuity/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of compound interest present value with annuity.",
+        "series": "don3ts"
+    },
+    {
+        "id": 4,
+        "name": "Compound present value",
+        "href": "viz_presentvalue_perpetuity_multiasset/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of compound interest present value.",
+        "series": "don3ts"
+    },
+    {
+        "id": 5,
+        "name": "Annuity future value",
+        "href": "viz_futurevalue_annuity/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of annuity future value with compound interest.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Compound future value",
+        "href": "viz_futurevalue_compound/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of compound interest future value.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Depreciation, straight-line",
+        "href": "viz_depreciation_straightline/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of straight-line depreciation.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Depreciation, double declining",
+        "href": "viz_depreciation_doubledeclining/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "Visualization of double-declining depreciation",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Viz networks 1",
+        "href": "viz_networks1/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "D3 networks 1.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Viz multi-map",
+        "href": "viz_multiplemapelements/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "D3 multi-map.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Viz Choropleth",
+        "href": "viz_choropleth/comic.html",
+        "src": "images/viz_table.JPG",
+        "category": "don3ts",
+        "description": "D3 choropleth.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Viz maps",
+        "href": "viz_maps/comic.html",
+        "src": "images/viz_maps.JPG",
+        "category": "don3ts",
+        "description": "D3 maps.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Viz Donut/Pie Charts",
+        "href": "viz_donutpiecharts/comic.html",
+        "src": "images/viz_donutpiecharts.JPG",
+        "category": "don3ts",
+        "description": "D3 donut/pie charts.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Viz Line Charts",
+        "href": "viz_linecharts/comic.html",
+        "src": "images/viz_linecharts.JPG",
+        "category": "don3ts",
+        "description": "D3 line charts.",
+        "series": "don3ts"
+    },
+    {
+        "id": 1,
+        "name": "Viz Bar Charts",
+        "href": "viz_barcharts/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "D3 bar charts.",
+        "series": "don3ts"
+    }
+]

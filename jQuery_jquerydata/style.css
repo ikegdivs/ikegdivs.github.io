@@ -135,9 +135,9 @@
 }
 
 .chatbubble.patchsays {
-    top: 20%;
+    top: 5%;
     left: 1%;
-    width: 39%;
+    width: 40%;
 }
 
 .chatarrow.patchsays {
@@ -149,9 +149,9 @@
 }
 
 .chatbubble.maudesays {
-    top: 39%;
+    top: 35%;
     left: 15%;
-    width: 50%;
+    width: 54%;
 }
 
 .chatarrow.maudesays {

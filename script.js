@@ -26,14 +26,14 @@ if(location.pathname != '/'
         $('body').prepend(navbar);
 }
 
+// Add patch and maude items to the carousel
 if(location.pathname == '/index.html' 
     || location.pathname =='/'){
-    console.log('In index.html')
+
     // Load mainpages.json into an object
     jQuery.getJSON('/data/mainpages.json', function(data){
         // For every item in mainpages.json, create a carousel-item
         data.forEach(function(page, index){
-            console.log(page.src);
             let cItem = $('<div></div>')
             cItem.addClass('carousel-item');
             // If this is the first page, make it the active element
@@ -79,36 +79,144 @@ if(location.pathname == '/index.html'
             cap.append(desc);
         });
     });
+
+    // Add the controls to the carousel
+    $('#patchmaudecarousel .carousel-inner').append(
+        `<a class="carousel-control-prev" href="#patchmaudecarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#patchmaudecarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        </a>`
+    );
 }
 
-// add the carousel-item to the carousel-inner object
+// Add the Divs items to the carousel
+if(location.pathname == '/index.html' 
+    || location.pathname =='/'){
 
-// add the controls to the carousel
-{
-`<a class="carousel-control-prev" href="#patchmaudecarousel" role="button" data-slide="prev">
-<span class="carousel-control-prev-icon"></span>
-</a>
-<a class="carousel-control-next" href="#patchmaudecarousel" role="button" data-slide="next">
-<span class="carousel-control-next-icon"></span>
-</a>`
+    // Load mainpages.json into an object
+    jQuery.getJSON('/data/divspages.json', function(data){
+        // For every item in mainpages.json, create a carousel-item
+        data.forEach(function(page, index){
+            let cItem = $('<div></div>')
+            cItem.addClass('carousel-item');
+            // If this is the first page, make it the active element
+            if(index==0){
+                cItem.addClass('active');
+            }
+
+            // Add the link
+            href = $('<a></a>')
+            href.attr('href', page.href);
+
+            // Add the image
+            img = $('<img />');
+            img.addClass('d-block');
+            img.addClass('img-fluid');
+            img.attr('src', page.src);
+            img.attr('alt', page.name);
+
+            // Add the caption.
+            cap = $('<div></div>');
+            cap.addClass('carousel-caption');
+            cap.addClass('d-none');
+            cap.addClass('d-md-block');
+
+            // Add the caption text
+            h2 = $('<h2></h2>');
+            h2.addClass('mt-0');
+            h2.text(page.name);
+
+            // Add the description
+            desc = $('<p></p>');
+            desc.addClass('d-none');
+            desc.addClass('d-sm-block');
+            desc.text(page.description);
+
+            
+            // Assemble the objects
+            $('#thedivscarousel .carousel-inner').append(cItem);
+            cItem.append(href);
+            href.append(img);
+            href.append(cap);
+            cap.append(h2);
+            cap.append(desc);
+        });
+    });
+
+    // Add the controls to the carousel
+    $('#thedivscarousel .carousel-inner').append(
+        `<a class="carousel-control-prev" href="#thedivscarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#thedivscarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        </a>`
+    );
 }
-{
-`<div class="carousel-item active" >
 
-href: address of page source html file.
-    <a href="jQuery_fadeto/comic.html">
+// Add the don3ts items to the carousel
+if(location.pathname == '/index.html' 
+    || location.pathname =='/'){
 
-src: address of image for link to page.
-alt: alternate text (use "name" attribute)
-    <img class="d-block img-fluid"  src="images/jQuery_fadeto.JPG"  alt="jQuery: fadeto">
+    // Load mainpages.json into an object
+    jQuery.getJSON('/data/don3tspages.json', function(data){
+        // For every item in mainpages.json, create a carousel-item
+        data.forEach(function(page, index){
+            let cItem = $('<div></div>')
+            cItem.addClass('carousel-item');
+            // If this is the first page, make it the active element
+            if(index==0){
+                cItem.addClass('active');
+            }
 
-        <div class="carousel-caption d-none d-md-block">
-                            
-Replace jQuery: fadeTo with "name"
-        <h2 class="mt-0">jQuery: fadeto <span class="badge badge-pill badge-secondary">jQuery</span></h2>
+            // Add the link
+            href = $('<a></a>')
+            href.attr('href', page.href);
 
+            // Add the image
+            img = $('<img />');
+            img.addClass('d-block');
+            img.addClass('img-fluid');
+            img.attr('src', page.src);
+            img.attr('alt', page.name);
 
-                            <p class="d-none d-sm-block">Patch and Maude meet a ghost.</p>
-                        </div>
-                      </a>
-                    </div>`}
+            // Add the caption.
+            cap = $('<div></div>');
+            cap.addClass('carousel-caption');
+            cap.addClass('d-none');
+            cap.addClass('d-md-block');
+
+            // Add the caption text
+            h2 = $('<h2></h2>');
+            h2.addClass('mt-0');
+            h2.text(page.name);
+
+            // Add the description
+            desc = $('<p></p>');
+            desc.addClass('d-none');
+            desc.addClass('d-sm-block');
+            desc.text(page.description);
+
+            
+            // Assemble the objects
+            $('#vizcarousel .carousel-inner').append(cItem);
+            cItem.append(href);
+            href.append(img);
+            href.append(cap);
+            cap.append(h2);
+            cap.append(desc);
+        });
+    });
+
+    // Add the controls to the carousel
+    $('#vizcarousel .carousel-inner').append(
+        `<a class="carousel-control-prev" href="#vizcarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#vizcarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        </a>`
+    );
+}

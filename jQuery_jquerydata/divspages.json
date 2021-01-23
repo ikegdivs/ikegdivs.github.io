@@ -1,0 +1,20 @@
+[
+    {
+        "id": 0,
+        "name": "the Divs: Grand Theft Pong",
+        "href": "divs_pong/comic.html",
+        "src": "images/divs_pong.JPG",
+        "category": "Divs",
+        "description": "Anne and Steve plan a game.",
+        "series": "the Divs"
+    },
+    {
+        "id": 1,
+        "name": "the Divs: fonts",
+        "href": "divs_fonts/comic.html",
+        "src": "images/divs_fonts.JPG",
+        "category": "Divs",
+        "description": "Anne and Steve discuss fonts.",
+        "series": "the Divs"
+    }
+]
