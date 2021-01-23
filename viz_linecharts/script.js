@@ -10,9 +10,10 @@ document.addEventListener("DOMContentLoaded", function(){
     // properties:
     //   date: a dateTime object
     //   y: a numeric value
-    function dataElement(date, y){
+    //   factor: user manipulation factor
+    function dataElement(date, y, factor = 0){
         this.date = date;
-        this.y = y;
+        this.y = Math.pow(((1+factor/10)*y-5), 3) + 100;
     }
 
     // Create a set of 10 dataElements.
@@ -25,6 +26,27 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     representData(viz_svg01, dataObj);
+
+    // If the user changes the X slider, adjust the color of the map elements
+    $('#formControlRangeX').on('input', function(event){
+        dataObj = [];
+        // Get the input from the slider.
+        userVal = parseFloat($(event.currentTarget).prop('value'));
+
+        // Clear the svg
+        viz_svg01.selectAll('svg > *').remove();
+
+        // Create a set of 10 dataElements.
+        for(i = 0; i < 10; i++){
+            // Create a new date
+            theDate = new Date(2021, 0, 1)
+            // Add i months to the date
+            theDate.setMonth(theDate.getMonth() + i);
+            dataObj.push(new dataElement(theDate, i, userVal));
+        }
+
+        representData(viz_svg01, dataObj);
+    })
 })
 
 function representData(location, data){
