@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/css/assets.css">
     <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <link href="/node_modules/prismjs/themes/prism-okaidia.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="name" content="PJ Divs">
     <meta name="robots" content="noindex, nofollow">
@@ -103,18 +104,18 @@
                 <p>We will need a spot in our html in order to draw our map. This can easily be done by adding an
                     svg element to an html document:
                 </p>
-                <pre><code>
-                    &lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
+                <pre><code class="language-html">
+&lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
                 </code></pre>
                 <p>Place this code in the body of an html document. D3 will identify this svg using the 'id' attribute, 
                     as shown in the code below:
                 </p>
-                <pre><code>
-    // Load some geodata
-    // Draw a map with the data.
-    document.addEventListener("DOMContentLoaded", function(){
-        // Identify where we are drawing the map.
-        let viz_svg01 = d3.select("#viz_svg01");
+                <pre><code class="language-js">
+// Load some geodata
+// Draw a map with the data.
+document.addEventListener("DOMContentLoaded", function(){
+    // Identify where we are drawing the map.
+    let viz_svg01 = d3.select("#viz_svg01");
                 </code></pre>
                 <p>
                     Once D3 has identified the svg, we can start to build chart elements inside.
@@ -135,7 +136,7 @@
                     file. If the geoJSON file is successfully loaded, then the function will later call 'representData' to create
                     the map.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // Asynchronously load the data
     d3.json('/data/countries.geojson').then(function(data){
                 </code></pre>
@@ -148,7 +149,7 @@
                     I'll be creating categorical data for this map. You can choose to create or load your own. Since data is data,
                     as long as your data follows the same formatting as shown below, everything should work out fine. 
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // dataObj holds the values assigned to each country.
     dataObj = [];
 
@@ -167,7 +168,7 @@
     
                 </code></pre>
                 <p>Once the data is created or loaded, we can call 'representData' to draw the map:</p>
-                <pre><code>          
+                <pre><code class="language-js">          
     // Create the chart
     representData(data, dataObj, viz_svg01);
 }
@@ -180,7 +181,7 @@
                 <p>Drawing a map can get messy. With all of the parameters that will be changed throughout the life
                     of the map, it is a good idea to place them all up front:
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
 function representData(mapData, descriptiveData, location){
     // Establish the basic parameters of the display
     // The starting position of the chart.
@@ -205,7 +206,7 @@ function representData(mapData, descriptiveData, location){
                 <p>We want to make sure the destination is empty, and has the proper display parameters for the map. 
                     The following code can be used to properly initialize the map we are about to draw.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // clean out the location:
     location.innerHTML = '';
 
@@ -225,7 +226,7 @@ function representData(mapData, descriptiveData, location){
                     the data we created earlier with the countries in the map. The following code can help make that
                     happen:
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // Create a pairing of descriptive data and country name
     let dataIndex = {};
     for (let c of descriptiveData){
@@ -253,7 +254,7 @@ function representData(mapData, descriptiveData, location){
                     You can use the following code to create a projection that allows our map to look good on 
                     a flat surface:
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // Create the projection
     let projection = d3.geoMercator()
         // scale the projection
@@ -272,7 +273,7 @@ function representData(mapData, descriptiveData, location){
                     allows speroidal coordinates to make sense in a flat plane. For our purposes, this means a simple call
                     to geoPath with our projection.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     let path = d3.geoPath()
     .projection(projection)
                 </code></pre>
@@ -286,7 +287,7 @@ function representData(mapData, descriptiveData, location){
                 <p>Next, add the following code to actually draw the countries onto the map. You can see that this is 
                     quite similar to building pretty much any other D3 chart: entering data and appending paths.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     body.selectAll('path')
     .data(mapData.features)
     .enter()
@@ -308,7 +309,7 @@ function representData(mapData, descriptiveData, location){
                     of your data to determine the extents of the color scheme. Also notice that any country that does not
                     have any data assigned to it will be colored 'white'.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // Color the map elements
     setMapColors(mapData, location, ['rgb(0, 255, 255)', 'rgb(255, 0, 255)', 'rgb(255, 0, 0)']);
 }
@@ -352,6 +353,7 @@ function setMapColors(mapData, location, colorRange){
 <script> particlesJS.load('particles-js', '/particles/particles.json', function() {
   console.log('callback - particles.js config loaded');
 });</script>
+<script src="/node_modules/prismjs/prism.js"></script>
 <script src="./script.js"></script>
 <script src="/script.js"></script>
 </html>

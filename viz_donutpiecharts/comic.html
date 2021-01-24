@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/css/assets.css">
     <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <link href="/node_modules/prismjs/themes/prism-okaidia.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="name" content="PJ Divs">
     <meta name="robots" content="noindex, nofollow">
@@ -105,7 +106,7 @@
                     want to represent. If you don't happen to have any data, then creating data is exceptionally easy.
                     Place the following code in a javascript file to create a donut/pie set of data to practice with:
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
 // When the document is loaded:
 // Create some data
 // Draw a donut chart with the data.
@@ -142,8 +143,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 <p>We will need a spot in our html in order to draw our donut chart. This can easily be done by adding an
                     svg element to an html document:
                 </p>
-                <pre><code>
-                    &lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
+                <pre><code class="language-html">
+&lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
                 </code></pre>
                 <p>Place this code in the body of an html document. D3 will identify this svg using the 'id' attribute.
                     Once D3 has identified the svg, we can start to build chart elements inside.
@@ -156,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 <p>Drawing a chart can get messy. With all of the parameters that will be changed throughout the life
                     of the chart, it is a good idea to place them all up front:
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     function representData(location, data){
         // Establish the basic parameters of the display
         // The starting position of the chart.
@@ -188,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     care of all of the messy tasks involved with calculating beginnings and ends, distributing graphic elements
                     evenly, and determining the best ways to represent our data by color.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // Create a pie function to translate values into arcs
     let pie = d3.pie()
         .value(d => d.sales)
@@ -209,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     so we will use D3 to 
                     append a 'g' grouping element to the svg for each the body and axes elements.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // Add groups to the svg for the body of the chart.
     body = location.append('g')
                 .attr('id', 'chartBody')
@@ -232,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 <p>In the following code, we use d3.select to state where we want the arc to be drawn. Then we use append('path')
                     to indicate that we want to use a path to represent our data, then we
                     indicate that we want the incoming data (we called it 'data') to be used as our chart's source data.</p>
-                <pre><code>
+                <pre><code class="language-js">
     // Create the arcs for the pie chart
     let arc = d3.arc()
         .outerRadius(yScaleHeight/2)
@@ -248,7 +249,6 @@ document.addEventListener("DOMContentLoaded", function(){
     g.append('path')
         .attr('d', arc)
         .attr('fill', d => { return colorScale(d.data.category)})
-
 }
                 </code></pre>
                 <p>Adding this code to the end of your javascript file should complete this donut chart demo. If you have any
@@ -271,6 +271,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <script> particlesJS.load('particles-js', '/particles/particles.json', function() {
   console.log('callback - particles.js config loaded');
 });</script>
+<script src="/node_modules/prismjs/prism.js"></script>
 <script src="./script.js"></script>
 <script src="/script.js"></script>
 </html>

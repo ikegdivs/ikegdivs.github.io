@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/css/assets.css">
     <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <link href="/node_modules/prismjs/themes/prism-okaidia.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="name" content="PJ Divs">
     <meta name="robots" content="noindex, nofollow">
@@ -108,7 +109,7 @@
                     file. If the geoJSON file is successfully loaded, then the function 'representData' is called. The 'representData'
                     function is used to draw the map onto the destination location.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
 // When the document is loaded:
 // Load some geodata
 // Draw a map with the data.
@@ -128,8 +129,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 <p>We will need a spot in our html in order to draw our map. This can easily be done by adding an
                     svg element to an html document:
                 </p>
-                <pre><code>
-                    &lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
+                <pre><code class="language-html">
+&lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
                 </code></pre>
                 <p>Place this code in the body of an html document. D3 will identify this svg using the 'id' attribute.
                     Once D3 has identified the svg, we can start to build chart elements inside.
@@ -142,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 <p>Drawing a map can get messy. With all of the parameters that will be changed throughout the life
                     of the map, it is a good idea to place them all up front:
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     function representData(data, location, elementcolor=0){
         // Establish the basic parameters of the display
         // The starting position of the chart.
@@ -167,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 <p>We want to make sure the destination is empty, and has the proper display parameters for the map. 
                     The following code can be used to properly initialize the map we are about to draw.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // clean out the location:
     location.innerHTML = '';
 
@@ -188,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     You can use the following code to create a projection that allows our map to look good on 
                     a flat surface:
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     // Create the projection
     let projection = d3.geoMercator()
         // scale the projection
@@ -207,9 +208,9 @@ document.addEventListener("DOMContentLoaded", function(){
                     allows speroidal coordinates to make sense in a flat plane. For our purposes, this means a simple call
                     to geoPath with our projection.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     let path = d3.geoPath()
-    .projection(projection)
+        .projection(projection)
                 </code></pre>
                 <p>Once that code has been placed into the javascript file, we can actually start drawing the map.
                 </p>
@@ -222,13 +223,13 @@ document.addEventListener("DOMContentLoaded", function(){
                     quite similar to building pretty much any other D3 chart: entering data, appending paths, and filling
                     those paths with specific colors.
                 </p>
-                <pre><code>
+                <pre><code class="language-js">
     body.selectAll('path')
-    .data(data.features)
-    .enter()
-    .append('path')
-    .attr('d', d => path(d))
-    .attr('fill', `rgba(125, ${elementcolor}, ${255 - elementcolor}, 1)`)
+        .data(data.features)
+        .enter()
+        .append('path')
+        .attr('d', d => path(d))
+        .attr('fill', `rgba(125, ${elementcolor}, ${255 - elementcolor}, 1)`)
 }
                 </code></pre>
                 <p>Adding this code to the end of your JavaScript file should complete this map demo. If you have any
@@ -251,6 +252,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <script> particlesJS.load('particles-js', '/particles/particles.json', function() {
   console.log('callback - particles.js config loaded');
 });</script>
+<script src="/node_modules/prismjs/prism.js"></script>
 <script src="./script.js"></script>
 <script src="/script.js"></script>
 </html>
