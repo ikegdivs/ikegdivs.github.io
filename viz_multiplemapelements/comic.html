@@ -20,10 +20,8 @@
   <body>
     <div class="jumbotron">
         <div id="particles-js" class="particles-js"></div>
-        <div class="col-sm-12">
-          <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
-          <h1 style="text-align: center">Issac Gardner's Portal</h1>
-        </div>
+        <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
+        <h1 style="text-align: center">don3ts: Maps.</h1>
       </div>
       
     <hr>
@@ -33,14 +31,16 @@
     <div class="container nomargin">
         <div class="row">
             <div class="col-12 col-sm-12">
-                <div class="card">
-                    <h3 class="card-header bg-primary text-white">Instructions:</h3>
-                    <div class="card-body">
-                        <dl class="row">
-                            The slider below the drawing uses JQuery's prop() to get the value property of the slider when it is moved.
-                        </dl>
-                    </div>
-                </div>
+                <h1>Goals:</h1>
+                <ul>
+                    <li>Gather geoJSON data for the map.</li>
+                    <li>Create a location for the map.</li>
+                    <li>Develop the basic parameters for the map.</li>
+                    <li>Prepare the html destination.</li>
+                    <li>Generate a global projection for the map.</li>
+                    <li>Using D3 geopath, generate shapes for the countries.</li>
+                    <li>Draw the map using the features from geoJSON.</li>
+                </ul>
             </div>
         </div>
         <div class='paperroll bottom'></div>
@@ -49,51 +49,198 @@
             </div>
         </div>
         <div class="row row-content">
-            <div class="col-12 col-sm-12">
+            <div class="col-12 col-sm-12 d-flex justify-content-center">
                 <div id="workspace">
                     <div id="panel-a" class="workview">
-                        <div class="inpanel">
-                            <div class="showcase viz001">
-                                <div class="container">
-                                    <div class="row row-content">
-                                        <div id="d3viz001" class="d3viz">
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="wall"></div>
+                        <div class="floor"></div>
+                        <div class="whiteboard">
+                            <div id="d3viz002" class="d3viz chartcontainer">
+                                <svg id="viz_svg01" class="chart"></svg>
                             </div>
-                            <div class="showcase viz002">
-                                <div class="container">
-                                    <div class="row row-content">
-                                        <div id="d3viz002" class="d3viz">
-                                            <svg id="viz002svg001">
-                                                <g id="body"></g>
-                                                <g id="yAxis"></g>
-                                                <g id="xAxis"></g>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="strawberryDonut">
+                            <img src="/svg/don3ts/donut_strawberry.svg">
+                        </div>
+                        <div class="chocolateDonut">
+                            <img src="/svg/don3ts/donut_chocolate.svg">
+                        </div>
+                        <div class="chatbubble workbubble strawberrysays">How do you learn binary?
+                            <div class="chatarrow strawberrysays"></div>
+                        </div>
+                        <div class="chatbubble workbubble chocolatesays">A bit here, a bit there.
+                            <div class="chatarrow chocolatesays"></div>
                         </div>
                     </div>
                 </div>
-                <form>
-                    <div class="form-group" style="margin-top: 10px; width:50%">
-                        <label for="formControlRangeX">Move Patch and Maude.</label>
-                        <input type="range" class="form-control-range" id="formControlRangeX" value="0">
-                        <h2>Flatten on hover from raised</h2>
-                        <a href="" class="btn paper paper-raise-flatten">Try Me</a>
-                        <h2>Curl right corner on hover</h2>
-                        <a href="" class="btn paper paper-curl-right">Try Me</a>
+            </div>
+            <div class="col-12 col-sm-12 d-flex justify-content-center">
+                <form style="width: 50%;">
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label for="formControlRangeX">Adjust the color of the map elements.</label>
+                        <input type="range" class="form-control-range theme-purple" id="formControlRangeX" value="0">
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row row-content">
+            <h1>D3 maps</h1>
+            <p>A map is one of the more complex features of D3, but D3 has some functions that turn creating a map
+                into a very quick process. Using the following steps, you'll be able to start making maps with D3 
+                using just about any geoJSON file as a source.
+            </p>
+            
+            <p>The following steps can be taken to build a map like the one in the image above.</p>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Gather geoJSON data for the map.</h3>
+                </p>
+                    You can download the geoJSON file I'll be using <a href="#">here</a>. This is a complex file that can be used
+                    to draw a map of the countries on the Earth. This is a fairly large file with a lot of complexities - you
+                    may want to consider using a more simple file for your mapping needs if you are just looking for a basic map 
+                    of the Earth.
+                </p>
+                <p>
+                    The following code identifies the location where the map will be drawn, then uses d3.json to load a geoJSON
+                    file. If the geoJSON file is successfully loaded, then the function 'representData' is called. The 'representData'
+                    function is used to draw the map onto the destination location.
+                </p>
+                <pre><code>
+// When the document is loaded:
+// Load some geodata
+// Draw a map with the data.
+document.addEventListener("DOMContentLoaded", function(){
+    let viz_svg01 = d3.select("#viz_svg01");
+
+    d3.json('/data/countries.geojson').then(function(data){
+        representData(data, viz_svg01);
+    } )
+})
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Create a location for the map</h3>
+                <p>We will need a spot in our html in order to draw our map. This can easily be done by adding an
+                    svg element to an html document:
+                </p>
+                <pre><code>
+                    &lt;svg id="viz_svg01" class="chart"&gt;&lt;/svg&gt;
+                </code></pre>
+                <p>Place this code in the body of an html document. D3 will identify this svg using the 'id' attribute.
+                    Once D3 has identified the svg, we can start to build chart elements inside.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Develop the basic parameters for the map</h3>
+                <p>Drawing a map can get messy. With all of the parameters that will be changed throughout the life
+                    of the map, it is a good idea to place them all up front:
+                </p>
+                <pre><code>
+    function representData(data, location, elementcolor=0){
+        // Establish the basic parameters of the display
+        // The starting position of the chart.
+        chartBodyX = 0;
+        chartBodyY = 25;
+        // The relative size of the axes.
+        xScaleWidth = 420;
+        yScaleHeight = 170;
+    
+        // Create the viewbox. This viewbox helps define the visible portions
+        // of the chart, but it also helps when making the chart responsive.
+        location.attr('viewBox', `0 0 ${xScaleWidth + chartBodyX} ${yScaleHeight}`);
+                </code></pre>
+                <p>Append this code to your javascript file. Nothing special should happen just yet - we still have a bit more 
+                    defining to do.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Prepare the html destination.</h3>
+                <p>We want to make sure the destination is empty, and has the proper display parameters for the map. 
+                    The following code can be used to properly initialize the map we are about to draw.
+                </p>
+                <pre><code>
+    // clean out the location:
+    location.innerHTML = '';
+
+    // Add groups to the svg for the body of the chart.
+    body = location.append('g')
+                .attr('id', 'chartBody')
+                .attr('transform', `translate(${chartBodyX}, ${chartBodyY})`)
+                </code></pre>
+                <p>Appending this code to the javascript file, we can now move on to preparing the svg to draw the chart.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Generate a global projection for the map.</h3>
+                <p>The thing about most maps is that they are flat, and we are trying to make a picture of something
+                    that actually exists on a spherical body. In order to do this, we need to define a projection.
+                    You can use the following code to create a projection that allows our map to look good on 
+                    a flat surface:
+                </p>
+                <pre><code>
+    // Create the projection
+    let projection = d3.geoMercator()
+        // scale the projection
+        .scale(50)
+        // move the projection to the center
+        .translate([xScaleWidth/2, yScaleHeight/2]);
+                </code></pre>
+                <p>Once that code is placed into the JavaScript file, we can begin to create the shapes for the countries.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Using D3 geopath, generate shapes for the countries.</h3>
+                <p>D3 geoPath() uses the projection we selected above (geoMercator) to draw the shapes in a way that
+                    allows speroidal coordinates to make sense in a flat plane. For our purposes, this means a simple call
+                    to geoPath with our projection.
+                </p>
+                <pre><code>
+    let path = d3.geoPath()
+    .projection(projection)
+                </code></pre>
+                <p>Once that code has been placed into the javascript file, we can actually start drawing the map.
+                </p>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Draw the map using the features from geoJSON.</h3>
+                <p>Finally, add the following code to actually draw the countries onto the map. You can see that this is 
+                    quite similar to building pretty much any other D3 chart: entering data, appending paths, and filling
+                    those paths with specific colors.
+                </p>
+                <pre><code>
+    body.selectAll('path')
+    .data(data.features)
+    .enter()
+    .append('path')
+    .attr('d', d => path(d))
+    .attr('fill', `rgba(125, ${elementcolor}, ${255 - elementcolor}, 1)`)
+}
+                </code></pre>
+                <p>Adding this code to the end of your JavaScript file should complete this map demo. If you have any
+                    troubles, you can check the source code for the image at the top of this article <a href="#">here</a>.
+                </p>
             </div>
         </div>
     </div>
   </body>
 
 <footer class="row footer justify-content-center">
-  <code>Copyright (c) 2020 Issac Gardner</code>
+  <code>Copyright (c) 2021 Issac Gardner</code>
 </footer>
 <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
 <script src="/node_modules/jquery/dist/jquery.min.js"></script>
@@ -105,4 +252,5 @@
   console.log('callback - particles.js config loaded');
 });</script>
 <script src="./script.js"></script>
+<script src="/script.js"></script>
 </html>

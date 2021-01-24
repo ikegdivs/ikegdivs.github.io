@@ -6,9 +6,7 @@ jQuery(function(){
     pointsObj = [];
     data = null;
 
-    let d3viz001 = d3.select("#d3viz001");
-    let d3viz002 = d3.select("#d3viz002");
-    let viz002svg001 = d3.select("#viz002svg001");
+    let viz_svg01 = d3.select("#viz_svg01");
 
     // dataElements are classes for data row/objects.
     function dataElement(country, value){
@@ -38,21 +36,32 @@ jQuery(function(){
             pointsObj.push(new pointData(j, 50 + j * 2, 50 + j * 2, j * 10))
         }
 
-        console.log(data);
         // Create the chart
-        representData(data, dataObj, pointsObj, viz002svg001);
-        // Create the table
-        makeTable('d3viz001', pointsObj, ['id', 'x']);
+        representData(data, dataObj, pointsObj, viz_svg01);
     } )
 })
 
-
-
 function representData(mapData, descriptiveData, pointsObj, location){
-    location.attr('height', '600px');
-    location.attr('width', '600px');
-    let body = d3.select('#body')
+    // Establish the basic parameters of the display
+    // The starting position of the chart.
+    chartBodyX = 0;
+    chartBodyY = 25;
+    // The relative size of the axes.
+    xScaleWidth = 420;
+    yScaleHeight = 170;
 
+    // Create the viewbox. This viewbox helps define the visible portions
+    // of the chart, but it also helps when making the chart responsive.
+    location.attr('viewBox', `0 0 ${xScaleWidth + chartBodyX} ${yScaleHeight}`);
+
+    // clean out the location:
+    location.innerHTML = '';
+
+    // Add groups to the svg for the body of the chart.
+    body = location.append('g')
+                .attr('id', 'chartBody')
+                .attr('transform', `translate(${chartBodyX}, ${chartBodyY})`)
+                
     // Create a pairing of descriptive data and country name
     let dataIndex = {};
     for (let c of descriptiveData){
@@ -109,54 +118,4 @@ function representData(mapData, descriptiveData, pointsObj, location){
         .attr('fill', 'green')
         .attr('cx', d => projection([+d.y, +d.x])[0])
         .attr('cy', d => projection([+d.y, +d.x])[1])
-}
-
-function makeTable(locationid, data, columns){
-    function tabulate(data, columns) {
-        /*Clear out the viz object*/
-        document.getElementById(locationid).innerHTML = '';
-        /*Create the table and add it to the viz object */
-        var table = d3.select('#' + locationid).append('table');
-        var thead = table.append('thead');
-        var tbody = table.append('tbody');
-
-        
-        // append header row
-        thead.append('tr')
-            .selectAll('th')
-            .data(columns).enter()
-            .append('th')
-                .text(function(column) {return column;});
-
-        // create a row for each object in the data
-        var rows = tbody.selectAll('tr')
-                        .data(data)
-                        .enter()
-                        .append('tr');
-        
-        // Create a cell in each row for each column
-        var cells = rows.selectAll('td')
-                        .data(function (row) {
-                            return columns.map(function (column) {
-                                return {column: column, value: row[column]};
-                            });
-                        })
-                        .enter()
-                        .append('td')
-                            .text(function (d) { return d.value; });
-
-        /* Add the appropriate bootstrap classes */
-        d3.select('#'+locationid+' table').node().classList.add('table');
-        /* Alternate colors of rows. */
-        d3.select('#'+locationid+' table').node().classList.add('table-striped');
-        /* Color rows when hovered */
-        d3.select('#'+locationid+' table').node().classList.add('table-hover');
-        /* Ensure column headers are given column scope */
-        d3.selectAll('#'+locationid+' thead tr th').attr('scope', 'col');
-
-        return table;
-    }
-
-    // render the tables
-    tabulate(data, columns);
 }
