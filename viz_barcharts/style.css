@@ -52,6 +52,7 @@ body{
     top: 55%;
     right: 2%;
     width: 30%;
+    transform: rotate(180);
 }
 
 .wall {
@@ -172,7 +173,7 @@ body{
             -webkit-transform: translateX(0.5%) scale(1.01);
             transform: translateX(0.5%) scale(1.01); }  }
 
-.chocolateDonut {
+.strawberryDonut {
     /* just a little bit of breathing life, alternate forever. */
     -webkit-animation: bgd03 3s alternate infinite;
             animation: bgd03 3s alternate infinite;
@@ -182,15 +183,15 @@ body{
     /* Expand and sway to simulate breath. */
     @-webkit-keyframes bgd03 {
         from {
-            -webkit-transform: translateX(0%) scale(1);
-            transform: translateX(0%) scale(1); } 
+            -webkit-transform: translateX(0%) rotateY(180deg) scale(1);
+            transform: translateX(0%) rotateY(180deg) scale(1); } 
         to {
-            -webkit-transform: translateX(0.5%) scale(1.01);
-            transform: translateX(0.5%) scale(1.01); }  }
-        @keyframes bgd02 {
+            -webkit-transform: translateX(0.5%) rotateY(180deg) scale(1.01);
+            transform: translateX(0.5%) rotateY(180deg) scale(1.01); }  }
+        @keyframes bgd03 {
         from {
-            -webkit-transform: translateX(0%) scale(1);
-            transform: translateX(0%) scale(1); } 
+            -webkit-transform: translateX(0%) rotateY(180deg) scale(1);
+            transform: translateX(0%) rotateY(180deg) scale(1); } 
         to {
             -webkit-transform: translateX(0.5%) scale(1.01);
-            transform: translateX(0.5%) scale(1.01); }  }
+            transform: translateX(0.5%) rotateY(180deg) scale(1.01); }  }
