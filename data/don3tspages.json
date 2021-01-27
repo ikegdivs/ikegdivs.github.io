@@ -54,7 +54,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 6,
         "name": "Compound future value",
         "href": "viz_futurevalue_compound/comic.html",
         "src": "images/viz_table.JPG",
@@ -63,7 +63,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 7,
         "name": "Depreciation, straight-line",
         "href": "viz_depreciation_straightline/comic.html",
         "src": "images/viz_table.JPG",
@@ -72,7 +72,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 8,
         "name": "Depreciation, double declining",
         "href": "viz_depreciation_doubledeclining/comic.html",
         "src": "images/viz_table.JPG",
@@ -81,7 +81,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 9,
         "name": "Viz networks 1",
         "href": "viz_networks1/comic.html",
         "src": "images/viz_table.JPG",
@@ -90,7 +90,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 10,
         "name": "Viz multi-map",
         "href": "viz_multiplemapelements/comic.html",
         "src": "images/viz_table.JPG",
@@ -99,7 +99,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 11,
         "name": "Viz Choropleth",
         "href": "viz_choropleth/comic.html",
         "src": "images/viz_table.JPG",
@@ -108,7 +108,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 12,
         "name": "Viz maps",
         "href": "viz_maps/comic.html",
         "src": "images/viz_maps.JPG",
@@ -117,7 +117,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 13,
         "name": "Viz Donut/Pie Charts",
         "href": "viz_donutpiecharts/comic.html",
         "src": "images/viz_donutpiecharts.JPG",
@@ -126,7 +126,7 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 14,
         "name": "Viz Line Charts",
         "href": "viz_linecharts/comic.html",
         "src": "images/viz_linecharts.JPG",
@@ -135,12 +135,39 @@
         "series": "don3ts"
     },
     {
-        "id": 1,
+        "id": 15,
         "name": "Viz Bar Charts",
         "href": "viz_barcharts/comic.html",
         "src": "images/viz_barcharts.JPG",
         "category": "don3ts",
         "description": "D3 bar charts.",
+        "series": "don3ts"
+    },
+    {
+        "id": 16,
+        "name": "Viz Line: stroke-width",
+        "href": "viz_line_stroke-width/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "D3 line styling: stroke-width",
+        "series": "don3ts"
+    },
+    {
+        "id": 17,
+        "name": "Viz Line: stroke",
+        "href": "viz_line_stroke/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "D3 line styling: stroke",
+        "series": "don3ts"
+    },
+    {
+        "id": 18,
+        "name": "Viz Line: curve",
+        "href": "viz_line_curve/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "D3 line styling: curve",
         "series": "don3ts"
     }
 ]

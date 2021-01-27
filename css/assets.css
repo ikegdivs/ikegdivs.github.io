@@ -331,6 +331,7 @@ span {
     overflow: hidden;
     width: 100%;
     height: 100%;
+    background-image: linear-gradient( rgba(240, 240, 2254, 1) 0%, rgba(254, 254, 248, 0) 80%, rgba(0, 0, 0, 0) 100%);
     z-index: -1;
 }
 
