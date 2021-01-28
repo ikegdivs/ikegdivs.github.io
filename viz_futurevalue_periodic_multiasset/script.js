@@ -1,6 +1,6 @@
 /*When the document is loaded*/
 jQuery(function(){
-    let viz002svg001 = d3.select("#viz002svg001");
+    let viz_svg01 = d3.select("#viz_svg01");
     let currentAsset = null;
 
     // UserWorkspace
@@ -448,8 +448,8 @@ jQuery(function(){
     // Tabulator
     // *****************************************************
 
-    var table = new Tabulator("#example-table", {
-        height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+    var table = new Tabulator("#asset-data-table", {
+        //height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
         //reactiveData:true, // enable reactive data
         data:ams.assets, //assign data to table
         layout:"fitColumns", //fit columns to width of table (optional)
@@ -612,7 +612,7 @@ jQuery(function(){
     // *********************************************
 
     function drawModel(amsassetModelDataGroup){
-        representData(viz002svg001, amsassetModelDataGroup, currentAsset.id);
+        representData(viz_svg01, amsassetModelDataGroup, currentAsset.id);
     }
 
     // Reset range sliders
@@ -625,25 +625,29 @@ jQuery(function(){
 })
 
 function representData(location, data, selectedid = 0){
-    location.attr('viewBox', '0 0 500 300');
-    let body = d3.select('#body')
+    location.attr('viewBox', '0 0 700 300');
     
+    // Clear out the base svg and legend
+    location.html(null);
+    document.getElementById('legend').innerHTML = '';
+    
+    // Create the location for the body of the chart.
+    let body = location.append('g');
+    body.attr('id', 'body');
+
     let bodyHeight = 200;
-    let bodyWidth = 400;
-    //let maxValue = d3.max(data, d => d.val);
-    let yAxisWidth = 75;
-    let xAxisHeight = 60;
+    let bodyWidth = 600;
+
+    let yAxisWidth = 0;
+    let xAxisHeight = 0;
+    let yAxisXpos = 80;
+    let xAxisYpos = 40;
 
     // Get the count of objects that need to go into the legend
     let legendObjects = data.length;
 
     // Adjust the body to show the axes, etc.
-    body.style('transform', `translate(${yAxisWidth*1.01}px, ${xAxisHeight*0.5
-    }px)`);
-
-    // clear out the groups
-    document.getElementById('body').innerHTML ='';
-    document.getElementById('legend').innerHTML = '';
+    body.style('transform', `translate(${yAxisXpos*1.01}px, ${xAxisYpos*1}px)`);
 
     // ********************************************
     // Chart creation
@@ -660,7 +664,7 @@ function representData(location, data, selectedid = 0){
         .range([bodyHeight, 0]);
 
     let axesColor = 'rgba(245, 245, 250, 1)'
-    let chartColor = 'rgba(245, 250, 245, 1)'
+    let chartColor = 'rgba(255, 255, 255, 1)'
 
     // Create the chart background
     chartBG = body.append('g');
@@ -679,15 +683,6 @@ function representData(location, data, selectedid = 0){
     // Create the legend svg object
     let legendSVG = d3.select('#legend')
         .append('svg')
-    
-    /*body.append('g')
-        .attr('transform', 'translate(0, ' + bodyHeight + ')')
-        .append('text')
-        .attr('class', 'axis-label')
-        .text('Year')
-        .attr('fill', 'rgba(50, 50, 50, 0.9)')
-        .attr('x', bodyWidth/2)
-        .attr('y', 40)*/
 
     legendSVG
         .append('text')
@@ -697,7 +692,7 @@ function representData(location, data, selectedid = 0){
         .attr('fill', 'rgba(50, 50, 50, 0.9)')
 
     legendSVG
-        .selectAll('colorBars')
+        .selectAll('colorDots')
         .data(data)
         .enter()
         .append('circle')
@@ -722,13 +717,13 @@ function representData(location, data, selectedid = 0){
 
     // Create the line
     var valueline = d3.line()
-    .x(d => xScale(Date.parse(d.date)))
-    .y(d => yScale(d.val))
+                    .x(d => xScale(Date.parse(d.date)))
+                    .y(d => yScale(d.val))
+                    .curve(d3.curveBasis)
 
     let lines = body.append('g')
         .attr('class', 'lines')
 
-        
     // Create a 'background outline' for stylistic purposes.
     lines.selectAll('.line-group-bg-ol')
         .data(data)
@@ -773,14 +768,12 @@ function representData(location, data, selectedid = 0){
         .style('stroke-linecap', 'round')
         .style('fill', 'none')
         
-
     // If a specific asset is selected, color it 
     // with a blue outline
     lines.selectAll('.line-group-bg')
         .selectAll('[nodeid="'+selectedid+'"]')
         .attr('selected', 'true')
         .style('stroke', 'cyan');
-
 
     // Create the axes background
     // y axes background
