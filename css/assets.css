@@ -70,7 +70,7 @@ body {
     border: 1px solid rgba(160, 160, 160, 0.7);
     border-radius: 1vw;
     box-shadow: 0vw 0vw 0.5vw 0.5vw rgba(238, 238, 238, 1);
-    background-color:rgb(170, 50, 160);
+    background-color:rgb(220, 220, 220);
     text-align: center;
 }
 
@@ -86,10 +86,10 @@ body {
 }
 
 .dashboard-box {
-    padding: 1vw;
+    padding: 0.5vw;
     border: 1px solid rgba(160, 160, 160, 0.7);
     border-radius: 1vw;
-    background-color:rgb(170, 50, 160);
+    background-color:rgb(220, 220, 220);
     box-shadow: 0vw 0vw 0.5vw 0.5vw rgba(238, 238, 238, 1);
     height: 100%;
 }
@@ -106,10 +106,10 @@ body {
 }
 
 .legendBox {
-    padding: 1vw;
+    padding: 0.5vw;
     border: 1px solid rgba(160, 160, 160, 0.7);
     border-radius: 1vw;
-    background-color:rgb(170, 50, 160);
+    background-color:rgb(220, 220, 220);
     box-shadow: 0vw 0vw 0.5vw 0.5vw rgba(238, 238, 238, 1);
     height: 100%;
     max-height: 20vw;

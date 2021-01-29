@@ -169,5 +169,14 @@
         "category": "don3ts",
         "description": "D3 line styling: curve",
         "series": "don3ts"
+    },
+    {
+        "id": 19,
+        "name": "Viz: min",
+        "href": "viz_min/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "D3: minimum",
+        "series": "don3ts"
     }
 ]

@@ -105,12 +105,6 @@
                                     <input type="range" class="form-control-range theme-purple" id="formRangeDiscountRate" value="50">
                                 </div>
                             </div>
-                            <div class="row"  style="margin: 0.5vw;">
-                                <div class="col">
-                                    <label for="formRangeModelPeriods">Adjust periods per year.</label>
-                                    <input type="range" class="form-control-range theme-purple" id="formRangeModelPeriods" value="0">
-                                </div>
-                            </div>
                             <div class="row" style="margin: 0.5vw;">
                                 <div class="col">
                                     <button id="addAsset" class="btn btn-primary" style="background-color:rgb(130, 10, 120);">Add New Asset</button>
@@ -133,6 +127,9 @@
         <div class="col-md-8 col-sm-12">
             <div class="legendBox dashboard-box">
                 <div class="legendBorder dashboard-border">
+                    <div class="card-header" style="padding: 0.2vw; background-color:rgb(110, 10, 140); border-radius: 10px; border: 1px solid rgba(0, 0, 0, 0.2);">
+                        <h5 class="text-white">Asset Data</h5>
+                    </div>
                     <div id="asset-data-table"></div>
                 </div>
             </div>
@@ -140,8 +137,8 @@
         <div class="col-md-2 col-sm-12">
             <div class="legendBox dashboard-box">
                 <div class="legendBorder dashboard-border">
-                    <div class="card-header" style="padding: 0.2vw; background-color:rgb(130, 10, 120); border-radius: 10px; border: 1px solid rgba(0, 0, 0, 0.2);">
-                        <h5 class="text-white" >Legend</h5>
+                    <div class="card-header" style="padding: 0.2vw; background-color:rgb(110, 10, 140); border-radius: 10px; border: 1px solid rgba(0, 0, 0, 0.2);">
+                        <h5 class="text-white">Legend</h5>
                     </div>
                     <div id="legend" class="legend"></div>
                 </div>
@@ -150,8 +147,15 @@
         <div class="col-md-2 col-sm-12">
             <div class="dashboard-box">
                 <div class="dashboard-border">
-                    <div class="card-header" style="padding: 0.2vw; background-color:rgb(130, 10, 120); border-radius: 10px; border: 1px solid rgba(0, 0, 0, 0.2);">
-                        <h5 class="text-white" >Model Info</h5>
+                    <div class="card-header" style="padding: 0.2vw; background-color:rgb(110, 10, 140); border-radius: 10px; border: 1px solid rgba(0, 0, 0, 0.2);">
+                        <h5 class="text-white">Model Info</h5>
+                        
+                    </div>
+                    <div class="row"  style="margin: 0.5vw;">
+                        <div class="col">
+                            <label for="formRangeModelPeriods">Adjust periods per year.</label>
+                            <input type="range" class="form-control-range theme-purple" id="formRangeModelPeriods" value="0">
+                        </div>
                     </div>
                 </div>
             </div>
