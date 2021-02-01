@@ -1,0 +1,85 @@
+<!doctype html>
+
+<!-- this is a comment for human! -->
+
+<html lang="en">
+
+  <header>
+    <title>PJ Divs</title><!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/css/assets.css">
+    <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <link href="/node_modules/prismjs/themes/prism-okaidia.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="name" content="PJ Divs">
+    <meta name="robots" content="noindex, nofollow">
+  </header>
+
+  <body>
+    <div class="jumbotron">
+        <div id="particles-js" class="particles-js"></div>
+        <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
+    </div>
+    
+    <h1 style="text-align: center">don3ts: D3 chart panning.</h1>
+      
+    <div class="container nomargin">
+        <div class="row">
+            <div class="col-md-8 col-sm-12 mx-auto">
+                <div id="workspace">
+                    <div id="panel-a" class="workview">
+                        <div class="wall"></div>
+                        <div class="floor"></div>
+                        <div class="whiteboard">
+                            <div id="d3viz002" class="d3viz chartcontainer">
+                                <svg id="viz_svg01" class="chart"></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 d-flex offset-md-2 justify-content-center">
+                <form style="width: 25%;">
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label for="formControlSelector">Choose the style of d3 curve:</label>
+                        <select class="form-control theme-purple" id="formControlSelector">
+                            <option>curveLinear</option>
+                            <option>curveBasis</option>
+                            <option>curveBasisClosed</option>
+                            <option>curveBundle</option>
+                            <option>curveCardinal</option>
+                            <option>curveCatmullRom</option>
+                            <option>curveMonotoneX</option>
+                            <option>curveMonotoneY</option>
+                            <option>curveNatural</option>
+                            <option>curveStep</option>
+                            <option>curveStepAfter</option>
+                            <option>curveStepBefore</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </body>
+
+<footer class="row footer justify-content-center">
+  <code>Copyright (c) 2020 Issac Gardner</code>
+</footer>
+<!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/particles/particles.js"></script>
+<script> particlesJS.load('particles-js', '/particles/particles.json', function() {
+  console.log('callback - particles.js config loaded');
+});</script>
+<script src="/node_modules/d3/dist/d3.js"></script>
+<!--<script src="https://d3js.org/d3.v5.min.js"></script>-->
+<script src="/node_modules/prismjs/prism.js"></script>
+<script src="./script.js"></script>
+<script src="/script.js"></script>
+</html>

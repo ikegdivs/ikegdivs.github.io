@@ -27,17 +27,25 @@ class ChartSpecs {
         // The amount of space to allocate for text,e etc. on the x and y axes.
         this.textBuffer = 20;
         this.topMargin = 10;
+    }
+    
+    // The maximum value of the independent variable.
+    get maxVal() {
+        return d3.max(this.data, d => d.y);
+    }
 
-        // The maximum value of the independent variable.
-        this.maxVal = d3.max(data, d => d.y);
+    // To create a scaling Y function for the chart, use this getter.
+    get scaleY() {
+        return d3.scaleLinear()
+            .range([this.yScaleHeight, 0])
+            .domain([0, this.maxVal]);
+    }
 
-        this.scaleX = d3.scaleLinear()
-                    .range([0, this.xScaleWidth])
-                    .domain(d3.extent(this.data, d => d.cat))
-
-        this.scaleY = d3.scaleLinear()
-                    .range([this.yScaleHeight, 0])
-                    .domain([0, this.maxVal]);
+    // To create a scaling X function for the chart, use this getter.
+    get scaleX() {
+        return d3.scaleLinear()
+            .range([0, this.xScaleWidth])
+            .domain(d3.extent(this.data, d=>d.cat))
     }
 }
 
@@ -62,12 +70,9 @@ document.addEventListener("DOMContentLoaded", function(){
 
     // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
     $('#formControlSelector').on('change', function(event){
-        // Establish a variable for the curve function
-        let d3curve = '';
-
         // Get the input from the drop down.
         userVal = $(event.currentTarget).prop('value');
- 
+
         drawLine(theseSpecs, d3[userVal])
     })
 })
@@ -104,20 +109,34 @@ function representData(location, theseSpecs){
 // curveType: a d3 curve type
 function drawLine(theseSpecs, curveType){
     // Create the line
-    var line = d3.line()
+    let line = d3.line()
         .x(function(d) { return theseSpecs.scaleX(d.cat); })
         .y(function(d) { return theseSpecs.scaleY(d.y); })
         .curve(curveType)
 
-    var u = body
-        .selectAll('path')
+    // Create a join on 'path' and the data
+    let join = d3.selectAll('#chartBody path')
         .data([theseSpecs.data]);
-    
-    u.enter()
-        .append('path')
-        .merge(u)
-        .style('stroke', 'rgba(255, 0, 0, 1')
+
+    // Establish the styles for the line
+    join.style('stroke', 'rgba(255, 0, 0, 1')
         .style('fill', 'none')
-        .attr('stroke-width', '0.2vw')
-        .attr('d', line);
+        .style('stroke-width', '0.2vw')
+
+    // Perform a transition, if there is any data to transition.
+    join.transition()
+        .duration(1000)
+        .attr('d', line)
+    
+    // Remove any unnecesary objects.
+    join.exit()
+        .remove()
+
+    // Update the y axis.
+    d3.selectAll('#yAxis')
+        .call(d3.axisLeft(theseSpecs.scaleY))
+
+    // Update the x axis.
+    d3.selectAll('#xAxis')
+        .call(d3.axisBottom(theseSpecs.scaleX))
 }

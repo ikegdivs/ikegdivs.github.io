@@ -27,6 +27,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
     // Use D3 to represent the data as a chart.
     representData(viz_svg01, dataObj);
+
+    // If the user changes the X slider, adjust the color of the histogram bars
+    $('#formControlRangeX').on('input', function(event){
+        elementcolor =  Math.round(parseFloat($(event.currentTarget).prop('value')) * 2.5);
+        
+        // Use d3 to create a set of rectangle objects utilizing the data.
+        let join = d3.select('#chartBody')
+            .selectAll('rect')
+            .attr('fill', `rgb(0, ${255 - elementcolor}, 255)`)
+    })
 })
 
 // representData is used to create a d3 chart. 
@@ -97,15 +107,16 @@ function representData(location, data){
     // chart. New objects will 'enter' the chart and be 'appended'.
     join.enter()
         .append('rect')
-        .attr('fill', 'rgba(180, 240, 255')
-        .style('stroke', 'rgba(230, 230, 230')
+        .attr('fill', 'rgba(0, 255, 255')
+        .attr('stroke-width', '1')
+        .attr('stroke', 'rgba(230, 230, 230')
         // Set the horizontal width of the object to the
         // scaled values of the dependent variable
-        .style('width', d => scaleX(d.y))
+        .attr('width', d => scaleX(d.y))
         // Set the vertical height of the object to
-        // an appropriate value calculated by the scaleY.
+        // an appropriate value calculated by the scaleY map.
         .attr('height', scaleY.bandwidth())
-        // Position the bar using scaleY's distribution abilities.
+        // Position the bar using scaleY's map.
         .attr('y', d => scaleY(d.x))
 
     // Create the x axis

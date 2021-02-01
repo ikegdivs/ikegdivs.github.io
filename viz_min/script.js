@@ -124,9 +124,9 @@ function representData(location, theseSpecs){
         .call(d3.axisBottom(theseSpecs.scaleX))
         .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.yScaleHeight + theseSpecs.topMargin})`);
 
-    drawLine(theseSpecs, d3.curveLinear);
+    drawLine(theseSpecs, d3.curveBasis);
     drawMinLine(theseSpecs);
-    createLegend(location);
+    createLegend();
 }
 
 // drawLine creates the line.
@@ -182,7 +182,7 @@ function drawMinLine(theseSpecs){
 }
 
 // Create a legend for the chart.
-function createLegend(location){
+function createLegend(){
     // Identify the chart body
     let body = d3.selectAll('#chartBody')
 

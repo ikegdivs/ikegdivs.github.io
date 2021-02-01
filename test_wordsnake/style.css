@@ -1,0 +1,90 @@
+html {
+    line-height: 1.15;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    font-family: "Lato", sans-serif;
+  }
+  
+  body {
+    margin: 0;
+    overflow-x: hidden;
+  }
+  
+  section {
+    display: block;
+  }
+  
+  svg {
+    overflow: visible;
+  }
+  
+  section {
+    background-color: white;
+  }
+  
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+  }
+  
+  #viz-word-snake {
+    font-size: 14px;
+    white-space: pre;
+    cursor: default;
+    width: 700px;
+    margin: 0 auto;
+  }
+  
+  .circle-path {
+    fill: none;
+    pointer-events: none;
+  }
+  
+  .node .circle-background {
+    fill: none;
+    pointer-events: all;
+    cursor: pointer;
+  }
+  
+  .circle-center-translation {
+    font-family: "Lato", sans-serif;
+    font-size: 0.8em;
+    font-weight: 400;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  
+  .circle-center-original {
+    font-family: "Dancing Script", cursive;
+    font-size: 1.7em;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  
+  .circle-center-language {
+    font-family: "Lato", sans-serif;
+    font-size: 0.8em;
+    font-weight: 400;
+    font-style: italic;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  
+  .circle-path-legend {
+    font-family: "Lato", sans-serif;
+    font-size: 0.8em;
+    pointer-events: none;
+  }
+  
+  .circle-path-text {
+    font-family: "Dancing Script", cursive;
+    font-size: 1.1em;
+    pointer-events: none;
+  }
+  

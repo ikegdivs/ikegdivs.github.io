@@ -24,8 +24,8 @@ body{
 
  .whiteboard {
      position: absolute;
-     top:5%;
-     left: 10%;
+     top: 5%;
+     left: 15%;
      width: 80%;
      height: 60%;
      background-color: rgba(252, 252, 252, 1);
@@ -137,20 +137,20 @@ body{
   /* slightly move the whiteboard */
   @-webkit-keyframes bgd01 {
     from {
-        -webkit-transform: translateX(5%);
-        transform: translateX(5%); } 
+        -webkit-transform: translateX(0%);
+        transform: translateX(0%); } 
     to {
-        -webkit-transform: translateX(7%);
-        transform: translateX(7%); }  }
+        -webkit-transform: translateX(2%);
+        transform: translateX(2%); }  }
   @keyframes bgd01 {
     from {
-        -webkit-transform: translateX(5%);
-        transform: translateX(5%); } 
+        -webkit-transform: translateX(0%);
+        transform: translateX(0%); } 
     to {
-        -webkit-transform: translateX(7%);
-        transform: translateX(7%); }  }
+        -webkit-transform: translateX(2%);
+        transform: translateX(2%); }  }
 
-.strawberryDonut {
+.chocolateDonut {
     /* just a little bit of breathing life, alternate forever. */
     -webkit-animation: bgd02 3s alternate infinite;
             animation: bgd02 3s alternate infinite;

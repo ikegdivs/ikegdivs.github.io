@@ -178,5 +178,23 @@
         "category": "don3ts",
         "description": "D3: minimum",
         "series": "don3ts"
+    },
+    {
+        "id": 20,
+        "name": "Viz: pan",
+        "href": "viz_line_pan/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "D3: chart panning",
+        "series": "don3ts"
+    },
+    {
+        "id": 21,
+        "name": "SWMM: Link Flow",
+        "href": "swmm_link_flow/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "SWMM: Link Flow",
+        "series": "don3ts"
     }
 ]
