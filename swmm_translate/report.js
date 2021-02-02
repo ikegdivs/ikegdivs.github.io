@@ -191,7 +191,7 @@ function report_writeSysTime()
     if ( Frpt.contents )
     {
         Frpt.contents += FMT20.format(ctime(SysTime));
-        time(endTime);
+        endTime = Math.floor(Date.now() / 1000);;
         Frpt.contents += FMT20a.format(ctime(endTime));
         elapsedTime = difftime(endTime, SysTime);
         Frpt.contents += FMT21;
@@ -227,7 +227,7 @@ function report_writeLogo()
     Frpt.contents += FMT08;
     Frpt.contents += FMT09;
     Frpt.contents += FMT10;
-    time(SysTime);                    // Save starting wall clock time
+    SysTime = Math.floor(Date.now() / 1000);                    // Save starting wall clock time
 }
 
 //=============================================================================
@@ -270,7 +270,7 @@ function report_writeOptions()
     WRITE("****************");
     WRITE("Analysis Options");
     WRITE("****************");
-    Frpt.contents += "\n  Flow Units ............... %s".format(FlowUnitWords[FlowUnits]));
+    Frpt.contents += "\n  Flow Units ............... %s".format(FlowUnitWords[FlowUnits]);
     Frpt.contents += "\n  Process Models:";
     Frpt.contents += "\n    Rainfall/Runoff ........ ";
     if ( IgnoreRainfall || Nobjects[GAGE] == 0 )
@@ -439,7 +439,7 @@ function   report_writeControlActionsHeading()
     WRITE("*********************");
     WRITE("Control Actions Taken");
     WRITE("*********************");
-    Frpt.contents += "\n");
+    Frpt.contents += "\n";
 }
 
 //=============================================================================

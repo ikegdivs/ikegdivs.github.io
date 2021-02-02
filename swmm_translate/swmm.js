@@ -685,8 +685,7 @@ function  writecon(s)
 //  Purpose: writes string of characters to the console.
 //
 {
-    fprintf(stdout,"%s",s);
-    fflush(stdout);
+    console.log(s);
 }
 
 //=============================================================================
