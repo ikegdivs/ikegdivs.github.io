@@ -196,5 +196,14 @@
         "category": "don3ts",
         "description": "SWMM: Link Flow",
         "series": "don3ts"
+    },
+    {
+        "id": 22,
+        "name": "SWMM: Translate",
+        "href": "swmm_translate/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "SWMM: Translate",
+        "series": "don3ts"
     }
 ]
