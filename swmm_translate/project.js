@@ -685,7 +685,7 @@ function project_readOption(s1, s2)
           break;
 
       case TEMPDIR: // Temporary Directory
-        sstrncpy(TempDir, s2, MAXFNAME);
+        TempDir =  s2;
         break;
 
     }
@@ -751,7 +751,7 @@ function setDefaults()
    Fhotstart2.mode = NO_FILE;
    Finflows.mode   = NO_FILE;
    Foutflows.mode  = NO_FILE;
-   Frain.file      = null;
+   /*Frain.file      = null;
    Fclimate.file   = null;
    Frunoff.file    = null;
    Frdii.file      = null;
@@ -759,7 +759,16 @@ function setDefaults()
    Fhotstart2.file = null;
    Finflows.file   = null;
    Foutflows.file  = null;
-   Fout.file       = null;
+   Fout.file       = null;*/
+   Frain.contents      = null;
+   Fclimate.contents   = null;
+   Frunoff.contents    = null;
+   Frdii.contents      = null;
+   Fhotstart1.contents = null;
+   Fhotstart2.contents = null;
+   Finflows.contents   = null;
+   Foutflows.contents  = null;
+   Fout.contents       = null;
    Fout.mode       = NO_FILE;
 
    // Analysis options
@@ -885,14 +894,19 @@ function openFiles(f1, f2, f3)
 //
 {
     // --- initialize file pointers to null
-    Finp.file = null;
+    /*Finp.file = null;
     Frpt.file = null;
-    Fout.file = null;
+    Fout.file = null;*/
+
+    // --- initialize file contents to empty
+    Finp.contents = '';
+    Frpt.contents = '';
+    Fout.contents = '';
 
     // --- save file names
-    sstrncpy(Finp.name, f1, MAXFNAME);
-    sstrncpy(Frpt.name, f2, MAXFNAME);
-    sstrncpy(Fout.name, f3, MAXFNAME);
+    Finp.name = f1;
+    Frpt.name = f2;
+    Fout.name = f3;
 
     // --- check that file names are not identical
     if (strcomp(f1, f2) || strcomp(f1, f3) || strcomp(f2, f3))
@@ -910,12 +924,12 @@ function openFiles(f1, f2, f3)
         ErrorCode = ERR_INP_FILE;
         return;
     }
-    if ((Frpt.file = fopen(f2,"wt")) == null)
+    /*if ((Frpt.file = fopen(f2,"wt")) == null)
     {
        writecon(FMT13);
        ErrorCode = ERR_RPT_FILE;
        return;
-    }
+    }*/
 }
 
 //=============================================================================

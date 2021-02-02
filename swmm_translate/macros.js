@@ -29,3 +29,13 @@ function ARRAY_LENGTH(x) {(sizeof(x)/sizeof(x[0]))} /* length of array x     */
 //-------------------------------------------------
 function CALL(x) {(ErrorCode = ((ErrorCode>0) ? (ErrorCode) : (x)))}
 
+function fopen(filePath) {
+    var result = null;
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", filePath, false);
+    xmlhttp.send();
+    if(xmlhttp.status==200){
+        result = xmlhttp.responseText;
+    }
+    return result;
+}

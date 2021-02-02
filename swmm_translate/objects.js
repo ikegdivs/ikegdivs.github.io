@@ -70,7 +70,8 @@ class TFile
       this.name;     // Array of size [MAXFNAME+1]. file name
       this.mode;                 // NO_FILE, SCRATCH, USE, or SAVE
       this.state;                // current state (OPENED, CLOSED)
-      this.file;                 // FILE structure pointer
+      //this.file;                 // FILE structure pointer
+      this.contents;             // Replacement for file: allows for browser-created reports.
    }
 }  ;
 
@@ -114,6 +115,7 @@ class TTable
       this.lastEntry;       //TTableEntry last data point
       this.thisEntry;       //TTableEntry current data point
       this.file;            //TFile external data file
+      this.contents;        //Replaces this.file for browser models
    }
 }  ;
 
@@ -180,7 +182,7 @@ class TWind
 {
    constructor(){
       this.type;             // monthly or file data
-      this.aws;          // double[12]. monthly avg. wind speed (mph)
+      this.aws = new Array(12);          // double[12]. monthly avg. wind speed (mph)
       //-----------------------------
       this.ws;              // wind speed (mph)
    }
@@ -192,13 +194,16 @@ class TWind
 class TSnow
 {
    constructor(){
-      this.snotmp;          // temp. dividing rain from snow (deg F)
-      this.tipm;            // antecedent temp. index parameter
-      this.rnm;             // ratio of neg. melt to melt coeff.
+      this.snotmp;           // temp. dividing rain from snow (deg F)
+      this.tipm;             // antecedent temp. index parameter
+      this.rnm;              // ratio of neg. melt to melt coeff.
       //-----------------------------
-      this.season;          // snowmelt season
-      this.removed;         // total snow plowed out of system (ft3)
-      this.adc;      // Array of [2][10], areal depletion curves
+      this.season;           // snowmelt season
+      this.removed;          // total snow plowed out of system (ft3)
+      this.adc = Array.from( // Array of [2][10], areal depletion curves
+                     Array(2),  
+                     () => new Array(4)
+                  );
    }
 }  ;
 
@@ -216,8 +221,8 @@ class TEvap
       this.rate;            // current evaporation rate (ft/sec)
       this.recoveryFactor;  // current soil recovery factor
       // The following are arrays of size 12
-      this.monthlyEvap; // monthly evaporation values
-      this.panCoeff;    // monthly pan coeff. values
+      this.monthlyEvap = new Array(12); // monthly evaporation values
+      this.panCoeff = new Array(12);    // monthly pan coeff. values
    }
 }   ;
 
@@ -230,10 +235,10 @@ class TAdjust
       this.rainFactor;      // current rainfall adjustment multiplier
       this.hydconFactor;    // current conductivity multiplier
       // The following are all arrays of size 12
-      this.temp;        // monthly temperature adjustments (deg F)
-      this.evap;        // monthly evaporation adjustments (ft/s)
-      this.rain;        // monthly rainfall adjustment multipliers
-      this.hydcon;      // hyd. conductivity adjustment multipliers
+      this.temp = new Array(12);        // monthly temperature adjustments (deg F)
+      this.evap = new Array(12);        // monthly evaporation adjustments (ft/s)
+      this.rain = new Array(12);        // monthly rainfall adjustment multipliers
+      this.hydcon = new Array(12);      // hyd. conductivity adjustment multipliers
    }
 }   ;
 
@@ -335,16 +340,16 @@ class TSnowmelt
       this.weplow;          // depth at which plowing begins (ft)
       this.toSubcatch;      // index of subcatch receiving plowed snow
       // The following are all arrays of size 3.
-      this.si;           // snow depth for 100% cover
-      this.dhmin;        // min. melt coeff. for each surface (ft/sec-F)
-      this.dhmax;        // max. melt coeff. for each surface (ft/sec-F)
-      this.tbase;        // base temp. for melting (F)
-      this.fwfrac;       // free water capacity / snow depth
-      this.wsnow;        // initial snow depth on each surface (ft)
-      this.fwnow;        // initial free water in snow pack (ft)
-      this.dhm;          // melt coeff. for each surface (ft/sec-F)
+      this.si = new Array(3);           // snow depth for 100% cover
+      this.dhmin = new Array(3);        // min. melt coeff. for each surface (ft/sec-F)
+      this.dhmax = new Array(3);        // max. melt coeff. for each surface (ft/sec-F)
+      this.tbase = new Array(3);        // base temp. for melting (F)
+      this.fwfrac = new Array(3);       // free water capacity / snow depth
+      this.wsnow = new Array(3);        // initial snow depth on each surface (ft)
+      this.fwnow = new Array(3);        // initial free water in snow pack (ft)
+      this.dhm = new Array(3);          // melt coeff. for each surface (ft/sec-F)
       // The following are arrays of size 5.
-      this.sfrac;        // fractions moved to other areas by plowing
+      this.sfrac = new Array(5);        // fractions moved to other areas by plowing
    }
 }  ;
 
@@ -358,15 +363,15 @@ class TSnowpack
    constructor(){
       this.snowmeltIndex;   // index of snow melt parameter set
       // The following are arrays of size 3
-      this.fArea;        // fraction of total area of each surface
-      this.wsnow;        // depth of snow pack (ft)
-      this.fw;           // depth of free water in snow pack (ft)
-      this.coldc;        // cold content of snow pack
-      this.ati;          // antecedent temperature index (deg F)
-      this.sba;          // initial ASC of linear ADC
-      this.awe;          // initial AWESI of linear ADC
-      this.sbws;         // final AWESI of linear ADC
-      this.imelt;        // immediate melt (ft)
+      this.fArea = new Array(3);        // fraction of total area of each surface
+      this.wsnow = new Array(3);        // depth of snow pack (ft)
+      this.fw = new Array(3);           // depth of free water in snow pack (ft)
+      this.coldc = new Array(3);        // cold content of snow pack
+      this.ati = new Array(3);          // antecedent temperature index (deg F)
+      this.sba = new Array(3);          // initial ASC of linear ADC
+      this.awe = new Array(3);          // initial AWESI of linear ADC
+      this.sbws = new Array(3);         // final AWESI of linear ADC
+      this.imelt = new Array(3);        // immediate melt (ft)
    }
 }  ;
 
@@ -461,7 +466,7 @@ class TPattern
       this.ID;              // time pattern name
       this.type;            // time pattern type code
       this.count;           // number of factors
-      this.factor;          // Array size 24time pattern factors
+      this.factor = new Array(24);          // Array size 24time pattern factors
    }
 }  ;
 
@@ -506,7 +511,7 @@ class DwfInflow
    constructor(){
       this.param;          // pollutant index (flow = -1)
       this.avgValue;       // average value (cfs or concen.)
-      this.patterns;       // monthly, daily, hourly, weekend time patterns, array of 4
+      this.patterns = new Array(4);       // monthly, daily, hourly, weekend time patterns, array of 4
       this.next;  
    }         // /*DwfInflow*/ pointer to next inflow data object
 };
@@ -516,7 +521,7 @@ class TDwfInflow
    constructor(){
       this.param;          // pollutant index (flow = -1)
       this.avgValue;       // average value (cfs or concen.)
-      this.patterns;       // monthly, daily, hourly, weekend time patterns, array of 4
+      this.patterns = new Array(4);       // monthly, daily, hourly, weekend time patterns, array of 4
       this.next;  
    }         // /*DwfInflow*/ pointer to next inflow data object
 };
@@ -541,14 +546,13 @@ class TUnitHyd
    constructor(){
       this.ID;              // name of the unit hydrograph object
       this.rainGage;        // index of rain gage
-      // The following are all [12][3] arrays, written as 12 arrays. The 3 should be controlled elsewhere.
-      // Example: iaMax[12][3] => let iaMax = new Array(12);
-      this.iaMax;    // max. initial abstraction (IA) (in or mm)
-      this.iaRecov;  // IA recovery rate (in/day or mm/day)
-      this.iaInit;   // starting IA (in or mm)
-      this.r;        // fraction of rainfall becoming I&I
-      this.tBase;    // time base of each UH in each month (sec)
-      this.tPeak;    // time to peak of each UH in each month (sec)
+      // The following are all [12][3] arrays.
+      this.iaMax = Array.from(Array(12), () => new Array(3));    // max. initial abstraction (IA) (in or mm)
+      this.iaRecov = Array.from(Array(12), () => new Array(3));  // IA recovery rate (in/day or mm/day)
+      this.iaInit = Array.from(Array(12), () => new Array(3));   // starting IA (in or mm)
+      this.r = Array.from(Array(12), () => new Array(3));        // fraction of rainfall becoming I&I
+      this.tBase = Array.from(Array(12), () => new Array(3));    // time base of each UH in each month (sec)
+      this.tPeak = Array.from(Array(12), () => new Array(3));    // time to peak of each UH in each month (sec)
    }
 }  ;
 
@@ -699,9 +703,9 @@ class TTransect
       this.lengthFactor;              // floodplain / channel length
       //--------------------------------------
       this.roughness;                 // Manning's n
-      this.areaTbl;                   // Array size [N_TRANSECT_TBL]. table of area v. depth
-      this.hradTbl;                   // Array size [N_TRANSECT_TBL]. table of hyd. radius v. depth
-      this.widthTbl;                  // Array size [N_TRANSECT_TBL]. table of top width v. depth
+      this.areaTbl = new Array(N_TRANSECT_TBL); // Array size [N_TRANSECT_TBL]. table of area v. depth
+      this.hradTbl = new Array(N_TRANSECT_TBL);                   // Array size [N_TRANSECT_TBL]. table of hyd. radius v. depth
+      this.widthTbl = new Array(N_TRANSECT_TBL);                  // Array size [N_TRANSECT_TBL]. table of top width v. depth
       this.nTbl;                      // size of geometry tables
    }
 }   ;
@@ -720,9 +724,9 @@ class TShape
       this.wMax;                      // max. width
       this.sMax;                      // max. section factor
       this.aMax;                      // area at max. section factor
-      this.areaTbl;      // double[N_SHAPE_TBL]. table of area v. depth
-      this.hradTbl;      // double[N_SHAPE_TBL]. table of hyd. radius v. depth
-      this.widthTbl;     // double[N_SHAPE_TBL]. table of top width v. depth
+      this.areaTbl = new Array(N_SHAPE_TBL);      // double[N_SHAPE_TBL]. table of area v. depth
+      this.hradTbl = new Array(N_SHAPE_TBL);      // double[N_SHAPE_TBL]. table of hyd. radius v. depth
+      this.widthTbl = new Array(N_SHAPE_TBL);     // double[N_SHAPE_TBL]. table of top width v. depth
    }
 }   ;
 
@@ -904,7 +908,7 @@ class TBuildup
    constructor(){
       this.normalizer;      // normalizer code (area or curb length)
       this.funcType;        // buildup function type code
-      this.coeff;           // Array of size 3. Coeffs. of buildup function
+      this.coeff = new Array(3);           // Array of size 3. Coeffs. of buildup function
       this.maxDays;         // time to reach max. buildup (days)
    }
 }  ;
@@ -1047,8 +1051,8 @@ class TSysStats
       this.avgTimeStep;
       this.avgStepCount;
       this.steadyStateCount;
-      this.timeStepIntervals; // Array of size [TIMELEVELS];      //(5.1.015)
-      this.timeStepCounts;    // Array of size [TIMELEVELS];      //(5.1.015)   
+      this.timeStepIntervals = new Array(TIMELEVELS); // Array of size [TIMELEVELS];      //(5.1.015)
+      this.timeStepCounts = new Array(TIMELEVELS);    // Array of size [TIMELEVELS];      //(5.1.015)   
    }
    
 }  ;
@@ -1173,7 +1177,7 @@ class TLinkStats
       this.timeFullDnstream;
       this.timeFullFlow;
       this.timeCapacityLimited;
-      this.timeInFlowClass      // Array of size [MAX_FLOW_CLASSES];
+      this.timeInFlowClass = new Array(MAX_FLOW_CLASSES)      // Array of size [MAX_FLOW_CLASSES];
       this.timeCourantCritical;
       this.flowTurns;
       this.flowTurnSign;

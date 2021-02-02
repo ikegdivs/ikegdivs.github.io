@@ -542,11 +542,11 @@ function swmm_getError(errMsg, msgLen)
     let errMsgLen = msgLen;
 
     // --- copy text of last error message into errMsg
-    if ( ErrorCode > 0 && strlen(ErrorMsg) == 0 ) sstrncpy(errMsg, "", 1);
+    if ( ErrorCode > 0 && strlen(ErrorMsg) == 0 ) errMsg = "";
     else
     {
         errMsgLen = MIN(errMsgLen, strlen(ErrorMsg));
-        errMsg = sstrncpy(errMsg, ErrorMsg, errMsgLen);
+        errMsg = ErrorMsg;
     }
 
     // --- remove leading line feed from errMsg
@@ -572,7 +572,7 @@ function UCF(u)
 
 //=============================================================================
 
-function sstrncpy(dest, src, maxlen)
+/*function sstrncpy(dest, src, maxlen)
 //
 //  Input:   dest = string to be copied to
 //           src = string to be copied from
@@ -581,10 +581,9 @@ function sstrncpy(dest, src, maxlen)
 //  Purpose: safe version of standard strncpy function
 //
 {
-     strncpy(dest, src, maxlen);
-     dest[maxlen] = '\0';
+     dest = src;
      return dest;
-}
+}*/
 
 //=============================================================================
 

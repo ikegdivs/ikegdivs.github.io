@@ -42,8 +42,8 @@ var  FMT16  = "\n  ERROR %d detected. Execution halted."
 var  FMT17  = "at line %ld of input file:"                                    //(5.1.013)
 var  FMT18  = "at line %ld of %s] section:"                                   //(5.1.013)
 var  FMT19  = "\n  Maximum error count exceeded."
-var  FMT20  = "\n\n  Analysis begun on:  %s"
-var  FMT20a = "  Analysis ended on:  %s"
+var  FMT20  = "\n\n  Analysis begun on:  {0}"
+var  FMT20a = "  Analysis ended on:  {0}"
 var  FMT21  = "  Total elapsed time: = "
 
 // Warning messages
