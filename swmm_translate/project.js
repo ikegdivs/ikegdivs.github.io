@@ -63,8 +63,60 @@
 //-----------------------------------------------------------------------------
 //  Shared variables
 //-----------------------------------------------------------------------------
-var Htable; // Hash tables for object ID names
+var Htable = new Array(MAX_OBJ_TYPES); // Hash tables for object ID names
 var MemPoolAllocated;      // true if memory pool allocated 
+
+/*
+**  root - Pointer to the current pool.
+*/
+//static alloc_root_t *root;
+class alloc_root_s
+{
+    //alloc_hdr_t *first,    /* First header in pool */
+    //            *current;  /* Current header       */
+    constructor(){
+        this.first;
+        this.current;
+    }
+}  //alloc_root_t;
+
+class alloc_root_t
+{
+    constructor(){
+        this.first;
+        this.current;
+    }
+}  
+
+var root = new alloc_root_t();
+
+/*
+**  alloc_hdr_t - Header for each block of memory.
+*/
+
+class alloc_hdr_s
+{
+    //struct alloc_hdr_s *next;   /* Next Block          */
+    //char               *block,  /* Start of block      */
+    //                   *free,   /* Next free in block  */
+    //                   *end;    /* block + block size  */
+    constructor(){
+        this.next;
+        this.block;
+        this.free;
+        this.end;
+    }
+}  //alloc_hdr_t;
+
+class alloc_hdr_t
+{
+    constructor(){
+        this.next;
+        this.block;
+        this.free;
+        this.end;
+    }
+} 
 
 //-----------------------------------------------------------------------------
 //  External Functions (declared in funcs.h)
@@ -135,7 +187,7 @@ function project_readInput()
     else
     {
         // --- compute total duration of simulation in seconds
-        TotalDuration = floor((EndDateTime - StartDateTime) * SECperDAY);
+        TotalDuration = Math.floor((EndDateTime - StartDateTime) * SECperDAY);
 
         // --- reporting step must be <= total duration
         if ( ReportStep > TotalDuration )
@@ -175,8 +227,8 @@ function project_validate()
     }
     for ( i=0; i<Nobjects[TSERIES]; i++ )
     {
-        err = table_validate(Tseries[i]);
-        if ( err ) report_writeTseriesErrorMsg(err, Tseries[i]);
+        err = table_validate(TSeries[i]);
+        if ( err ) report_writeTSeriesErrorMsg(err, TSeries[i]);
     }
 
     // --- validate hydrology objects
@@ -262,7 +314,7 @@ function  project_init()
     let j;
     climate_initState();
     lid_initState();
-    for (j=0; j<Nobjects[TSERIES]; j++)  table_tseriesInit(Tseries[j]);
+    for (j=0; j<Nobjects[TSERIES]; j++)  table_tseriesInit(TSeries[j]);
     for (j=0; j<Nobjects[GAGE]; j++)     gage_initState(j);
     for (j=0; j<Nobjects[SUBCATCH]; j++) subcatch_initState(j);
     for (j=0; j<Nobjects[NODE]; j++)     node_initState(j);
@@ -284,6 +336,10 @@ function project_addObject(type,  id, n)
     let  result;
     let  len;
     let  newID;
+
+    if(type == 13){
+        let x = 0;
+    }
 
     // --- do nothing if object already placed in hash table
     if ( project_findObject(type, id) >= 0 ) return 0;
@@ -415,7 +471,7 @@ function project_readOption(s1, s2)
 
       // --- simulation start date
       case START_DATE:
-        if ( !datetime_strToDate(s2, StartDate) )
+        if ( (StartDate = datetime_strToDate(s2, StartDate)) == null)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -423,7 +479,7 @@ function project_readOption(s1, s2)
 
       // --- simulation start time of day
       case START_TIME:
-        if ( !datetime_strToTime(s2, StartTime) )
+        if ( (StartTime = datetime_strToTime(s2, StartTime)) == null)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -431,7 +487,7 @@ function project_readOption(s1, s2)
 
       // --- simulation ending date
       case END_DATE:
-        if ( !datetime_strToDate(s2, EndDate) ) 
+        if ( (EndDate = datetime_strToDate(s2, EndDate)) == null) 
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -439,7 +495,7 @@ function project_readOption(s1, s2)
 
       // --- simulation ending time of day
       case END_TIME:
-        if ( !datetime_strToTime(s2, EndTime) )
+        if ( (EndTime = datetime_strToTime(s2, EndTime)) == null)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -447,7 +503,7 @@ function project_readOption(s1, s2)
 
       // --- reporting start date
       case REPORT_START_DATE:
-        if ( !datetime_strToDate(s2, ReportStartDate) )
+        if ( (ReportStartDate = datetime_strToDate(s2, ReportStartDate)) == null)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -455,7 +511,7 @@ function project_readOption(s1, s2)
 
       // --- reporting start time of day
       case REPORT_START_TIME:
-        if ( !datetime_strToTime(s2, ReportStartTime) )
+        if ( (ReportStartTime = datetime_strToTime(s2, ReportStartTime)) == null)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -468,7 +524,7 @@ function project_readOption(s1, s2)
       case SWEEP_END:
         strDate = s2;
         strDate += "/1947";
-        if ( !datetime_strToDate(strDate, aDate) )
+        if ( (aDate = datetime_strToDate(strDate, aDate)) == null )
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -479,7 +535,7 @@ function project_readOption(s1, s2)
 
       // --- number of antecedent dry days
       case START_DRY_DAYS:
-        StartDryDays = atof(s2);
+        StartDryDays = parseFloat(s2);
         if ( StartDryDays < 0.0 )
         {
             return error_setInpError(ERR_NUMBER, s2);
@@ -492,13 +548,31 @@ function project_readOption(s1, s2)
       case DRY_STEP:
       case REPORT_STEP:
       case RULE_STEP:                                                          //(5.1.013)
-        if ( !datetime_strToTime(s2, aTime) )
+        if(s2.includes(':'))
+        {
+            if ( (tStep = datetime_strToTime(s2, aTime)) == null)
+            {
+                return error_setInpError(ERR_NUMBER, s2);
+            }
+            else
+            {
+                /*datetime_decodeTime(aTime, h, m, s);
+                h += 24*aTime;
+                s = s + 60*m + 3600*h;
+                tStep = s;*/
+                tStep *= SecsPerDay;
+            }
+        } else {
+            tStep = getDouble(s2)
+        }
+      
+      
+        /*if ( (aTime = datetime_strToTime(s2, aTime)) == null)
         {
             return error_setInpError(ERR_DATETIME, s2);
-        }
-        datetime_decodeTime(aTime, h, m, s);
-        h += 24*aTime;
-        s = s + 60*m + 3600*h;
+        }*/
+
+        s = tStep;
 
         // --- RuleStep allowed to be 0 while other time steps must be > 0     //(5.1.013)
         if (k == RULE_STEP)                                                    //      
@@ -582,19 +656,23 @@ function project_readOption(s1, s2)
       //     (a value of 0 means that no lengthening is used))
       case ROUTE_STEP:
       case LENGTHENING_STEP:
-        if ( !getDouble(s2, tStep) )
+        //if ( (tStep = getDouble(s2, tStep)) == null )
+        if(s2.includes(':'))
         {
-            if ( !datetime_strToTime(s2, aTime) )
+            if ( (tStep = datetime_strToTime(s2, aTime)) == null)
             {
                 return error_setInpError(ERR_NUMBER, s2);
             }
             else
             {
-                datetime_decodeTime(aTime, h, m, s);
+                /*datetime_decodeTime(aTime, h, m, s);
                 h += 24*aTime;
                 s = s + 60*m + 3600*h;
-                tStep = s;
+                tStep = s;*/
+                tStep *= SecsPerDay;
             }
+        } else {
+            tStep = getDouble(s2)
         }
         if ( k == ROUTE_STEP )
         {
@@ -606,7 +684,7 @@ function project_readOption(s1, s2)
 
      // --- minimum variable time step for dynamic wave routing
       case MIN_ROUTE_STEP:
-        if ( !getDouble(s2, MinRouteStep) || MinRouteStep < 0.0 )
+        if ( ((MinRouteStep = getDouble(s2)) == null) || MinRouteStep < 0.0 )
             return error_setInpError(ERR_NUMBER, s2);
         break;
 
@@ -620,7 +698,7 @@ function project_readOption(s1, s2)
       //     dynamic wave flow routing (value of 0 indicates that variable
       //     time step option not used)
       case VARIABLE_STEP:
-        if ( !getDouble(s2, CourantFactor) )
+        if ( (CourantFactor = getDouble(s2)) == null )
             return error_setInpError(ERR_NUMBER, s2);
         if ( CourantFactor < 0.0 || CourantFactor > 2.0 )
             return error_setInpError(ERR_NUMBER, s2);
@@ -629,7 +707,7 @@ function project_readOption(s1, s2)
       // --- minimum surface area (ft2 or sq. meters) associated with nodes
       //     under dynamic wave flow routing 
       case MIN_SURFAREA:
-        if (!getDouble(s2, MinSurfArea))                                      //(5.1.013)
+        if ((MinSurfArea = getDouble(s2)) == null)                                     //(5.1.013)
             return error_setInpError(ERR_NUMBER, s2);                          //(5.1.013)
         if (MinSurfArea < 0.0)                                                 //(5.1.013)
             return error_setInpError(ERR_NUMBER, s2);                          //(5.1.013)
@@ -637,7 +715,7 @@ function project_readOption(s1, s2)
 
       // --- minimum conduit slope (%)
       case MIN_SLOPE:
-        if ( !getDouble(s2, MinSlope) )
+        if ( (MinSlope = getDouble(s2) ) == null)
             return error_setInpError(ERR_NUMBER, s2);
         if ( MinSlope < 0.0 || MinSlope >= 100 )
             return error_setInpError(ERR_NUMBER, s2);
@@ -653,7 +731,7 @@ function project_readOption(s1, s2)
 
       // --- head convergence tolerance for dynamic wave routing
       case HEAD_TOL:
-        if ( !getDouble(s2, HeadTol) )
+        if ( (HeadTol = getDouble(s2) ) == null)
         {
             return error_setInpError(ERR_NUMBER, s2);
         }
@@ -661,7 +739,7 @@ function project_readOption(s1, s2)
 
       // --- steady state tolerance on system inflow - outflow
       case SYS_FLOW_TOL:
-        if ( !getDouble(s2, SysFlowTol) )
+        if ( (SysFlowTol = getDouble(s2) ) == null)
         {
             return error_setInpError(ERR_NUMBER, s2);
         }
@@ -670,7 +748,7 @@ function project_readOption(s1, s2)
 
       // --- steady state tolerance on nodal lateral inflow
       case LAT_FLOW_TOL:
-        if ( !getDouble(s2, LatFlowTol) )
+        if ( (LatFlowTol = getDouble(s2) ) == null)
         {
             return error_setInpError(ERR_NUMBER, s2);
         }
@@ -701,30 +779,30 @@ function initPointers()
 //  Purpose: assigns null to all dynamic arrays for a new project.
 //
 {
-    Gage     = null;
-    Subcatch = null;
-    Node     = null;
-    Outfall  = null;
-    Divider  = null;
-    Storage  = null;
-    Link     = null;
-    Conduit  = null;
-    Pump     = null;
-    Orifice  = null;
-    Weir     = null;
-    Outlet   = null;
-    Pollut   = null;
-    Landuse  = null;
-    Pattern  = null;
-    Curve    = null;
-    Tseries  = null;
-    Transect = null;
-    Shape    = null;
-    Aquifer    = null;
-    UnitHyd    = null;
-    Snowmelt   = null;
-    Event      = null;
-    MemPoolAllocated = false;
+    Gage     = [];
+    Subcatch = [];
+    Node     = [];
+    Outfall  = [];
+    Divider  = [];
+    Storage  = [];
+    Link     = [];
+    Conduit  = [];
+    Pump     = [];
+    Orifice  = [];
+    Weir     = [];
+    Outlet   = [];
+    Pollut   = [];
+    Landuse  = [];
+    Pattern  = [];
+    Curve    = [];
+    TSeries  = [];
+    Transect = [];
+    Shape    = [];
+    Aquifer    = [];
+    UnitHyd    = [];
+    Snowmelt   = [];
+    Event      = [];
+    MemPoolAllocated = [];
 }
 
 //=============================================================================
@@ -917,13 +995,15 @@ function openFiles(f1, f2, f3)
     }
 
     // --- open input and report files
-    if ((Finp.file = fopen(f1,"rt")) == null)
+    if ((Finp.contents = fopen(f1,"rt")) == null)
     {
         writecon(FMT12);
         writecon(f1);
         ErrorCode = ERR_INP_FILE;
         return;
     }
+    
+    
     /*if ((Frpt.file = fopen(f2,"wt")) == null)
     {
        writecon(FMT13);
@@ -948,39 +1028,42 @@ function createObjects()
 
     // --- allocate memory for each category of object
     if ( ErrorCode ) return;
-    Gage     = new Array(Nobjects[GAGE]);
-    Subcatch = new Array(Nobjects[SUBCATCH]);
-    Node     = new Array(Nobjects[NODE]);
-    Outfall  = new Array(Nnodes[OUTFALL]);
-    Divider  = new Array(Nnodes[DIVIDER]);
-    Storage  = new Array(Nnodes[STORAGE]);
-    Link     = new Array(Nobjects[LINK]);
-    Conduit  = new Array(Nlinks[CONDUIT]);
-    Pump     = new Array(Nlinks[PUMP]);
-    Orifice  = new Array(Nlinks[ORIFICE]);
-    Weir     = new Array(Nlinks[WEIR]);
-    Outlet   = new Array(Nlinks[OUTLET]);
-    Pollut   = new Array(Nobjects[POLLUT]);
-    Landuse  = new Array(Nobjects[LANDUSE]);
-    Pattern  = new Array(Nobjects[TIMEPATTERN]);
-    Curve    = new Array(Nobjects[CURVE]);
-    Tseries  = new Array(Nobjects[TSERIES]);
-    Aquifer  = new Array(Nobjects[AQUIFER]);
-    UnitHyd  = new Array(Nobjects[UNITHYD]);
-    Snowmelt = new Array(Nobjects[SNOWMELT]);
-    Shape    = new Array(Nobjects[SHAPE]);
+    for(let i = 0; i < Nobjects[GAGE]; i++){Gage.push(new TGage())}
+    for(let i = 0; i < Nobjects[SUBCATCH]; i++){Subcatch.push(new TSubcatch())}
+    for(let i = 0; i < Nobjects[NODE]; i++){Node.push(new TNode())}
+    for(let i = 0; i < Nnodes[OUTFALL]; i++){Outfall.push(new TOutfall())}
+    for(let i = 0; i < Nnodes[DIVIDER]; i++){Divider.push(new TDivider())}
+    for(let i = 0; i < Nnodes[STORAGE]; i++){Storage.push(new TStorage())}
+    for(let i = 0; i < Nobjects[LINK]; i++){Link.push(new TLink())}
+    for(let i = 0; i < Nlinks[CONDUIT]; i++){Conduit.push(new TConduit())}
+    for(let i = 0; i < Nlinks[PUMP]; i++){Pump.push(new TPump())}
+    for(let i = 0; i < Nlinks[ORIFICE]; i++){Orifice.push(new TOrifice())}
+    for(let i = 0; i < Nlinks[WEIR]; i++){Weir.push(new TWeir())}
+    for(let i = 0; i < Nlinks[OUTLET]; i++){Outlet.push(new TOutlet())}
+    for(let i = 0; i < Nobjects[POLLUT]; i++){Pollut.push(new TPollut())}
+    for(let i = 0; i < Nobjects[LANDUSE]; i++){Landuse.push(new TLanduse())}
+    for(let i = 0; i < Nobjects[TIMEPATTERN]; i++){Pattern.push(new TPattern())}
+    for(let i = 0; i < Nobjects[CURVE]; i++){Curve.push(new TTable())}
+    for(let i = 0; i < Nobjects[TSERIES]; i++){TSeries.push(new TTable())}
+    for(let i = 0; i < Nobjects[AQUIFER]; i++){Aquifer.push(new TAquifer())}
+    for(let i = 0; i < Nobjects[UNITHYD]; i++){UnitHyd.push(new TUnitHyd())}
+    for(let i = 0; i < Nobjects[SNOWMELT]; i++){Snowmelt.push(new TSnowmelt())}
+    for(let i = 0; i < Nobjects[SHAPE]; i++){Shape.push(new TShape())}
 
     // --- create array of detailed routing event periods
-    Event =  new Array(NumEvents+1)
+    Event = new Array(NumEvents+1);
+    for(let i = 0; i < NumEvents+1; i++){
+        Event[i] = new TEvent();
+    }
     Event[NumEvents].start = BIG;
     Event[NumEvents].end = BIG + 1.0;
 
     // --- create LID objects
-    lid_create(Nobjects[LID], Nobjects[SUBCATCH]);
+    //lid_create(Nobjects[LID], Nobjects[SUBCATCH]);
 
     // --- create control rules
-    ErrorCode = controls_create(Nobjects[CONTROL]);
-    if ( ErrorCode ) return;
+    //ErrorCode = controls_create(Nobjects[CONTROL]);
+    //if ( ErrorCode ) return;
 
     // --- create cross section transects
     ErrorCode = transect_create(Nobjects[TRANSECT]);
@@ -990,7 +1073,7 @@ function createObjects()
     infil_create(Nobjects[SUBCATCH]);                                          //(5.1.015)
 
     // --- allocate memory for water quality state variables
-    for (let j = 0; j < Nobjects[SUBCATCH]; j++)
+    /*for (let j = 0; j < Nobjects[SUBCATCH]; j++)
     {
         Subcatch[j].initBuildup = new Array(Nobjects[POLLUT]);
         Subcatch[j].oldQual = new Array(Nobjects[POLLUT]);
@@ -1012,22 +1095,27 @@ function createObjects()
         Link[j].oldQual = new Array(Nobjects[POLLUT]);
         Link[j].newQual = new Array(Nobjects[POLLUT]);
         Link[j].totalLoad = new Array(Nobjects[POLLUT]);
-    }
+    }*/
 
     // --- allocate memory for land use buildup/washoff functions
     for (let j = 0; j < Nobjects[LANDUSE]; j++)
     {
-        Landuse[j].buildupFunc = new Array(Nobjects[POLLUT]);
-        Landuse[j].washoffFunc = new Array(Nobjects[POLLUT]);
+        //Landuse[j].buildupFunc = new Array(Nobjects[POLLUT]);
+        //Landuse[j].washoffFunc = new Array(Nobjects[POLLUT]);
+        for(var i = 0; i < Nobjects[POLLUT]; i++){Landuse[j].buildupFunc.push(new TBuildup())}
+        for(var i = 0; i < Nobjects[POLLUT]; i++){Landuse[j].washoffFunc.push(new TWashoff())}
     }
 
     // --- allocate memory for subcatchment landuse factors
     for (let j = 0; j < Nobjects[SUBCATCH]; j++)
     {
-        Subcatch[j].landFactor = new Array(Nobjects[LANDUSE]);
+        for(let i = 0; i < Nobjects[LANDUSE]; i++){Subcatch[j].landFactor.push(new TLandFactor())}
+        
         for (let k = 0; k < Nobjects[LANDUSE]; k++)
         {
-            Subcatch[j].landFactor[k].buildup = new Array(Nobjects[POLLUT]);
+            //Subcatch[j].landFactor[k].buildup = new Array(Nobjects[POLLUT]);
+            for(let ii = 0; ii < Nobjects[POLLUT]; ii++){Subcatch[j].landFactor[k].buildup.push(new TBuildup())}
+        
         }
     }
 
@@ -1078,6 +1166,7 @@ function createObjects()
     // --- initialize link properties
     for (let j = 0; j < Nobjects[LINK]; j++)
     {
+        Link[j].xsect = new TXsect();
         Link[j].xsect.type   = -1;
         Link[j].cLossInlet   = 0.0;
         Link[j].cLossOutlet  = 0.0;
@@ -1093,7 +1182,7 @@ function createObjects()
 
     //  --- initialize curves, time series, and time patterns
     for (let j = 0; j < Nobjects[CURVE]; j++)   table_init(Curve[j]);
-    for (let j = 0; j < Nobjects[TSERIES]; j++) table_init(Tseries[j]);
+    for (let j = 0; j < Nobjects[TSERIES]; j++) table_init(TSeries[j]);
     for (let j = 0; j < Nobjects[TIMEPATTERN]; j++) inflow_initDwfPattern(j);
 }
 
@@ -1181,8 +1270,8 @@ function deleteObjects()
     }
 
     // --- delete table entries for curves and time series
-    if ( Tseries ) for (let j = 0; j < Nobjects[TSERIES]; j++)
-        table_deleteEntries(Tseries[j]);
+    if ( TSeries ) for (let j = 0; j < Nobjects[TSERIES]; j++)
+        table_deleteEntries(TSeries[j]);
     if ( Curve ) for (let j = 0; j < Nobjects[CURVE]; j++)
         table_deleteEntries(Curve[j]);
 
@@ -1212,7 +1301,7 @@ function deleteObjects()
     FREE(Landuse);
     FREE(Pattern);
     FREE(Curve);
-    FREE(Tseries);
+    FREE(TSeries);
     FREE(Aquifer);
     FREE(UnitHyd);
     FREE(Snowmelt);
@@ -1221,12 +1310,23 @@ function deleteObjects()
 }
 
 //=============================================================================
+// I'm not certain any of the hdr object is useful in JavaScript.
+function AllocHdr() {
+    var hdr = new alloc_hdr_t();
+    let block;
 
+    block = '';
+    hdr.block = block;
+    hdr.free = block;
+    hdr.next = null;
+    hdr.end = block + ALLOC_BLOCK_SIZE;
+}
 function createHashTables()
 //
 //  Input:   none
 //  Output:  returns error code
 //  Purpose: allocates memory for object ID hash tables
+//  Note: I don't this this is useful in JavaScript.
 //
 {   let  j;
     MemPoolAllocated = false;
@@ -1235,10 +1335,17 @@ function createHashTables()
         Htable[j] = HTcreate();
         if ( Htable[j] == null ) report_writeErrorMsg(ERR_MEMORY, "");
     }
+    
+    root.first = AllocHdr();
+    root.current = root.first;
+    newpool = root;
+
 
     // --- initialize memory pool used to store object ID's
-    if ( AllocInit() == null ) report_writeErrorMsg(ERR_MEMORY, "");
-    else MemPoolAllocated = true;
+    // -- Not sure this is necessary in JavaScript.
+    //if ( root == null || root.first == null) report_writeErrorMsg(ERR_MEMORY, "");
+    //else 
+    MemPoolAllocated = true;
 }
 
 //=============================================================================

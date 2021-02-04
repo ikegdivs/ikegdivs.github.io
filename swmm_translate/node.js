@@ -73,7 +73,7 @@ function  node_setParams(j, type, k, x)
         Outfall[k].stageSeries = x[4];
         Outfall[k].hasFlapGate = x[5];
         Outfall[k].routeTo     = x[6];
-        Outfall[k].wRouted     = NULL;
+        Outfall[k].wRouted     = null;
         if ( Outfall[k].routeTo >= 0 )
         {
             /*Outfall[k].wRouted =
@@ -537,7 +537,7 @@ function junc_readParams(j, k, tok, ntoks)
 
     if ( ntoks < 2 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(NODE, tok[0]);
-    if ( id == NULL ) return error_setInpError(ERR_NAME, tok[0]);
+    if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
 
     // --- parse invert elev., max. depth, init. depth, surcharged depth,
     //     & ponded area values
@@ -546,7 +546,7 @@ function junc_readParams(j, k, tok, ntoks)
         x[i-1] = 0.0;
         if ( i < ntoks )
         {
-            if ( ! getDouble(tok[i], x[i-1]) )
+            if ( !(x[i-1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
     }
@@ -588,12 +588,12 @@ function storage_readParams(j, k, tok, ntoks)
     // --- get ID name
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, '');
     id = project_findID(NODE, tok[0]);
-    if ( id == NULL ) return error_setInpError(ERR_NAME, tok[0]);
+    if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
 
     // --- get invert elev, max. depth, & init. depth
     for ( i = 1; i <= 3; i++ )
     {
-        if ( ! getDouble(tok[i], x[i-1]) )
+        if ( !(x[i-1] = getDouble(tok[i])) )
             return error_setInpError(ERR_NUMBER, tok[i]);
     }
 
@@ -614,7 +614,7 @@ function storage_readParams(j, k, tok, ntoks)
         {
             if ( i < ntoks )
             {
-                if ( ! getDouble(tok[i], x[i-2]) )
+                if ( !(x[i-2] = getDouble(tok[i])) )
                     return error_setInpError(ERR_NUMBER, tok[i]);
             }
         }
@@ -633,7 +633,7 @@ function storage_readParams(j, k, tok, ntoks)
     // --- ponded area replaced by surcharge depth                             //(5.1.013)
     if ( ntoks > n)
     {
-        if ( ! getDouble(tok[n], x[7]) )
+        if ( !(x[7] = getDouble(tok[n])) )
             return error_setInpError(ERR_NUMBER, tok[n]);
         n++;
     }
@@ -641,7 +641,7 @@ function storage_readParams(j, k, tok, ntoks)
     // --- get evaporation fraction if present
     if ( ntoks > n )
     {
-        if ( ! getDouble(tok[n], x[8]) )
+        if ( !(x[8] = getDouble(tok[n])) )
             return error_setInpError(ERR_NUMBER, tok[n]);
         n++;
     }
@@ -851,7 +851,7 @@ function storage_getLosses(j, tStep)
         exfil = Storage[k].exfil;
 
         // --- if either of these apply
-        if ( evapRate > 0.0 || exfil != NULL) 
+        if ( evapRate > 0.0 || exfil != null) 
         {
             // --- obtain storage depth & surface area 
             depth = Node[j].newDepth;
@@ -862,7 +862,7 @@ function storage_getLosses(j, tStep)
                 evapRate = area * evapRate;
 
             // --- find exfiltration rate (cfs) through bottom and side banks
-            if ( exfil != NULL )
+            if ( exfil != null )
             {
                 exfilRate = exfil_getLoss(exfil, tStep, depth, area);
             }
@@ -912,16 +912,16 @@ function divider_readParams(j, k, tok, ntoks)
     // --- get ID name
     if ( ntoks < 4 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(NODE, tok[0]);
-    if ( id == NULL ) return error_setInpError(ERR_NAME, tok[0]);
+    if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
 
     // --- get invert elev.
-    if ( ! getDouble(tok[1], x[0]) ) return error_setInpError(ERR_NUMBER, tok[1]);
+    if ( !(x[0] = getDouble(tok[1])) ) return error_setInpError(ERR_NUMBER, tok[1]);
 
     // --- initialize parameter values
     for ( i=1; i<11; i++) x[i] = 0.0;
 
     // --- check if no diverted link supplied
-    if ( strlen(tok[2]) == 0 || strcmp(tok[2], "*") == 0 ) x[1] = -1.0;
+    if ( tok[2].length == 0 || strcmp(tok[2], "*") == 0 ) x[1] = -1.0;
 
     // --- otherwise get index of diverted link
     else
@@ -952,7 +952,7 @@ function divider_readParams(j, k, tok, ntoks)
     if ( m1 == CUTOFF_DIVIDER )
     {
         if ( ntoks < 5 ) return error_setInpError(ERR_ITEMS, "");
-        if ( ! getDouble(tok[4], x[4]) )
+        if ( !(x[4] = getDouble(tok[4])) )
             return error_setInpError(ERR_NUMBER, tok[4]);
         n = 5;
     }
@@ -962,7 +962,7 @@ function divider_readParams(j, k, tok, ntoks)
     {
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
         for (i=4; i<7; i++)
-             if ( ! getDouble(tok[i], x[i]) )
+             if ( !(x[i] = getDouble(tok[i])) )
                  return error_setInpError(ERR_NUMBER, tok[i]);
         n = 7;
     }
@@ -975,7 +975,7 @@ function divider_readParams(j, k, tok, ntoks)
     m = 7;
     for (i=n; i<ntoks && m<11; i++)
     {
-        if ( ! getDouble(tok[i], x[m]) )
+        if ( !(x[m] = getDouble(tok[i])) )
         {
             return error_setInpError(ERR_NUMBER, tok[i]);
         }
@@ -1130,9 +1130,9 @@ function outfall_readParams(j, k, tok, ntoks)
 
     if ( ntoks < 3 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(NODE, tok[0]);                      // node ID
-    if ( id == NULL )
+    if ( id == null )
         return error_setInpError(ERR_NAME, tok[0]);
-    if ( ! getDouble(tok[1], x[0]) )                       // invert elev. 
+    if ( !(x[0] = getDouble(tok[1])) )                       // invert elev. 
         return error_setInpError(ERR_NUMBER, tok[1]);
     i = findmatch(tok[2], OutfallTypeWords);               // outfall type
     if ( i < 0 ) return error_setInpError(ERR_KEYWORD, tok[2]);
@@ -1151,7 +1151,7 @@ function outfall_readParams(j, k, tok, ntoks)
         switch ( i )
         {
         case FIXED_OUTFALL:                                // fixed stage
-          if ( ! getDouble(tok[3], x[2]) )
+          if ( !(x[2] = getDouble(tok[3])) )
               return error_setInpError(ERR_NUMBER, tok[3]);
           break;
         case TIDAL_OUTFALL:                                // tidal curve
@@ -1163,7 +1163,7 @@ function outfall_readParams(j, k, tok, ntoks)
           m = project_findObject(TSERIES, tok[3]);            
           if ( m < 0 ) return error_setInpError(ERR_NAME, tok[3]);
           x[4] = m;
-          Tseries[m].refersTo = TIMESERIES_OUTFALL;
+          TSeries[m].refersTo = TIMESERIES_OUTFALL;
         }
     }
     if ( ntoks == n )
@@ -1224,14 +1224,14 @@ function outfall_setOutletDepth(j, yNorm, yCrit, z)
         k = Outfall[i].tideCurve;
         table_getFirstEntry(Curve[k], x, y);
         currentDate = NewRoutingTime / MSECperDAY;
-        x += ( currentDate - floor(currentDate) ) * 24.0;
+        x += ( currentDate - Math.floor(currentDate) ) * 24.0;
         stage = table_lookup(Curve[k], x) / UCF(LENGTH);
         break;
 
       case TIMESERIES_OUTFALL:
         k = Outfall[i].stageSeries;
         currentDate = StartDateTime + NewRoutingTime / MSECperDAY;
-        stage = table_tseriesLookup(Tseries[k], currentDate, TRUE) /
+        stage = table_tseriesLookup(TSeries[k], currentDate, TRUE) /
                 UCF(LENGTH);
         break;
       default: stage = Node[j].invertElev;

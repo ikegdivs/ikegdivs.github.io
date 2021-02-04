@@ -134,9 +134,9 @@ function datetime_encodeDate(year, month, day)
     && (day >= 1)
     && (day <= DaysPerMonth[i][month-1]))
     {
-        for (j = 0; j < month-1; j++) day += DaysPerMonth[i][j];
+        for (j = 0; j < parseInt(month-1); j++) day += DaysPerMonth[i][j];
         i = year - 1;
-        return i*365 + i/4 - i/100 + i/400 + day - DateDelta;
+        return i*365 + i/4 - i/100 + i/400 + parseInt(day) - DateDelta;
     }
     else return -DateDelta;
 }
@@ -151,11 +151,11 @@ function datetime_encodeTime(hour, minute, second)
 //  Purpose: encodes hour:minute:second to a DateTime value
 {
     let s;
-    if ((hour >= 0)
-    && (minute >= 0)
-    && (second >= 0))
+    if ((parseInt(hour) >= 0)
+    && (parseInt(minute) >= 0)
+    && (parseInt(second) >= 0))
     {
-        s = (hour * 3600 + minute * 60 + second);
+        s = (parseInt(hour) * 3600 + parseInt(minute) * 60 + parseInt(second));
         return s/SecsPerDay;
     }
     else return 0.0;
@@ -178,7 +178,7 @@ function datetime_decodeDate(date, year, month, day)
     D100 = D4 * 25 - 1;    //36524
     D400 = D100 * 4 + 1;   //146097
 
-    t = (int)(floor (date)) + DateDelta;
+    t = (Math.floor(date)) + DateDelta;
     if (t <= 0)
     {
         year = 0;
@@ -236,8 +236,8 @@ function datetime_decodeTime(time, h, m, s)
 {
     let secs;
     let mins;
-    let fracDay = (time - floor(time)) * SecsPerDay;
-    secs = (int)(floor(fracDay + 0.5));
+    let fracDay = (time - Math.floor(time)) * SecsPerDay;
+    secs = (Math.floor(fracDay + 0.5));
     if ( secs >= 86400 ) secs = 86399;
     divMod(secs, 60, mins, s);
     divMod(mins, 60, h, m);
@@ -366,9 +366,10 @@ function datetime_strToDate(s, d)
         }
         if (!(/\d/.test(mon))) mon = datetime_findMonth(month);
         d = datetime_encodeDate(yr, mon, day);
+        return d;
     }
     if (d == -DateDelta) return 0;
-    else return 1;
+    else return null;
 }
 
 //=============================================================================
@@ -386,8 +387,8 @@ function datetime_strToTime(s, t)
     t = parseInt(s);
     if ( t == NaN )
     {
-        t /= 24.0;
-        return 1;
+        t = 0;
+        return t;
     }
 
     // Read time in hr:min:sec format
@@ -400,8 +401,8 @@ function datetime_strToTime(s, t)
             sec = vals[2]
     if ( n == 0 ) return 0;
     t = datetime_encodeTime(hr, min, sec);
-    if ( (hr >= 0) && (min >= 0) && (sec >= 0) ) return 1;
-    else return 0;
+    if ( (hr >= 0) && (min >= 0) && (sec >= 0) ) return t;
+    else return null;
 }
 
 //=============================================================================
@@ -422,7 +423,7 @@ function datetime_addSeconds(date1, seconds)
 //  Output:  returns updated value of date1
 //  Purpose: adds a given number of seconds to a date/time.
 {
-    let d = floor(date1);
+    let d = Math.floor(date1);
     let h, m, s;
     datetime_decodeTime(date1, h, m, s);
     return d + (3600.0*h + 60.0*m + s + seconds)/SecsPerDay;
@@ -436,8 +437,8 @@ function datetime_addDays(date1, date2)
 //  Output:  returns date1 + date2
 //  Purpose: adds a given number of decimal days to a date/time.
 {
-    let d1 = floor(date1);
-    let d2 = floor(date2);
+    let d1 = Math.floor(date1);
+    let d2 = Math.floor(date2);
     let h1, m1, s1;
     let h2, m2, s2;
     datetime_decodeTime(date1, h1, m1, s1);
@@ -453,15 +454,15 @@ function datetime_timeDiff(date1, date2)
 //  Output:  returns date1 - date2 in seconds
 //  Purpose: finds number of seconds between two dates.
 {
-    let d1 = floor(date1);
-    let d2 = floor(date2);
+    let d1 = Math.floor(date1);
+    let d2 = Math.floor(date2);
     let    h, m, s;
     let   s1, s2, secs;
     datetime_decodeTime(date1, h, m, s);
     s1 = 3600*h + 60*m + s;
     datetime_decodeTime(date2, h, m, s);
     s2 = 3600*h + 60*m + s;
-    secs = (int)(floor((d1 - d2)*SecsPerDay + 0.5));
+    secs = (Math.floor((d1 - d2)*SecsPerDay + 0.5));
     secs += (s1 - s2);
     return secs;
 }
@@ -489,7 +490,7 @@ function  datetime_dayOfYear(date)
     let startOfYear;
     datetime_decodeDate(date, year, month, day);
     startOfYear = datetime_encodeDate(year, 1, 1);
-    return (floor(date - startOfYear)) + 1;
+    return (Math.floor(date - startOfYear)) + 1;
 }
 
 //=============================================================================
@@ -499,7 +500,7 @@ function datetime_dayOfWeek(date)
 //  Output:  returns index of day of week (1..7)
 //  Purpose: finds day of week (Sun = 1, ... Sat = 7) for a given date.
 {
-    let t = (floor(date)) + DateDelta;
+    let t = (Math.floor(date)) + DateDelta;
     return (t % 7) + 1;
 }
 

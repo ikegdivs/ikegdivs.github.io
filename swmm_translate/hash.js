@@ -4,30 +4,21 @@
 //   Header file for Hash Table module hash.c.
 //-----------------------------------------------------------------------------
 
-#ifndef HASH_H
-#define HASH_H
+var HTMAXSIZE = 1999
+var NOTFOUND  = -1
 
-
-#define HTMAXSIZE 1999
-#define NOTFOUND  -1
-
-struct HTentry
+class HTentry
 {
-    char   *key;
-    int    data;
-    struct HTentry *next;
+    constructor(){
+        this.key;
+        this.data;
+        //struct HTentry *next
+        this.next;
+    }
 };
 
-typedef struct HTentry *HTtable;
-
-HTtable *HTcreate(void);
-int     HTinsert(HTtable *, char *, int);
-int     HTfind(HTtable *, char *);
-char    *HTfindKey(HTtable *, char *);
-void    HTfree(HTtable *);
-
-
-#endif //HASH_H
+//typedef struct HTentry *HTtable;
+var HTtable;
 
 //-----------------------------------------------------------------------------
 //   hash.c
@@ -46,103 +37,101 @@ void    HTfree(HTtable *);
 //      HTfree()   - frees a hash table
 //-----------------------------------------------------------------------------
 
-#include <stdlib.h>
-#include <string.h>
-#include "hash.h"
-#define UCHAR(x) (((x) >= 'a' && (x) <= 'z') ? ((x)&~32) : (x))
+//function UCHAR(x) {(((x) >= 'a' && (x) <= 'z') ? ((x)&~32) : (x))}
 
 /* Case-insensitive comparison of strings s1 and s2 */
-int  samestr(char *s1, char *s2)
+// char *s1, 
+// char *s2
+// returns 1 if they are spelled the same, 0 if they are not.
+function  samestr(s1, s2)
 {
-   int i;
-   for (i=0; UCHAR(s1[i]) == UCHAR(s2[i]); i++)
-     if (!s1[i+1] && !s2[i+1]) return(1);
-   return(0);
+    if(s1.toUpperCase() === s2.toUpperCase()){
+        return 1;
+    } else {
+        return 0;
+    }
 }                                       /*  End of samestr  */
 
 /* Use Fletcher's checksum to compute 2-byte hash of string */
-unsigned int hash(char *str)
+// char *str
+function hash(str)
 {
-    unsigned int sum1= 0, check1;
-    unsigned long sum2= 0L;
-	while(  '\0' != *str  )
-    {
-        sum1 += UCHAR(*str);
-        str++;
+    var sum1 = 0, check1;
+    var sum2 = 0;
+    for(let i = 0; i < str.length; i++){
+        sum1 += str[i];
         if (  255 <= sum1  ) sum1 -= 255;
         sum2 += sum1;
     }
-    check1= sum2;
+    check1 = sum2;
     check1 %= 255;
-    check1= 255 - (sum1+check1) % 255;
-    sum1= 255 - (sum1+check1) % 255;
+    check1 = 255 - (sum1+check1) % 255;
+    sum1 = 255 - (sum1+check1) % 255;
     return( ( ( check1 << 8 )  |  sum1  ) % HTMAXSIZE);
 }
 
-HTtable *HTcreate()
+//HTtable *HTcreate()
+function HTcreate()
 {
-        int i;
-        HTtable *ht = (HTtable *) calloc(HTMAXSIZE, sizeof(HTtable));
-        if (ht != NULL) for (i=0; i<HTMAXSIZE; i++) ht[i] = NULL;
+        //HTtable *ht = (HTtable *) calloc(HTMAXSIZE, sizeof(HTtable));
+        var ht = new Array(HTMAXSIZE);
+        //if (ht != null) for (i=0; i<HTMAXSIZE; i++) ht[i] = null;
         return(ht);
 }
-
-int     HTinsert(HTtable *ht, char *key, int data)
+// HTtable *ht, char *key, int data
+function HTinsert(ht, key, data)
 {
-        unsigned int i = hash(key);
-        struct HTentry *entry;
+        let i = hash(key);
+        //struct HTentry *entry;
+        let entry = new HTentry();
         if ( i >= HTMAXSIZE ) return(0);
-        entry = (struct HTentry *) malloc(sizeof(struct HTentry));
-        if (entry == NULL) return(0);
-        entry->key = key;
-        entry->data = data;
-        entry->next = ht[i];
+        entry.key = key;
+        entry.data = data;
+        entry.next = ht[i];
         ht[i] = entry;
         return(1);
 }
 
-int     HTfind(HTtable *ht, char *key)
+// HTtable *ht, char *key
+function HTfind(ht, key)
 {
-        unsigned int i = hash(key);
-        struct HTentry *entry;
+        let i = hash(key);
         if ( i >= HTMAXSIZE ) return(NOTFOUND);
-        entry = ht[i];
-        while (entry != NULL)
+        let entry = ht[i];
+        while (entry != null)
         {
-            if ( samestr(entry->key,key) ) return(entry->data);
-            entry = entry->next;
+            if ( samestr(entry.key,key) ) {
+                return(entry.data);
+            }
+            entry = entry.next;
         }
         return(NOTFOUND);
 }
 
-char    *HTfindKey(HTtable *ht, char *key)
+// HTtable *ht, char *key
+function HTfindKey(ht, key)
 {
-        unsigned int i = hash(key);
-        struct HTentry *entry;
-        if ( i >= HTMAXSIZE ) return(NULL);
-        entry = ht[i];
-        while (entry != NULL)
+        let i = hash(key);
+        if ( i >= HTMAXSIZE ) return(null);
+        let entry = ht[i];
+        while (entry != null)
         {
-            if ( samestr(entry->key,key) ) return(entry->key);
-            entry = entry->next;
+            if ( samestr(entry.key,key) ) {
+                return(entry.key);
+            }
+            entry = entry.next;
         }
-        return(NULL);
+        return(null);
 }
 
-void    HTfree(HTtable *ht)
+// HTtable *ht
+function HTfree(ht)
 {
-        struct HTentry *entry,
-                       *nextentry;
-        int i;
+        let i;
+
         for (i=0; i<HTMAXSIZE; i++)
         {
-            entry = ht[i];
-            while (entry != NULL)
-            {
-                nextentry = entry->next;
-                free(entry);
-                entry = nextentry;
-            }
+            ht[i] = null;
         }
         free(ht);
 }

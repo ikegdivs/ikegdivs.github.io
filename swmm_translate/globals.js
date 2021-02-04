@@ -147,6 +147,31 @@ var Wind        = new TWind();                     // Wind speed data
 var Snow        = new TSnow();                     // Snow melt data
 var Adjust      = new TAdjust();                   // Climate adjustments
 
+var Snowmelt = []                // Array of snow melt objects
+var Gage = []                     // Array of rain gages
+var Subcatch = []                 // Array of subcatchments
+var Aquifer = []                  // Array of groundwater aquifers
+var UnitHyd = []                  // Array of unit hydrographs
+var Node = []                     // Array of nodes
+var Outfall = []                  // Array of outfall nodes
+var Divider = []                  // Array of divider nodes
+var Storage = []                  // Array of storage nodes
+var Link = []                     // Array of links
+var Conduit = []                  // Array of conduit links
+var Pump = []                     // Array of pump links
+var Orifice = []                  // Array of orifice links
+var Weir = []                     // Array of weir links
+var Outlet = []                   // Array of outlet device links
+var Pollut = []                   // Array of pollutants
+var Landuse = []                  // Array of landuses
+var Pattern = []                  // Array of time patterns
+var Curve = []                    // Array of curve tables
+var TSeries = []                  // Array of time series tables
+var Transect = []                 // Array of transect data
+var Shape = []                    // Array of custom conduit shapes
+var Event = []                    // Array of routing events
+
+/*
 var Snowmelt    = new TSnowmelt();                 // Array of snow melt objects
 var Gage        = new TGage();                     // Array of rain gages
 var Subcatch    = new TSubcatch();                 // Array of subcatchments
@@ -166,8 +191,9 @@ var Pollut      = new TPollut();                   // Array of pollutants
 var Landuse     = new TLanduse();                  // Array of landuses
 var Pattern     = new TPattern();                  // Array of time patterns
 var Curve       = new TTable();                    // Array of curve tables
-var Tseries     = new TTable();                    // Array of time series tables
+var TSeries     = new TTable();                    // Array of time series tables
 var Transect    = new TTransect();                 // Array of transect data
 var Shape       = new TShape();                    // Array of custom conduit shapes
 var Event       = new TEvent();                    // Array of routing events
+*/
 

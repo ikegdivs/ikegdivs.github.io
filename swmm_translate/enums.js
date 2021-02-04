@@ -39,6 +39,9 @@
 //
 //-----------------------------------------------------------------------------
 
+//mempool.c
+var ALLOC_BLOCK_SIZE =  64000
+
 //-------------------------------------
 // Names of major object types
 //-------------------------------------
@@ -444,7 +447,7 @@ var s_OPTION = 1
 var s_FILE = 2
 var s_RAINGAGE = 3
 var s_TEMP = 4
-var s_EVAPvar = 5
+var s_EVAP = 5
 var s_SUBCATCH = 6
 var s_SUBAREA = 7
 var s_INFIL = 8
@@ -472,7 +475,7 @@ var s_COVERAGE = 29
 var s_INFLOW = 30
 var s_DWF = 31
 var s_PATTERN = 32
-var _RDII = 33
+var s_RDII = 33
 var s_UNITHYD = 34
 var s_LOADING = 35
 var s_TREATMENT = 36
@@ -518,25 +521,26 @@ var SLOPE_WEIGHTING = 19
 var VARIABLE_STEP = 20
 var NORMAL_FLOW_LTD = 21
 var LENGTHENING_STEP = 22
-var MIN_SURFAREA, COMPATIBILITY = 23
-var SKIP_STEADY_STATE = 24
-var TEMPDIR = 25
-var IGNORE_RAINFALL = 26
-var FORCE_MAIN_EQN = 27
-var LINK_OFFSETS = 28
-var MIN_SLOPE = 29
-var IGNORE_SNOWMELT = 30
-var IGNORE_GWATER = 31
-var IGNORE_ROUTING = 32
-var IGNORE_QUALITY = 33
-var MAX_TRIALS = 34
-var HEAD_TOL = 35
-var SYS_FLOW_TOL = 36
-var LAT_FLOW_TOL = 37
-var IGNORE_RDII = 38
-var MIN_ROUTE_STEP = 39
-var NUM_THREADS = 40
-var SURCHARGE_METHOD = 41                            //(5.1.013)
+var MIN_SURFAREA = 23 
+var COMPATIBILITY = 24
+var SKIP_STEADY_STATE = 25
+var TEMPDIR = 26
+var IGNORE_RAINFALL = 27
+var FORCE_MAIN_EQN = 28
+var LINK_OFFSETS = 29
+var MIN_SLOPE = 30
+var IGNORE_SNOWMELT = 31
+var IGNORE_GWATER = 32
+var IGNORE_ROUTING = 33
+var IGNORE_QUALITY = 34
+var MAX_TRIALS = 35
+var HEAD_TOL = 36
+var SYS_FLOW_TOL = 37
+var LAT_FLOW_TOL = 38
+var IGNORE_RDII = 39
+var MIN_ROUTE_STEP = 40
+var NUM_THREADS = 41
+var SURCHARGE_METHOD = 42                            //(5.1.013)
 
 //enum  NoYesType {
 var NO = 0

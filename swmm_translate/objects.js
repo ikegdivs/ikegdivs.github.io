@@ -111,10 +111,10 @@ class TTable
       this.x2;
       this.y1;          // current bracket on y-values
       this.y2;
-      this.firstEntry;      //TTableEntry first data point
-      this.lastEntry;       //TTableEntry last data point
-      this.thisEntry;       //TTableEntry current data point
-      this.file;            //TFile external data file
+      this.firstEntry = new TTableEntry();      //TTableEntry first data point
+      this.lastEntry = new TTableEntry();       //TTableEntry last data point
+      this.thisEntry = new TTableEntry();       //TTableEntry current data point
+      this.file = new TFile();            //TFile external data file
       this.contents;        //Replaces this.file for browser models
    }
 }  ;
@@ -406,7 +406,7 @@ class TLandFactor
 {
    constructor(){
       this.fraction;        // fraction of land area with land use
-      this.buildup;         // array of buildups for each pollutant
+      this.buildup = [];         // array of buildups for each pollutant
       this.lastSwept;       // date/time of last street sweeping
    }
 }  ;
@@ -424,18 +424,19 @@ class TSubcatch
       this.outSubcatch;     // outlet subcatchment index
       this.infilModel;      // infiltration method index                 //(5.1.015)
       this.infil;           // infiltration object index
-      this.subArea;      // Array size 3 sub-area data
+      this.subArea = [];      // Array size 3 sub-area data
+      for(let i = 0; i < 3; i++){this.subArea.push(new TSubarea())}
       this.width;           // overland flow width (ft)
       this.area;            // area (ft2)
       this.fracImperv;      // fraction impervious
       this.slope;           // slope (ft/ft)
       this.curbLength;      // total curb length (ft)
-      this.initBuildup;     // initial pollutant buildup (mass/ft2)
-      this.landFactor;      // array of land use factors TLandFactor
-      this.groundwater;     // associated groundwater data TGroundwater*
-      this.gwLatFlowExpr;   // user-supplied lateral outflow expression MathExpr*     
-      this.gwDeepFlowExpr;  // user-supplied deep percolation expression MathExpr*     
-      this.snowpack;        // associated snow pack data TSnowpack*    
+      this.initBuildup = [];     // initial pollutant buildup (mass/ft2)
+      this.landFactor = [];      // array of land use factors TLandFactor
+      this.groundwater = [];     // associated groundwater data TGroundwater*
+      this.gwLatFlowExpr = [];   // user-supplied lateral outflow expression MathExpr*     
+      this.gwDeepFlowExpr = [];  // user-supplied deep percolation expression MathExpr*     
+      this.snowpack = [];        // associated snow pack data TSnowpack*    
       this.nPervPattern;    // pervious N pattern index                  //(5.1.013)
       this.dStorePattern;   // depression storage pattern index          //
       this.infilPattern;    // infiltration rate pattern index           //
@@ -585,7 +586,7 @@ class TNode
       this.extInflow;       // pointer to external inflow data
       this.dwfInflow;       // pointer to dry weather flow inflow data
       this.rdiiInflow;      // pointer to RDII inflow data
-      this.treatment;       // array of treatment data
+      this.treatment = [];       // array of treatment data
       //-----------------
       this.degree;          // number of outflow links
       this.updated;         // true if state has been updated
@@ -937,8 +938,8 @@ class TLanduse
       this.sweepInterval;   // street sweeping interval (days)
       this.sweepRemoval;    // fraction of buildup available for sweeping
       this.sweepDays0;      // days since last sweeping at start
-      this.buildupFunc;     // TBuildup. array of buildup functions for pollutants
-      this.washoffFunc;     // TWashoff. array of washoff functions for pollutants
+      this.buildupFunc = [];     // TBuildup. array of buildup functions for pollutants
+      this.washoffFunc = [];     // TWashoff. array of washoff functions for pollutants
    }
 }  ;
 

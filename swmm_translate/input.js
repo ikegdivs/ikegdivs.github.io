@@ -53,6 +53,8 @@ function input_countObjects()
     let  errsum = 0;                  // number of errors found                   
     let  i;
     let  lineCount = 0;
+    let  iter;
+    let  lineIter;
 
     // --- initialize number of objects & set default values
     if ( ErrorCode ) return ErrorCode;
@@ -62,25 +64,35 @@ function input_countObjects()
     for (i = 0; i < MAX_LINK_TYPES; i++) Nlinks[i] = 0;
 
     // --- make pass through data file counting number of each object
-    // change this to contents string.
-    while ( fgets(line, MAXLINE, Finp.contents) != NULL )
+    //while ( fgets(line, MAXLINE, Finp.contents) != null )
+    while((lineIter = Finp.contents.indexOf('\n', iter)) !== -1)
     {
+        // Get the contents of a line
+        line = Finp.contents.substring(iter, lineIter)
+        iter = lineIter + 1;
+
+        if(lineCount >= 79){
+          let goofy = 1;
+        }
+
         // --- skip blank lines & those beginning with a comment
         lineCount++;
-        strcpy(wLine, line);           // make working copy of line
-        tok = strtok(wLine, SEPSTR);   // get first text token on line
-        if ( tok == NULL ) continue;
-        if ( *tok == ';' ) continue;
+        wLine = line;           // make working copy of line
+        //tok = strtok(wLine, SEPSTR);   // get first text token on line
+        wLine = wLine.trim();
+        tok = wLine.split(/[\s\t\n\r]+/)[0];
+        if ( tok == null || tok == '' ) continue;
+        if ( tok[0] == ';' ) continue;
 
         // --- check if line begins with a new section heading
-        if ( *tok == '[' )
+        if ( tok[0] == '[' )
         {
             // --- look for heading in list of section keywords
             newsect = findmatch(tok, SectWords);
             if ( newsect >= 0 )
             {
                 sect = newsect;
-                continue;
+                //continue;
             }
             else
             {
@@ -110,21 +122,23 @@ function input_countObjects()
 
 //=============================================================================
 
-int input_readData()
+function input_readData()
 //
 //  Input:   none
 //  Output:  returns error code
 //  Purpose: reads input file to determine input parameters for each object.
 //
 {
-    char  line[MAXLINE+1];        // line from input data file
-    char  wLine[MAXLINE+1];       // working copy of input line
-    char* comment;                // ptr. to start of comment in input line
-    int   sect, newsect;          // data sections
-    int   inperr, errsum;         // error code & total error count
-    int   lineLength;             // number of characters in input line
-    int   i;
-    long  lineCount = 0;
+    let  line;        // line from input data file
+    let  wLine;       // working copy of input line
+    let  comment;                // ptr. to start of comment in input line
+    let  sect, newsect;          // data sections
+    let  inperr, errsum;         // error code & total error count
+    let  lineLength;             // number of characters in input line
+    let  i;
+    let  lineCount = 0;
+    let  lineIter;
+    let  iter;
 
     // --- initialize working item count arrays
     //     (final counts in Mobjects, Mnodes & Mlinks should
@@ -139,7 +153,7 @@ int input_readData()
     // --- initialize starting date for all time series
     for ( i = 0; i < Nobjects[TSERIES]; i++ )
     {
-        Tseries[i].lastDate = StartDate + StartTime;
+        TSeries[i].lastDate = StartDate + StartTime;
     }
 
     // --- read each line from input file
@@ -147,25 +161,29 @@ int input_readData()
     errsum = 0;
     //rewind(Finp.file);
     // Not sure if a contents string needs rewind.
-    rewind(Finp.contents);
-    //while ( fgets(line, MAXLINE, Finp.file) != NULL )
-    while ( fgets(line, MAXLINE, Finp.contents) != NULL )
+    //rewind(Finp.contents);
+    //while ( fgets(line, MAXLINE, Finp.file) != null )
+    while((lineIter = Finp.contents.indexOf('\n', iter)) !== -1)
     {
+        // Get the contents of a line
+        line = Finp.contents.substring(iter, lineIter)
+        iter = lineIter + 1;
+
         // --- make copy of line and scan for tokens
         lineCount++;
-        strcpy(wLine, line);
+        wLine = line;
         Ntokens = getTokens(wLine);
 
         // --- skip blank lines and comments
         if ( Ntokens == 0 ) continue;
-        if ( *Tok[0] == ';' ) continue;
+        if ( Tok[0][0] == ';' ) continue;
 
         // --- check if max. line length exceeded
-        lineLength = strlen(line);
+        lineLength = line.length;
         if ( lineLength >= MAXLINE )
         {
             // --- don't count comment if present
-            comment = strchr(line, ';');
+            comment = line.indexOf(';');
             if ( comment ) lineLength = comment - line;    // Pointer math here
             if ( lineLength >= MAXLINE )
             {
@@ -176,7 +194,7 @@ int input_readData()
         }
 
         // --- check if at start of a new input section
-        if (*Tok[0] == '[')
+        if (Tok[0][0] == '[')
         {
             // --- match token against list of section keywords
             newsect = findmatch(Tok[0], SectWords);
@@ -222,8 +240,8 @@ int input_readData()
 }
 
 //=============================================================================
-
-int  addObject(int objType, char* id)
+// int objType, char* id
+function  addObject(objType, id)
 //
 //  Input:   objType = object type index
 //           id = object's ID string
@@ -231,7 +249,7 @@ int  addObject(int objType, char* id)
 //  Purpose: adds a new object to the project.
 //
 {
-    int errcode = 0;
+    let errcode = 0;
     switch( objType )
     {
       case s_RAINGAGE:
@@ -366,7 +384,7 @@ int  addObject(int objType, char* id)
             Nobjects[CURVE]++;
 
             // --- check for a conduit shape curve
-            id = strtok(NULL, SEPSTR);
+            id = strtok(null, SEPSTR);
             if ( findmatch(id, CurveTypeWords) == SHAPE_CURVE )
                 Nobjects[SHAPE]++;
         }
@@ -390,7 +408,7 @@ int  addObject(int objType, char* id)
         // --- for TRANSECTS, ID name appears as second entry on X1 line
         if ( match(id, "X1") )
         {
-            id = strtok(NULL, SEPSTR);
+            id = strtok(null, SEPSTR);
             if ( id ) 
             {
                 if ( !project_addObject(TRANSECT, id, Nobjects[TRANSECT]) )
@@ -418,8 +436,8 @@ int  addObject(int objType, char* id)
 }
 
 //=============================================================================
-
-int  parseLine(int sect, char *line)
+//int sect, char *line
+function  parseLine(sect, line)
 //
 //  Input:   sect  = current section of input file
 //           *line = line of text read from input file
@@ -427,7 +445,7 @@ int  parseLine(int sect, char *line)
 //  Purpose: parses contents of a tokenized line of text read from input file.
 //
 {
-    int j, err;
+    let j, err;
     switch (sect)
     {
       case s_TITLE:
@@ -506,7 +524,7 @@ int  parseLine(int sect, char *line)
         return link_readXsectParams(Tok, Ntokens);
 
       case s_TRANSECT:
-        return transect_readParams(&Mobjects[TRANSECT], Tok, Ntokens);
+        return transect_readParams(Mobjects[TRANSECT], Tok, Ntokens);
 
       case s_LOSSES:
         return link_readLossParams(Tok, Ntokens);
@@ -582,8 +600,8 @@ int  parseLine(int sect, char *line)
 }
 
 //=============================================================================
-
-int readControl(char* tok[], int ntoks)
+//char* tok[], int ntoks
+function readControl(tok, ntoks)
 //
 //  Input:   tok[] = array of string tokens
 //           ntoks = number of tokens
@@ -591,8 +609,8 @@ int readControl(char* tok[], int ntoks)
 //  Purpose: reads a line of input for a control rule.
 //
 {
-    int index;
-    int keyword;
+    let index;
+    let keyword;
 
     // --- check for minimum number of tokens
     if ( ntoks < 2 ) return error_setInpError(ERR_ITEMS, "");
@@ -620,8 +638,8 @@ int readControl(char* tok[], int ntoks)
 }
 
 //=============================================================================
-
-int readOption(char* line)
+//char* line
+function readOption(line)
 //
 //  Input:   line = line of input data
 //  Output:  returns error code
@@ -642,14 +660,14 @@ function readTitle(line)
 //  Purpose: reads project title from line of input.
 //
 {
-    int i, n;
+    let i, n;
     for (i = 0; i < MAXTITLE; i++)
     {
         // --- find next empty Title entry
-        if ( strlen(Title[i]) == 0 )
+        if ( Title[i].length == 0 )
         {
             // --- strip line feed character from input line
-            n = strlen(line);
+            n = line.length;
             if (line[n-1] == 10) line[n-1] = ' ';
 
             // --- copy input line into Title entry
@@ -661,53 +679,54 @@ function readTitle(line)
 }
 
 //=============================================================================
-    
-int readNode(int type)
+// int type
+function readNode(type)
 //
 //  Input:   type = type of node
 //  Output:  returns error code
 //  Purpose: reads data for a node from a line of input.
 //
 {
-    int j = Mobjects[NODE];
-    int k = Mnodes[type];
-    int err = node_readParams(j, type, k, Tok, Ntokens);
+    let j = Mobjects[NODE];
+    let k = Mnodes[type];
+    let err = node_readParams(j, type, k, Tok, Ntokens);
     Mobjects[NODE]++;
     Mnodes[type]++;
     return err;
 }
 
 //=============================================================================
-
-int readLink(int type)
+// int type
+function readLink(type)
 //
 //  Input:   type = type of link
 //  Output:  returns error code
 //  Purpose: reads data for a link from a line of input.
 //
 {
-    int j = Mobjects[LINK];
-    int k = Mlinks[type];
-    int err = link_readParams(j, type, k, Tok, Ntokens);
+    let j = Mobjects[LINK];
+    let k = Mlinks[type];
+    let err = link_readParams(j, type, k, Tok, Ntokens);
     Mobjects[LINK]++;
     Mlinks[type]++;
     return err;
 }
 
 //=============================================================================
-
-int  readEvent(char* tok[], int ntoks)
+//char* tok[], int ntoks
+function  readEvent(tok, ntoks)
 {
-    DateTime x[4];
+    //DateTime x[4];
+    let x = new Array(4);
 
     if ( ntoks < 4 ) return error_setInpError(ERR_ITEMS, "");
-    if ( !datetime_strToDate(tok[0], &x[0]) )
+    if ( !datetime_strToDate(tok[0], x[0]) )
         return error_setInpError(ERR_DATETIME, tok[0]);
-    if ( !datetime_strToTime(tok[1], &x[1]) )
+    if ( !datetime_strToTime(tok[1], x[1]) )
         return error_setInpError(ERR_DATETIME, tok[1]);
-    if ( !datetime_strToDate(tok[2], &x[2]) )
+    if ( !datetime_strToDate(tok[2], x[2]) )
         return error_setInpError(ERR_DATETIME, tok[2]);
-    if ( !datetime_strToTime(tok[3], &x[3]) )
+    if ( !datetime_strToTime(tok[3], x[3]) )
         return error_setInpError(ERR_DATETIME, tok[3]);
 
     Event[Mevents].start = x[0] + x[1];
@@ -719,8 +738,8 @@ int  readEvent(char* tok[], int ntoks)
 }
 
 //=============================================================================
-
-int  findmatch(char *s, char *keyword[])
+// char *s, char *keyword[]
+function  findmatch(s, keyword)
 //
 //  Input:   s = character string
 //           keyword = array of keyword strings
@@ -728,8 +747,8 @@ int  findmatch(char *s, char *keyword[])
 //  Purpose: finds match between string and array of keyword strings.
 //
 {
-   int i = 0;
-   while (keyword[i] != NULL)
+   let i = 0;
+   while (keyword[i] != null)
    {
       if (match(s, keyword[i])) return(i);
       i++;
@@ -738,8 +757,8 @@ int  findmatch(char *s, char *keyword[])
 }
 
 //=============================================================================
-
-int  match(char *str, char *substr)
+// char *str, char *substr
+function   match(str, substr)
 //
 //  Input:   str = character string being searched
 //           substr = sub-string being searched for
@@ -748,7 +767,7 @@ int  match(char *str, char *substr)
 //           (not case sensitive).
 //
 {
-    int i,j;
+    let i,j;
 
     // --- fail if substring is empty
     if (!substr[0]) return(0);
@@ -768,8 +787,8 @@ int  match(char *str, char *substr)
 }
 
 //=============================================================================
-
-int  getInt(char *s, int *y)
+// char *s, int *y
+function  getInt(s)
 //
 //  Input:   s = a character string
 //  Output:  y = converted value of s,
@@ -777,21 +796,22 @@ int  getInt(char *s, int *y)
 //  Purpose: converts a string to an integer number.
 //
 {
-    double x;
-    if ( getDouble(s, &x) )
+    /*let x;
+    if ( getDouble(s, x) )
     {
         if ( x < 0.0 ) x -= 0.01;
         else x += 0.01;
-        *y = (int)x;
+        y = x;
         return 1;
     }
-    *y = 0;
-    return 0;
+    y = 0;
+    return 0;*/
+    return parseInt(s);
 }
 
 //=============================================================================
-
-int  getFloat(char *s, float *y)
+// char *s, float *y
+function  getFloat(s)
 //
 //  Input:   s = a character string
 //  Output:  y = converted value of s,
@@ -799,15 +819,17 @@ int  getFloat(char *s, float *y)
 //  Purpose: converts a string to a single precision floating point number.
 //
 {
-    char *endptr;
-    *y = (float) strtod(s, &endptr);
-    if (*endptr > 0) return(0);
+    /*let endptr;
+    y = strtod(s, endptr);
+    if (endptr > 0) return(0);
     return(1);
+    return 1;*/
+    return parseFloat(s);
 }
 
 //=============================================================================
-
-int  getDouble(char *s, double *y)
+// char *s, double *y
+function  getDouble(s)
 //
 //  Input:   s = a character string
 //  Output:  y = converted value of s,
@@ -815,15 +837,16 @@ int  getDouble(char *s, double *y)
 //  Purpose: converts a string to a double precision floating point number.
 //
 {
-    char *endptr;
-    *y = strtod(s, &endptr);
-    if (*endptr > 0) return(0);
-    return(1);
+    /*let endptr;
+    y = strtod(s, endptr);
+    if (endptr > 0) return(0);
+    return(1);*/
+    return parseFloat(s);
 }
 
 //=============================================================================
-
-int  getTokens(char *s)
+// char *s
+function  getTokens(s)
 //
 //  Input:   s = a character string
 //  Output:  returns number of tokens found in s
@@ -835,37 +858,54 @@ int  getTokens(char *s)
 //           in CONSTS.H. Text between quotes is treated as a single token.
 //
 {
-    int  len, m, n;
-    char *c;
+    let  len, fullLen, m, n;
+    let  c;
+    // copy of s
+    let s_full = (' ' + s).slice(1);
 
     // --- begin with no tokens
-    for (n = 0; n < MAXTOKS; n++) Tok[n] = NULL;
+    for (n = 0; n < MAXTOKS; n++) Tok[n] = null;
     n = 0;
 
     // --- truncate s at start of comment 
-    c = strchr(s,';');
-    if (c) *c = '\0';
-    len = strlen(s);
+    c = s.indexOf(';');
+    if (c >= 0) c = '\0';
+    len = s.length;
+    fullLen = len;
 
     // --- scan s for tokens until nothing left
     while (len > 0 && n < MAXTOKS)
     {
-        m = strcspn(s,SEPSTR);              // find token length 
-        if (m == 0) s++;                    // no token found
-        else
-        {
-            if (*s == '"')                  // token begins with quote
-            {
-                s++;                        // start token after quote
-                len--;                      // reduce length of s
-                m = strcspn(s,"\"\n");      // find end quote or new line
-            }
-            s[m] = '\0';                    // null-terminate the token
-            Tok[n] = s;                     // save pointer to token 
-            n++;                            // update token count
-            s += m+1;                       // begin next token
+        // Remove leading spaces
+        while(s[0] == ' '){
+          len--;
+          s = s.substring(1);
+        }       
+        let x = s.split(/[\s\t\n\r]+/g);
+        if(s.split(/[\s\t\n\r]+/)[n]){
+          m = s.split(/[\s\t\n\r]+/)[n].length    // find token length             
+          if (m == 0){                           // no token found
+            len--;                                // reduce the size of the string
+            s = s.substring(1);                  // Remove the first letter
+          }
+          else
+          {
+              if (s[0] == '"')                  // token begins with quote
+              {
+                  s = s.subtstring(1);          // start token after quote
+                  len--;                        // reduce length of s
+                  //m = strcspn(s,"\"\n");      // find end quote or new line
+                  m = s.split(/["\n]+/)[n].length
+              }
+              Tok[n] = s.split(/["\s\t\n\r]+/)[n];
+              len = fullLen - (s_full.indexOf(Tok[n]) + Tok[n].length)
+              n++;                            // update token count
+          }
+        } else {
+          len--;                                // reduce the size of the string
+          s = s.substring(1);                  // Remove the first letter
         }
-        len -= m+1;                         // update length of s
+        //len -= m+1;                           // indicate how many letters are left in the line
     }
     return(n);
 }

@@ -130,7 +130,7 @@ function  swmm_run(f1, f2, f3)
                 if ( newHour > oldHour )
                 {
                     theDay = elapsedTime;
-                    theHour = ((elapsedTime - floor(elapsedTime)) * 24.0);
+                    theHour = ((elapsedTime - Math.floor(elapsedTime)) * 24.0);
                     writecon("\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
                     sprintf(Msg, "%-5ld hour: %-2ld", theDay, theHour);        //(5.1.013)
                     writecon(Msg);
@@ -465,9 +465,9 @@ function swmm_close()
     if ( Fout.file ) output_close();
     if ( IsOpenFlag ) project_close();
     report_writeSysTime();
-    if ( Finp.file != NULL ) fclose(Finp.file);
-    if ( Frpt.file != NULL ) fclose(Frpt.file);
-    if ( Fout.file != NULL )
+    if ( Finp.file != null ) fclose(Finp.file);
+    if ( Frpt.file != null ) fclose(Frpt.file);
+    if ( Fout.file != null )
     {
         fclose(Fout.file);
         if ( Fout.mode == SCRATCH_FILE ) remove(Fout.name);
@@ -542,10 +542,10 @@ function swmm_getError(errMsg, msgLen)
     let errMsgLen = msgLen;
 
     // --- copy text of last error message into errMsg
-    if ( ErrorCode > 0 && strlen(ErrorMsg) == 0 ) errMsg = "";
+    if ( ErrorCode > 0 && ErrorMsg.length == 0 ) errMsg = "";
     else
     {
-        errMsgLen = MIN(errMsgLen, strlen(ErrorMsg));
+        errMsgLen = MIN(errMsgLen, ErrorMsg.length);
         errMsg = ErrorMsg;
     }
 
@@ -616,7 +616,7 @@ function getTempFileName(fname)
     let dir = null;
 
     // --- set dir to user's choice of a temporary directory
-    if (strlen(TempDir) > 0)
+    if (TempDir.length > 0)
     {
         _mkdir(TempDir);
         dir = TempDir;
@@ -624,11 +624,11 @@ function getTempFileName(fname)
 
     // --- use _tempnam to get a pointer to an unused file name
     name = _tempnam(dir, "swmm");
-    if (name == NULL) return NULL;
+    if (name == null) return null;
 
     // --- copy the file name to fname
-    if (strlen(name) < MAXFNAME) strncpy(fname, name, MAXFNAME);
-    else fname = NULL;
+    if (name.length < MAXFNAME) strncpy(fname, name, MAXFNAME);
+    else fname = null;
 
     // --- free the pointer returned by _tempnam
     free(name);

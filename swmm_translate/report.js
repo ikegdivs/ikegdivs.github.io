@@ -203,7 +203,7 @@ function report_writeSysTime()
             {
                 //Frpt.contents += "%d.", floor(elapsedTime));
                 Frpt.contents += '%d'.format(elapsedTime)
-                elapsedTime -= floor(elapsedTime);
+                elapsedTime -= Math.floor(elapsedTime);
             }
             datetime_timeToStr(elapsedTime, theTime);
             //Frpt.contents += "%s", theTime);
@@ -242,7 +242,7 @@ function report_writeTitle()
     let i;
     let lineCount = 0;
     if ( ErrorCode ) {return};
-    for (i=0; i<MAXTITLE; i++) if ( strlen(Title[i]) > 0 )
+    for (i=0; i<MAXTITLE; i++) if ( Title[i].length > 0 )
     {
         WRITE(Title[i]);
         lineCount++;
@@ -1472,7 +1472,7 @@ function report_writeWarningMsg(msg, id)
 
 //=============================================================================
 // int code, TTable *tseries
-function report_writeTseriesErrorMsg(code, tseries)
+function report_writeTSeriesErrorMsg(code, tseries)
 //
 //  Input:   tseries = pointer to a time series
 //  Output:  none

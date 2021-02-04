@@ -149,7 +149,7 @@ function link_readXsectParams(tok, ntoks)
         // --- parse max. depth & shape curve for a custom shape
         if ( k == CUSTOM )
         {
-            if ( !getDouble(tok[2], x[0]) || x[0] <= 0.0 )
+            if ( !(x[0] = getDouble(tok[2])) || x[0] <= 0.0 )
                return error_setInpError(ERR_NUMBER, tok[2]);
             i = project_findObject(CURVE, tok[3]);
             if ( i < 0 ) return error_setInpError(ERR_NAME, tok[3]);
@@ -161,7 +161,7 @@ function link_readXsectParams(tok, ntoks)
         // --- parse and save geometric parameters
         else for (i = 2; i <= 5; i++)
         {
-            if ( !getDouble(tok[i], x[i-2]) )
+            if ( !( x[i-2] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
 
@@ -218,7 +218,7 @@ function link_readLossParams(tok, ntoks)
     if ( j < 0 ) return error_setInpError(ERR_NAME, tok[0]);
     for (i=1; i<=3; i++)
     {
-        if ( ! getDouble(tok[i], x[i-1]) || x[i-1] < 0.0 )
+        if ( !(x[i-1] = getDouble(tok[i])) || x[i-1] < 0.0 )
         return error_setInpError(ERR_NUMBER, tok[i]);
     }
     k = 0;
@@ -229,7 +229,7 @@ function link_readLossParams(tok, ntoks)
     }
     if ( ntoks >= 6 )
     {
-        if ( ! getDouble(tok[5], seepRate) )
+        if ( !(seepRate = getDouble(tok[5])) )
         return error_setInpError(ERR_NUMBER, tok[5]);
     }
     Link[j].cLossInlet   = x[0];
@@ -322,7 +322,7 @@ function  link_setParams(j, type, n1, n2, k, x)
         Link[j].hasFlapGate  = (x[4] > 0.0) ? 1 : 0;
         Outlet[k].curveType  = x[5];
 
-        xsect_setParams(Link[j].xsect, DUMMY, NULL, 0.0);
+        xsect_setParams(Link[j].xsect, DUMMY, null, 0.0);
         break;
 
     }
@@ -876,37 +876,37 @@ function  conduit_readParams(j, k, tok, ntoks)
     // --- check for valid ID and end node IDs
     if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);                // link ID
-    if ( id == NULL ) return error_setInpError(ERR_NAME, tok[0]);
+    if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
     n1 = project_findObject(NODE, tok[1]);            // upstrm. node
     if ( n1 < 0 ) return error_setInpError(ERR_NAME, tok[1]);
     n2 = project_findObject(NODE, tok[2]);            // dwnstrm. node
     if ( n2 < 0 ) return error_setInpError(ERR_NAME, tok[2]);
 
     // --- parse length & Mannings N
-    if ( !getDouble(tok[3], x[0]) )
+    if ( !(x[0] = getDouble(tok[3])) )
         return error_setInpError(ERR_NUMBER, tok[3]);
-    if ( !getDouble(tok[4], x[1]) )
+    if ( !(x[1] = getDouble(tok[4])) )
         return error_setInpError(ERR_NUMBER, tok[4]);
 
     // --- parse offsets
     if ( LinkOffsets == ELEV_OFFSET && tok[5] == '*' ) x[2] = MISSING;
-    else if ( !getDouble(tok[5], x[2]) )
+    else if ( !(x[2] = getDouble(tok[5])) )
         return error_setInpError(ERR_NUMBER, tok[5]);
     if ( LinkOffsets == ELEV_OFFSET && tok[6] == '*' ) x[3] = MISSING;
-    else if ( !getDouble(tok[6], x[3]) )
+    else if ( !(x[3] = getDouble(tok[6])) )
         return error_setInpError(ERR_NUMBER, tok[6]);
 
    // --- parse optional parameters
     x[4] = 0.0;                                       // init. flow
     if ( ntoks >= 8 )
     {
-        if ( !getDouble(tok[7], x[4]) )
+        if ( !(x[4] = getDouble(tok[7])) )
         return error_setInpError(ERR_NUMBER, tok[7]);
     }
     x[5] = 0.0;
     if ( ntoks >= 9 )
     {
-        if ( !getDouble(tok[8], x[5]) )
+        if ( !(x[5] = getDouble(tok[8])) )
         return error_setInpError(ERR_NUMBER, tok[8]);
     }
 
@@ -1337,7 +1337,7 @@ function  pump_readParams(j, k, tok, ntoks)
     // --- check for valid ID and end node IDs
     if ( ntoks < 3 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);
-    if ( id == NULL ) return error_setInpError(ERR_NAME, tok[0]);
+    if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
     n1 = project_findObject(NODE, tok[1]);
     if ( n1 < 0 ) return error_setInpError(ERR_NAME, tok[1]);
     n2 = project_findObject(NODE, tok[2]);
@@ -1368,13 +1368,13 @@ function  pump_readParams(j, k, tok, ntoks)
     x[2] = 0.0;
     if ( ntoks >= 6 )
     {
-        if ( !getDouble(tok[5], x[2]) || x[2] < 0.0)
+        if ( !(x[2] = getDouble(tok[5])) || x[2] < 0.0)
         return error_setInpError(ERR_NUMBER, tok[5]);
     }
     x[3] = 0.0;
     if ( ntoks >= 7 )
     {
-        if ( !getDouble(tok[6], x[3]) || x[3] < 0.0 )
+        if ( !(x[3] = getDouble(tok[6])) || x[3] < 0.0 )
         return error_setInpError(ERR_NUMBER, tok[6]);
     }
 
@@ -1572,7 +1572,7 @@ function  orifice_readParams(j, k, tok, ntoks)
     // --- check for valid ID and end node IDs
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);
-    if ( id == NULL ) return error_setInpError(ERR_NAME, tok[0]);
+    if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
     n1 = project_findObject(NODE, tok[1]);
     if ( n1 < 0 ) return error_setInpError(ERR_NAME, tok[1]);
     n2 = project_findObject(NODE, tok[2]);
@@ -1583,9 +1583,9 @@ function  orifice_readParams(j, k, tok, ntoks)
     if ( m < 0 ) return error_setInpError(ERR_KEYWORD, tok[3]);
     x[0] = m;                                              // type
     if ( LinkOffsets == ELEV_OFFSET && tok[4] == '*' ) x[1] = MISSING;
-    else if ( ! getDouble(tok[4], x[1]) )                 // crest height
+    else if ( !(x[1] = getDouble(tok[4])) )                 // crest height
         return error_setInpError(ERR_NUMBER, tok[4]);
-    if ( ! getDouble(tok[5], x[2]) || x[2] < 0.0 )        // cDisch
+    if ( !(x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch
         return error_setInpError(ERR_NUMBER, tok[5]);
     x[3] = 0.0;
     if ( ntoks >= 7 )
@@ -1597,7 +1597,7 @@ function  orifice_readParams(j, k, tok, ntoks)
     x[4] = 0.0;
     if ( ntoks >= 8 )
     {
-        if ( ! getDouble(tok[7], x[4]) || x[4] < 0.0 )    // orate
+        if ( !(x[4] = getDouble(tok[7])) || x[4] < 0.0 )    // orate
             return error_setInpError(ERR_NUMBER, tok[7]);
     }
 
@@ -1941,7 +1941,7 @@ function   weir_readParams(j, k, tok, ntoks)
     // --- check for valid ID and end node IDs
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);
-    if ( id == NULL ) return error_setInpError(ERR_NAME, tok[0]);
+    if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
     n1 = project_findObject(NODE, tok[1]);
     if ( n1 < 0 ) return error_setInpError(ERR_NAME, tok[1]);
     n2 = project_findObject(NODE, tok[2]);
@@ -1952,9 +1952,9 @@ function   weir_readParams(j, k, tok, ntoks)
     if ( m < 0 ) return error_setInpError(ERR_KEYWORD, tok[3]);
     x[0] = m;                                              // type
     if ( LinkOffsets == ELEV_OFFSET && tok[4] == '*' ) x[1] = MISSING;
-    else if ( ! getDouble(tok[4], x[1]) )                 // height
+    else if ( !(x[1] = getDouble(tok[4])) )                 // height
         return error_setInpError(ERR_NUMBER, tok[4]);
-    if ( ! getDouble(tok[5], x[2]) || x[2] < 0.0 )        // cDisch1
+    if ( !(x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch1
         return error_setInpError(ERR_NUMBER, tok[5]);
     x[3] = 0.0;
     x[4] = 0.0;
@@ -1971,12 +1971,12 @@ function   weir_readParams(j, k, tok, ntoks)
     }
     if ( ntoks >= 8 && tok[7] != '*' ) 
     {
-        if ( ! getDouble(tok[7], x[4]) || x[4] < 0.0 )     // endCon
+        if ( !(x[4] = getDouble(tok[7])) || x[4] < 0.0 )     // endCon
             return error_setInpError(ERR_NUMBER, tok[7]);
     }
     if ( ntoks >= 9 && tok[8] != '*' )
     {
-        if ( ! getDouble(tok[8], x[5]) || x[5] < 0.0 )     // cDisch2
+        if ( !( x[5] = getDouble(tok[8])) || x[5] < 0.0 )     // cDisch2
             return error_setInpError(ERR_NUMBER, tok[8]);
     }
 
@@ -1991,7 +1991,7 @@ function   weir_readParams(j, k, tok, ntoks)
     {
         if ( ntoks >= 11 )                                  // road width
         {
-            if ( ! getDouble(tok[10], x[7]) || x[7] < 0.0 ) 
+            if ( !(x[7] = getDouble(tok[10])) || x[7] < 0.0 ) 
                 return error_setInpError(ERR_NUMBER, tok[10]);
         }
         if ( ntoks >= 12 )                                  // road surface
@@ -2456,7 +2456,7 @@ function outlet_readParams(j, k, tok, ntoks)
     // --- check for valid ID and end node IDs
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);
-    if ( id == NULL ) return error_setInpError(ERR_NAME, tok[0]);
+    if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
     n1 = project_findObject(NODE, tok[1]);
     if ( n1 < 0 ) return error_setInpError(ERR_NAME, tok[1]);
     n2 = project_findObject(NODE, tok[2]);
@@ -2466,7 +2466,7 @@ function outlet_readParams(j, k, tok, ntoks)
     if ( LinkOffsets == ELEV_OFFSET && tok[3] == '*' ) x[0] = MISSING;
     else
     {
-        if ( ! getDouble(tok[3], x[0]) )
+        if ( !(x[0] = getDouble(tok[3])) )
             return error_setInpError(ERR_NUMBER, tok[3]);
 	if ( LinkOffsets == DEPTH_OFFSET && x[0] < 0.0 ) x[0] = 0.0;
     }
@@ -2482,16 +2482,16 @@ function outlet_readParams(j, k, tok, ntoks)
     // --- see if rating curve is head or depth based
     x[5] = NODE_DEPTH;                                //default is depth-based
     s = strtok(tok[4], "/");                          //parse token for
-    s = strtok(NULL, "/");                            //  qualifier term
+    s = strtok(null, "/");                            //  qualifier term
     if ( strcomp(s, w_HEAD) ) x[5] = NODE_HEAD;       //check if its "HEAD"
 
     // --- get params. for functional outlet device
     if ( m == FUNCTIONAL )
     {
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
-        if ( ! getDouble(tok[5], x[1]) )
+        if ( !(x[1] = getDouble(tok[5])) )
             return error_setInpError(ERR_NUMBER, tok[5]);
-        if ( ! getDouble(tok[6], x[2]) )
+        if ( !(x[2] = getDouble(tok[6])) )
             return error_setInpError(ERR_NUMBER, tok[6]);
         n = 7;
     }
