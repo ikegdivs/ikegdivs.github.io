@@ -205,7 +205,7 @@ function report_writeSysTime()
                 Frpt.contents += '%d'.format(elapsedTime)
                 elapsedTime -= Math.floor(elapsedTime);
             }
-            datetime_timeToStr(elapsedTime, theTime);
+            theTime = datetime_timeToStr(elapsedTime, theTime);
             //Frpt.contents += "%s", theTime);
             Frpt.contents += '%s'.format(theTime)
         }
@@ -333,7 +333,7 @@ function report_writeOptions()
     }
     if ( Nobjects[LINK] > 0 )
     {
-        Frpt.contents += `\n  Routing Time Step ........ ${RouteStep.toFixed(2)} sec`.format(RouteStep);
+        Frpt.contents += `\n  Routing Time Step ........ ${RouteStep.toFixed(2)} sec`;
 		if ( RouteModel == DW )
 		{
 		Frpt.contents += `\n  Variable Time Step ....... `
@@ -458,8 +458,8 @@ function   report_writeControlAction(aDate, linkID, value, ruleID)
 {
     let     theDate;
     let     theTime;
-    datetime_dateToStr(aDate, theDate);
-    datetime_timeToStr(aDate, theTime);
+    theDate = datetime_dateToStr(aDate, theDate);
+    theTime = datetime_timeToStr(aDate, theTime);
     Frpt.contents +=
             "  %11s: %8s Link %s setting changed to %6.2f by Control %s\n"
                 .format(theDate, theTime, linkID, value, ruleID);
@@ -1073,7 +1073,7 @@ function report_RouteStepFreq(sysStats)
         Frpt.contents += 
             "\n     %6.3f - %6.3f sec      :  %7.2f %%".format(
             sysStats.timeStepIntervals[i-1], sysStats.timeStepIntervals[i],
-            100.0 * (double)(sysStats.timeStepCounts[i]) / totalSteps);
+            100.0 * (sysStats.timeStepCounts[i]) / totalSteps);
 }
 
 
@@ -1133,8 +1133,8 @@ function report_Subcatchments()
             for ( period = 1; period <= Nperiods; period++ )
             {
                 output_readDateTime(period, days);
-                datetime_dateToStr(days, theDate);
-                datetime_timeToStr(days, theTime);
+                theDate = datetime_dateToStr(days, theDate);
+                theTime = datetime_timeToStr(days, theTime);
                 output_readSubcatchResults(period, k);
                 Frpt.contents += "\n  %11s %8s %10.3f%10.3f%10.4f".format(
                     theDate, theTime, SubcatchResults[SUBCATCH_RAINFALL],
@@ -1257,8 +1257,8 @@ function report_Nodes()
             for ( period = 1; period <= Nperiods; period++ )
             {
                 output_readDateTime(period, days);
-                datetime_dateToStr(days, theDate);
-                datetime_timeToStr(days, theTime);
+                theDate = datetime_dateToStr(days, theDate);
+                theTime = datetime_timeToStr(days, theTime);
                 output_readNodeResults(period, k);
                 Frpt.contents += "\n  %11s %8s  %9.3f %9.3f %9.3f %9.3f".format(
                     theDate, theTime, NodeResults[NODE_INFLOW],
@@ -1336,8 +1336,8 @@ function report_Links()
             for ( period = 1; period <= Nperiods; period++ )
             {
                 output_readDateTime(period, days);
-                datetime_dateToStr(days, theDate);
-                datetime_timeToStr(days, theTime);
+                theDate = datetime_dateToStr(days, theDate);
+                theTime = datetime_timeToStr(days, theTime);
                 output_readLinkResults(period, k);
                 Frpt.contents += "\n  %11s %8s  %9.3f %9.3f %9.3f %9.3f".format(
                     theDate, theTime, LinkResults[LINK_FLOW],
@@ -1485,8 +1485,8 @@ function report_writeTSeriesErrorMsg(code, tseries)
     if (code == ERR_CURVE_SEQUENCE)
     {
         x = tseries.x2;
-        datetime_dateToStr(x, theDate);
-        datetime_timeToStr(x, theTime);
+        theDate = datetime_dateToStr(x, theDate);
+        theTime = datetime_timeToStr(x, theTime);
         report_writeErrorMsg(ERR_TIMESERIES_SEQUENCE, tseries.ID);
         Frpt.contents += " at %s %s.".format(theDate, theTime);
     }

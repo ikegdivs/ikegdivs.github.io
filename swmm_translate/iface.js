@@ -268,8 +268,23 @@ function iface_saveOutletResults(reportDate, file)
 {
     let i, p, yr, mon, day, hr, min, sec;
     let theDate; // char[25]
-    datetime_decodeDate(reportDate, yr, mon, day);
-    datetime_decodeTime(reportDate, hr, min, sec);
+    let returnObj;
+    //datetime_decodeDate(reportDate, yr, mon, day);
+    ////////////////////////////////////
+    returnObj = {year: yr, month: mon, day: day}
+    datetime_decodeDate(reportDate, returnObj);
+    yr = returnObj.year;
+    mon = returnObj.month;
+    day = returnObj.day;
+    ////////////////////////////////////
+    //datetime_decodeTime(reportDate, hr, min, sec);
+    ////////////////////////////////////
+    returnObj = {h: hr, min: m, s: sec}
+    datetime_decodeTime(reportDate, returnObj);
+    hr = returnObj.h;
+    min = returnObj.m;
+    sec = returnObj.s;
+    ////////////////////////////////////
     sprintf(theDate, " %04d %02d  %02d  %02d  %02d  %02d ",
             yr, mon, day, hr, min, sec);
     for (i=0; i<Nobjects[NODE]; i++)

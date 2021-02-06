@@ -435,6 +435,8 @@ function project_readOption(s1, s2)
     let strDate;
     let aTime;
     let aDate;
+    let returnObj;
+    let returnVal;
 
     // --- determine which option is being read
     k = findmatch(s1, OptionWords);
@@ -469,7 +471,12 @@ function project_readOption(s1, s2)
 
       // --- simulation start date
       case START_DATE:
-        if ( (StartDate = datetime_strToDate(s2, StartDate)) == null)
+        ////////////////////////////////////
+        returnObj = {d: StartDate}
+        returnVal = datetime_strToDate(s2, returnObj);
+        StartDate = returnObj.d;
+        ////////////////////////////////////
+        if ( !returnVal)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -477,7 +484,13 @@ function project_readOption(s1, s2)
 
       // --- simulation start time of day
       case START_TIME:
-        if ( (StartTime = datetime_strToTime(s2, StartTime)) == null)
+        ////////////////////////////////////
+        returnObj = {t: StartTime}
+        returnVal = datetime_strToTime(s2, returnObj);
+        StartTime = returnObj.t;
+        ////////////////////////////////////
+        //if ( (StartTime = datetime_strToTime(s2, StartTime)) == null)
+        if(!returnVal)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -485,7 +498,12 @@ function project_readOption(s1, s2)
 
       // --- simulation ending date
       case END_DATE:
-        if ( (EndDate = datetime_strToDate(s2, EndDate)) == null) 
+        ////////////////////////////////////
+        returnObj = {d: EndDate}
+        returnVal = datetime_strToDate(s2, returnObj);
+        EndDate = returnObj.d;
+        ////////////////////////////////////
+        if (!returnVal) 
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -493,7 +511,13 @@ function project_readOption(s1, s2)
 
       // --- simulation ending time of day
       case END_TIME:
-        if ( (EndTime = datetime_strToTime(s2, EndTime)) == null)
+        ////////////////////////////////////
+        returnObj = {t: EndTime}
+        returnVal = datetime_strToTime(s2, returnObj);
+        EndTime = returnObj.t;
+        ////////////////////////////////////
+        //if ( (EndTime = datetime_strToTime(s2, EndTime)) == null)
+        if(!returnVal)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -501,7 +525,13 @@ function project_readOption(s1, s2)
 
       // --- reporting start date
       case REPORT_START_DATE:
-        if ( (ReportStartDate = datetime_strToDate(s2, ReportStartDate)) == null)
+        ////////////////////////////////////
+        returnObj = {d: ReportStartDate}
+        returnVal = datetime_strToDate(s2, returnObj);
+        ReportStartDate = returnObj.d;
+        ////////////////////////////////////
+        //if ( (ReportStartDate = datetime_strToDate(s2, ReportStartDate)) == null)
+        if(!returnVal)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -509,7 +539,13 @@ function project_readOption(s1, s2)
 
       // --- reporting start time of day
       case REPORT_START_TIME:
-        if ( (ReportStartTime = datetime_strToTime(s2, ReportStartTime)) == null)
+        ////////////////////////////////////
+        returnObj = {t: ReportStartTime}
+        returnVal = datetime_strToTime(s2, returnObj);
+        ReportStartTime = returnObj.t;
+        ////////////////////////////////////
+        //if ( (ReportStartTime = datetime_strToTime(s2, ReportStartTime)) == null)
+        if(!returnVal)
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -522,7 +558,12 @@ function project_readOption(s1, s2)
       case SWEEP_END:
         strDate = s2;
         strDate += "/1947";
-        if ( (aDate = datetime_strToDate(strDate, aDate)) == null )
+        ////////////////////////////////////
+        returnObj = {d: aDate}
+        returnVal = datetime_strToDate(strDate, returnObj);
+        aDate = returnObj.d;
+        ////////////////////////////////////
+        if ( !returnVal )
         {
             return error_setInpError(ERR_DATETIME, s2);
         }
@@ -546,31 +587,26 @@ function project_readOption(s1, s2)
       case DRY_STEP:
       case REPORT_STEP:
       case RULE_STEP:                                                          //(5.1.013)
-        if(s2.includes(':'))
+        ////////////////////////////////////
+        returnObj = {t: aTime}
+        returnVal = datetime_strToTime(s2, returnObj);
+        aTime = returnObj.t;
+        ////////////////////////////////////
+        //if ( (tStep = datetime_strToTime(s2, aTime)) == null)
+        if(!returnVal)
         {
-            if ( (tStep = datetime_strToTime(s2, aTime)) == null)
-            {
-                return error_setInpError(ERR_NUMBER, s2);
-            }
-            else
-            {
-                /*datetime_decodeTime(aTime, h, m, s);
-                h += 24*aTime;
-                s = s + 60*m + 3600*h;
-                tStep = s;*/
-                tStep *= SecsPerDay;
-            }
-        } else {
-            tStep = getDouble(s2)
+            return error_setInpError(ERR_NUMBER, s2);
         }
-      
-      
-        /*if ( (aTime = datetime_strToTime(s2, aTime)) == null)
-        {
-            return error_setInpError(ERR_DATETIME, s2);
-        }*/
-
-        s = tStep;
+        //datetime_decodeTime(aTime, h, m, s);
+        ////////////////////////////////////
+        returnObj = {h: h, m: m, s: s}
+        datetime_decodeTime(aTime, returnObj);
+        h = returnObj.h;
+        m = returnObj.m;
+        s = returnObj.s;
+        ////////////////////////////////////
+        h += 24*aTime;
+        s = s + 60*m + 3600*h;
 
         // --- RuleStep allowed to be 0 while other time steps must be > 0     //(5.1.013)
         if (k == RULE_STEP)                                                    //      
@@ -657,17 +693,29 @@ function project_readOption(s1, s2)
         //if ( (tStep = getDouble(s2, tStep)) == null )
         if(s2.includes(':'))
         {
-            if ( (tStep = datetime_strToTime(s2, aTime)) == null)
+            ////////////////////////////////////
+            returnObj = {t: aTime}
+            returnVal = datetime_strToTime(s2, returnObj);
+            aTime = returnObj.t;
+            ////////////////////////////////////
+            //if ( (tStep = datetime_strToTime(s2, aTime)) == null)
+            if(!returnVal)
             {
                 return error_setInpError(ERR_NUMBER, s2);
             }
             else
             {
-                /*datetime_decodeTime(aTime, h, m, s);
-                h += 24*aTime;
+                //datetime_decodeTime(aTime, h, m, s);
+                ////////////////////////////////////
+                returnObj = {h: h, m: m, s: s}
+                datetime_decodeTime(aTime, returnObj);
+                h = returnObj.h;
+                m = returnObj.m;
+                s = returnObj.s;
+                ////////////////////////////////////
+                h += 24*Math.floor(aTime);
                 s = s + 60*m + 3600*h;
-                tStep = s;*/
-                tStep *= SecsPerDay;
+                tStep = s;
             }
         } else {
             tStep = getDouble(s2)

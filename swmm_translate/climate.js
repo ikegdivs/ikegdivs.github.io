@@ -180,7 +180,13 @@ function  climate_readParams(tok, ntoks)
         {
             if ( tok[2] != '*')
             {
-                if ( !datetime_strToDate(tok[2], aDate) )
+                ////////////////////////////////////
+                let returnObj = {d: aDate}
+                let returnVal = datetime_strToDate(tok[2], returnObj);
+                aDate = returnObj.d;
+                ////////////////////////////////////
+                //if ( !datetime_strToDate(tok[2], aDate) )
+                if( !returnVal)
                     return error_setInpError(ERR_DATETIME, tok[2]);
                 Temp.fileStartDate = aDate;
             }
@@ -502,6 +508,7 @@ function climate_openFile()
 //
 {
     let i, m, y;
+    let returnObj;
 
     // --- open the file
     if ( (Fclimate.file = fopen(Fclimate.name, "rt")) == null )
@@ -529,10 +536,26 @@ function climate_openFile()
     //     month/year or at start of simulation period.
     rewind(Fclimate.file);
     strcpy(FileLine, "");
-    if ( Temp.fileStartDate == NO_DATE )
-        datetime_decodeDate(StartDate, FileYear, FileMonth, FileDay);
-    else
-        datetime_decodeDate(Temp.fileStartDate, FileYear, FileMonth, FileDay);
+    if ( Temp.fileStartDate == NO_DATE ){
+        //datetime_decodeDate(StartDate, FileYear, FileMonth, FileDay);
+        ////////////////////////////////////
+        returnObj = {year: FileYear, month: FileMonth, day: FileDay}
+        datetime_decodeDate(StartDate, returnObj);
+        FileYear = returnObj.year;
+        FileMonth = returnObj.month;
+        FileDay = returnObj.day;
+        ////////////////////////////////////
+    }
+    else{
+        //datetime_decodeDate(Temp.fileStartDate, FileYear, FileMonth, FileDay);
+        ////////////////////////////////////
+        returnObj = {year: FileYear, month: FileMonth, day: FileDay}
+        datetime_decodeDate(Temp.fileStartDate, returnObj);
+        FileYear = returnObj.year;
+        FileMonth = returnObj.month;
+        FileDay = returnObj.day;
+        ////////////////////////////////////
+    }
     while ( !feof(Fclimate.file) )
     {
         strcpy(FileLine, "");
@@ -656,7 +679,14 @@ function setNextEvapDate(theDate)
 
       // --- for monthly evaporation, use the start of the next month
       case MONTHLY_EVAP:
-        datetime_decodeDate(theDate, yr, mon, day);
+        //datetime_decodeDate(theDate, yr, mon, day);
+        ////////////////////////////////////
+        let returnObj = {year: yr, month: mon, day: day}
+        datetime_decodeDate(theDate, returnObj);
+        yr = returnObj.year;
+        mon = returnObj.month;
+        day = returnObj.day;
+        ////////////////////////////////////
         if ( mon == 12 )
         {
             mon = 1;
@@ -898,7 +928,14 @@ function setWind(theDate)
     switch ( Wind.type )
     {
       case MONTHLY_WIND:
-        datetime_decodeDate(theDate, yr, mon, day);
+        //datetime_decodeDate(theDate, yr, mon, day);
+        ////////////////////////////////////
+        let returnObj = {year: yr, month: mon, day: day}
+        datetime_decodeDate(theDate, returnObj);
+        yr = returnObj.year;
+        mon = returnObj.month;
+        day = returnObj.day;
+        ////////////////////////////////////
         Wind.ws = Wind.aws[mon-1] / UCF(WINDSPEED);
         break;
 

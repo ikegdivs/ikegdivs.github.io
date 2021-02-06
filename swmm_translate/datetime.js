@@ -67,7 +67,8 @@ const SecsPerDay = 86400.;    // seconds per day
 
 //=============================================================================
 
-function divMod(n, d, result, remainder)
+//function divMod(n, d, result, remainder)
+function divMod(n, d, returnObj)
 //  Input:   n = numerator
 //           d = denominator
 //  Output:  result = integer part of n/d
@@ -76,13 +77,13 @@ function divMod(n, d, result, remainder)
 {
     if (d == 0)
     {
-        result = 0;
-        remainder = 0;
+        returnObj.result = 0;
+        returnObj.remainder = 0;
     }
     else
     {
-        result = n/d;
-        remainder = n - d*(result);
+        returnObj.result = n/d;
+        returnObj.remainder = n - d*(returnObj.result);
     }
 }
 
@@ -109,9 +110,12 @@ function datetime_findMonth(month)
     let i;
     for (i = 0; i < 12; i++)
     {
-        if (UCHAR(month[0]) == MonthTxt[i][0]
-        &&  UCHAR(month[1]) == MonthTxt[i][1]
-        &&  UCHAR(month[2]) == MonthTxt[i][2]) return i+1;
+        //if (UCHAR(month[0]) == MonthTxt[i][0]
+        //&&  UCHAR(month[1]) == MonthTxt[i][1]
+        //&&  UCHAR(month[2]) == MonthTxt[i][2]) return i+1;
+        if(month.toUpperCase() === MonthTxt[i].toUpperCase()){
+            return i+1;
+        }
     }
     return 0;
 }
@@ -163,7 +167,8 @@ function datetime_encodeTime(hour, minute, second)
 
 //=============================================================================
 
-function datetime_decodeDate(date, year, month, day)
+//function datetime_decodeDate(date, year, month, day)
+function datetime_decodeDate(date, inObj)
 //  Input:   date = encoded date/time value
 //  Output:  year = 4-digit year
 //           month = month of year (1-12)
@@ -172,6 +177,7 @@ function datetime_decodeDate(date, year, month, day)
 {
     let  D1, D4, D100, D400;
     let  y, m, d, i, k, t;
+    let returnObj;
 
     D1 = 365;              //365
     D4 = D1 * 4 + 1;       //1461
@@ -181,9 +187,9 @@ function datetime_decodeDate(date, year, month, day)
     t = (Math.floor(date)) + DateDelta;
     if (t <= 0)
     {
-        year = 0;
-        month = 1;
-        day = 1;
+        inObj.year = 0;
+        inObj.month = 1;
+        inObj.day = 1;
     }
     else
     {
@@ -194,16 +200,37 @@ function datetime_decodeDate(date, year, month, day)
             t -= D400;
             y += 400;
         }
-        divMod(t, D100, i, d);
+        //divMod(t, D100, i, d);
+        ////////////////////////////////////
+        returnObj = {result: i, remainder: d}
+        divMod(t, D100, returnObj);
+        i = returnObj.result;
+        d = returnObj.remainder;
+        ////////////////////////////////////
+
         if (i == 4)
         {
             i--;
             d += D100;
         }
         y += i*100;
-        divMod(d, D4, i, d);
+
+        //divMod(d, D4, &i, &d);
+        ////////////////////////////////////
+        returnObj = {result: i, remainder: d}
+        divMod(d, D4, returnObj);
+        i = returnObj.result;
+        d = returnObj.remainder;
+        ////////////////////////////////////
+
         y += i*4;
-        divMod(d, D1, i, d);
+        //divMod(d, D1, i, d);
+        ////////////////////////////////////
+        returnObj = {result: i, remainder: d}
+        divMod(d, D1, returnObj);
+        i = returnObj.result;
+        d = returnObj.remainder;
+        ////////////////////////////////////
         if (i == 4)
         {
             i--;
@@ -219,15 +246,16 @@ function datetime_decodeDate(date, year, month, day)
             d -= i;
             m++;
         }
-        year = y;
-        month = m;
-        day = d + 1;
+        inObj.year = y;
+        inObj.month = m;
+        inObj.day = d + 1;
     }
 }
 
 //=============================================================================
 
-function datetime_decodeTime(time, h, m, s)
+//function datetime_decodeTime(time, h, m, s)
+function datetime_decodeTime(time, inObj)
 //  Input:   time = decimal fraction of a day
 //  Output:  h = hour of day (0-23)
 //           m = minute of hour (0-59)
@@ -237,11 +265,25 @@ function datetime_decodeTime(time, h, m, s)
     let secs;
     let mins;
     let fracDay = (time - Math.floor(time)) * SecsPerDay;
+    let returnObj;
+
     secs = (Math.floor(fracDay + 0.5));
     if ( secs >= 86400 ) secs = 86399;
-    divMod(secs, 60, mins, s);
-    divMod(mins, 60, h, m);
-    if ( h > 23 ) h = 0;
+    //divMod(secs, 60, mins, s);
+    ////////////////////////////////////
+    returnObj = {result: mins, remainder: inObj.s}
+    divMod(secs, 60, returnObj);
+    mins = returnObj.result;
+    inObj.s = returnObj.remainder;
+    ////////////////////////////////////
+    //divMod(mins, 60, h, m);
+    ////////////////////////////////////
+    returnObj = {result: inObj.h, remainder: inObj.m}
+    divMod(mins, 60, returnObj);
+    inObj.h = returnObj.result;
+    inObj.m = returnObj.remainder;
+    ////////////////////////////////////
+    if ( inObj.h > 23 ) inObj.h = 0;
 }
 
 //=============================================================================
@@ -253,7 +295,14 @@ function datetime_dateToStr(date, s)
 {
     let  y, m, d;
     let dateStr = new Array(DATE_STR_SIZE);
-    datetime_decodeDate(date, y, m, d);
+    //datetime_decodeDate(date, y, m, d);
+    ////////////////////////////////////
+    let returnObj = {year: y, month: m, day: d}
+    datetime_decodeDate(date, returnObj);
+    y = returnObj.year;
+    m = returnObj.month;
+    d = returnObj.day;
+    ////////////////////////////////////
     switch (DateFormat)
     {
       case Y_M_D:
@@ -284,6 +333,8 @@ function datetime_dateToStr(date, s)
                     + y.toString().padStart(4, "0") 
     }
     s = dateStr;
+
+    return s;
 }
 
 //=============================================================================
@@ -295,7 +346,14 @@ function datetime_timeToStr(time, s)
 {
     let  hr, min, sec;
     let timeStr;
-    datetime_decodeTime(time, hr, min, sec);
+    //datetime_decodeTime(time, hr, min, sec);
+    ////////////////////////////////////
+    let returnObj = {h: hr, m: min, s: sec}
+    datetime_decodeTime(time, returnObj);
+    hr = returnObj.h;
+    min = returnObj.m;
+    sec = returnObj.s;
+    ////////////////////////////////////
     //sprintf(timeStr, "%02d:%02d:%02d", hr, min, sec);
     timeStr = hr.toString().padStart(2, "0")
                 + ':'
@@ -304,11 +362,15 @@ function datetime_timeToStr(time, s)
                 + sec.toString().padStart(2, "0")
     //strcpy(s, timeStr);
     s = timeStr;
+
+    return s;
 }
 
 //=============================================================================
 
-function datetime_strToDate(s, d)
+// 
+//function datetime_strToDate(s, d)
+function datetime_strToDate(s, inObj)
 //  Input:   s = date as string
 //  Output:  d = encoded date;
 //           returns 1 if conversion successful, 0 if not
@@ -318,7 +380,7 @@ function datetime_strToDate(s, d)
     let  yr = 0, mon = 0, day = 0, n;
     let month;
     let sep1, sep2;
-    d = -DateDelta;
+    inObj.d = -DateDelta;
     //if (strchr(s, '-') || strchr(s, '/'))
     if (s.includes('-') || s.includes('/'))
     {
@@ -364,17 +426,17 @@ function datetime_strToDate(s, d)
             }
             break;
         }
-        if (!(/\d/.test(mon))) mon = datetime_findMonth(month);
-        d = datetime_encodeDate(yr, mon, day);
-        return d;
+        //if (!(/\d/.test(mon))) mon = datetime_findMonth(month);
+        if (mon == 0) mon = datetime_findMonth(month);
+        inObj.d = datetime_encodeDate(yr, mon, day);
     }
-    if (d == -DateDelta) return 0;
-    else return null;
+    if (inObj.d == -DateDelta) return 0;
+    else return 1;
 }
 
 //=============================================================================
-
-function datetime_strToTime(s, t)
+//function datetime_strToTime(s, t)
+function datetime_strToTime(s, inObj)
 //  Input:   s = time as string
 //  Output:  t = encoded time,
 //           returns 1 if conversion successful, 0 if not
@@ -384,25 +446,25 @@ function datetime_strToTime(s, t)
     let  n, hr, min = 0, sec = 0;
 
     // Attempt to read time as decimal hours
-    t = parseInt(s);
-    if ( t == NaN )
+    inObj.t = parseInt(s);
+    if ( inObj.t == NaN )
     {
-        t = 0;
+        inObj.t /= 24.0;
         return t;
     }
 
     // Read time in hr:min:sec format
-    t = 0.0;
+    inObj.t = 0.0;
     //n = sscanf(s, "%d:%d:%d", &hr, &min, &sec);
     vals = s.split(/[:]+/)
             n = vals.length
-            hr = vals[0]
-            min = vals[1]
-            sec = vals[2]
+            hr = parseInt(vals[0])
+            min = parseInt(vals[1])
+            sec = parseInt(vals[2])
     if ( n == 0 ) return 0;
-    t = datetime_encodeTime(hr, min, sec);
-    if ( (hr >= 0) && (min >= 0) && (sec >= 0) ) return t;
-    else return null;
+    inObj.t = datetime_encodeTime(hr, min, sec);
+    if ( (hr >= 0) && (min >= 0) && (sec >= 0) ) return 1;
+    else return 0;
 }
 
 //=============================================================================
@@ -425,7 +487,14 @@ function datetime_addSeconds(date1, seconds)
 {
     let d = Math.floor(date1);
     let h, m, s;
-    datetime_decodeTime(date1, h, m, s);
+    //datetime_decodeTime(date1, h, m, s);
+    ////////////////////////////////////
+    let returnObj = {h: h, m: m, s: s}
+    datetime_decodeTime(date1, returnObj);
+    h = returnObj.h;
+    m = returnObj.m;
+    s = returnObj.s;
+    ////////////////////////////////////
     return d + (3600.0*h + 60.0*m + s + seconds)/SecsPerDay;
 }
 
@@ -441,8 +510,24 @@ function datetime_addDays(date1, date2)
     let d2 = Math.floor(date2);
     let h1, m1, s1;
     let h2, m2, s2;
-    datetime_decodeTime(date1, h1, m1, s1);
-    datetime_decodeTime(date2, h2, m2, s2);
+    let returnObj;
+
+    //datetime_decodeTime(date1, h1, m1, s1);
+    ////////////////////////////////////
+    returnObj = {h: h1, m: m1, s: s1}
+    datetime_decodeTime(date1, returnObj);
+    h1 = returnObj.h;
+    m1 = returnObj.m;
+    s1 = returnObj.s;
+    ////////////////////////////////////
+    //datetime_decodeTime(date2, h2, m2, s2);
+    ////////////////////////////////////
+    returnObj = {h: h2, m: m2, s: s2}
+    datetime_decodeTime(date2, returnObj);
+    h2 = returnObj.h;
+    m2 = returnObj.m;
+    s2 = returnObj.s;
+    ////////////////////////////////////
     return d1 + d2 + datetime_encodeTime(h1+h2, m1+m2, s1+s2);
 }
 
@@ -458,9 +543,24 @@ function datetime_timeDiff(date1, date2)
     let d2 = Math.floor(date2);
     let    h, m, s;
     let   s1, s2, secs;
-    datetime_decodeTime(date1, h, m, s);
+    let returnObj;
+    //datetime_decodeTime(date1, h, m, s);
+    ////////////////////////////////////
+    returnObj = {h: h, m: m, s: s}
+    datetime_decodeTime(date1, returnObj);
+    h = returnObj.h;
+    m = returnObj.m;
+    s = returnObj.s;
+    ////////////////////////////////////
     s1 = 3600*h + 60*m + s;
-    datetime_decodeTime(date2, h, m, s);
+    //datetime_decodeTime(date2, h, m, s);
+    ////////////////////////////////////
+    returnObj = {h: h, m: m, s: s}
+    datetime_decodeTime(date2, returnObj);
+    h = returnObj.h;
+    m = returnObj.m;
+    s = returnObj.s;
+    ////////////////////////////////////
     s2 = 3600*h + 60*m + s;
     secs = (Math.floor((d1 - d2)*SecsPerDay + 0.5));
     secs += (s1 - s2);
@@ -475,7 +575,14 @@ function  datetime_monthOfYear(date)
 //  Purpose: finds month of year (Jan = 1 ...) for a given date.
 {
     let year, month, day;
-    datetime_decodeDate(date, year, month, day);
+    //datetime_decodeDate(date, year, month, day);
+    ////////////////////////////////////
+    let returnObj = {year: year, month: month, day: day}
+    datetime_decodeDate(date, returnObj);
+    year = returnObj.year;
+    month = returnObj.month;
+    day = returnObj.day;
+    ////////////////////////////////////
     return month;
 }
 
@@ -488,7 +595,14 @@ function  datetime_dayOfYear(date)
 {
     let year, month, day;
     let startOfYear;
-    datetime_decodeDate(date, year, month, day);
+    //datetime_decodeDate(date, year, month, day);
+    ////////////////////////////////////
+    let returnObj = {year: year, month: month, day: day}
+    datetime_decodeDate(date, returnObj);
+    year = returnObj.year;
+    month = returnObj.month;
+    day = returnObj.day;
+    ////////////////////////////////////
     startOfYear = datetime_encodeDate(year, 1, 1);
     return (Math.floor(date - startOfYear)) + 1;
 }
@@ -512,7 +626,14 @@ function  datetime_hourOfDay(date)
 //  Purpose: finds hour of day (0 = 12 AM, ..., 23 = 11 PM) for a given date.
 {
     let hour, min, sec;
-    datetime_decodeTime(date, hour, min, sec);
+    //datetime_decodeTime(date, hour, min, sec);
+    ////////////////////////////////////
+    let returnObj = {h: hour, m: min, s: sec}
+    datetime_decodeTime(date, returnObj);
+    hour = returnObj.h;
+    min = returnObj.m;
+    sec = returnObj.s;
+    ////////////////////////////////////
     return hour;
 }
 
@@ -529,8 +650,13 @@ function  datetime_daysPerMonth(year, month)
 }
 
 //=============================================================================
-
-function datetime_getTimeStamp(fmt, aDate, stampSize, timeStamp)
+////////////////////////////////////
+//let returnObj = {timeStamp: val}
+//datetime_getTimeStamp(fmt, aDate, stampSize, returnObj);
+//val = returnObj.h;
+////////////////////////////////////
+//function datetime_getTimeStamp(fmt, aDate, stampSize, timeStamp)
+function datetime_getTimeStamp(fmt, aDate, stampSize, inObj)
 
 //  Input:   fmt = desired date format code
 //           aDate = a date/time value in decimal days
@@ -544,9 +670,9 @@ function datetime_getTimeStamp(fmt, aDate, stampSize, timeStamp)
     
     if ( stampSize < DATE_STR_SIZE + TIME_STR_SIZE + 2 ) return;
     datetime_setDateFormat(fmt);     
-    datetime_dateToStr(aDate, dateStr);
+    dateStr = datetime_dateToStr(aDate, dateStr);
     DateFormat = oldDateFormat;
-    datetime_timeToStr(aDate, timeStr);
+    timeStr = datetime_timeToStr(aDate, timeStr);
     //sprintf(timeStamp, "%s %s", dateStr, timeStr);
-    timeStamp = dateStr + ' ' + timeStr;
+    inObj.timeStamp = dateStr + ' ' + timeStr;
 }

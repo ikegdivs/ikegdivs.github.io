@@ -1353,7 +1353,7 @@ function getUnitHydConvol(j, k, rainInterval)
         if ( v > 0.0 )
         {
             // --- find mid-point time of UH period in seconds
-            t = ((double)(p) - 0.5) * rainInterval;
+            t = ((p) - 0.5) * rainInterval;
 
             // --- convolute rain volume with UH ordinate
             u = getUnitHydOrd(j, m, k, t) * UnitHyd[j].r[m][k];

@@ -103,6 +103,8 @@ function table_readTimeseries(tok, ntoks)
     let x, y;                           // time & value table entries
     let d;                        // day portion of date/time value
     let t;                        // time portion of date/time value
+    let returnObj;
+    let returnVal;
 
     // --- check for minimum number of tokens
     if ( ntoks < 3 ) return error_setInpError(ERR_ITEMS, "");
@@ -132,7 +134,13 @@ function table_readTimeseries(tok, ntoks)
         switch(state)
         {
           case 1:            // look for a date entry
-            if ( datetime_strToDate(tok[k], d) )
+            ////////////////////////////////////
+            returnObj = {d: d}
+            returnVal = datetime_strToDate(tok[k], returnObj);
+            d = returnObj.d;
+            ////////////////////////////////////
+            // datetime_strToDate(tok[k], d)
+            if ( returnVal )
             {
                 Tseries[j].lastDate = d;
                 k++;
@@ -145,11 +153,18 @@ function table_readTimeseries(tok, ntoks)
           case 2:            // look for a time entry
             if ( k >= ntoks ) return error_setInpError(ERR_ITEMS, "");
 
-            // --- first check for decimal hours format
-            if ( null != (t = getDouble(tok[k])) ) t /= 24.0;
+            
 
             // --- then for an hrs:min format
-            else if ( !datetime_strToTime(tok[k], t) )
+            ////////////////////////////////////
+            returnObj = {t: t}
+            returnVal = datetime_strToTime(tok[k], returnObj);
+            t = returnObj.t;
+            ////////////////////////////////////
+            // --- first check for decimal hours format
+            if ( null != (t = getDouble(tok[k])) ) t /= 24.0;
+            //else if ( !datetime_strToTime(tok[k], t) )
+            else if(!returnVal)
                 return error_setInpError(ERR_NUMBER, tok[k]);
 
             // --- save date + time in x
@@ -828,6 +843,8 @@ function  table_parseFileLine(line, table, x, y)
     let yy;               // value as double
     let d;              // day portion of date/time value
     let t;              // time portion of date/time value
+    let returnObj;
+    let returnVal;
 
     // --- get 3 string tokens from line and check if its a comment
     n = sscanf(line, "%s %s %s", s1, s2, s3);
@@ -849,7 +866,13 @@ function  table_parseFileLine(line, table, x, y)
     else if ( n == 3 )
     {
         // --- convert date string to numeric value
-        if ( !datetime_strToDate(s1, d) ) return false;
+        ////////////////////////////////////
+        returnObj = {d: d}
+        returnVal = datetime_strToDate(s1, returnObj);
+        d = returnObj.d;
+        ////////////////////////////////////
+        //datetime_strToDate(s1, d)
+        if ( !returnVal ) return false;
 
         // --- update last recorded calendar date
         table.lastDate = d;
@@ -859,8 +882,14 @@ function  table_parseFileLine(line, table, x, y)
     else return false;
 
     // --- convert time string to numeric value
+    ////////////////////////////////////
+    returnObj = {t: t}
+    returnVal = datetime_strToTime(tStr, returnObj);
+    t = returnObj.t;
+    ////////////////////////////////////
     if ( null != (t = getDouble(tStr)) ) t /= 24.0;
-    else if ( !datetime_strToTime(tStr, t) ) return false;
+    //else if ( !datetime_strToTime(tStr, t) ) return false;
+    else if (!returnVal) return false;
 
     // --- convert value string to numeric value
     if ( null == (yy = getDouble(yStr)) ) return false;

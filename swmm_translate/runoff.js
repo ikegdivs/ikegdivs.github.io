@@ -171,7 +171,7 @@ function runoff_execute()
     if ( Nobjects[SUBCATCH] == 0 )
     {
         OldRunoffTime = NewRunoffTime;
-        NewRunoffTime += (double)(1000 * DryStep);
+        NewRunoffTime += (1000 * DryStep);
         NewRunoffTime = MIN(NewRunoffTime, TotalDuration);
         return;
     }
@@ -212,7 +212,7 @@ function runoff_execute()
 
     // --- update runoff time clock (in milliseconds)
     OldRunoffTime = NewRunoffTime;
-    NewRunoffTime += (double)(1000 * runoffStep);
+    NewRunoffTime += (1000 * runoffStep);
 
     // --- adjust runoff step so that total duration not exceeded
     if ( NewRunoffTime > TotalDuration )

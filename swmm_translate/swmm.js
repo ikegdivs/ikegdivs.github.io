@@ -323,7 +323,7 @@ function swmm_step(elapsedTime)
             else output_saveResults(ReportTime);
 
             // --- advance to next reporting period
-            ReportTime = ReportTime + (double)(1000 * ReportStep);
+            ReportTime = ReportTime + (1000 * ReportStep);
         }
 
         // --- not a reporting period so update average results if applicable
@@ -664,7 +664,14 @@ function getElapsedTime(aDate, days, hrs, mins)
     else
     {
         days = x;
-        datetime_decodeTime(x, hrs, mins, secs);
+        //datetime_decodeTime(x, hrs, mins, secs);
+        ////////////////////////////////////
+        let returnObj = {h: hrs, mins: m, s: secs}
+        datetime_decodeTime(x, returnObj);
+        hrs = returnObj.h;
+        mins = returnObj.m;
+        secs = returnObj.s;
+        ////////////////////////////////////
     }
 }
 

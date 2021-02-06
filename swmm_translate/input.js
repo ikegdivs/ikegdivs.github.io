@@ -718,15 +718,41 @@ function  readEvent(tok, ntoks)
 {
     //DateTime x[4];
     let x = new Array(4);
+    let returnObj;
+    let returnVal;
 
     if ( ntoks < 4 ) return error_setInpError(ERR_ITEMS, "");
-    if ( !datetime_strToDate(tok[0], x[0]) )
+    ////////////////////////////////////
+    returnObj = {d: x[0]}
+    returnVal = datetime_strToDate(tok[0], returnObj);
+    x[0] = returnObj.d;
+    ////////////////////////////////////
+    //if ( !datetime_strToDate(tok[0], x[0]) )
+    if ( !returnVal )
         return error_setInpError(ERR_DATETIME, tok[0]);
-    if ( !datetime_strToTime(tok[1], x[1]) )
+    ////////////////////////////////////
+    returnObj = {t: x[1]}
+    returnVal = datetime_strToTime(tok[1], returnObj);
+    x[1] = returnObj.t;
+    ////////////////////////////////////
+    //if ( !datetime_strToTime(tok[1], x[1]) )
+    if ( !returnVal )
         return error_setInpError(ERR_DATETIME, tok[1]);
-    if ( !datetime_strToDate(tok[2], x[2]) )
+    ////////////////////////////////////
+    returnObj = {d: x[2]}
+    returnVal = datetime_strToDate(tok[2], returnObj);
+    x[2] = returnObj.d;
+    ////////////////////////////////////
+    //if ( !datetime_strToDate(tok[2], x[2]) )
+    if ( !returnVal )
         return error_setInpError(ERR_DATETIME, tok[2]);
-    if ( !datetime_strToTime(tok[3], x[3]) )
+    ////////////////////////////////////
+    returnObj = {t: x[3]}
+    returnVal = datetime_strToTime(tok[3], returnObj);
+    x[3] = returnObj.t;
+    ////////////////////////////////////
+    //if ( !datetime_strToTime(tok[3], x[3]) )
+    if(!returnVal)
         return error_setInpError(ERR_DATETIME, tok[3]);
 
     Event[Mevents].start = x[0] + x[1];
@@ -781,7 +807,7 @@ function   match(str, substr)
     // --- check if substr matches remainder of str
     for (i = i,j = 0; substr[j]; i++,j++)
     {
-        if (!str[i] || UCHAR(str[i]) != UCHAR(substr[j])) return(0);
+        if (!str[i] || str[i].toUpperCase() != substr[j].toUpperCase()) return(0);
     }
     return(1);
 }

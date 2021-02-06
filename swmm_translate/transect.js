@@ -231,7 +231,7 @@ function  transect_validate(j)
 
     // --- determine size & depth increment for geometry tables
     Transect[j].nTbl = N_TRANSECT_TBL;
-    dy = (ymax - ymin) / (double)(Transect[j].nTbl - 1);
+    dy = (ymax - ymin) / (Transect[j].nTbl - 1);
 
     // --- set 1st table entries to zero
     Transect[j].areaTbl[0] = 0.0;

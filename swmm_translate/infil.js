@@ -513,8 +513,8 @@ function horton_getInfil(infil, tstep, irate, depth)
         }
         else
         {
-            Fp = fmin * tp + df / kd * (1.0 - exp(-kd * tp));
-            F1 = fmin * t1 + df / kd * (1.0 - exp(-kd * t1));
+            Fp = fmin * tp + df / kd * (1.0 - Math.exp(-kd * tp));
+            F1 = fmin * t1 + df / kd * (1.0 - Math.exp(-kd * t1));
         }
         fp = (F1 - Fp) / tstep;
         fp = MAX(fp, fmin);
@@ -537,7 +537,7 @@ function horton_getInfil(infil, tstep, irate, depth)
             for ( iter=1; iter<=20; iter++ )
             {
                 kt = MIN( 60.0, kd*tp );
-                ex = exp(-kt);
+                ex = Math.exp(-kt);
                 FF = fmin * tp + df / kd * (1.0 - ex) - F1;
                 FF1 = fmin + df * ex;
                 r = FF / FF1;
@@ -559,14 +559,14 @@ function horton_getInfil(infil, tstep, irate, depth)
     // --- case where infil. capacity is regenerating; update tp.
     else if (kr > 0.0)
     {
-        r = exp(-kr * tstep);
-        tp = 1.0 - exp(-kd * tp);
-        tp = -log(1.0 - r*tp) / kd;
+        r = Math.exp(-kr * tstep);
+        tp = 1.0 - Math.exp(-kd * tp);
+        tp = -Math.log(1.0 - r*tp) / kd;
 
         // reduction in cumulative infiltration
         if ( Fmax > 0.0 )
         {
-            infil.Fe = fmin*tp + (df/kd)*(1.0 - exp(-kd*tp));
+            infil.Fe = fmin*tp + (df/kd)*(1.0 - Math.exp(-kd*tp));
         }
     }
     infil.tp = tp;
@@ -631,7 +631,7 @@ function modHorton_getInfil(infil, tstep, irate,
     // --- reduce cumulative infiltration for dry condition
     else if (kr > 0.0)
     {
-        infil.Fe *= exp(-kr * tstep);
+        infil.Fe *= Math.exp(-kr * tstep);
         infil.Fe = MAX(infil.Fe, 0.0);
     }
     return f;
@@ -929,10 +929,10 @@ function grnampt_getF2(f1, c1, ks, ts)
 
     // --- use Newton-Raphson method to solve integrated G-A equation
     //     (convergence limit reduced from that used in previous releases)
-    c2 = c1 * log(f1 + c1) - ks * ts;
+    c2 = c1 * Math.log(f1 + c1) - ks * ts;
     for ( i = 1; i <= 20; i++ )
     {
-        df2 = (f2 - f1 - c1 * log(f2 + c1) + c2) / (1.0 - c1 / (f2 + c1) );
+        df2 = (f2 - f1 - c1 * Math.log(f2 + c1) + c2) / (1.0 - c1 / (f2 + c1) );
         if ( Math.abs(df2) < 0.00001 )
         {
             return MAX(f2, f2min);

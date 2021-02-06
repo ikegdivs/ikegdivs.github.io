@@ -123,8 +123,14 @@ function readGageSeriesFormat(tok, ntoks, x)
     x[1] = m;
 
     // --- get data time interval & convert to seconds
+    ////////////////////////////////////
+    let returnObj = {t: aTime}
+    let returnVal = datetime_strToTime(tok[2], returnObj);
+    aTime = returnObj.t;
+    ////////////////////////////////////
     if ( null != (x[2] = getDouble(tok[2]) )) x[2] = Math.floor(x[2]*3600 + 0.5);
-    else if ( datetime_strToTime(tok[2], aTime) )
+    //else if ( datetime_strToTime(tok[2], aTime) )
+    else if (returnVal)
     {
         x[2] = Math.floor(aTime*SECperDAY + 0.5);
     }
@@ -157,8 +163,14 @@ function readGageFileFormat(tok, ntoks, x)
     x[1] = m;
 
     // --- get data time interval & convert to seconds
+    ////////////////////////////////////
+    let returnObj = {t: aTime}
+    let returnVal = datetime_strToTime(tok[2], returnObj);
+    aTime = returnObj.t;
+    ////////////////////////////////////
     if (  null != (x[2] = getDouble(tok[2])) ) x[2] *= 3600;
-    else if ( datetime_strToTime(tok[2], aTime) )
+    //else if ( datetime_strToTime(tok[2], aTime) )
+    else if(returnVal)
     {
         x[2] = Math.floor(aTime*SECperDAY + 0.5);
     }
@@ -177,7 +189,13 @@ function readGageFileFormat(tok, ntoks, x)
     // --- get start date (if present)
     if ( ntoks > 8 && tok[8] != '*')
     {
-        if ( !datetime_strToDate(tok[8], aDate) )
+        ////////////////////////////////////
+        let returnObj = {d: aDate}
+        let returnVal = datetime_strToDate(tok[8], returnObj);
+        aDate = returnObj.d;
+        ////////////////////////////////////
+        //if ( !datetime_strToDate(tok[8], aDate) )
+        if ( !returnVal )
             return error_setInpError(ERR_DATETIME, tok[8]);
         x[4] =  aDate;
     }
