@@ -65,58 +65,56 @@
 //-----------------------------------------------------------------------------
 var Htable = new Array(MAX_OBJ_TYPES); // Hash tables for object ID names
 var MemPoolAllocated;      // true if memory pool allocated 
-
+var root = new alloc_root_t();
 /*
 **  root - Pointer to the current pool.
 */
 //static alloc_root_t *root;
-class alloc_root_s
-{
+//class alloc_root_s
+//{
     //alloc_hdr_t *first,    /* First header in pool */
     //            *current;  /* Current header       */
-    constructor(){
-        this.first;
-        this.current;
-    }
-}  //alloc_root_t;
+//    constructor(){
+//        this.first;
+////        this.current;
+//    }
+//}  //alloc_root_t;
 
-class alloc_root_t
-{
-    constructor(){
-        this.first;
-        this.current;
-    }
-}  
-
-var root = new alloc_root_t();
+//class alloc_root_t
+//{
+//    constructor(){
+//        this.first;
+//        this.current;
+//   }
+//}  
 
 /*
 **  alloc_hdr_t - Header for each block of memory.
 */
 
-class alloc_hdr_s
-{
+//class alloc_hdr_s
+//{
     //struct alloc_hdr_s *next;   /* Next Block          */
     //char               *block,  /* Start of block      */
     //                   *free,   /* Next free in block  */
     //                   *end;    /* block + block size  */
-    constructor(){
-        this.next;
-        this.block;
-        this.free;
-        this.end;
-    }
-}  //alloc_hdr_t;
+//    constructor(){
+//        this.next;
+//        this.block;
+//        this.free;
+//        this.end;
+//    }
+//}  //alloc_hdr_t;
 
-class alloc_hdr_t
-{
-    constructor(){
-        this.next;
-        this.block;
-        this.free;
-        this.end;
-    }
-} 
+//class alloc_hdr_t
+//{
+//    constructor(){
+//        this.next;
+//        this.block;
+//        this.free;
+////        this.end;
+ //   }
+//} 
 
 //-----------------------------------------------------------------------------
 //  External Functions (declared in funcs.h)
@@ -227,8 +225,8 @@ function project_validate()
     }
     for ( i=0; i<Nobjects[TSERIES]; i++ )
     {
-        err = table_validate(TSeries[i]);
-        if ( err ) report_writeTSeriesErrorMsg(err, TSeries[i]);
+        err = table_validate(Tseries[i]);
+        if ( err ) report_writeTSeriesErrorMsg(err, Tseries[i]);
     }
 
     // --- validate hydrology objects
@@ -314,7 +312,7 @@ function  project_init()
     let j;
     climate_initState();
     lid_initState();
-    for (j=0; j<Nobjects[TSERIES]; j++)  table_tseriesInit(TSeries[j]);
+    for (j=0; j<Nobjects[TSERIES]; j++)  table_tseriesInit(Tseries[j]);
     for (j=0; j<Nobjects[GAGE]; j++)     gage_initState(j);
     for (j=0; j<Nobjects[SUBCATCH]; j++) subcatch_initState(j);
     for (j=0; j<Nobjects[NODE]; j++)     node_initState(j);
@@ -689,7 +687,7 @@ function project_readOption(s1, s2)
         break;
 
       case NUM_THREADS:
-        m = atoi(s2);
+        m = parseInt(s2);
         if ( m < 0 ) return error_setInpError(ERR_NUMBER, s2);
         NumThreads = m;
         break;
@@ -724,7 +722,7 @@ function project_readOption(s1, s2)
 
       // --- maximum trials / time step for dynamic wave routing
       case MAX_TRIALS:
-        m = atoi(s2);
+        m = parseInt(s2);
         if ( m < 0 ) return error_setInpError(ERR_NUMBER, s2);
         MaxTrials = m;
         break;
@@ -795,7 +793,7 @@ function initPointers()
     Landuse  = [];
     Pattern  = [];
     Curve    = [];
-    TSeries  = [];
+    Tseries  = [];
     Transect = [];
     Shape    = [];
     Aquifer    = [];
@@ -1044,12 +1042,13 @@ function createObjects()
     for(let i = 0; i < Nobjects[LANDUSE]; i++){Landuse.push(new TLanduse())}
     for(let i = 0; i < Nobjects[TIMEPATTERN]; i++){Pattern.push(new TPattern())}
     for(let i = 0; i < Nobjects[CURVE]; i++){Curve.push(new TTable())}
-    for(let i = 0; i < Nobjects[TSERIES]; i++){TSeries.push(new TTable())}
+    for(let i = 0; i < Nobjects[TSERIES]; i++){Tseries.push(new TTable())}
     for(let i = 0; i < Nobjects[AQUIFER]; i++){Aquifer.push(new TAquifer())}
     for(let i = 0; i < Nobjects[UNITHYD]; i++){UnitHyd.push(new TUnitHyd())}
     for(let i = 0; i < Nobjects[SNOWMELT]; i++){Snowmelt.push(new TSnowmelt())}
     for(let i = 0; i < Nobjects[SHAPE]; i++){Shape.push(new TShape())}
 
+    //thing.item = 0;
     // --- create array of detailed routing event periods
     Event = new Array(NumEvents+1);
     for(let i = 0; i < NumEvents+1; i++){
@@ -1182,7 +1181,7 @@ function createObjects()
 
     //  --- initialize curves, time series, and time patterns
     for (let j = 0; j < Nobjects[CURVE]; j++)   table_init(Curve[j]);
-    for (let j = 0; j < Nobjects[TSERIES]; j++) table_init(TSeries[j]);
+    for (let j = 0; j < Nobjects[TSERIES]; j++) table_init(Tseries[j]);
     for (let j = 0; j < Nobjects[TIMEPATTERN]; j++) inflow_initDwfPattern(j);
 }
 
@@ -1270,8 +1269,8 @@ function deleteObjects()
     }
 
     // --- delete table entries for curves and time series
-    if ( TSeries ) for (let j = 0; j < Nobjects[TSERIES]; j++)
-        table_deleteEntries(TSeries[j]);
+    if ( Tseries ) for (let j = 0; j < Nobjects[TSERIES]; j++)
+        table_deleteEntries(Tseries[j]);
     if ( Curve ) for (let j = 0; j < Nobjects[CURVE]; j++)
         table_deleteEntries(Curve[j]);
 
@@ -1301,7 +1300,7 @@ function deleteObjects()
     FREE(Landuse);
     FREE(Pattern);
     FREE(Curve);
-    FREE(TSeries);
+    FREE(Tseries);
     FREE(Aquifer);
     FREE(UnitHyd);
     FREE(Snowmelt);
@@ -1311,8 +1310,8 @@ function deleteObjects()
 
 //=============================================================================
 // I'm not certain any of the hdr object is useful in JavaScript.
-function AllocHdr() {
-    var hdr = new alloc_hdr_t();
+/*function AllocHdr() {
+    let hdr = new alloc_hdr_t();
     let block;
 
     block = '';
@@ -1320,7 +1319,8 @@ function AllocHdr() {
     hdr.free = block;
     hdr.next = null;
     hdr.end = block + ALLOC_BLOCK_SIZE;
-}
+}*/
+
 function createHashTables()
 //
 //  Input:   none
@@ -1345,7 +1345,8 @@ function createHashTables()
     // -- Not sure this is necessary in JavaScript.
     //if ( root == null || root.first == null) report_writeErrorMsg(ERR_MEMORY, "");
     //else 
-    MemPoolAllocated = true;
+    if ( AllocInit() == null ) report_writeErrorMsg(ERR_MEMORY, "");
+    else MemPoolAllocated = true;
 }
 
 //=============================================================================

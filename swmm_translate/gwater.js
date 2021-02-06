@@ -128,7 +128,7 @@ function gwater_readAquiferParams(j, tok, ntoks)
     for (i = 0; i < 11; i++) x[i] = 0.0;
     for (i = 1; i < 13; i++)
     {
-        if ( ! (x[i-1] = getDouble(tok[i])))
+        if ( null == (x[i-1] = getDouble(tok[i])))
             return error_setInpError(ERR_NUMBER, tok[i]);
     }
 
@@ -194,7 +194,7 @@ function gwater_readGroundwaterParams(tok, ntoks)
     // -- read in the flow parameters
     for ( i = 0; i < 7; i++ )
     {
-        if ( !(x[i] = getDouble(tok[i+3]))) 
+        if ( null == (x[i] = getDouble(tok[i+3]))) 
             return error_setInpError(ERR_NUMBER, tok[i+3]);
     }
 
@@ -205,7 +205,7 @@ function gwater_readGroundwaterParams(tok, ntoks)
         m = i + 3;
         if ( ntoks > m && tok[m] != '*' )
         {    
-            if (!(x[i] = getDouble(tok[m]))) 
+            if (null == (x[i] = getDouble(tok[m]))) 
                 return error_setInpError(ERR_NUMBER, tok[m]);
             if ( i < 10 ) x[i] /= UCF(LENGTH);
         }
@@ -794,13 +794,13 @@ function getGWFlow(lowerDepth)
 
     // --- compute groundwater component of flow
     if ( GW.b1 == 0.0 ) t1 = GW.a1;
-    else t1 = GW.a1 * pow( (lowerDepth - Hstar)*UCF(LENGTH), GW.b1);
+    else t1 = GW.a1 * Math.pow( (lowerDepth - Hstar)*UCF(LENGTH), GW.b1);
 
     // --- compute surface water component of flow
     if ( GW.b2 == 0.0 ) t2 = GW.a2;
     else if (Hsw > Hstar)
     {
-        t2 = GW.a2 * pow( (Hsw - Hstar)*UCF(LENGTH), GW.b2);
+        t2 = GW.a2 * Math.pow( (Hsw - Hstar)*UCF(LENGTH), GW.b2);
     }
     else t2 = 0.0;
 

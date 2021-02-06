@@ -149,7 +149,7 @@ function link_readXsectParams(tok, ntoks)
         // --- parse max. depth & shape curve for a custom shape
         if ( k == CUSTOM )
         {
-            if ( !(x[0] = getDouble(tok[2])) || x[0] <= 0.0 )
+            if ( null == (x[0] = getDouble(tok[2])) || x[0] <= 0.0 )
                return error_setInpError(ERR_NUMBER, tok[2]);
             i = project_findObject(CURVE, tok[3]);
             if ( i < 0 ) return error_setInpError(ERR_NAME, tok[3]);
@@ -161,7 +161,7 @@ function link_readXsectParams(tok, ntoks)
         // --- parse and save geometric parameters
         else for (i = 2; i <= 5; i++)
         {
-            if ( !( x[i-2] = getDouble(tok[i])) )
+            if ( null == ( x[i-2] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
 
@@ -179,7 +179,7 @@ function link_readXsectParams(tok, ntoks)
         // --- parse number of barrels if present
         if ( Link[j].type == CONDUIT && ntoks >= 7 )
         {
-            i = atoi(tok[6]);
+            i = parseInt(tok[6]);
             if ( i <= 0 ) return error_setInpError(ERR_NUMBER, tok[6]);
             else Conduit[Link[j].subIndex].barrels = i;
         }
@@ -187,7 +187,7 @@ function link_readXsectParams(tok, ntoks)
         // --- parse culvert code if present
         if ( Link[j].type == CONDUIT && ntoks >= 8 )
         {
-            i = atoi(tok[7]);
+            i = parseInt(tok[7]);
             if ( i < 0 ) return error_setInpError(ERR_NUMBER, tok[7]);
             else Link[j].xsect.culvertCode = i;
         }
@@ -218,7 +218,7 @@ function link_readLossParams(tok, ntoks)
     if ( j < 0 ) return error_setInpError(ERR_NAME, tok[0]);
     for (i=1; i<=3; i++)
     {
-        if ( !(x[i-1] = getDouble(tok[i])) || x[i-1] < 0.0 )
+        if ( null == (x[i-1] = getDouble(tok[i])) || x[i-1] < 0.0 )
         return error_setInpError(ERR_NUMBER, tok[i]);
     }
     k = 0;
@@ -229,7 +229,7 @@ function link_readLossParams(tok, ntoks)
     }
     if ( ntoks >= 6 )
     {
-        if ( !(seepRate = getDouble(tok[5])) )
+        if ( null == (seepRate = getDouble(tok[5])) )
         return error_setInpError(ERR_NUMBER, tok[5]);
     }
     Link[j].cLossInlet   = x[0];
@@ -686,7 +686,7 @@ function link_setOutfallDepth(j)
     if ( Link[j].type == CONDUIT )
     {
         k = Link[j].subIndex;
-        q = fabs(Link[j].newFlow / Conduit[k].barrels);
+        q = Math.abs(Link[j].newFlow / Conduit[k].barrels);
         yNorm = link_getYnorm(j, q);
         yCrit = link_getYcrit(j, q);
     }
@@ -723,7 +723,7 @@ function link_getYnorm(j, q)
 
     if ( Link[j].type != CONDUIT ) return 0.0;
     if ( Link[j].xsect.type == DUMMY ) return 0.0;
-    q = fabs(q);
+    q = Math.abs(q);
     k = Link[j].subIndex;
     if ( q > Conduit[k].qMax ) q = Conduit[k].qMax;
     if ( q <= 0.0 ) return 0.0;
@@ -798,7 +798,7 @@ function link_getFroude(j, v, y)
     y = xsect_getAofY(xsect, y) / xsect_getWofY(xsect, y);
 
     // --- compute Froude No.
-    return fabs(v) / sqrt(GRAVITY * y);
+    return Math.abs(v) / Math.sqrt(GRAVITY * y);
 }
 
 //=============================================================================
@@ -815,8 +815,8 @@ function link_getPower(j)
     let    n2 = Link[j].node2;
     let dh = (Node[n1].invertElev + Node[n1].newDepth) -
                 (Node[n2].invertElev + Node[n2].newDepth);
-    let q =  fabs(Link[j].newFlow);
-    return fabs(dh) * q / 8.814 * KWperHP;
+    let q =  Math.abs(Link[j].newFlow);
+    return Math.abs(dh) * q / 8.814 * KWperHP;
 }
 
 //=============================================================================
@@ -883,30 +883,30 @@ function  conduit_readParams(j, k, tok, ntoks)
     if ( n2 < 0 ) return error_setInpError(ERR_NAME, tok[2]);
 
     // --- parse length & Mannings N
-    if ( !(x[0] = getDouble(tok[3])) )
+    if ( null == (x[0] = getDouble(tok[3])) )
         return error_setInpError(ERR_NUMBER, tok[3]);
-    if ( !(x[1] = getDouble(tok[4])) )
+    if ( null == (x[1] = getDouble(tok[4])) )
         return error_setInpError(ERR_NUMBER, tok[4]);
 
     // --- parse offsets
     if ( LinkOffsets == ELEV_OFFSET && tok[5] == '*' ) x[2] = MISSING;
-    else if ( !(x[2] = getDouble(tok[5])) )
+    else if ( null == (x[2] = getDouble(tok[5])) )
         return error_setInpError(ERR_NUMBER, tok[5]);
     if ( LinkOffsets == ELEV_OFFSET && tok[6] == '*' ) x[3] = MISSING;
-    else if ( !(x[3] = getDouble(tok[6])) )
+    else if ( null == (x[3] = getDouble(tok[6])) )
         return error_setInpError(ERR_NUMBER, tok[6]);
 
    // --- parse optional parameters
     x[4] = 0.0;                                       // init. flow
     if ( ntoks >= 8 )
     {
-        if ( !(x[4] = getDouble(tok[7])) )
+        if ( null == (x[4] = getDouble(tok[7])) )
         return error_setInpError(ERR_NUMBER, tok[7]);
     }
     x[5] = 0.0;
     if ( ntoks >= 9 )
     {
-        if ( !(x[5] = getDouble(tok[8])) )
+        if ( null == (x[5] = getDouble(tok[8])) )
         return error_setInpError(ERR_NUMBER, tok[8]);
     }
 
@@ -1020,7 +1020,7 @@ function  conduit_validate(j, k)
     if ( Link[j].xsect.type == IRREGULAR )
     {
         lengthFactor = Transect[Link[j].xsect.transect].lengthFactor;
-        roughness *= sqrt(lengthFactor);
+        roughness *= Math.sqrt(lengthFactor);
     }
 
     // --- lengthen conduit if lengthening option is in effect
@@ -1036,7 +1036,7 @@ function  conduit_validate(j, k)
     {
         Conduit[k].modLength = lengthFactor * conduit_getLength(j);
         slope /= lengthFactor;
-        roughness = roughness / sqrt(lengthFactor);
+        roughness = roughness / Math.sqrt(lengthFactor);
     }
 
     // --- compute roughness factor used when computing friction
@@ -1049,11 +1049,11 @@ function  conduit_validate(j, k)
         Link[j].xsect.sBot =
             forcemain_getRoughFactor(j, lengthFactor);
     }
-    Conduit[k].roughFactor = GRAVITY * SQR(roughness/PHI);
+    Conduit[k].roughFactor = GRAVITY * Math.pow(roughness/PHI, 2);
 
     // --- compute full flow through cross section
     if ( Link[j].xsect.type == DUMMY ) Conduit[k].beta = 0.0;
-    else Conduit[k].beta = PHI * sqrt(fabs(slope)) / roughness;
+    else Conduit[k].beta = PHI * Math.sqrt(Math.abs(slope)) / roughness;
     Link[j].qFull = Link[j].xsect.sFull * Conduit[k].beta;
     Conduit[k].qMax = Link[j].xsect.sMax * Conduit[k].beta;
 
@@ -1062,8 +1062,8 @@ function  conduit_validate(j, k)
     //     (factor of 0.3 is for circular pipe 95% full)
     // NOTE: this factor was used in the past for a modified version of
     //       Kinematic Wave routing but is now deprecated.
-    aa = Conduit[k].beta / sqrt(32.2) *
-         pow(Link[j].xsect.yFull, 0.1666667) * 0.3;
+    aa = Conduit[k].beta / Math.sqrt(32.2) *
+         Math.pow(Link[j].xsect.yFull, 0.1666667) * 0.3;
     if ( aa >= 1.0 ) Conduit[k].superCritical = TRUE;
     else             Conduit[k].superCritical = FALSE;
 
@@ -1147,8 +1147,8 @@ function conduit_getLengthFactor(j, k, roughness)
 //  The following form of the Courant criterion is used:
 //      L = t * v * (1 + Fr) / Fr
 //  where L = conduit length, t = time step, v = velocity, & Fr = Froude No.
-//  After substituting Fr = v / sqrt(gy), where y = flow depth, we get:
-//    L = t * ( sqrt(gy) + v )
+//  After substituting Fr = v / Math.sqrt(gy), where y = flow depth, we get:
+//    L = t * ( Math.sqrt(gy) + v )
 //
 {
     let ratio;
@@ -1163,7 +1163,7 @@ function conduit_getLengthFactor(j, k, roughness)
         yFull = Link[j].xsect.aFull / xsect_getWofY(Link[j].xsect, yFull);
     }
     vFull = PHI / roughness * Link[j].xsect.sFull *
-            sqrt(fabs(Conduit[k].slope)) / Link[j].xsect.aFull;
+            Math.sqrt(Math.abs(Conduit[k].slope)) / Link[j].xsect.aFull;
 
     // --- determine ratio of Courant length to actual length
     if ( LengtheningStep == 0.0 ) tStep = RouteStep;
@@ -1190,7 +1190,7 @@ function conduit_getSlope(j)
     // --- check that elevation drop > minimum allowable drop
     elev1 = Link[j].offset1 + Node[Link[j].node1].invertElev;
     elev2 = Link[j].offset2 + Node[Link[j].node2].invertElev;
-    delta = fabs(elev1 - elev2);
+    delta = Math.abs(elev1 - elev2);
     if ( delta < MIN_DELTA_Z )
     {
         report_writeWarningMsg(WARN04, Link[j].ID);
@@ -1205,7 +1205,7 @@ function conduit_getSlope(j)
     }
 
     // --- slope = elev. drop / horizontal distance
-    else slope = delta / sqrt(SQR(length) - SQR(delta));
+    else slope = delta / Math.sqrt(SQR(length) - SQR(delta));
 
     // -- check that slope exceeds minimum allowable slope
     if ( MinSlope > 0.0 && slope < MinSlope )
@@ -1368,13 +1368,13 @@ function  pump_readParams(j, k, tok, ntoks)
     x[2] = 0.0;
     if ( ntoks >= 6 )
     {
-        if ( !(x[2] = getDouble(tok[5])) || x[2] < 0.0)
+        if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0)
         return error_setInpError(ERR_NUMBER, tok[5]);
     }
     x[3] = 0.0;
     if ( ntoks >= 7 )
     {
-        if ( !(x[3] = getDouble(tok[6])) || x[3] < 0.0 )
+        if ( null == (x[3] = getDouble(tok[6])) || x[3] < 0.0 )
         return error_setInpError(ERR_NUMBER, tok[6]);
     }
 
@@ -1583,9 +1583,9 @@ function  orifice_readParams(j, k, tok, ntoks)
     if ( m < 0 ) return error_setInpError(ERR_KEYWORD, tok[3]);
     x[0] = m;                                              // type
     if ( LinkOffsets == ELEV_OFFSET && tok[4] == '*' ) x[1] = MISSING;
-    else if ( !(x[1] = getDouble(tok[4])) )                 // crest height
+    else if ( null == (x[1] = getDouble(tok[4])) )                 // crest height
         return error_setInpError(ERR_NUMBER, tok[4]);
-    if ( !(x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch
+    if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch
         return error_setInpError(ERR_NUMBER, tok[5]);
     x[3] = 0.0;
     if ( ntoks >= 7 )
@@ -1597,7 +1597,7 @@ function  orifice_readParams(j, k, tok, ntoks)
     x[4] = 0.0;
     if ( ntoks >= 8 )
     {
-        if ( !(x[4] = getDouble(tok[7])) || x[4] < 0.0 )    // orate
+        if ( null == (x[4] = getDouble(tok[7])) || x[4] < 0.0 )    // orate
             return error_setInpError(ERR_NUMBER, tok[7]);
     }
 
@@ -1635,7 +1635,7 @@ function  orifice_validate(j, k)
     orifice_setSetting(j, 0.0);
 
     // --- compute an equivalent length
-    Orifice[k].length = 2.0 * RouteStep * sqrt(GRAVITY * Link[j].xsect.yFull);
+    Orifice[k].length = 2.0 * RouteStep * Math.sqrt(GRAVITY * Link[j].xsect.yFull);
     Orifice[k].length = MAX(200.0, Orifice[k].length);
     Orifice[k].surfArea = 0.0;
 }
@@ -1663,14 +1663,14 @@ function  orifice_setSetting(j, tstep)
     {
         delta = Link[j].targetSetting - Link[j].setting;
         step = tstep / Orifice[k].orate;
-        if ( step + 0.001 >= fabs(delta) )
+        if ( step + 0.001 >= Math.abs(delta) )
             Link[j].setting = Link[j].targetSetting;
         else Link[j].setting += SGN(delta) * step;
     }
 
     // --- find effective orifice discharge coeff.
     h = Link[j].setting * Link[j].xsect.yFull;
-    f = xsect_getAofY(Link[j].xsect, h) * sqrt(2.0 * GRAVITY);
+    f = xsect_getAofY(Link[j].xsect, h) * Math.sqrt(2.0 * GRAVITY);
     Orifice[k].cOrif = Orifice[k].cDisch * f;
 
     // --- find equiv. discharge coeff. for when weir flow occurs
@@ -1720,7 +1720,7 @@ function orifice_getWeirCoeff(j, k, h)
     }
 
     // --- return a coefficient for the critical depth
-    return Orifice[k].cDisch * sqrt(h);
+    return Orifice[k].cDisch * Math.sqrt(h);
 }
 
 //=============================================================================
@@ -1844,7 +1844,7 @@ function orifice_getInflow(j)
     if ( f < 1.0 && h2 > hcrest )
     {
         ratio = (h2 - hcrest) / (h1 - hcrest);
-        q *= pow( (1.0 - pow(ratio, 1.5)), 0.385);
+        q *= Math.pow( (1.0 - Math.pow(ratio, 1.5)), 0.385);
     }
     return q;
 }
@@ -1876,14 +1876,14 @@ function orifice_getFlow(j, k, head, f, hasFlapGate)
     //     orifice behaves as a weir
     else if ( f < 1.0 )
     {
-        q = Orifice[k].cWeir * pow(f, 1.5);
+        q = Orifice[k].cWeir * Math.pow(f, 1.5);
         Link[j].dqdh = 1.5 * q / (f * Orifice[k].hCrit);
     }
 
     // --- case where normal orifice flow applies
     else
     {
-        q = Orifice[k].cOrif * sqrt(head);
+        q = Orifice[k].cOrif * Math.sqrt(head);
         Link[j].dqdh = q / (2.0 * head);
     }
 
@@ -1897,7 +1897,7 @@ function orifice_getFlow(j, k, head, f, hasFlapGate)
 
         // --- compute head loss from gate
         hLoss = (4.0 / GRAVITY) * veloc * veloc *
-                 exp(-1.15 * veloc / sqrt(head) );
+                 exp(-1.15 * veloc / Math.sqrt(head) );
 
         // --- update head (for orifice flow)
         //     or critical depth fraction (for weir flow)
@@ -1952,9 +1952,9 @@ function   weir_readParams(j, k, tok, ntoks)
     if ( m < 0 ) return error_setInpError(ERR_KEYWORD, tok[3]);
     x[0] = m;                                              // type
     if ( LinkOffsets == ELEV_OFFSET && tok[4] == '*' ) x[1] = MISSING;
-    else if ( !(x[1] = getDouble(tok[4])) )                 // height
+    else if ( null == (x[1] = getDouble(tok[4])) )                 // height
         return error_setInpError(ERR_NUMBER, tok[4]);
-    if ( !(x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch1
+    if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch1
         return error_setInpError(ERR_NUMBER, tok[5]);
     x[3] = 0.0;
     x[4] = 0.0;
@@ -1971,12 +1971,12 @@ function   weir_readParams(j, k, tok, ntoks)
     }
     if ( ntoks >= 8 && tok[7] != '*' ) 
     {
-        if ( !(x[4] = getDouble(tok[7])) || x[4] < 0.0 )     // endCon
+        if ( null == (x[4] = getDouble(tok[7])) || x[4] < 0.0 )     // endCon
             return error_setInpError(ERR_NUMBER, tok[7]);
     }
     if ( ntoks >= 9 && tok[8] != '*' )
     {
-        if ( !( x[5] = getDouble(tok[8])) || x[5] < 0.0 )     // cDisch2
+        if ( null == ( x[5] = getDouble(tok[8])) || x[5] < 0.0 )     // cDisch2
             return error_setInpError(ERR_NUMBER, tok[8]);
     }
 
@@ -1991,7 +1991,7 @@ function   weir_readParams(j, k, tok, ntoks)
     {
         if ( ntoks >= 11 )                                  // road width
         {
-            if ( !(x[7] = getDouble(tok[10])) || x[7] < 0.0 ) 
+            if ( null == (x[7] = getDouble(tok[10])) || x[7] < 0.0 ) 
                 return error_setInpError(ERR_NUMBER, tok[10]);
         }
         if ( ntoks >= 12 )                                  // road surface
@@ -2063,7 +2063,7 @@ function  weir_validate(j, k)
     if ( Link[j].offset1 < 0.0 ) Link[j].offset1 = 0.0;
 
     // --- compute an equivalent length
-    Weir[k].length = 2.0 * RouteStep * sqrt(GRAVITY * Link[j].xsect.yFull);
+    Weir[k].length = 2.0 * RouteStep * Math.sqrt(GRAVITY * Link[j].xsect.yFull);
     Weir[k].length = MAX(200.0, Weir[k].length);
     Weir[k].surfArea = 0.0;
 
@@ -2074,7 +2074,7 @@ function  weir_validate(j, k)
 
     // --- compute equivalent orifice coeff. (for CFS flow units)
     head = head / 2.0;  // head seen by equivalent orifice
-    Weir[k].cSurcharge = q / sqrt(head); 
+    Weir[k].cSurcharge = q / Math.sqrt(head); 
 }
 
 //=============================================================================
@@ -2105,7 +2105,7 @@ function weir_setSetting(j)
 
         // --- compute equivalent orifice coeff. (for CFS flow units)
         h = h / 2.0;  // head seen by equivalent orifice
-        Weir[k].cSurcharge = q / sqrt(h);
+        Weir[k].cSurcharge = q / Math.sqrt(h);
     }
 }
 
@@ -2222,9 +2222,9 @@ function weir_getInflow(j)
     if ( h2 > hcrest )
     {
         ratio = (h2 - hcrest) / (h1 - hcrest);
-        q1 *= pow( (1.0 - pow(ratio, weirPower[Weir[k].type])), 0.385);
+        q1 *= Math.pow( (1.0 - Math.pow(ratio, weirPower[Weir[k].type])), 0.385);
         if ( q2 > 0.0 )
-            q2 *= pow( (1.0 - pow(ratio, weirPower[VNOTCH_WEIR])), 0.385);
+            q2 *= Math.pow( (1.0 - Math.pow(ratio, weirPower[VNOTCH_WEIR])), 0.385);
     }
 
     // --- return total flow through weir
@@ -2281,36 +2281,36 @@ function weir_getFlow(j, k, head, dir, hasFlapGate,
 
         // --- reduce length when end contractions present 
         length -= 0.1 * Weir[k].endCon * h;
-        length = MAX(length, 0.0);
-        q1 = cDisch1 * length * pow(h, 1.5);                                  //(5.1.013)
+        length = Math.max(length, 0.0);
+        q1 = cDisch1 * length * Math.pow(h, 1.5);                                  //(5.1.013)
         break;
 
       case SIDEFLOW_WEIR:
 
         // --- reduce length when end contractions present
         length -= 0.1 * Weir[k].endCon * h;
-        length = MAX(length, 0.0);
+        length = Math.max(length, 0.0);
 
         // --- weir behaves as a transverse weir under reverse flow
         if ( dir < 0.0 )
-            q1 = cDisch1 * length * pow(h, 1.5);                              //(5.1.013)
+            q1 = cDisch1 * length * Math.pow(h, 1.5);                              //(5.1.013)
         else
 
        //  Corrected formula (see Metcalf & Eddy, Inc.,
        //  Wastewater Engineering, McGraw-Hill, 1972 p. 164).
-            q1 = cDisch1 * pow(length, 0.83) * pow(h, 1.67);                  //(5.1.013)
+            q1 = cDisch1 * Math.pow(length, 0.83) * Math.pow(h, 1.67);                  //(5.1.013)
 
         break;
 
       case VNOTCH_WEIR:
-        q1 = cDisch1 * Weir[k].slope * pow(h, 2.5);                           //(5.1.013)
+        q1 = cDisch1 * Weir[k].slope * Math.pow(h, 2.5);                           //(5.1.013)
         break;
 
       case TRAPEZOIDAL_WEIR:
         y = (1.0 - Link[j].setting) * Link[j].xsect.yFull;
         length = xsect_getWofY(Link[j].xsect, y) * UCF(LENGTH);
-        q1 = cDisch1 * length * pow(h, 1.5);                                 //(5.1.013)
-        q2 = Weir[k].cDisch2 * Weir[k].slope * pow(h, 2.5);
+        q1 = cDisch1 * length * Math.pow(h, 1.5);                                 //(5.1.013)
+        q2 = Weir[k].cDisch2 * Weir[k].slope * Math.pow(h, 2.5);
     }
 
     // --- convert CMS flows to CFS
@@ -2331,7 +2331,7 @@ function weir_getFlow(j, k, head, dir, hasFlapGate,
 
             // --- compute headloss and subtract from original head
             hLoss = (4.0 / GRAVITY) * veloc * veloc *
-                     exp(-1.15 * veloc / sqrt(head) );
+                     exp(-1.15 * veloc / Math.sqrt(head) );
             head = head - hLoss;
             if ( head < 0.0 ) head = 0.0;
 
@@ -2358,7 +2358,7 @@ function weir_getOrificeFlow(j, head, y, cOrif)
     let a, q, v, hloss;
 
     // --- evaluate the orifice flow equation
-    q = cOrif * sqrt(head);
+    q = cOrif * Math.sqrt(head);
 
     // --- apply Armco adjustment if weir has a flap gate
     if ( Link[j].hasFlapGate )
@@ -2367,10 +2367,10 @@ function weir_getOrificeFlow(j, head, y, cOrif)
         if ( a > 0.0 )
         {
             v = q / a;
-            hloss = (4.0 / GRAVITY) * v * v * exp(-1.15 * v / sqrt(y) );
+            hloss = (4.0 / GRAVITY) * v * v * exp(-1.15 * v / Math.sqrt(y) );
             head -= hloss;
             head = MAX(head, 0.0);
-            q = cOrif * sqrt(head);
+            q = cOrif * Math.sqrt(head);
         }
     }
     if ( head > 0.0 ) Link[j].dqdh = q / (2.0 * head);
@@ -2410,9 +2410,9 @@ function  weir_getdqdh(k, dir, h, q1, q2)
     let q1h;
     let q2h;
 
-    if ( fabs(h) < FUDGE ) return 0.0;
-    q1h = fabs(q1/h);
-    q2h = fabs(q2/h);
+    if ( Math.abs(h) < FUDGE ) return 0.0;
+    q1h = Math.abs(q1/h);
+    q2h = Math.abs(q2/h);
 
     switch (Weir[k].type)
     {
@@ -2466,7 +2466,7 @@ function outlet_readParams(j, k, tok, ntoks)
     if ( LinkOffsets == ELEV_OFFSET && tok[3] == '*' ) x[0] = MISSING;
     else
     {
-        if ( !(x[0] = getDouble(tok[3])) )
+        if ( null == (x[0] = getDouble(tok[3])) )
             return error_setInpError(ERR_NUMBER, tok[3]);
 	if ( LinkOffsets == DEPTH_OFFSET && x[0] < 0.0 ) x[0] = 0.0;
     }
@@ -2489,9 +2489,9 @@ function outlet_readParams(j, k, tok, ntoks)
     if ( m == FUNCTIONAL )
     {
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
-        if ( !(x[1] = getDouble(tok[5])) )
+        if ( null == (x[1] = getDouble(tok[5])) )
             return error_setInpError(ERR_NUMBER, tok[5]);
-        if ( !(x[2] = getDouble(tok[6])) )
+        if ( null == (x[2] = getDouble(tok[6])) )
             return error_setInpError(ERR_NUMBER, tok[6]);
         n = 7;
     }
@@ -2604,5 +2604,5 @@ function outlet_getFlow(k, head)
     if ( m >= 0 ) return table_lookup(Curve[m], h) / UCF(FLOW);
 
     // --- otherwise use function to find flow
-    else return Outlet[k].qCoeff * pow(h, Outlet[k].qExpon) / UCF(FLOW);
+    else return Outlet[k].qCoeff * Math.pow(h, Outlet[k].qExpon) / UCF(FLOW);
 }

@@ -92,7 +92,7 @@ function input_countObjects()
             if ( newsect >= 0 )
             {
                 sect = newsect;
-                //continue;
+                continue;
             }
             else
             {
@@ -153,7 +153,7 @@ function input_readData()
     // --- initialize starting date for all time series
     for ( i = 0; i < Nobjects[TSERIES]; i++ )
     {
-        TSeries[i].lastDate = StartDate + StartTime;
+        Tseries[i].lastDate = StartDate + StartTime;
     }
 
     // --- read each line from input file

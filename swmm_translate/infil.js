@@ -542,7 +542,7 @@ function horton_getInfil(infil, tstep, irate, depth)
                 FF1 = fmin + df * ex;
                 r = FF / FF1;
                 tp = tp - r;
-                if ( fabs(r) <= 0.001 * tstep ) break;
+                if ( Math.abs(r) <= 0.001 * tstep ) break;
             }
         }
 
@@ -671,7 +671,7 @@ function grnampt_setParams(infil, p)
 
     // --- find depth of upper soil zone (ft) using Mein's eqn.
     ksat = infil.Ks * 12. * 3600.;
-    infil.Lu = 4.0 * sqrt(ksat) / 12.;
+    infil.Lu = 4.0 * Math.sqrt(ksat) / 12.;
     return TRUE;
 }
 
@@ -729,7 +729,7 @@ function grnampt_getInfil(infil, tstep, irate,
 //
 {
     // --- find saturated upper soil zone water volume
-    Fumax = infil.IMDmax * infil.Lu * sqrt(InfilFactor);                     //(5.1.013)
+    Fumax = infil.IMDmax * infil.Lu * Math.sqrt(InfilFactor);                     //(5.1.013)
 
     // --- reduce time until next event
     infil.T -= tstep;
@@ -759,7 +759,7 @@ function grnampt_getUnsatInfil(infil, tstep, irate,
 {
     let ia, c1, F2, dF, Fs, kr, ts;
     let ks = infil.Ks * InfilFactor;                                       //(5.1.013)
-    let lu = infil.Lu * sqrt(InfilFactor);                                 //(5.1.013)
+    let lu = infil.Lu * Math.sqrt(InfilFactor);                                 //(5.1.013)
 
     // --- get available infiltration rate (rainfall + ponded water)
     ia = irate + depth / tstep;
@@ -866,7 +866,7 @@ function grnampt_getSatInfil(infil, tstep, irate,
 {
     let ia, c1, dF, F2;
     let ks = infil.Ks * InfilFactor;                                       //(5.1.013)
-    let lu = infil.Lu * sqrt(InfilFactor);                                 //(5.1.013)
+    let lu = infil.Lu * Math.sqrt(InfilFactor);                                 //(5.1.013)
 
     // --- get available infiltration rate (rainfall + ponded water)
     ia = irate + depth / tstep;
@@ -933,7 +933,7 @@ function grnampt_getF2(f1, c1, ks, ts)
     for ( i = 1; i <= 20; i++ )
     {
         df2 = (f2 - f1 - c1 * log(f2 + c1) + c2) / (1.0 - c1 / (f2 + c1) );
-        if ( fabs(df2) < 0.00001 )
+        if ( Math.abs(df2) < 0.00001 )
         {
             return MAX(f2, f2min);
         }

@@ -223,7 +223,7 @@ function swmm_start(saveResults)
     // --- initialize runoff, routing & reporting time (in milliseconds)
     NewRunoffTime = 0.0;
     NewRoutingTime = 0.0;
-    ReportTime =   (double)(1000 * ReportStep);
+    ReportTime =   (1000 * ReportStep);
     TotalStepCount = 0;                                                    //(5.1.015)
     ReportStepCount = 0;                                                   //(5.1.015)
     NonConvergeCount = 0;
@@ -595,12 +595,17 @@ function strcomp(s1, s2)
 //  Purpose: does a case insensitive comparison of two strings.
 //
 {
-    let i;
+    /*let i;
     for (i = 0; UCHAR(s1[i]) == UCHAR(s2[i]); i++)
     {
         if (!s1[i+1] && !s2[i+1]) return(1);
     }
-    return(0);
+    return(0);*/
+    if (s1.toUpperCase().localeCompare(s2.toUpperCase()) == 0){
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 //=============================================================================

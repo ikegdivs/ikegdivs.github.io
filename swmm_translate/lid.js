@@ -670,7 +670,7 @@ function lid_readGroupParams(toks, ntoks)
     //... convert next 4 tokens to doubles
     for (i = 3; i <= 7; i++)
     {
-        if ( !(x[i-3] = getDouble(toks[i])) || x[i-3] < 0.0 )
+        if ( null == (x[i-3] = getDouble(toks[i])) || x[i-3] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -696,7 +696,7 @@ function lid_readGroupParams(toks, ntoks)
     x[5] = 0.0;                                                                //
     if (ntoks >= 11)                                                           //
     {                                                                          //
-        if (!(x[5] = getDouble(toks[10])) || x[5] < 0.0 || x[5] > 100.0)         //
+        if (null == (x[5] = getDouble(toks[10])) || x[5] < 0.0 || x[5] > 100.0)         //
             return error_setInpError(ERR_NUMBER, toks[10]);                    //
     }                                                                          //
 
@@ -813,7 +813,7 @@ function readSurfaceData(j, toks, ntoks)
     if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 2; i < 7; i++)
     {
-        if ( !(x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
+        if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
     if ( x[1] >= 1.0 ) return error_setInpError(ERR_NUMBER, toks[3]);           
@@ -849,7 +849,7 @@ function readPavementData(j, toks, ntoks)
     if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 2; i < 7; i++)
     {
-        if ( !(x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
+        if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -857,13 +857,13 @@ function readPavementData(j, toks, ntoks)
     x[5] = 0.0;                                                                //
     if (ntoks > 7)                                                             //
     {                                                                          //
-        if (!(x[5] = getDouble(toks[7])) || x[5] < 0.0)                          //
+        if (null == (x[5] = getDouble(toks[7])) || x[5] < 0.0)                          //
             return error_setInpError(ERR_NUMBER, toks[7]);                     //
     }                                                                          //
     x[6] = 0.0;                                                                //
     if (ntoks > 8)                                                             //
     {                                                                          //
-        if (!(x[6] = getDouble(toks[8])) || x[6] < 0.0 || x[6] > 1.0)            //
+        if (null == (x[6] = getDouble(toks[8])) || x[6] < 0.0 || x[6] > 1.0)            //
             return error_setInpError(ERR_NUMBER, toks[8]);                     //
     }                                                                          //
 
@@ -901,7 +901,7 @@ function readSoilData(j, toks, ntoks)
     if ( ntoks < 9 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 2; i < 9; i++)
     {
-        if ( !(x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
+        if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
     LidProcs[j].soil.thickness = x[0] / UCF(RAINDEPTH);
@@ -936,7 +936,7 @@ function readStorageData(j, toks, ntoks)
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 2; i < 6; i++)
     {
-        if ( !(x[i-2] = getDouble(toks[i]))  || x[i-2] < 0.0 )
+        if ( null == (x[i-2] = getDouble(toks[i]))  || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -974,7 +974,7 @@ function readDrainData(j, toks, ntoks)
     for (i = 0; i < 6; i++) x[i] = 0.0;                                        //(5.1.013)
     for (i = 2; i < 8; i++)                                                    //
     {
-        if ( ntoks > i && !(x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )      //(5.1.013)
+        if ( ntoks > i && null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )      //(5.1.013)
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -1019,7 +1019,7 @@ function readDrainMatData(j, toks, ntoks)
     if ( LidProcs[j].lidType != GREEN_ROOF ) return 0;
     for (i = 2; i < 5; i++)
     {
-        if ( !(x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
+        if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -1250,7 +1250,7 @@ function validateLidProc(j)
             report_writeErrorMsg(ERR_LID_PARAMS, Msg);
         }
         else LidProcs[j].surface.alpha = 
-            1.49 * sqrt(LidProcs[j].surface.surfSlope) /
+            1.49 * Math.sqrt(LidProcs[j].surface.surfSlope) /
                 LidProcs[j].surface.roughness;
     }
     else
@@ -1258,7 +1258,7 @@ function validateLidProc(j)
         //... compute surface overland flow coeff.
         if ( LidProcs[j].surface.roughness > 0.0 )
             LidProcs[j].surface.alpha = 1.49 / LidProcs[j].surface.roughness *
-                                        sqrt(LidProcs[j].surface.surfSlope);
+                                        Math.sqrt(LidProcs[j].surface.surfSlope);
         else LidProcs[j].surface.alpha = 0.0;
     }
 
@@ -1266,7 +1266,7 @@ function validateLidProc(j)
     if ( LidProcs[j].drainMat.roughness > 0.0 )
     {
         LidProcs[j].drainMat.alpha = 1.49 / LidProcs[j].drainMat.roughness *
-                                    sqrt(LidProcs[j].surface.surfSlope);
+                                    Math.sqrt(LidProcs[j].surface.surfSlope);
     }
     else LidProcs[j].drainMat.alpha = 0.0;
 

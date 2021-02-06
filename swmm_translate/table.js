@@ -76,9 +76,9 @@ function table_readCurve(tok, ntoks)
     for ( k = k1; k < ntoks; k = k+2)
     {
         if ( k+1 >= ntoks ) return error_setInpError(ERR_ITEMS, "");
-        if ( !(x = getDouble(tok[k])) )
+        if ( null == (x = getDouble(tok[k])) )
             return error_setInpError(ERR_NUMBER, tok[k]);
-        if ( !(y = getDouble(tok[k+1])) )
+        if ( null == (y = getDouble(tok[k+1])) )
             return error_setInpError(ERR_NUMBER, tok[k+1]);
         table_addEntry(Curve[j], x, y);
     }
@@ -112,14 +112,14 @@ function table_readTimeseries(tok, ntoks)
     if ( j < 0 ) return error_setInpError(ERR_NAME, tok[0]);
 
     // --- if first line of data, assign ID pointer
-    if ( TSeries[j].ID == null )
-        TSeries[j].ID = project_findID(TSERIES, tok[0]);
+    if ( Tseries[j].ID == null )
+        Tseries[j].ID = project_findID(TSERIES, tok[0]);
 
     // --- check if time series data is in an external file
     if ( strcomp(tok[1], w_FILE ) )
     {
-        sstrncpy(TSeries[j].file.name, tok[2], MAXFNAME);
-        TSeries[j].file.mode = USE_FILE;
+        sstrncpy(Tseries[j].file.name, tok[2], MAXFNAME);
+        Tseries[j].file.mode = USE_FILE;
         return 0;
     }
 
@@ -134,7 +134,7 @@ function table_readTimeseries(tok, ntoks)
           case 1:            // look for a date entry
             if ( datetime_strToDate(tok[k], d) )
             {
-                TSeries[j].lastDate = d;
+                Tseries[j].lastDate = d;
                 k++;
             }
 
@@ -146,14 +146,14 @@ function table_readTimeseries(tok, ntoks)
             if ( k >= ntoks ) return error_setInpError(ERR_ITEMS, "");
 
             // --- first check for decimal hours format
-            if ( (t = getDouble(tok[k])) ) t /= 24.0;
+            if ( null != (t = getDouble(tok[k])) ) t /= 24.0;
 
             // --- then for an hrs:min format
             else if ( !datetime_strToTime(tok[k], t) )
                 return error_setInpError(ERR_NUMBER, tok[k]);
 
             // --- save date + time in x
-            x = TSeries[j].lastDate + t;
+            x = Tseries[j].lastDate + t;
 
             // --- next token must be a numeric value
             k++;
@@ -163,11 +163,11 @@ function table_readTimeseries(tok, ntoks)
           case 3:
             // --- extract a numeric value from token
             if ( k >= ntoks ) return error_setInpError(ERR_ITEMS, "");
-            if ( !(y = getDouble(tok[k])) )
+            if ( null == (y = getDouble(tok[k])) )
                 return error_setInpError(ERR_NUMBER, tok[k]);
 
             // --- add date/time & value to time series
-            table_addEntry(TSeries[j], x, y);
+            table_addEntry(Tseries[j], x, y);
 
             // --- start over looking first for a date
             k++;
@@ -655,7 +655,7 @@ function  table_getInverseArea(table, a)
     a1 = y1*x1/2.0;
     if ( a <= a1 )
     {
-        if ( y1 > 0.0 ) return sqrt(2.0*a*x1/y1);
+        if ( y1 > 0.0 ) return Math.sqrt(2.0*a*x1/y1);
         else return 0.0;
     }
 
@@ -859,11 +859,11 @@ function  table_parseFileLine(line, table, x, y)
     else return false;
 
     // --- convert time string to numeric value
-    if ( (t = getDouble(tStr)) ) t /= 24.0;
+    if ( null != (t = getDouble(tStr)) ) t /= 24.0;
     else if ( !datetime_strToTime(tStr, t) ) return false;
 
     // --- convert value string to numeric value
-    if ( !(yy = getDouble(yStr)) ) return false;
+    if ( null == (yy = getDouble(yStr)) ) return false;
 
     // --- assign values to current date and value
     x = d + t;

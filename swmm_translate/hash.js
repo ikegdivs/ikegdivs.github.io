@@ -45,7 +45,7 @@ var HTtable;
 // returns 1 if they are spelled the same, 0 if they are not.
 function  samestr(s1, s2)
 {
-    if(s1.toUpperCase() === s2.toUpperCase()){
+    if(s1.toUpperCase() == s2.toUpperCase()){
         return 1;
     } else {
         return 0;

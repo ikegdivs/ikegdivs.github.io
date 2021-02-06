@@ -201,7 +201,7 @@ function  climate_readParams(tok, ntoks)
             Wind.type = MONTHLY_WIND;
             for (i=0; i<12; i++)
             {
-                if ( !(y = getDouble(tok[i+2])) )
+                if ( null == (y = getDouble(tok[i+2])) )
                     return error_setInpError(ERR_NUMBER, tok[i+2]);
                 Wind.aws[i] = y;
             }
@@ -212,7 +212,7 @@ function  climate_readParams(tok, ntoks)
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
         for (i=1; i<7; i++)
         {
-            if ( !(x[i-1] = getDouble(tok[i])) )
+            if ( null == (x[i-1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         // --- convert deg. C to deg. F for snowfall temperature
@@ -235,7 +235,7 @@ function  climate_readParams(tok, ntoks)
         // --- read 10 fractional values
         for (j=0; j<10; j++)
         {
-            if ( !(y = getDouble(tok[j+2])) || y < 0.0 || y > 1.0 )
+            if ( null == (y = getDouble(tok[j+2])) || y < 0.0 || y > 1.0 )
                 return error_setInpError(ERR_NUMBER, tok[j+2]);
             Snow.adc[i][j] = y;
         }
@@ -298,7 +298,7 @@ function climate_readEvapParams(tok, ntoks)
     {
       case CONSTANT_EVAP:
         // --- for constant evap., fill monthly avg. values with same number
-        if ( !(x = getDouble(tok[1])) )
+        if ( null == (x = getDouble(tok[1])) )
             return error_setInpError(ERR_NUMBER, tok[1]);
         for (i=0; i<12; i++) Evap.monthlyEvap[i] = x;
         break;
@@ -307,7 +307,7 @@ function climate_readEvapParams(tok, ntoks)
         // --- for monthly evap., read a value for each month of year
         if ( ntoks < 13 ) return error_setInpError(ERR_ITEMS, "");
         for ( i=0; i<12; i++)
-            if ( !(Evap.monthlyEvap[i] = getDouble(tok[i+1])))
+            if ( null == (Evap.monthlyEvap[i] = getDouble(tok[i+1])))
                 return error_setInpError(ERR_NUMBER, tok[i+1]);
         break;
 
@@ -327,7 +327,7 @@ function climate_readEvapParams(tok, ntoks)
             if ( ntoks < 13 ) return error_setInpError(ERR_ITEMS, "");
             for (i=0; i<12; i++)
             {
-                if ( !(Evap.panCoeff[i] = getDouble(tok[i+1])) )
+                if ( null == (Evap.panCoeff[i] = getDouble(tok[i+1])) )
                     return error_setInpError(ERR_NUMBER, tok[i+1]);
             }
         }
@@ -364,7 +364,7 @@ function climate_readAdjustments(tok, ntoks)
         if ( ntoks < 13 )  return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i < 13; i++)
         {
-            if ( !(Adjust.temp[i-1] = getDouble(tok[i])) )
+            if ( null == (Adjust.temp[i-1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         return 0;
@@ -375,7 +375,7 @@ function climate_readAdjustments(tok, ntoks)
         if ( ntoks < 13 )  return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i < 13; i++)
         {
-            if ( !(Adjust.evap[i-1] = getDouble(tok[i])))
+            if ( null == (Adjust.evap[i-1] = getDouble(tok[i])))
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         return 0;
@@ -386,7 +386,7 @@ function climate_readAdjustments(tok, ntoks)
         if ( ntoks < 13 )  return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i < 13; i++)
         {
-            if ( !(Adjust.rain[i-1] = getDouble(tok[i])))
+            if ( null == (Adjust.rain[i-1] = getDouble(tok[i])))
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         return 0;
@@ -397,7 +397,7 @@ function climate_readAdjustments(tok, ntoks)
         if ( ntoks < 13 )  return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i < 13; i++)
         {
-            if ( !(Adjust.hydcon[i-1] = getDouble(tok[i])))
+            if ( null == (Adjust.hydcon[i-1] = getDouble(tok[i])))
                 return error_setInpError(ERR_NUMBER, tok[i]);
             if ( Adjust.hydcon[i-1] <= 0.0 ) Adjust.hydcon[i-1] = 1.0;
         }
@@ -481,7 +481,7 @@ function climate_validate()
     // --- compute psychrometric constant
     z = Temp.elev / 1000.0;
     if ( z <= 0.0 ) pa = 29.9;
-    else  pa = 29.9 - 1.02*z + 0.0032*pow(z, 2.4); // atmos. pressure
+    else  pa = 29.9 - 1.02*z + 0.0032*Math.pow(z, 2.4); // atmos. pressure
     Temp.gamma = 0.000359 * pa;
 
     // --- convert units of monthly temperature & evap adjustments
@@ -1002,7 +1002,7 @@ function  getFileFormat()
     if ( strlen(line) >= 233 )
     {
         sstrncpy(elemType, line[13], 3);
-        n = atoi(elemType);
+        n = parseInt(elemType);
         if ( n == 1 || n == 2 || n == 151 ) return DLY0204;
     }
 
@@ -1096,8 +1096,8 @@ function readTD3200FileLine(y, m)
     // --- get record's date
     sstrncpy(year,  FileLine[17], 4);
     sstrncpy(month, FileLine[21], 2);
-    y = atoi(year);
-    m = atoi(month);
+    y = parseInt(year);
+    m = parseInt(month);
 }
 
 //=============================================================================
@@ -1125,8 +1125,8 @@ function readDLY0204FileLine(y, m)
     // --- get record's date
     sstrncpy(year,  FileLine[7], 4);
     sstrncpy(month, FileLine[11], 2);
-    y = atoi(year);
-    m = atoi(month);
+    y = parseInt(year);
+    m = parseInt(month);
 }
 
 //=============================================================================
@@ -1519,7 +1519,7 @@ function updateTempMoveAve(tmin, tmax)
 
     // --- find ta and tr from new day's min and max temperature
     ta = (tmin + tmax) / 2.0;
-    tr = fabs(tmax - tmin);
+    tr = Math.abs(tmax - tmin);
 
     // --- if the array used to store previous days' temperatures is full
     if ( count == Tma.maxCount )

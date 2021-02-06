@@ -116,7 +116,7 @@ function transect_readParams(count, tok, ntoks)
         if ( ntoks < 4 ) return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i <= 3; i++)
         {
-            if ( !(x[i] = getDouble(tok[i])) )
+            if ( null == (x[i] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         return setManning(x);
@@ -133,7 +133,7 @@ function transect_readParams(count, tok, ntoks)
         // --- read in rest of numerical values on data line
         for ( i = 2; i < 10; i++ )
         {
-            if ( !(x[i] = getDouble(tok[i])) )
+            if ( null == (x[i] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
 
@@ -153,7 +153,7 @@ function transect_readParams(count, tok, ntoks)
         i = 1;
         while ( i < ntoks )
         {
-            if ( !(x[1] = getDouble(tok[i])) )
+            if ( null == (x[1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
             if ( (x[2] = getDouble(tok[i+1])) == null )
                 return error_setInpError(ERR_NUMBER, tok[i+1]);
@@ -204,7 +204,7 @@ function  transect_validate(j)
 
     // --- adjust main channel's Mannings n to make its equivalent
     //     length equal to that of entire flood plain
-    Nchannel = Nchannel * sqrt(Lfactor);
+    Nchannel = Nchannel * Math.sqrt(Lfactor);
     Transect[j].lengthFactor = Lfactor;
 
     // --- find max. depth across transect
@@ -425,7 +425,7 @@ function  getGeometry(i, j, y)
     //     total flow, total area, and main channel n
     aSum = Transect[j].areaTbl[i];
     if ( aSum == 0.0 ) Transect[j].hradTbl[i] = Transect[j].hradTbl[i-1];
-    else Transect[j].hradTbl[i] = pow(qSum * Nchannel / 1.49 / aSum, 1.5);
+    else Transect[j].hradTbl[i] = Math.pow(qSum * Nchannel / 1.49 / aSum, 1.5);
 }
 
 //=============================================================================
@@ -458,9 +458,9 @@ function getSliceGeom(k, y, ylo, yhi, w,
     let width, ratio;
 
     // --- compute width & wetted perimeter of transect slice
-    width = fabs(Station[k] - Station[k-1]);
+    width = Math.abs(Station[k] - Station[k-1]);
     w = width;
-    wp = sqrt(width * width + (yhi - ylo) * (yhi - ylo));
+    wp = Math.sqrt(width * width + (yhi - ylo) * (yhi - ylo));
     a  = 0.0;
 
     // --- find area for completely submerged slice
@@ -525,7 +525,7 @@ function getFlow(k, a, wp, findFlow)
         if ( Station[k] > Xrightbank )  n = Nright;
 
         // --- compute flow through flow area
-        return PHI / n * a * pow(a/wp, 2./3.);
+        return PHI / n * a * Math.pow(a/wp, 2./3.);
     }
     return 0.0;
 }
@@ -547,7 +547,7 @@ function setMaxSectionFactor(j)
     Transect[j].sMax = 0.0;
     for (i=1; i<Transect[j].nTbl; i++)
     {
-        sf = Transect[j].areaTbl[i] * pow(Transect[j].hradTbl[i], 2./3.);
+        sf = Transect[j].areaTbl[i] * Math.pow(Transect[j].hradTbl[i], 2./3.);
         if ( sf > Transect[j].sMax )
         {
             Transect[j].sMax = sf;

@@ -123,7 +123,7 @@ function readGageSeriesFormat(tok, ntoks, x)
     x[1] = m;
 
     // --- get data time interval & convert to seconds
-    if ( x[2] = getDouble(tok[2]) ) x[2] = Math.floor(x[2]*3600 + 0.5);
+    if ( null != (x[2] = getDouble(tok[2]) )) x[2] = Math.floor(x[2]*3600 + 0.5);
     else if ( datetime_strToTime(tok[2], aTime) )
     {
         x[2] = Math.floor(aTime*SECperDAY + 0.5);
@@ -132,7 +132,7 @@ function readGageSeriesFormat(tok, ntoks, x)
     if ( x[2] <= 0.0 ) return error_setInpError(ERR_DATETIME, tok[2]);
 
     // --- get snow catch deficiency factor
-    if ( !(x[3] = getDouble(tok[3])))
+    if ( null == (x[3] = getDouble(tok[3])))
         return error_setInpError(ERR_DATETIME, tok[3]);;
 
     // --- get time series index
@@ -157,7 +157,7 @@ function readGageFileFormat(tok, ntoks, x)
     x[1] = m;
 
     // --- get data time interval & convert to seconds
-    if (  x[2] = getDouble(tok[2]) ) x[2] *= 3600;
+    if (  null != (x[2] = getDouble(tok[2])) ) x[2] *= 3600;
     else if ( datetime_strToTime(tok[2], aTime) )
     {
         x[2] = Math.floor(aTime*SECperDAY + 0.5);
@@ -166,7 +166,7 @@ function readGageFileFormat(tok, ntoks, x)
     if ( x[2] <= 0.0 ) return error_setInpError(ERR_DATETIME, tok[2]);
 
     // --- get snow catch deficiency factor
-    if ( !( x[3] = getDouble(tok[3])))
+    if ( null == ( x[3] = getDouble(tok[3])))
         return error_setInpError(ERR_NUMBER, tok[3]);
  
     // --- get rain depth units

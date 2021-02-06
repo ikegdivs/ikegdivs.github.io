@@ -195,7 +195,7 @@ var SUBCATCH_WASHOFF = 8                // pollutant washoff concentration
 //-------------------------------------
 // Computed node quantities
 //-------------------------------------
-varMAX_NODE_RESULTS = 7
+var MAX_NODE_RESULTS = 7
 //enum NodeResultType {
 var NODE_DEPTH = 0                      // water depth above invert
 var NODE_HEAD = 1                       // hydraulic head

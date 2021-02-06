@@ -450,10 +450,10 @@ class TSubcatch
       this.newRunoff;       // current runoff (cfs)
       this.oldSnowDepth;    // previous snow depth (ft)
       this.newSnowDepth;    // current snow depth (ft)
-      this.oldQual;         // previous runoff quality (mass/L)
-      this.newQual;         // current runoff quality (mass/L)
-      this.pondedQual;      // ponded surface water quality (mass)
-      this.totalLoad;       // total washoff load (lbs or kg)
+      this.oldQual = [];         // previous runoff quality (mass/L)
+      this.newQual = [];         // current runoff quality (mass/L)
+      this.pondedQual = [];      // ponded surface water quality (mass)
+      this.totalLoad = [];       // total washoff load (lbs or kg)
    }
    
 }  ;
@@ -602,8 +602,8 @@ class TNode
       this.newDepth;        // current water depth (ft)
       this.oldLatFlow;      // previous lateral inflow (cfs)
       this.newLatFlow;      // current lateral inflow (cfs)
-      this.oldQual;         // previous quality state
-      this.newQual;         // current quality state
+      this.oldQual = [];         // previous quality state
+      this.newQual = [];         // current quality state
       this.oldFlowInflow;   // previous flow inflow
       this.oldNetInflow;    // previous net inflow
    }
@@ -622,7 +622,7 @@ class TOutfall
       this.stageSeries;        // index of outfall stage time series
       this.routeTo;            // subcatchment index routed onto
       this.vRouted;            // flow volume routed (ft3)
-      this.wRouted;            // pollutant load routed (mass)
+      this.wRouted = [];            // pollutant load routed (mass)
    }
 }  ;
 
@@ -767,9 +767,9 @@ class TLink
       this.targetSetting;   // target control setting
       this.timeLastSet;     // time when setting was last changed
       this.froude;          // Froude number
-      this.oldQual;         // previous quality state
-      this.newQual;         // current quality state
-      this.totalLoad;       // total quality mass loading
+      this.oldQual = [];         // previous quality state
+      this.newQual = [];         // current quality state
+      this.totalLoad = [];       // total quality mass loading
       this.flowClass;       // flow classification
       this.dqdh;            // change in flow w.r.t. head (ft2/sec)
       this.direction;       // flow direction flag
@@ -1047,7 +1047,8 @@ class TRoutingTotals
 var TIMELEVELS = 6                                          //(5.1.015)
 class TSysStats
 {
-   constructor(){minTimeStep;
+   constructor(){
+      this.minTimeStep;
       this.maxTimeStep;
       this.avgTimeStep;
       this.avgStepCount;
@@ -1137,7 +1138,7 @@ class TOutfallStats
    constructor(){
       this.avgFlow;
       this.maxFlow;
-      this.totalLoad;
+      this.totalLoad = [];
       this.totalPeriods;
    }
 }  ;

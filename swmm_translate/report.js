@@ -270,7 +270,7 @@ function report_writeOptions()
     WRITE("****************");
     WRITE("Analysis Options");
     WRITE("****************");
-    Frpt.contents += "\n  Flow Units ............... %s".format(FlowUnitWords[FlowUnits]);
+    Frpt.contents += `\n  Flow Units ............... ${FlowUnitWords[FlowUnits]}`
     Frpt.contents += "\n  Process Models:";
     Frpt.contents += "\n    Rainfall/Runoff ........ ";
     if ( IgnoreRainfall || Nobjects[GAGE] == 0 )
@@ -306,42 +306,42 @@ function report_writeOptions()
     else Frpt.contents += "YES";
 
     if ( Nobjects[SUBCATCH] > 0 )
-    Frpt.contents += "\n  Infiltration Method ...... %s".format(InfilModelWords[InfilModel]);
+    Frpt.contents += `\n  Infiltration Method ...... ${InfilModelWords[InfilModel]}`
     if ( Nobjects[LINK] > 0 )
-    Frpt.contents += "\n  Flow Routing Method ...... %s".format(RouteModelWords[RouteModel]);
+    Frpt.contents += `\n  Flow Routing Method ...... ${RouteModelWords[RouteModel]}`
 
     if (RouteModel == DW)                                                      //(5.1.013)
-    Frpt.contents += "\n  Surcharge Method ......... %s".format(SurchargeWords[SurchargeMethod]);                                      //(5.1.013)
+    Frpt.contents += `\n  Surcharge Method ......... ${SurchargeWords[SurchargeMethod]}`                                      //(5.1.013)
 
     str = datetime_dateToStr(StartDate, str);
-    Frpt.contents += "\n  Starting Date ............ %s".format(str);
+    Frpt.contents += `\n  Starting Date ............ ${str}`
     str = datetime_timeToStr(StartTime, str);
-    Frpt.contents += " %s".format(str);
+    Frpt.contents += ` ${str}`
     str = datetime_dateToStr(EndDate, str);
-    Frpt.contents += "\n  Ending Date .............. %s".format(str);
+    Frpt.contents += `\n  Ending Date .............. ${str}`
     str = datetime_timeToStr(EndTime, str);
-    Frpt.contents += " %s".format(str);
-    Frpt.contents += "\n  Antecedent Dry Days ...... %.1f".format(StartDryDays);
+    Frpt.contents += ` ${str}`
+    Frpt.contents += `\n  Antecedent Dry Days ...... ${StartDryDays.toFixed(1)}`;
     str = datetime_timeToStr(datetime_encodeTime(0, 0, ReportStep), str);
-    Frpt.contents += "\n  Report Time Step ......... %s".format(str);
+    Frpt.contents += `\n  Report Time Step ......... ${str}`
     if ( Nobjects[SUBCATCH] > 0 )
     {
         str = datetime_timeToStr(datetime_encodeTime(0, 0, WetStep), str);
-        Frpt.contents += "\n  Wet Time Step ............ %s".format(str);
+        Frpt.contents += `\n  Wet Time Step ............ ${str}`
         str = datetime_timeToStr(datetime_encodeTime(0, 0, DryStep), str);
-        Frpt.contents += "\n  Dry Time Step ............ %s".format(str);
+        Frpt.contents += `\n  Dry Time Step ............ ${str}`
     }
     if ( Nobjects[LINK] > 0 )
     {
-        Frpt.contents += "\n  Routing Time Step ........ %.2f sec".format(RouteStep);
+        Frpt.contents += `\n  Routing Time Step ........ ${RouteStep.toFixed(2)} sec`.format(RouteStep);
 		if ( RouteModel == DW )
 		{
-		Frpt.contents += "\n  Variable Time Step ....... "
+		Frpt.contents += `\n  Variable Time Step ....... `
 		if ( CourantFactor > 0.0 ) Frpt.contents += "YES"
 		else                       Frpt.contents += "NO"
-		Frpt.contents += "\n  Maximum Trials ........... %d".formnat(MaxTrials);
-        Frpt.contents += "\n  Number of Threads ........ %d".format(NumThreads);
-		Frpt.contents += "\n  Head Tolerance ........... %.6f ".format(HeadTol*UCF(LENGTH));
+		Frpt.contents += `\n  Maximum Trials ........... ${MaxTrials}`
+        Frpt.contents += `\n  Number of Threads ........ ${NumThreads}`
+		Frpt.contents += `\n  Head Tolerance ........... ${(HeadTol*UCF(LENGTH)).toFixed(6)} `;
 		if ( UnitSystem == US ) Frpt.contents += "ft"
 		else                    Frpt.contents += "m"
 		}
@@ -382,8 +382,7 @@ function report_writeRainStats(i,  r)
     {
         if ( r.startDate != NO_DATE ) date1 = datetime_dateToStr(r.startDate, date1);
         if ( r.endDate   != NO_DATE ) date2 = datetime_dateToStr(r.endDate, date2);
-        Frpt.contents += "  %-10s %-11s  %-11s  %5d min    %6ld     %6ld     %6ld\n".format(Gage[i].staID, date1, date2, Gage[i].rainInterval/60,
-            r.periodsRain, r.periodsMissing, r.periodsMalfunc);
+        Frpt.contents += `  ${staID} ${date1}  ${date2}  ${Gage[i].rainInterval/60} min    ${r.periodsRain}     ${r.periodsMissing}     ${r.periodsMalfunc}\n`
     }
 }
 

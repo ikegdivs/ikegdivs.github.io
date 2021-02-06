@@ -8,11 +8,6 @@ class TStorageVol{
     }
 }
 
-
-function junc_readParamsx(j, k, tok, ntoks){
-    return "hi";
-}
-
 //
 //  Input:   j = node index
 //           type = node type code
@@ -377,7 +372,7 @@ function node_getSystemOutflow(j, isFlooded)
             if ( Node[j].inflow == 0.0 )
             {
                 outflow = -Node[j].outflow;
-                Node[j].inflow = fabs(outflow);
+                Node[j].inflow = Math.abs(outflow);
             }
         }
 
@@ -546,7 +541,7 @@ function junc_readParams(j, k, tok, ntoks)
         x[i-1] = 0.0;
         if ( i < ntoks )
         {
-            if ( !(x[i-1] = getDouble(tok[i])) )
+            if ( null == (x[i-1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
     }
@@ -593,7 +588,7 @@ function storage_readParams(j, k, tok, ntoks)
     // --- get invert elev, max. depth, & init. depth
     for ( i = 1; i <= 3; i++ )
     {
-        if ( !(x[i-1] = getDouble(tok[i])) )
+        if ( null == (x[i-1] = getDouble(tok[i])) )
             return error_setInpError(ERR_NUMBER, tok[i]);
     }
 
@@ -614,7 +609,7 @@ function storage_readParams(j, k, tok, ntoks)
         {
             if ( i < ntoks )
             {
-                if ( !(x[i-2] = getDouble(tok[i])) )
+                if ( null == (x[i-2] = getDouble(tok[i])) )
                     return error_setInpError(ERR_NUMBER, tok[i]);
             }
         }
@@ -633,7 +628,7 @@ function storage_readParams(j, k, tok, ntoks)
     // --- ponded area replaced by surcharge depth                             //(5.1.013)
     if ( ntoks > n)
     {
-        if ( !(x[7] = getDouble(tok[n])) )
+        if ( null == (x[7] = getDouble(tok[n])) )
             return error_setInpError(ERR_NUMBER, tok[n]);
         n++;
     }
@@ -641,7 +636,7 @@ function storage_readParams(j, k, tok, ntoks)
     // --- get evaporation fraction if present
     if ( ntoks > n )
     {
-        if ( !(x[8] = getDouble(tok[n])) )
+        if ( null == (x[8] = getDouble(tok[n])) )
             return error_setInpError(ERR_NUMBER, tok[n]);
         n++;
     }
@@ -691,7 +686,7 @@ function storage_getDepth(j, v)
         else if ( Storage[k].aConst == 0.0 )
         {
             e = 1.0 / (Storage[k].aExpon + 1.0);
-            d = pow(v / (Storage[k].aCoeff * e), e);
+            d = Math.pow(v / (Storage[k].aCoeff * e), e);
         }
         else
         {
@@ -726,12 +721,12 @@ function  storage_getVolDiff(y, f, df, p)
 
     // ... find storage volume at depth y
     e = Storage[k].aExpon + 1.0;
-    v = Storage[k].aConst * y + Storage[k].aCoeff / e * pow(y, e);
+    v = Storage[k].aConst * y + Storage[k].aCoeff / e * Math.pow(y, e);
 
     // ... compute difference between this volume and target volume
     //     as well as its derivative w.r.t. y
     f = v - p.v;
-    df = Storage[k].aConst + Storage[k].aCoeff * pow(y, e-1.0);
+    df = Storage[k].aConst + Storage[k].aCoeff * Math.pow(y, e-1.0);
 }
 
 //=============================================================================
@@ -763,7 +758,7 @@ function storage_getVolume(j, d)
         d *= UCF(LENGTH);
         v = Storage[k].aConst * d;
         v += Storage[k].aCoeff / (Storage[k].aExpon+1.0) *
-             pow(d, Storage[k].aExpon+1.0);
+        Math.pow(d, Storage[k].aExpon+1.0);
         return v / UCF(VOLUME);
 
     }
@@ -790,7 +785,7 @@ function storage_getSurfArea(j, d)
         else if ( Storage[k].aExpon == 0.0 )
             area = Storage[k].aConst + Storage[k].aCoeff;
         else area = Storage[k].aConst + Storage[k].aCoeff *
-                    pow(d*UCF(LENGTH), Storage[k].aExpon);
+                Math.pow(d*UCF(LENGTH), Storage[k].aExpon);
     }
     return area / UCF(LENGTH) / UCF(LENGTH);
 }
@@ -915,7 +910,7 @@ function divider_readParams(j, k, tok, ntoks)
     if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
 
     // --- get invert elev.
-    if ( !(x[0] = getDouble(tok[1])) ) return error_setInpError(ERR_NUMBER, tok[1]);
+    if ( null == (x[0] = getDouble(tok[1])) ) return error_setInpError(ERR_NUMBER, tok[1]);
 
     // --- initialize parameter values
     for ( i=1; i<11; i++) x[i] = 0.0;
@@ -952,7 +947,7 @@ function divider_readParams(j, k, tok, ntoks)
     if ( m1 == CUTOFF_DIVIDER )
     {
         if ( ntoks < 5 ) return error_setInpError(ERR_ITEMS, "");
-        if ( !(x[4] = getDouble(tok[4])) )
+        if ( null == (x[4] = getDouble(tok[4])) )
             return error_setInpError(ERR_NUMBER, tok[4]);
         n = 5;
     }
@@ -962,7 +957,7 @@ function divider_readParams(j, k, tok, ntoks)
     {
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
         for (i=4; i<7; i++)
-             if ( !(x[i] = getDouble(tok[i])) )
+             if ( null == (x[i] = getDouble(tok[i])) )
                  return error_setInpError(ERR_NUMBER, tok[i]);
         n = 7;
     }
@@ -975,7 +970,7 @@ function divider_readParams(j, k, tok, ntoks)
     m = 7;
     for (i=n; i<ntoks && m<11; i++)
     {
-        if ( !(x[m] = getDouble(tok[i])) )
+        if ( null == (x[m] = getDouble(tok[i])) )
         {
             return error_setInpError(ERR_NUMBER, tok[i]);
         }
@@ -1015,7 +1010,7 @@ function  divider_validate(j)
         else
         {
             // --- find flow when weir is full
-            Divider[k].qMax = Divider[k].cWeir * pow(Divider[k].dhMax, 1.5)
+            Divider[k].qMax = Divider[k].cWeir * Math.pow(Divider[k].dhMax, 1.5)
                               / UCF(FLOW);
             if ( Divider[k].qMin > Divider[k].qMax )
                 report_writeErrorMsg(ERR_WEIR_DIVIDER, Node[j].ID);
@@ -1072,11 +1067,11 @@ function divider_getOutflow(j, k)
                 (Divider[i].qMax - Divider[i].qMin);
 
             // --- if weir surcharged, use orifice eqn.
-            if ( f > 1.0 ) qOut = Divider[i].qMax * sqrt(f);
+            if ( f > 1.0 ) qOut = Divider[i].qMax * Math.sqrt(f);
             
             // --- otherwise use weir eqn.
             else qOut = Divider[i].cWeir *
-                        pow(f*Divider[i].dhMax, 1.5) / UCF(FLOW);
+                    Math.pow(f*Divider[i].dhMax, 1.5) / UCF(FLOW);
         }
         break;
 
@@ -1132,7 +1127,7 @@ function outfall_readParams(j, k, tok, ntoks)
     id = project_findID(NODE, tok[0]);                      // node ID
     if ( id == null )
         return error_setInpError(ERR_NAME, tok[0]);
-    if ( !(x[0] = getDouble(tok[1])) )                       // invert elev. 
+    if ( null == (x[0] = getDouble(tok[1])) )                       // invert elev. 
         return error_setInpError(ERR_NUMBER, tok[1]);
     i = findmatch(tok[2], OutfallTypeWords);               // outfall type
     if ( i < 0 ) return error_setInpError(ERR_KEYWORD, tok[2]);
@@ -1151,7 +1146,7 @@ function outfall_readParams(j, k, tok, ntoks)
         switch ( i )
         {
         case FIXED_OUTFALL:                                // fixed stage
-          if ( !(x[2] = getDouble(tok[3])) )
+          if ( null == (x[2] = getDouble(tok[3])) )
               return error_setInpError(ERR_NUMBER, tok[3]);
           break;
         case TIDAL_OUTFALL:                                // tidal curve
@@ -1163,7 +1158,7 @@ function outfall_readParams(j, k, tok, ntoks)
           m = project_findObject(TSERIES, tok[3]);            
           if ( m < 0 ) return error_setInpError(ERR_NAME, tok[3]);
           x[4] = m;
-          TSeries[m].refersTo = TIMESERIES_OUTFALL;
+          Tseries[m].refersTo = TIMESERIES_OUTFALL;
         }
     }
     if ( ntoks == n )
@@ -1231,7 +1226,7 @@ function outfall_setOutletDepth(j, yNorm, yCrit, z)
       case TIMESERIES_OUTFALL:
         k = Outfall[i].stageSeries;
         currentDate = StartDateTime + NewRoutingTime / MSECperDAY;
-        stage = table_tseriesLookup(TSeries[k], currentDate, TRUE) /
+        stage = table_tseriesLookup(Tseries[k], currentDate, TRUE) /
                 UCF(LENGTH);
         break;
       default: stage = Node[j].invertElev;

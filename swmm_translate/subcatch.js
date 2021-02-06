@@ -210,7 +210,7 @@ function subcatch_readSubareaParams(tok, ntoks)
     // --- read in Mannings n, depression storage, & PctZero values
     for (i = 0; i < 5; i++)
     {
-        if ( !(x[i] = getDouble(tok[i+1]))  || x[i] < 0.0 )
+        if ( null == (x[i] = getDouble(tok[i+1]))  || x[i] < 0.0 )
             return error_setInpError(ERR_NAME, tok[i+1]);
     }
 
@@ -223,7 +223,7 @@ function subcatch_readSubareaParams(tok, ntoks)
     x[6] = 1.0;
     if ( ntoks >= 8 )
     {
-        if ( !(x[6] = getDouble(tok[7])) || x[6] < 0.0 || x[6] > 100.0 )
+        if ( null == (x[6] = getDouble(tok[7])) || x[6] < 0.0 || x[6] > 100.0 )
             return error_setInpError(ERR_NUMBER, tok[7]);
         x[6] /= 100.0;
     }
@@ -302,7 +302,7 @@ function subcatch_readLanduseParams(tok, ntoks)
         m = project_findObject(LANDUSE, tok[k-1]);
         if ( m < 0 ) return error_setInpError(ERR_NAME, tok[k-1]);
         if ( k+1 > ntoks ) return error_setInpError(ERR_ITEMS, "");
-        if ( !(f = getDouble(tok[k])) )
+        if ( null == (f = getDouble(tok[k])) )
             return error_setInpError(ERR_NUMBER, tok[k]);
 
         // --- store land use fraction in subcatch's landFactor property
@@ -342,7 +342,7 @@ function subcatch_readInitBuildup(tok, ntoks)
         m = project_findObject(POLLUT, tok[k-1]);
         if ( m < 0 ) return error_setInpError(ERR_NAME, tok[k-1]);
         if ( k+1 > ntoks ) return error_setInpError(ERR_ITEMS, "");
-        if ( !(x = getDouble(tok[k])) )
+        if ( null == (x = getDouble(tok[k])) )
             return error_setInpError(ERR_NUMBER, tok[k]);
 
         // --- store loading in subcatch's initBuildup property
@@ -396,7 +396,7 @@ function  subcatch_validate(j)
         if ( area > 0.0 && Subcatch[j].subArea[i].N > 0.0 )
         {
             Subcatch[j].subArea[i].alpha = MCOEFF * Subcatch[j].width / area *
-                sqrt(Subcatch[j].slope) / Subcatch[j].subArea[i].N;
+                Math.sqrt(Subcatch[j].slope) / Subcatch[j].subArea[i].N;
         }
     }
 
@@ -1020,7 +1020,7 @@ function findSubareaRunoff(subarea, tRunoff)
         // --- case where nonlinear routing is used
         if ( subarea.N > 0.0 )
         {
-            runoff = Alpha * pow(xDepth, MEXP);                                //(5.1.013)
+            runoff = Alpha * Math.pow(xDepth, MEXP);                                //(5.1.013)
         }
 
         // --- case where no routing is used (Mannings N = 0)
@@ -1109,7 +1109,7 @@ function  getDdDt(t, d, dddt)
     }
     else
     {
-        rx = Alpha * pow(rx, MEXP);                                            //(5.1.013)
+        rx = Alpha * Math.pow(rx, MEXP);                                            //(5.1.013)
     }
     dddt = ix - rx;
 }
