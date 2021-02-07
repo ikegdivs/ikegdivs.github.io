@@ -410,7 +410,7 @@ function  stats_updateGwaterStats(j, infil, evap, latFlow,
     Subcatch[j].groundwater.stats.avgWaterTable += waterTable * tStep;
     Subcatch[j].groundwater.stats.finalUpperMoist = theta;
     Subcatch[j].groundwater.stats.finalWaterTable = waterTable;
-    if ( fabs(latFlow) > fabs(Subcatch[j].groundwater.stats.maxFlow) )
+    if ( Math.abs(latFlow) > Math.abs(Subcatch[j].groundwater.stats.maxFlow) )
     {
         Subcatch[j].groundwater.stats.maxFlow = latFlow;
     }
@@ -612,7 +612,7 @@ function stats_updateNodeStats(j, tStep, aDate)
     // --- update inflow statistics
     NodeStats[j].totLatFlow += ( (Node[j].oldLatFlow + Node[j].newLatFlow) * 
                                  0.5 * tStep );
-    if ( fabs(Node[j].newLatFlow) > fabs(NodeStats[j].maxLatFlow) )
+    if ( Math.abs(Node[j].newLatFlow) > Math.abs(NodeStats[j].maxLatFlow) )
         NodeStats[j].maxLatFlow = Node[j].newLatFlow;
     if ( Node[j].inflow > NodeStats[j].maxInflow )
     {
@@ -645,7 +645,7 @@ function  stats_updateLinkStats(j, tStep, aDate)
 
     // --- update max. flow
     dq = Link[j].newFlow - Link[j].oldFlow;
-    q = fabs(Link[j].newFlow);
+    q = Math.abs(Link[j].newFlow);
     if ( q > LinkStats[j].maxFlow )
     {
         LinkStats[j].maxFlow = q;
@@ -729,7 +729,7 @@ function  stats_updateLinkStats(j, tStep, aDate)
     // --- update flow turn count
     k = LinkStats[j].flowTurnSign;
     LinkStats[j].flowTurnSign = SGN(dq);
-    if ( fabs(dq) > 0.001 &&  k * LinkStats[j].flowTurnSign < 0 )
+    if ( Math.abs(dq) > 0.001 &&  k * LinkStats[j].flowTurnSign < 0 )
             LinkStats[j].flowTurns++;
 }
 
@@ -825,7 +825,7 @@ function  stats_updateMaxStats(maxStats, i, j, x)
     maxStats1.value   = x;
     for (k=0; k<MAX_STATS; k++)
     {
-        if ( fabs(maxStats1.value) > fabs(maxStats[k].value) )
+        if ( Math.abs(maxStats1.value) > Math.abs(maxStats[k].value) )
         {
             maxStats2 = maxStats[k];
             maxStats[k] = maxStats1;

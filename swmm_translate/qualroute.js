@@ -176,7 +176,7 @@ function findLinkMassFlow(i, tStep)
     // --- identify index of downstream node
     j = Link[i].node2;
     if ( qLink < 0.0 ) j = Link[i].node1;
-    qLink = fabs(qLink);
+    qLink = Math.abs(qLink);
 
     // --- examine each pollutant
     for (p = 0; p < Nobjects[POLLUT]; p++)
@@ -259,7 +259,7 @@ function findLinkQual(i, tStep)
     // --- get flow rates and evaporation loss
     k = Link[i].subIndex;
     barrels = Conduit[k].barrels;
-    qIn  = fabs(Conduit[k].q1) * barrels;
+    qIn  = Math.abs(Conduit[k].q1) * barrels;
     qSeep = Conduit[k].seepLossRate * barrels;
     vEvap = Conduit[k].evapLossRate * barrels * tStep;
 

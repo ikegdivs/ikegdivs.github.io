@@ -100,7 +100,7 @@ function odesolve_integrate(){
     {
         derivs(x,y,dydx);
         for (i=0; i<n; i++)
-            yscal[i] = fabs(y[i]) + fabs(dydx[i]*h) + TINY;
+            yscal[i] = Math.abs(y[i]) + Math.abs(dydx[i]*h) + TINY;
         if ((x+h-x2)*(x+h-x1) > 0.0) h = x2 - x;
         errcode = rkqs(&x,n,h,eps,&hdid,&hnext,derivs);
         if (errcode) break;
@@ -109,7 +109,7 @@ function odesolve_integrate(){
             for (i=0; i<n; i++) ystart[i] = y[i];
             return 0;
         }
-        if (fabs(hnext) <= 0.0) return 2;
+        if (Math.abs(hnext) <= 0.0) return 2;
         h = hnext;
     }
     return 3;
@@ -143,7 +143,7 @@ function rkqs(){
         errmax = 0.0;
         for (i=0; i<n; i++)
         {
-            err = fabs(yerr[i]/yscal[i]);
+            err = Math.abs(yerr[i]/yscal[i]);
             if (err > errmax) errmax = err;
         }
         errmax /= eps;

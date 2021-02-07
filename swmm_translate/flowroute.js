@@ -124,6 +124,8 @@ function flowrout_execute(links, routingModel, tStep)
     let qin;                        // link inflow (cfs)
     let qout;                       // link outflow (cfs)
     let steps;                      // computational step count
+    let returnObj;
+    let returnVal;
 
     // --- set overflows to drain any ponded water
     if ( ErrorCode ) return 0;
@@ -157,9 +159,25 @@ function flowrout_execute(links, routingModel, tStep)
         qin  = getLinkInflow(j, tStep);
 
         // route flow through link
-        if ( routingModel == SF )
-            steps += steadyflow_execute(j, qin, qout, tStep);
-        else steps += kinwave_execute(j, qin, qout, tStep);
+        if ( routingModel == SF ){
+            ////////////////////////////////////
+            returnObj = {qinflow: qin, qoutflow: qout}
+            returnVal = steadyflow_execute(j, returnObj, tStep);
+            qin  = returnObj.qinflow;
+            qout = returnObj.qoutnflow;
+            ////////////////////////////////////
+            //steps += steadyflow_execute(j, qin, qout, tStep);
+        }
+        else {
+            ////////////////////////////////////
+            returnObj = {qinflow: qin, qoutflow: qout}
+            returnVal = kinwave_execute(j, returnObj, tStep);
+            qin  = returnObj.qinflow;
+            qout = returnObj.qoutnflow;
+            ////////////////////////////////////
+            //steps += kinwave_execute(j, qin, qout, tStep);
+            steps += returnVal;
+        }
         Link[j].newFlow = qout;
 
         // adjust outflow at upstream node and inflow at downstream node
@@ -565,7 +583,7 @@ function updateStorageState(i, j, links, dt)
         // --- use under-relaxation to estimate new depth value
         //     and stop if close enough to previous value
         d2 = (1.0 - OMEGA)*d1 + OMEGA*d2;
-        if ( fabs(d2 - d1) <= STOPTOL ) stopped = TRUE;
+        if ( Math.abs(d2 - d1) <= STOPTOL ) stopped = TRUE;
 
         // --- update old depth with new value and continue to iterate
         Node[i].newDepth = d2;
@@ -723,7 +741,14 @@ function updateNodeDepth(i, y)
 
 //=============================================================================
 // int j, double* qin, double* qout, double tStep
-function steadyflow_execute(j, qin, qout, tStep)
+////////////////////////////////////
+//let returnObj = {qinflow: qin, qoutflow: qout}
+//let returnVal = steadyflow_execute(j, returnObj, tStep);
+//qin  = returnObj.qinflow;
+//qout = returnObj.qoutnflow;
+////////////////////////////////////
+//function steadyflow_execute(j, qin, qout, tStep)
+function steadyflow_execute(j, inObj, tStep)
 //
 //  Input:   j = link index
 //           qin = inflow to link (cfs)
@@ -742,7 +767,7 @@ function steadyflow_execute(j, qin, qout, tStep)
     if ( Link[j].type == CONDUIT )
     {
         k = Link[j].subIndex;
-        q = qin / Conduit[k].barrels;
+        q = inObj.qin / Conduit[k].barrels;
         if ( Link[j].xsect.type == DUMMY ) Conduit[k].a1 = 0.0;
         else 
         {
@@ -754,7 +779,7 @@ function steadyflow_execute(j, qin, qout, tStep)
             {
                 q = Link[j].qFull;
                 Conduit[k].a1 = Link[j].xsect.aFull;
-                qin = q * Conduit[k].barrels;
+                inObj.qin = q * Conduit[k].barrels;
             }
 
             // --- infer flow area from flow rate 
@@ -771,9 +796,9 @@ function steadyflow_execute(j, qin, qout, tStep)
         
         Conduit[k].q1 = q;
         Conduit[k].q2 = q;
-        qout = q * Conduit[k].barrels;
+        inObj.qout = q * Conduit[k].barrels;
     }
-    else qout = qin;
+    else inObj.qout = inObj.qin;
     return 1;
 }
 

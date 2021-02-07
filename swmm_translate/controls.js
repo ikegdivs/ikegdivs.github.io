@@ -71,90 +71,128 @@ var r_CONDUIT = 2
 var r_PUMP = 3;
 var r_ORIFICE = 4
 var r_WEIR = 5
-	               r_OUTLET, r_SIMULATION};
-enum RuleAttrib   {r_DEPTH, r_HEAD, r_VOLUME, r_INFLOW, r_FLOW, r_STATUS,
-                   r_SETTING, r_TIMEOPEN, r_TIMECLOSED, r_TIME, r_DATE,
-                   r_CLOCKTIME, r_DAYOFYEAR, r_DAY, r_MONTH};
-enum RuleRelation {EQ, NE, LT, LE, GT, GE};
-enum RuleSetting  {r_CURVE, r_TIMESERIES, r_PID, r_NUMERIC};
+var r_OUTLET = 6
+var r_SIMULATION
+//enum RuleAttrib   {
+var r_DEPTH = 0
+var r_HEAD = 1
+var r_VOLUME = 2
+var r_INFLOW = 3
+var r_FLOW = 4
+var r_STATUS = 5
+var r_SETTING = 6
+var r_TIMEOPEN = 7
+var r_TIMECLOSED = 8
+var r_TIME = 9
+var r_DATE = 10
+var r_CLOCKTIME = 11
+var r_DAYOFYEAR = 12
+var r_DAY = 13
+var r_MONTH = 14
+//enum RuleRelation {
+var EQ = 0
+var NE = 1
+var LT = 2
+var LE = 3
+var GT = 4
+var GE = 5
+//enum RuleSetting  {
+var r_CURVE = 0
+var r_TIMESERIES = 1
+var r_PID = 2
+var r_NUMERIC = 3
 
-static char* ObjectWords[] =
-    {"NODE", "LINK", "CONDUIT", "PUMP", "ORIFICE", "WEIR", "OUTLET",
-	 "SIMULATION", NULL};
-static char* AttribWords[] =
-    {"DEPTH", "HEAD", "VOLUME", "INFLOW", "FLOW", "STATUS", "SETTING",
+ObjectWords =
+    ["NODE", "LINK", "CONDUIT", "PUMP", "ORIFICE", "WEIR", "OUTLET",
+	 "SIMULATION", null];
+AttribWords =
+    ["DEPTH", "HEAD", "VOLUME", "INFLOW", "FLOW", "STATUS", "SETTING",
      "TIMEOPEN", "TIMECLOSED","TIME", "DATE", "CLOCKTIME", "DAYOFYEAR", 
-     "DAY", "MONTH", NULL}; 
-static char* RelOpWords[] = {"=", "<>", "<", "<=", ">", ">=", NULL};
-static char* StatusWords[]  = {"OFF", "ON", NULL};
-static char* ConduitWords[] = {"CLOSED", "OPEN", NULL};
-static char* SettingTypeWords[] = {"CURVE", "TIMESERIES", "PID", NULL};
+     "DAY", "MONTH", null]; 
+RelOpWords = ["=", "<>", "<", "<=", ">", ">=", null];
+StatusWords  = ["OFF", "ON", null];
+ConduitWords = ["CLOSED", "OPEN", null];
+SettingTypeWords = ["CURVE", "TIMESERIES", "PID", null];
 
 //-----------------------------------------------------------------------------                  
 // Data Structures
 //-----------------------------------------------------------------------------
 // Rule Premise Variable
-struct TVariable
+class TVariable
 {
-   int      node;            // index of a node (-1 if N/A)
-   int      link;            // index of a link (-1 if N/A)
-   int      attribute;       // type of attribute for node/link
+    constructor(){
+        this.node;            // index of a node (-1 if N/A)
+        this.link;            // index of a link (-1 if N/A)
+        this.attribute;       // type of attribute for node/link
+    }
 };
 
 // Rule Premise Clause 
-struct  TPremise
+class TPremise
 {
-    int     type;                 // clause type (IF/AND/OR)
-    struct  TVariable lhsVar;     // left hand side variable
-    struct  TVariable rhsVar;     // right hand side variable 
-    int     relation;             // relational operator (>, <, =, etc)
-    double  value;                // right hand side value
-    struct  TPremise *next;       // next premise clause of rule
+    constructor(){
+        this.type;                 // clause type (IF/AND/OR)
+        this.lhsVar = new TVariable();     // left hand side variable
+        this.rhsVar = new TVariable();     // right hand side variable 
+        this.relation;             // relational operator (>, <, =, etc)
+        this.value;                // right hand side value
+        this.next = new TPremise();       // next premise clause of rule
+    }
 };
 
 // Rule Action Clause
-struct  TAction              
+class  TAction              
 {
-   int     rule;             // index of rule that action belongs to
-   int     link;             // index of link being controlled
-   int     attribute;        // attribute of link being controlled
-   int     curve;            // index of curve for modulated control
-   int     tseries;          // index of time series for modulated control
-   double  value;            // control setting for link attribute
-   double  kp, ki, kd;       // coeffs. for PID modulated control
-   double  e1, e2;           // PID set point error from previous time steps
-   struct  TAction *next;    // next action clause of rule
+    constructor(){this.rule;             // index of rule that action belongs to
+        this.link;             // index of link being controlled
+        this.attribute;        // attribute of link being controlled
+        this.curve;            // index of curve for modulated control
+        this.tseries;          // index of time series for modulated control
+        this.value;            // control setting for link attribute
+        this.kp
+        this.ki
+        this.kd;       // coeffs. for PID modulated control
+        this.e1
+        this.e2;           // PID set point error from previous time steps
+        this.nex = new  TAction();    // next action clause of rule
+    }
 };
 
 // List of Control Actions
-struct  TActionList          
+class  TActionList          
 {
-   struct  TAction* action;
-   struct  TActionList* next;
+    constructor(){
+        this.action = new TAction();
+        this.next = new TActionList();
+    }
 };
 
 // Control Rule
-struct  TRule
+class  TRule
 {
-   char*    ID;                        // rule ID
-   double   priority;                  // priority level
-   struct   TPremise* firstPremise;    // pointer to first premise of rule
-   struct   TPremise* lastPremise;     // pointer to last premise of rule
-   struct   TAction*  thenActions;     // linked list of actions if true
-   struct   TAction*  elseActions;     // linked list of actions if false
+    constructor(){
+        this.ID;                        // rule ID
+        this.priority;                  // priority level
+        this.firstPremise = new  TPremise() ;    // pointer to first premise of rule
+        this.lastPremise = new  TPremise();     // pointer to last premise of rule
+        this.thenActions = new  TAction();     // linked list of actions if true
+        this.elseActions = new  TAction();     // linked list of actions if false
+    }
 };
 
 //-----------------------------------------------------------------------------
 //  Shared variables
 //-----------------------------------------------------------------------------
-struct   TRule*       Rules;           // array of control rules
-struct   TActionList* ActionList;      // linked list of control actions
-int      InputState;                   // state of rule interpreter
-int      RuleCount;                    // total number of rules
-double   ControlValue;                 // value of controller variable
-double   SetPoint;                     // value of controller setpoint
-DateTime CurrentDate;                  // current date in whole days 
-DateTime CurrentTime;                  // current time of day (decimal)
+//struct   TRule*       Rules;           // array of control rules
+var Rules = []
+//struct   TActionList* ActionList;      // linked list of control actions
+var ActionList;
+var      InputState;                   // state of rule interpreter
+var      RuleCount;                    // total number of rules
+var   ControlValue;                 // value of controller variable
+var   SetPoint;                     // value of controller setpoint
+var CurrentDate;                  // current date in whole days 
+var CurrentTime;                  // current time of day (decimal)
 
 //-----------------------------------------------------------------------------
 //  External functions (declared in funcs.h)
@@ -164,63 +202,38 @@ DateTime CurrentTime;                  // current time of day (decimal)
 //     controls_addRuleClause
 //     controls_evaluate
 
-//-----------------------------------------------------------------------------
-//  Local functions
-//-----------------------------------------------------------------------------
-int    addPremise(int r, int type, char* Tok[], int nToks);
-int    getPremiseVariable(char* tok[], int* k, struct TVariable* v);
-int    getPremiseValue(char* token, int attrib, double* value);
-int    addAction(int r, char* Tok[], int nToks);
-
-int    evaluatePremise(struct TPremise* p, double tStep);
-double getVariableValue(struct TVariable v);
-int    compareTimes(double lhsValue, int relation, double rhsValue,
-       double halfStep);
-int    compareValues(double lhsValue, int relation, double rhsValue);
-
-void   updateActionList(struct TAction* a);
-int    executeActionList(DateTime currentTime);
-void   clearActionList(void);
-void   deleteActionList(void);
-void   deleteRules(void);
-
-int    findExactMatch(char *s, char *keyword[]);
-int    setActionSetting(char* tok[], int nToks, int* curve, int* tseries,
-       int* attrib, double value[]);
-void   updateActionValue(struct TAction* a, DateTime currentTime, double dt);
-double getPIDSetting(struct TAction* a, double dt);
-
 //=============================================================================
-
-int  controls_create(int n)
+// int n
+function  controls_create(n)
 //
 //  Input:   n = total number of control rules
 //  Output:  returns error code
 //  Purpose: creates an array of control rules.
 //
 {
-   int r;
-   ActionList = NULL;
-   InputState = r_PRIORITY;
-   RuleCount = n;
-   if ( n == 0 ) return 0;
-   Rules = (struct TRule *) calloc(RuleCount, sizeof(struct TRule));
-   if (Rules == NULL) return ERR_MEMORY;
-   for ( r=0; r<RuleCount; r++ )
-   {
-       Rules[r].ID = NULL;
-       Rules[r].firstPremise = NULL;
-       Rules[r].lastPremise = NULL;
-       Rules[r].thenActions = NULL;
-       Rules[r].elseActions = NULL;
-       Rules[r].priority = 0.0;    
-   }
-   return 0;
+    let r;
+    ActionList = null;
+    InputState = r_PRIORITY;
+    RuleCount = n;
+    if ( n == 0 ) return 0;
+    //Rules = (struct TRule *) calloc(RuleCount, sizeof(struct TRule));
+    for(let i = 0; i < RuleCount; i++){Rules.push(new TRule())}
+    if (Rules == null) return ERR_MEMORY;
+    for ( r=0; r<RuleCount; r++ )
+    {
+        Rules[r].ID = null;
+        Rules[r].firstPremise = null;
+        Rules[r].lastPremise = null;
+        Rules[r].thenActions = null;
+        Rules[r].elseActions = null;
+        Rules[r].priority = 0.0;    
+    }
+    return 0;
 }
 
 //=============================================================================
-
-void controls_delete(void)
+// void
+function controls_delete()
 //
 //  Input:   none
 //  Output:  none
@@ -233,8 +246,8 @@ void controls_delete(void)
 }
 
 //=============================================================================
-
-int  controls_addRuleClause(int r, int keyword, char* tok[], int nToks)
+// int r, int keyword, char* tok[], int nToks
+function  controls_addRuleClause(r, keyword, tok, nToks)
 //
 //  Input:   r = rule index
 //           keyword = the clause's keyword code (IF, THEN, etc.)
@@ -247,7 +260,7 @@ int  controls_addRuleClause(int r, int keyword, char* tok[], int nToks)
     switch (keyword)
     {
       case r_RULE:
-        if ( Rules[r].ID == NULL )
+        if ( Rules[r].ID == null )
             Rules[r].ID = project_findID(CONTROL, tok[1]);
         InputState = r_RULE;
         if ( nToks > 2 ) return ERR_RULE;
@@ -281,7 +294,7 @@ int  controls_addRuleClause(int r, int keyword, char* tok[], int nToks)
       case r_PRIORITY:
         if ( InputState != r_THEN && InputState != r_ELSE ) return ERR_RULE;
         InputState = r_PRIORITY;
-        if ( !getDouble(tok[1], &Rules[r].priority) ) return ERR_NUMBER;
+        if ( !getDouble(tok[1], Rules[r].priority) ) return ERR_NUMBER;
         if ( nToks > 2 ) return ERR_RULE;
         return 0;
     }
@@ -289,8 +302,8 @@ int  controls_addRuleClause(int r, int keyword, char* tok[], int nToks)
 }
 
 //=============================================================================
-
-int controls_evaluate(DateTime currentTime, DateTime elapsedTime, double tStep)
+// DateTime currentTime, DateTime elapsedTime, double tStep
+function controls_evaluate(currentTime, elapsedTime, tStep)
 //
 //  Input:   currentTime = current simulation date/time
 //           elapsedTime = decimal days since start of simulation
@@ -299,14 +312,16 @@ int controls_evaluate(DateTime currentTime, DateTime elapsedTime, double tStep)
 //  Purpose: evaluates all control rules at current time of the simulation.
 //
 {
-    int    r;                          // control rule index
-    int    result;                     // TRUE if rule premises satisfied
-    struct TPremise* p;                // pointer to rule premise clause
-    struct TAction*  a;                // pointer to rule action clause
+    let    r;                          // control rule index
+    let    result;                     // true if rule premises satisfied
+    //struct TPremise* p;                // pointer to rule premise clause
+    //struct TAction*  a;                // pointer to rule action clause
+    let p;
+    let a;
 
     // --- save date and time to shared variables
-    CurrentDate = floor(currentTime);
-    CurrentTime = currentTime - floor(currentTime);
+    CurrentDate = Math.floor(currentTime);
+    CurrentTime = currentTime - Math.floor(currentTime);
     ElapsedTime = elapsedTime;
 
     // --- evaluate each rule
@@ -315,32 +330,32 @@ int controls_evaluate(DateTime currentTime, DateTime elapsedTime, double tStep)
     for (r=0; r<RuleCount; r++)
     {
         // --- evaluate rule's premises
-        result = TRUE;
+        result = true;
         p = Rules[r].firstPremise;
         while (p)
         {
-            if ( p->type == r_OR )
+            if ( p.type == r_OR )
             {
-                if ( result == FALSE )
+                if ( result == false )
                     result = evaluatePremise(p, tStep);
             }
             else
             {
-                if ( result == FALSE ) break;
+                if ( result == false ) break;
                 result = evaluatePremise(p, tStep);
             }
-            p = p->next;
+            p = p.next;
         }    
 
         // --- if premises true, add THEN clauses to action list
         //     else add ELSE clauses to action list
-        if ( result == TRUE ) a = Rules[r].thenActions;
+        if ( result == true ) a = Rules[r].thenActions;
         else                  a = Rules[r].elseActions;
         while (a)
         {
             updateActionValue(a, currentTime, tStep);
             updateActionList(a);
-            a = a->next;
+            a = a.next;
         }
     }
 
@@ -350,8 +365,8 @@ int controls_evaluate(DateTime currentTime, DateTime elapsedTime, double tStep)
 }
 
 //=============================================================================
-
-int  addPremise(int r, int type, char* tok[], int nToks)
+// int r, int type, char* tok[], int nToks
+function  addPremise(r, type, tok, nToks)
 //
 //  Input:   r = control rule index
 //           type = type of premise (IF, AND, OR)
@@ -361,18 +376,21 @@ int  addPremise(int r, int type, char* tok[], int nToks)
 //  Purpose: adds a new premise to a control rule.
 //
 {
-    int    relation, n, err = 0;
-    double value = MISSING;
-    struct TPremise* p;
-    struct TVariable v1;
-    struct TVariable v2;
+    let relation, n, err = 0;
+    let value = MISSING;
+    //struct TPremise* p;
+    //struct TVariable v1;
+    //struct TVariable v2;
+    let p// = new TPremise();
+    let v1 = new TVariable();
+    let v2 = new TVariable();
 
     // --- check for minimum number of tokens
     if ( nToks < 5 ) return ERR_ITEMS;
 
     // --- get LHS variable
     n = 1;
-    err = getPremiseVariable(tok, &n, &v1);
+    err = getPremiseVariable(tok, n, v1);
     if ( err > 0 ) return err;
 
     // --- get relational operator
@@ -392,7 +410,7 @@ int  addPremise(int r, int type, char* tok[], int nToks)
     // --- see if a RHS variable is supplied
     if ( findmatch(tok[n], ObjectWords) >= 0 && n + 3 >= nToks )
     {
-        err = getPremiseVariable(tok, &n, &v2);
+        err = getPremiseVariable(tok, n, v2);
         if ( err > 0 ) return ERR_RULE;
         if ( v1.attribute != v2.attribute)
             report_writeWarningMsg(WARN11, Rules[r].ID);
@@ -401,7 +419,7 @@ int  addPremise(int r, int type, char* tok[], int nToks)
     // --- otherwise get value to which LHS variable is compared to
     else
     {
-        err = getPremiseValue(tok[n], v1.attribute, &value);
+        err = getPremiseValue(tok[n], v1.attribute, value);
         n++;
     }
     if ( err > 0 ) return err;
@@ -410,29 +428,30 @@ int  addPremise(int r, int type, char* tok[], int nToks)
     if ( n < nToks && findmatch(tok[n], RuleKeyWords) >= 0 ) return ERR_RULE;
 
     // --- create the premise object
-    p = (struct TPremise *) malloc(sizeof(struct TPremise));
+    //p = (struct TPremise *) malloc(sizeof(struct TPremise));
+    p = new TPremise();
     if ( !p ) return ERR_MEMORY;
-    p->type      = type;
-    p->lhsVar    = v1;
-    p->rhsVar    = v2;
-    p->relation  = relation;
-    p->value     = value;
-    p->next      = NULL;
-    if ( Rules[r].firstPremise == NULL )
+    p.type      = type;
+    p.lhsVar    = v1;
+    p.rhsVar    = v2;
+    p.relation  = relation;
+    p.value     = value;
+    p.next      = null;
+    if ( Rules[r].firstPremise == null )
     {
         Rules[r].firstPremise = p;
     }
     else
     {
-        Rules[r].lastPremise->next = p;
+        Rules[r].lastPremise.next = p;
     }
     Rules[r].lastPremise = p;
     return 0;
 }
 
 //=============================================================================
-
-int getPremiseVariable(char* tok[], int* k, struct TVariable* v)
+// char* tok[], int* k, struct TVariable* v
+function getPremiseVariable(tok, k, v)
 //
 //  Input:   tok = array of string tokens containing premise statement
 //           k = index of current token
@@ -442,10 +461,10 @@ int getPremiseVariable(char* tok[], int* k, struct TVariable* v)
 //           premise clause of a control rule.
 //
 {
-    int    n = *k;
-    int    node = -1;
-    int    link = -1;
-    int    obj, attrib;
+    let    n = k;
+    let    node = -1;
+    let    link = -1;
+    let    obj, attrib;
 
     // --- get object type
     obj = findmatch(tok[n], ObjectWords);
@@ -527,16 +546,16 @@ int getPremiseVariable(char* tok[], int* k, struct TVariable* v)
     }
 
     // --- populate variable structure
-    v->node      = node;
-    v->link      = link;
-    v->attribute = attrib;
-    *k = n;
+    v.node      = node;
+    v.link      = link;
+    v.attribute = attrib;
+    k = n;
     return 0;
 }
 
 //=============================================================================
-
-int getPremiseValue(char* token, int attrib, double* value)
+//char* token, int attrib, double* value
+function getPremiseValue(token, attrib, value)
 //
 //  Input:   token = a string token
 //           attrib = index of a node/link attribute
@@ -546,13 +565,13 @@ int getPremiseValue(char* token, int attrib, double* value)
 //           in the premise clause of a control rule.
 //
 {
-    char   strDate[25]; 
+    let   strDate = ''; 
     switch (attrib)
     {
       case r_STATUS:
-        *value = findmatch(token, StatusWords);
-		if ( *value < 0.0 ) *value = findmatch(token, ConduitWords);
-        if ( *value < 0.0 ) return error_setInpError(ERR_KEYWORD, token);
+        value = findmatch(token, StatusWords);
+		if ( value < 0.0 ) value = findmatch(token, ConduitWords);
+        if ( value < 0.0 ) return error_setInpError(ERR_KEYWORD, token);
         break;
 
       case r_TIME:
@@ -571,14 +590,14 @@ int getPremiseValue(char* token, int attrib, double* value)
       case r_DAY:
         if ( !getDouble(token, value) ) 
             return error_setInpError(ERR_NUMBER, token);
-        if ( *value < 1.0 || *value > 7.0 )
+        if ( value < 1.0 || value > 7.0 )
              return error_setInpError(ERR_DATETIME, token);
         break;
 
       case r_MONTH:
         if ( !getDouble(token, value) )
             return error_setInpError(ERR_NUMBER, token);
-        if ( *value < 1.0 || *value > 12.0 )
+        if ( value < 1.0 || value > 12.0 )
              return error_setInpError(ERR_DATETIME, token);
         break;
 
@@ -587,9 +606,9 @@ int getPremiseValue(char* token, int attrib, double* value)
         strcat(strDate, "/1947");
         if ( datetime_strToDate(strDate, value) )
         {
-            *value = datetime_dayOfYear(*value);
+            value = datetime_dayOfYear(value);
         }
-        else if ( !getDouble(token, value) || *value < 1 || *value > 365 )
+        else if ( !getDouble(token, value) || value < 1 || value > 365 )
             return error_setInpError(ERR_DATETIME, token);
         break;
        
@@ -600,8 +619,8 @@ int getPremiseValue(char* token, int attrib, double* value)
 }
 
 //=============================================================================
-
-int  addAction(int r, char* tok[], int nToks)
+// int r, char* tok[], int nToks
+function  addAction(r, tok, nToks)
 //
 //  Input:   r = control rule index
 //           tok = array of string tokens containing action statement
@@ -610,13 +629,13 @@ int  addAction(int r, char* tok[], int nToks)
 //  Purpose: adds a new action to a control rule.
 //
 {
-    int    obj, link, attrib;
-    int    curve = -1, tseries = -1;
-    int    n;
-    int    err;
-    double values[] = {1.0, 0.0, 0.0};
+    let    obj, link, attrib;
+    let    curve = -1, tseries = -1;
+    let    n;
+    let    err;
+    let    values = [1.0, 0.0, 0.0];
 
-    struct TAction* a;
+    let a// = new TAction();
 
     // --- check for proper number of tokens
     if ( nToks < 6 ) return error_setInpError(ERR_ITEMS, "");
@@ -680,8 +699,8 @@ int  addAction(int r, char* tok[], int nToks)
         }
         else if ( attrib == r_SETTING )
         {
-            err = setActionSetting(tok, nToks, &curve, &tseries,
-                                   &attrib, values);
+            err = setActionSetting(tok, nToks, curve, tseries,
+                                   attrib, values);
             if ( err > 0 ) return err;
         }
         else return error_setInpError(ERR_KEYWORD, tok[3]);
@@ -691,8 +710,8 @@ int  addAction(int r, char* tok[], int nToks)
     {
         if ( attrib == r_SETTING )
         {
-           err = setActionSetting(tok, nToks, &curve, &tseries,
-                                  &attrib, values);
+           err = setActionSetting(tok, nToks, curve, tseries,
+                                  attrib, values);
            if ( err > 0 ) return err;
            if (  attrib == r_SETTING
            && (values[0] < 0.0 || values[0] > 1.0) ) 
@@ -709,39 +728,41 @@ int  addAction(int r, char* tok[], int nToks)
     if ( n < nToks && findmatch(tok[n], RuleKeyWords) >= 0 ) return ERR_RULE;
 
     // --- create the action object
-    a = (struct TAction *) malloc(sizeof(struct TAction));
+    //a = (struct TAction *) malloc(sizeof(struct TAction));
+    a = new TAction();
     if ( !a ) return ERR_MEMORY;
-    a->rule      = r;
-    a->link      = link;
-    a->attribute = attrib;
-    a->curve     = curve;
-    a->tseries   = tseries;
-    a->value     = values[0];
+    a.rule      = r;
+    a.link      = link;
+    a.attribute = attrib;
+    a.curve     = curve;
+    a.tseries   = tseries;
+    a.value     = values[0];
     if ( attrib == r_PID )
     {
-        a->kp = values[0];
-        a->ki = values[1];
-        a->kd = values[2];
-        a->e1 = 0.0;
-        a->e2 = 0.0;
+        a.kp = values[0];
+        a.ki = values[1];
+        a.kd = values[2];
+        a.e1 = 0.0;
+        a.e2 = 0.0;
     }
     if ( InputState == r_THEN )
     {
-        a->next = Rules[r].thenActions;
+        a.next = Rules[r].thenActions;
         Rules[r].thenActions = a;
     }
     else
     {
-        a->next = Rules[r].elseActions;
+        a.next = Rules[r].elseActions;
         Rules[r].elseActions = a;
     }
     return 0;
 }
 
 //=============================================================================
-
-int  setActionSetting(char* tok[], int nToks, int* curve, int* tseries,
-                      int* attrib, double values[])
+// char* tok[], int nToks, int* curve, int* tseries,
+//     int* attrib, double values[]
+function  setActionSetting(tok, nToks, curve, tseries,
+                       attrib, values)
 //
 //  Input:   tok = array of string tokens containing action statement
 //           nToks = number of string tokens
@@ -753,7 +774,7 @@ int  setActionSetting(char* tok[], int nToks, int* curve, int* tseries,
 //  Purpose: identifies how control actions settings are determined.
 //
 {
-    int k, m;
+    let k, m;
 
     // --- see if control action is determined by a Curve or Time Series
     if (nToks < 6) return error_setInpError(ERR_ITEMS, "");
@@ -766,14 +787,14 @@ int  setActionSetting(char* tok[], int nToks, int* curve, int* tseries,
     case r_CURVE:
         m = project_findObject(CURVE, tok[6]);
         if ( m < 0 ) return error_setInpError(ERR_NAME, tok[6]);
-        *curve = m;
+        curve = m;
         break;
 
     // --- control determined by a time series - find time series index
     case r_TIMESERIES:
         m = project_findObject(TSERIES, tok[6]);
         if ( m < 0 ) return error_setInpError(ERR_NAME, tok[6]);
-        *tseries = m;
+        tseries = m;
         Tseries[m].refersTo = CONTROL;
         break;
 
@@ -782,23 +803,23 @@ int  setActionSetting(char* tok[], int nToks, int* curve, int* tseries,
         if (nToks < 9) return error_setInpError(ERR_ITEMS, "");
         for (m=6; m<=8; m++)
         {
-            if ( !getDouble(tok[m], &values[m-6]) )
+            if ( !getDouble(tok[m], values[m-6]) )
                 return error_setInpError(ERR_NUMBER, tok[m]);
         }
-        *attrib = r_PID;
+        attrib = r_PID;
         break;
 
     // --- direct numerical control is used
     default:
-        if ( !getDouble(tok[5], &values[0]) )
+        if ( !getDouble(tok[5], values[0]) )
             return error_setInpError(ERR_NUMBER, tok[5]);
     }
     return 0;
 }
 
 //=============================================================================
-
-void  updateActionValue(struct TAction* a, DateTime currentTime, double dt)
+// struct TAction* a, DateTime currentTime, double dt
+function  updateActionValue(a, currentTime, dt)
 //
 //  Input:   a = an action object
 //           currentTime = current simulation date/time (days)
@@ -807,190 +828,196 @@ void  updateActionValue(struct TAction* a, DateTime currentTime, double dt)
 //  Purpose: updates value of actions found from Curves or Time Series.
 //
 {
-    if ( a->curve >= 0 )
+    if ( a.curve >= 0 )
     {
-        a->value = table_lookup(&Curve[a->curve], ControlValue);
+        a.value = table_lookup(Curve[a.curve], ControlValue);
     }
-    else if ( a->tseries >= 0 )
+    else if ( a.tseries >= 0 )
     {
-        a->value = table_tseriesLookup(&Tseries[a->tseries], currentTime, TRUE);
+        a.value = table_tseriesLookup(Tseries[a.tseries], currentTime, true);
     }
-    else if ( a->attribute == r_PID )
+    else if ( a.attribute == r_PID )
     {
-        a->value = getPIDSetting(a, dt);
+        a.value = getPIDSetting(a, dt);
     }
 }
 
 //=============================================================================
-
-double getPIDSetting(struct TAction* a, double dt)
+// struct TAction* a, double dt
+function getPIDSetting(a, dt)
 //
 //  Input:   a = an action object
 //           dt = current time step (days)
 //  Output:  returns a new link setting 
 //  Purpose: computes a new setting for a link subject to a PID controller.
 //
-//  Note:    a->kp = gain coefficient,
-//           a->ki = integral time (minutes)
-//           a->k2 = derivative time (minutes)
-//           a->e1 = error from previous time step
-//           a->e2 = error from two time steps ago
+//  Note:    a.kp = gain coefficient,
+//           a.ki = integral time (minutes)
+//           a.k2 = derivative time (minutes)
+//           a.e1 = error from previous time step
+//           a.e2 = error from two time steps ago
 {
-    double e0, setting;
-	double p, i, d, update;
-	double tolerance = 0.0001;
+    let e0, setting;
+	let p, i, d, update;
+	let tolerance = 0.0001;
 
 	// --- convert time step from days to minutes
 	dt *= 1440.0;
 
     // --- determine relative error in achieving controller set point
     e0 = SetPoint - ControlValue;
-    if ( fabs(e0) > TINY )
+    if ( Math.abs(e0) > TINY )
     {
         if ( SetPoint != 0.0 ) e0 = e0/SetPoint;
         else                   e0 = e0/ControlValue;
     }
 
 	// --- reset previous errors to 0 if controller gets stuck
-	if (fabs(e0 - a->e1) < tolerance)
+	if (Math.abs(e0 - a.e1) < tolerance)
 	{
-		a->e2 = 0.0;
-		a->e1 = 0.0;
+		a.e2 = 0.0;
+		a.e1 = 0.0;
 	}
 
     // --- use the recursive form of the PID controller equation to
     //     determine the new setting for the controlled link
-	p = (e0 - a->e1);
-	if ( a->ki == 0.0 ) i = 0.0;
-	else i = e0 * dt / a->ki;
-	d = a->kd * (e0 - 2.0*a->e1 + a->e2) / dt;
-	update = a->kp * (p + i + d);
-	if ( fabs(update) < tolerance ) update = 0.0;
-	setting = Link[a->link].targetSetting + update;
+	p = (e0 - a.e1);
+	if ( a.ki == 0.0 ) i = 0.0;
+	else i = e0 * dt / a.ki;
+	d = a.kd * (e0 - 2.0*a.e1 + a.e2) / dt;
+	update = a.kp * (p + i + d);
+	if ( Math.abs(update) < tolerance ) update = 0.0;
+	setting = Link[a.link].targetSetting + update;
 
 	// --- update previous errors
-    a->e2 = a->e1;
-    a->e1 = e0;
+    a.e2 = a.e1;
+    a.e1 = e0;
 
     // --- check that new setting lies within feasible limits
     if ( setting < 0.0 ) setting = 0.0;
-    if (Link[a->link].type != PUMP && setting > 1.0 ) setting = 1.0;
+    if (Link[a.link].type != PUMP && setting > 1.0 ) setting = 1.0;
     return setting;
 }
 
 //=============================================================================
-
-void updateActionList(struct TAction* a)
+// struct TAction* a
+function updateActionList(a)
 //
 //  Input:   a = an action object
 //  Output:  none
 //  Purpose: adds a new action to the list of actions to be taken.
 //
 {
-    struct TActionList* listItem;
-    struct TAction* a1;
-    double priority = Rules[a->rule].priority;
+    //struct TActionList* listItem;
+    //struct TAction* a1;
+    let listItem;
+    let a1;
+    let priority = Rules[a.rule].priority;
 
     // --- check if link referred to in action is already listed
     listItem = ActionList;
     while ( listItem )
     {
-        a1 = listItem->action;
+        a1 = listItem.action;
         if ( !a1 ) break;
-        if ( a1->link == a->link )
+        if ( a1.link == a.link )
         {
             // --- replace old action if new action has higher priority
-            if ( priority > Rules[a1->rule].priority ) listItem->action = a;
+            if ( priority > Rules[a1.rule].priority ) listItem.action = a;
             return;
         }
-        listItem = listItem->next;
+        listItem = listItem.next;
     }
 
     // --- action not listed so add it to ActionList
     if ( !listItem )
     {
-        listItem = (struct TActionList *) malloc(sizeof(struct TActionList));
-        listItem->next = ActionList;
+        //listItem = (struct TActionList *) malloc(sizeof(struct TActionList));
+        listItem = new TActionList()
+        listItem.next = ActionList;
         ActionList = listItem;
     }
-    listItem->action = a;
+    listItem.action = a;
 }
 
 //=============================================================================
-
-int executeActionList(DateTime currentTime)
+// DateTime currentTime
+function executeActionList(currentTime)
 //
 //  Input:   currentTime = current date/time of the simulation
 //  Output:  returns number of new actions taken
 //  Purpose: executes all actions required by fired control rules.
 //
 {
-    struct TActionList* listItem;
-    struct TActionList* nextItem;
-    struct TAction* a1;
-    int count = 0;
+    //struct TActionList* listItem;
+    //struct TActionList* nextItem;
+    //struct TAction* a1;
+    let listItem;
+    let nextItem;
+    let a1;
+    let count = 0;
 
     listItem = ActionList;
     while ( listItem )
     {
-        a1 = listItem->action;
+        a1 = listItem.action;
         if ( !a1 ) break;
-        if ( a1->link >= 0 )
+        if ( a1.link >= 0 )
         {
-            if ( Link[a1->link].targetSetting != a1->value )
+            if ( Link[a1.link].targetSetting != a1.value )
             {
-                Link[a1->link].targetSetting = a1->value;
-                if ( RptFlags.controls && a1->curve < 0 
-                     && a1->tseries < 0 && a1->attribute != r_PID )
-                    report_writeControlAction(currentTime, Link[a1->link].ID,
-                                              a1->value, Rules[a1->rule].ID);
+                Link[a1.link].targetSetting = a1.value;
+                if ( RptFlags.controls && a1.curve < 0 
+                     && a1.tseries < 0 && a1.attribute != r_PID )
+                    report_writeControlAction(currentTime, Link[a1.link].ID,
+                                              a1.value, Rules[a1.rule].ID);
                 count++;
             }
         }
-        nextItem = listItem->next;
+        nextItem = listItem.next;
         listItem = nextItem;
     }
     return count;
 }
 
 //=============================================================================
-
-int evaluatePremise(struct TPremise* p, double tStep)
+// struct TPremise* p, double tStep
+function evaluatePremise(p, tStep)
 //
 //  Input:   p = a control rule premise condition
 //           tStep = current time step (days)
-//  Output:  returns TRUE if the condition is true or FALSE otherwise
+//  Output:  returns true if the condition is true or false otherwise
 //  Purpose: evaluates the truth of a control rule premise condition.
 //
 {
-    double lhsValue, rhsValue;
-    int    result = FALSE;
+    let lhsValue, rhsValue;
+    let    result = false;
 
-    lhsValue = getVariableValue(p->lhsVar);
-    if ( p->value == MISSING ) rhsValue = getVariableValue(p->rhsVar);
-    else                       rhsValue = p->value;
-    if ( lhsValue == MISSING || rhsValue == MISSING ) return FALSE;
-    switch (p->lhsVar.attribute)
+    lhsValue = getVariableValue(p.lhsVar);
+    if ( p.value == MISSING ) rhsValue = getVariableValue(p.rhsVar);
+    else                       rhsValue = p.value;
+    if ( lhsValue == MISSING || rhsValue == MISSING ) return false;
+    switch (p.lhsVar.attribute)
     {
     case r_TIME:
     case r_CLOCKTIME:
-        return compareTimes(lhsValue, p->relation, rhsValue, tStep/2.0); 
+        return compareTimes(lhsValue, p.relation, rhsValue, tStep/2.0); 
     case r_TIMEOPEN:
     case r_TIMECLOSED:
-        result = compareTimes(lhsValue, p->relation, rhsValue, tStep/2.0);
+        result = compareTimes(lhsValue, p.relation, rhsValue, tStep/2.0);
         ControlValue = lhsValue * 24.0;  // convert time from days to hours
         return result;
     default:
-        return compareValues(lhsValue, p->relation, rhsValue);
+        return compareValues(lhsValue, p.relation, rhsValue);
     }
 }
 
 //=============================================================================
-
-double getVariableValue(struct TVariable v)
+// struct TVariable v
+function getVariableValue(v)
 {
-    int i = v.node;
-    int j = v.link;
+    let i = v.node;
+    let j = v.link;
 
     switch ( v.attribute )
     {
@@ -1059,128 +1086,136 @@ double getVariableValue(struct TVariable v)
 }
 
 //=============================================================================
-
-int compareTimes(double lhsValue, int relation, double rhsValue, double halfStep)
+// double lhsValue, int relation, double rhsValue, double halfStep
+function compareTimes(lhsValue, relation, rhsValue, halfStep)
 //
 //  Input:   lhsValue = date/time value on left hand side of relation
 //           relation = relational operator code (see RuleRelation enumeration)
 //           rhsValue = date/time value on right hand side of relation 
 //           halfStep = 1/2 the current time step (days)
-//  Output:  returns TRUE if time relation is satisfied
+//  Output:  returns true if time relation is satisfied
 //  Purpose: evaluates the truth of a relation between two date/times.
 //
 {
     if ( relation == EQ )
     {
         if ( lhsValue >= rhsValue - halfStep
-        &&   lhsValue < rhsValue + halfStep ) return TRUE;
-        return FALSE;
+        &&   lhsValue < rhsValue + halfStep ) return true;
+        return false;
     }
     else if ( relation == NE )
     {
         if ( lhsValue < rhsValue - halfStep
-        ||   lhsValue >= rhsValue + halfStep ) return TRUE;
-        return FALSE;
+        ||   lhsValue >= rhsValue + halfStep ) return true;
+        return false;
     }
     else return compareValues(lhsValue, relation, rhsValue);
 }
 
 //=============================================================================
-
-int compareValues(double lhsValue, int relation, double rhsValue)
+// double lhsValue, int relation, double rhsValue
+function compareValues(lhsValue, relation, rhsValue)
 //  Input:   lhsValue = value on left hand side of relation
 //           relation = relational operator code (see RuleRelation enumeration)
 //           rhsValue = value on right hand side of relation 
-//  Output:  returns TRUE if relation is satisfied
+//  Output:  returns true if relation is satisfied
 //  Purpose: evaluates the truth of a relation between two values.
 {
     SetPoint = rhsValue;
     ControlValue = lhsValue;
     switch (relation)
     {
-      case EQ: if ( lhsValue == rhsValue ) return TRUE; break;
-      case NE: if ( lhsValue != rhsValue ) return TRUE; break;
-      case LT: if ( lhsValue <  rhsValue ) return TRUE; break;
-      case LE: if ( lhsValue <= rhsValue ) return TRUE; break;
-      case GT: if ( lhsValue >  rhsValue ) return TRUE; break;
-      case GE: if ( lhsValue >= rhsValue ) return TRUE; break;
+      case EQ: if ( lhsValue == rhsValue ) return true; break;
+      case NE: if ( lhsValue != rhsValue ) return true; break;
+      case LT: if ( lhsValue <  rhsValue ) return true; break;
+      case LE: if ( lhsValue <= rhsValue ) return true; break;
+      case GT: if ( lhsValue >  rhsValue ) return true; break;
+      case GE: if ( lhsValue >= rhsValue ) return true; break;
     }
-    return FALSE;
+    return false;
 }
 
 //=============================================================================
-
-void clearActionList(void)
+// void
+function clearActionList()
 //
 //  Input:   none
 //  Output:  none
 //  Purpose: clears the list of actions to be executed.
 //
 {
-    struct TActionList* listItem;
+    //struct TActionList* listItem;
+    let listItem;
     listItem = ActionList;
     while ( listItem )
     {
-        listItem->action = NULL;
-        listItem = listItem->next;
+        listItem.action = null;
+        listItem = listItem.next;
     }
 }
 
 //=============================================================================
-
-void  deleteActionList(void)
+// void
+function  deleteActionList()
 //
 //  Input:   none
 //  Output:  none
 //  Purpose: frees the memory used to hold the list of actions to be executed.
 //
 {
-    struct TActionList* listItem;
-    struct TActionList* nextItem;
+    //struct TActionList* listItem;
+    //struct TActionList* nextItem;
+    let listItem;
+    let nextItem;
     listItem = ActionList;
     while ( listItem )
     {
-        nextItem = listItem->next;
+        nextItem = listItem.next;
         free(listItem);
         listItem = nextItem;
     }
-    ActionList = NULL;
+    ActionList = null;
 }
 
 //=============================================================================
-
-void  deleteRules(void)
+// void
+function  deleteRules()
 //
 //  Input:   none
 //  Output:  none
 //  Purpose: frees the memory used for all of the control rules.
 //
 {
-   struct TPremise* p;
-   struct TPremise* pnext;
-   struct TAction*  a;
-   struct TAction*  anext;
-   int r;
+   //struct TPremise* p;
+   //struct TPremise* pnext;
+   //struct TAction*  a;
+   //struct TAction*  anext;
+   let p;
+   let pnext;
+   let a;
+   let anext;
+   let r;
+
    for (r=0; r<RuleCount; r++)
    {
       p = Rules[r].firstPremise;
       while ( p )
       {
-         pnext = p->next;
+         pnext = p.next;
          free(p);
          p = pnext;
       }
       a = Rules[r].thenActions;
       while (a )
       {
-         anext = a->next;
+         anext = a.next;
          free(a);
          a = anext;
       }
       a = Rules[r].elseActions;
       while (a )
       {
-         anext = a->next;
+         anext = a.next;
          free(a);
          a = anext;
       }
@@ -1190,8 +1225,8 @@ void  deleteRules(void)
 }
 
 //=============================================================================
-
-int  findExactMatch(char *s, char *keyword[])
+// char *s, char *keyword[]
+function  findExactMatch(s, keyword)
 //
 //  Input:   s = character string
 //           keyword = array of keyword strings
@@ -1199,8 +1234,8 @@ int  findExactMatch(char *s, char *keyword[])
 //  Purpose: finds exact match between string and array of keyword strings.
 //
 {
-   int i = 0;
-   while (keyword[i] != NULL)
+   let i = 0;
+   while (keyword[i] != null)
    {
       if ( strcomp(s, keyword[i]) ) return(i);
       i++;

@@ -205,7 +205,7 @@ function routing_execute(routingModel, routingStep)
     currentDate = getDateTime(NewRoutingTime);                                 //
                                                                                //
     // --- evaluate control rules if next evluation time reached               //
-    if (RuleStep == 0 || fabs(NewRoutingTime - NewRuleTime) < 1.0)             //
+    if (RuleStep == 0 || Math.abs(NewRoutingTime - NewRuleTime) < 1.0)             //
     {                                                                          //   
         controls_evaluate(currentDate, currentDate - StartDateTime,            //
             routingStep / SECperDAY);                                          //
@@ -231,7 +231,7 @@ function routing_execute(routingModel, routingStep)
     NewRoutingTime = NewRoutingTime + 1000.0 * routingStep;
 
     // --- see if control rule evaluation time should be advanced              //(5.1.013)
-    if (fabs(NewRoutingTime - (NewRuleTime + 1000.0*RuleStep)) < 1)            //
+    if (Math.abs(NewRoutingTime - (NewRuleTime + 1000.0*RuleStep)) < 1)            //
         NewRuleTime += 1000.0 * RuleStep;                                      //
 
     // --- initialize mass balance totals for time step
@@ -293,7 +293,7 @@ function routing_execute(routingModel, routingStep)
         {
             if ( OldRoutingTime == 0.0
             ||   actionCount > 0
-            ||   fabs(stepFlowError) > SysFlowTol
+            ||   Math.abs(stepFlowError) > SysFlowTol
             ||   inflowHasChanged() ) inSteadyState = false;
             else inSteadyState = true;
         }
@@ -372,7 +372,7 @@ function addExternalInflows(currentDate)
             }
             else inflow = inflow.next;
         }
-        if ( fabs(q) < FLOW_TOL ) q = 0.0;
+        if ( Math.abs(q) < FLOW_TOL ) q = 0.0;
 
         // --- add flow inflow to node's lateral inflow
         Node[j].newLatFlow += q;
@@ -439,7 +439,7 @@ function addDryWeatherInflows(currentDate)
             }
             inflow = inflow.next;
         }
-        if ( fabs(q) < FLOW_TOL ) q = 0.0;
+        if ( Math.abs(q) < FLOW_TOL ) q = 0.0;
 
         // --- add flow inflow to node's lateral inflow
         Node[j].newLatFlow += q;
@@ -560,7 +560,7 @@ function addGroundwaterInflows(routingTime)
                 // add groundwater flow to lateral inflow
                 q = ( (1.0 - f)*(gw.oldFlow) + f*(gw.newFlow) )
                     * Subcatch[i].area;
-                if ( fabs(q) < FLOW_TOL ) continue;
+                if ( Math.abs(q) < FLOW_TOL ) continue;
                 Node[j].newLatFlow += q;
                 massbal_addInflowFlow(GROUNDWATER_INFLOW, q);
 
@@ -624,7 +624,7 @@ function addRdiiInflows(currentDate)
     {
         rdii_getRdiiFlow(i, j, q);
         if ( j < 0 ) continue;
-        if ( fabs(q) < FLOW_TOL ) continue;
+        if ( Math.abs(q) < FLOW_TOL ) continue;
         Node[j].newLatFlow += q;
         massbal_addInflowFlow(RDII_INFLOW, q);
 
@@ -664,7 +664,7 @@ function addIfaceInflows(currentDate)
         j = iface_getIfaceNode(i);
         if ( j < 0 ) continue;
         q = iface_getIfaceFlow(i);
-        if ( fabs(q) < FLOW_TOL ) continue;
+        if ( Math.abs(q) < FLOW_TOL ) continue;
         Node[j].newLatFlow += q;
         massbal_addInflowFlow(EXTERNAL_INFLOW, q);
 
@@ -702,18 +702,18 @@ function  inflowHasChanged()
     {
         qOld = Node[j].oldLatFlow;
         qNew = Node[j].newLatFlow;
-        if      ( fabs(qOld) > TINY ) diff = (qNew / qOld) - 1.0;
-        else if ( fabs(qNew) > TINY ) diff = 1.0;
+        if      ( Math.abs(qOld) > TINY ) diff = (qNew / qOld) - 1.0;
+        else if ( Math.abs(qNew) > TINY ) diff = 1.0;
         else                    diff = 0.0;
-        if ( fabs(diff) > LatFlowTol ) return true;
+        if ( Math.abs(diff) > LatFlowTol ) return true;
         if ( Node[j].type == OUTFALL || Node[j].degree == 0 )
         {
             qOld = Node[j].oldFlowInflow;
             qNew = Node[j].inflow;
-            if      ( fabs(qOld) > TINY ) diff = (qNew / qOld) - 1.0;
-            else if ( fabs(qNew) > TINY ) diff = 1.0;
+            if      ( Math.abs(qOld) > TINY ) diff = (qNew / qOld) - 1.0;
+            else if ( Math.abs(qNew) > TINY ) diff = 1.0;
             else                          diff = 0.0;
-            if ( fabs(diff) > LatFlowTol ) return true;
+            if ( Math.abs(diff) > LatFlowTol ) return true;
         }
     }
     return false;

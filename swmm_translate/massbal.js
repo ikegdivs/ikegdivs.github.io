@@ -738,7 +738,7 @@ function massbal_getRunoffError()
                    RunoffTotals.finalStorage +
                    RunoffTotals.finalSnowCover;
     RunoffTotals.pctError = 0.0;
-    if ( fabs(totalInflow - totalOutflow) < 1.0 )
+    if ( Math.abs(totalInflow - totalOutflow) < 1.0 )
     {
         RunoffTotals.pctError = TINY;
     }
@@ -787,7 +787,7 @@ function massbal_getLoadingError()
 
         // --- compute mass balance error
         LoadingTotals[j].pctError = 0.0;
-        if ( fabs(loadIn - loadOut) < 0.001 )
+        if ( Math.abs(loadIn - loadOut) < 0.001 )
         {
             LoadingTotals[j].pctError = TINY;
         }
@@ -846,7 +846,7 @@ function massbal_getGwaterError()
                    GwaterTotals.gwater +
                    GwaterTotals.finalStorage;
     GwaterTotals.pctError = 0.0;
-    if ( fabs(totalInflow - totalOutflow) < 1.0 )
+    if ( Math.abs(totalInflow - totalOutflow) < 1.0 )
     {
         GwaterTotals.pctError = TINY;
     }
@@ -894,15 +894,15 @@ function massbal_getFlowError()
 
     // --- find percent difference between total inflow and outflow
     FlowTotals.pctError = 0.0;
-    if ( fabs(totalInflow - totalOutflow) < 1.0 )
+    if ( Math.abs(totalInflow - totalOutflow) < 1.0 )
     {
         FlowTotals.pctError = TINY;
     }
-    else if ( fabs(totalInflow) > 0.0 )
+    else if ( Math.abs(totalInflow) > 0.0 )
     {
         FlowTotals.pctError = 100.0 * (1.0 - totalOutflow / totalInflow);
     }
-    else if ( fabs(totalOutflow) > 0.0 )
+    else if ( Math.abs(totalOutflow) > 0.0 )
     {
         FlowTotals.pctError = 100.0 * (totalInflow / totalOutflow - 1.0);
     }
@@ -944,7 +944,7 @@ function massbal_getQualError()
                        QualTotals[p].seepLoss +
                        QualTotals[p].finalStorage;
         QualTotals[p].pctError = 0.0;
-        if ( fabs(totalInflow - totalOutflow) < 0.001 )
+        if ( Math.abs(totalInflow - totalOutflow) < 0.001 )
         {
             QualTotals[p].pctError = TINY;
         }
@@ -958,7 +958,7 @@ function massbal_getQualError()
         }
 
         // --- update max. error among all pollutants
-        if ( fabs(QualTotals[p].pctError) > fabs(maxQualError) )
+        if ( Math.abs(QualTotals[p].pctError) > Math.abs(maxQualError) )
         {
             maxQualError = QualTotals[p].pctError;
         }
@@ -1022,9 +1022,9 @@ function massbal_getStepFlowError()
                    StepFlowTotals.evapLoss +
                    StepFlowTotals.seepLoss +
                    StepFlowTotals.reacted;
-    if ( fabs(totalInflow) > 0.0 )
+    if ( Math.abs(totalInflow) > 0.0 )
         return 1.0 - totalOutflow / totalInflow;
-    else if ( fabs(totalOutflow) > 0.0 )
+    else if ( Math.abs(totalOutflow) > 0.0 )
         return totalInflow / totalOutflow - 1.0;
     else return 0.0;
 }

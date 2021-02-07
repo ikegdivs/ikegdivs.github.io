@@ -1595,7 +1595,7 @@ int modpuls_solve(int n, double* x, double* xOld, double* xPrev,
             x[i] = MAX(x[i], xMin[i]);
 
             if ( omega > 0.0 &&
-                 fabs(x[i] - xPrev[i]) > xTol[i] ) canStop = 0;
+                 Math.abs(x[i] - xPrev[i]) > xTol[i] ) canStop = 0;
             xPrev[i] = x[i];
         }
 
