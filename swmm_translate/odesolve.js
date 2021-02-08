@@ -60,18 +60,25 @@ function odesolve_open(n)
 //-----------------------------------------------------------------------------
 function odesolve_close()
 {
-    if ( y ) free(y);
-    y = NULL;
+    /*if ( y ) free(y);
+    if (y) { y = []; }
+    y = null;
     if ( yscal ) free(yscal);
-    yscal = NULL;
+    yscal = null;
     if ( dydx ) free(dydx);
-    dydx = NULL;
+    dydx = null;
     if ( yerr ) free(yerr);
-    yerr = NULL;
+    yerr = null;
     if ( ytemp ) free(ytemp);
-    ytemp = NULL;
+    ytemp = null;
     if ( ak ) free(ak);
-    ak = NULL;
+    ak = null;*/
+    y = [];
+    yscal = [];
+    dydx = [];
+    yerr = [];
+    ytemp = [];
+    ak = [];
     nmax = 0;
 }
 

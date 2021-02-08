@@ -1106,11 +1106,11 @@ function createObjects()
     Event[NumEvents].end = BIG + 1.0;
 
     // --- create LID objects
-    //lid_create(Nobjects[LID], Nobjects[SUBCATCH]);
+    lid_create(Nobjects[LID], Nobjects[SUBCATCH]);
 
     // --- create control rules
-    //ErrorCode = controls_create(Nobjects[CONTROL]);
-    //if ( ErrorCode ) return;
+    ErrorCode = controls_create(Nobjects[CONTROL]);
+    if ( ErrorCode ) return;
 
     // --- create cross section transects
     ErrorCode = transect_create(Nobjects[TRANSECT]);
@@ -1120,7 +1120,7 @@ function createObjects()
     infil_create(Nobjects[SUBCATCH]);                                          //(5.1.015)
 
     // --- allocate memory for water quality state variables
-    /*for (let j = 0; j < Nobjects[SUBCATCH]; j++)
+    for (let j = 0; j < Nobjects[SUBCATCH]; j++)
     {
         Subcatch[j].initBuildup = new Array(Nobjects[POLLUT]);
         Subcatch[j].oldQual = new Array(Nobjects[POLLUT]);
@@ -1142,7 +1142,7 @@ function createObjects()
         Link[j].oldQual = new Array(Nobjects[POLLUT]);
         Link[j].newQual = new Array(Nobjects[POLLUT]);
         Link[j].totalLoad = new Array(Nobjects[POLLUT]);
-    }*/
+    }
 
     // --- allocate memory for land use buildup/washoff functions
     for (let j = 0; j < Nobjects[LANDUSE]; j++)

@@ -644,8 +644,13 @@ function getTempFileName(fname)
 }
 
 //=============================================================================
-
-function getElapsedTime(aDate, days, hrs, mins)
+//let returnObj = {days: d, hrs: h, mins: m}
+//getElapsedTime(aDate, returnObj)
+//d = returnObj.days
+//h = returnObj.hrs
+//m = returnObj.mins
+function getElapsedTime(aDate, inObj)
+// function getElapsedTime(aDate, days, hrs, mins)
 //
 //  Input:   aDate = simulation calendar date + time
 //  Output:  days, hrs, mins = elapsed days, hours & minutes for aDate
@@ -657,20 +662,20 @@ function getElapsedTime(aDate, days, hrs, mins)
     x = aDate - StartDateTime;
     if ( x <= 0.0 )
     {
-        days = 0;
-        hrs  = 0;
-        mins = 0;
+        inObj.days = 0;
+        inObj.hrs  = 0;
+        inObj.mins = 0;
     }
     else
     {
-        days = x;
+        inObj.days = x;
         //datetime_decodeTime(x, hrs, mins, secs);
         ////////////////////////////////////
-        let returnObj = {h: hrs, mins: m, s: secs}
+        let returnObj = {h: inObj.hrs, m: inObj.mins, s: secs}
         datetime_decodeTime(x, returnObj);
-        hrs = returnObj.h;
-        mins = returnObj.m;
-        secs = returnObj.s;
+        inObj.hrs = returnObj.h;
+        inObj.mins = returnObj.m;
+        inObj.secs = returnObj.s;
         ////////////////////////////////////
     }
 }

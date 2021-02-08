@@ -452,8 +452,8 @@ function lid_create(lidCount, subcatchCount)
     let j;
 
     //... assign null values to LID arrays
-    LidProcs = null;
-    LidGroups = null;
+    LidProcs = [];
+    LidGroups = [];
     LidCount = lidCount;
 
     //... create LID groups
@@ -462,7 +462,7 @@ function lid_create(lidCount, subcatchCount)
     {
         //LidGroups = (TLidGroup *) calloc(GroupCount, sizeof(TLidGroup));
         for(let i = 0; i < GroupCount; i++){LidGroups.push(new TLidGroup())}
-        if ( LidGroups == null )
+        if ( LidGroups.length == 0 )
         {
             ErrorCode = ERR_MEMORY;
             return;
@@ -1087,20 +1087,22 @@ function lid_writeSummary()
     let  lidUnit; //TLidUnit*
     let  lidList; // TLidList*
     let  lidGroup; //TLidGroup 
+    // String formatted values
+    let val1, val2, val3, val4, val5, val6
  
-    fprintf(Frpt.file, "\n");
-    fprintf(Frpt.file, "\n");
-    fprintf(Frpt.file, "\n  *******************");
-    fprintf(Frpt.file, "\n  LID Control Summary");
-    fprintf(Frpt.file, "\n  *******************");
+    Frpt.contents +=  `\n`;
+    Frpt.contents +=  `\n`;
+    Frpt.contents +=  `\n  *******************`;
+    Frpt.contents +=  `\n  LID Control Summary`;
+    Frpt.contents +=  `\n  *******************`;
 
 
-    fprintf(Frpt.file,
-"\n                                   No. of        Unit        Unit      %% Area    %% Imperv      %% Perv"); //(5.1.013)
-    fprintf(Frpt.file,                                                                                         //
-"\n  Subcatchment     LID Control      Units        Area       Width     Covered     Treated     Treated");    //
-    fprintf(Frpt.file,                                                                                         //
-"\n  ---------------------------------------------------------------------------------------------------");    //
+    Frpt.contents +=  
+`\n                                   No. of        Unit        Unit      %% Area    %% Imperv      %% Perv`; //(5.1.013)
+    Frpt.contents +=                                                                                           //
+`\n  Subcatchment     LID Control      Units        Area       Width     Covered     Treated     Treated`;    //
+    Frpt.contents +=                                                                                         //
+`\n  ---------------------------------------------------------------------------------------------------`;    //
 
     for (j = 0; j < GroupCount; j++)
     {
@@ -1112,11 +1114,16 @@ function lid_writeSummary()
             lidUnit = lidList.lidUnit;
             k = lidUnit.lidIndex;
             pctArea = lidUnit.area * lidUnit.number / Subcatch[j].area * 100.0;
-            fprintf(Frpt.file, "\n  %-16s %-16s", Subcatch[j].ID, LidProcs[k].ID);
-            fprintf(Frpt.file, "%6d  %10.2f  %10.2f  %10.2f  %10.2f  %10.2f",  //(5.1.013)
-                lidUnit.number, lidUnit.area * SQR(UCF(LENGTH)),
-                lidUnit.fullWidth * UCF(LENGTH), pctArea,
-                lidUnit.fromImperv*100.0, lidUnit.fromPerv*100.0);           //(5.1.013)
+            Frpt.contents += `\n  ${Subcatch[j].ID.padEnd(16, ' ')} ${LidProcs[k].ID.padEnd(16, ' ')}`
+
+            val1 = lidUnit.number.padStart(6, ' ')
+            val2 = (lidUnit.area * SQR(UCF(LENGTH))).toFixed(2).padStart(10, ' ')
+            val3 = (lidUnit.fullWidth * UCF(LENGTH)).toFixed(2).padStart(10, ' ')
+            val4 = pctArea.toFixed(2).padStart(10, ' ')
+            val5 = (lidUnit.fromImperv*100.0).toFixed(2).padStart(10, ' ')
+            val6 = (lidUnit.fromPerv*100.0).toFixed(2).padStart(10, ' ')
+            Frpt.contents += `%6d  %10.2f  %10.2f  %10.2f  %10.2f  %10.2f`  //(5.1.013)
+
             lidList = lidList.nextLidUnit;
         }
     }
@@ -2107,6 +2114,9 @@ function lid_writeWaterBalance()
     let  lidList; // TLidList*
     let  lidGroup; // TLidGroup
 
+    // String formatting values
+    let val1, val2, val3, val4, val5, val6, val7
+
     //... check that project has LIDs
     for ( j = 0; j < GroupCount; j++ )
     {
@@ -2115,22 +2125,22 @@ function lid_writeWaterBalance()
     if ( k == 0 ) return;
 
     //... write table header
-    fprintf(Frpt.file,
-    "\n"
-    +"\n  ***********************"
-    +"\n  LID Performance Summary"
-    +"\n  ***********************\n");
+    Frpt.contents +=
+    `\n`
+    +`\n  ***********************`
+    +`\n  LID Performance Summary`
+    +`\n  ***********************\n`;
 
-    fprintf(Frpt.file,
-"\n  --------------------------------------------------------------------------------------------------------------------"
-+"\n                                         Total      Evap     Infil   Surface    Drain    Initial     Final  Continuity"
-+"\n                                        Inflow      Loss      Loss   Outflow   Outflow   Storage   Storage       Error");
-    if ( UnitSystem == US ) fprintf(Frpt.file, 
-"\n  Subcatchment      LID Control             in        in        in        in        in        in        in           %%");
-    else fprintf(Frpt.file,
-+"\n  Subcatchment      LID Control             mm        mm        mm        mm        mm        mm        mm           %%");
-    fprintf(Frpt.file,
-+"\n  --------------------------------------------------------------------------------------------------------------------");
+    Frpt.contents +=
+`\n  --------------------------------------------------------------------------------------------------------------------`
++`\n                                         Total      Evap     Infil   Surface    Drain    Initial     Final  Continuity`
++`\n                                        Inflow      Loss      Loss   Outflow   Outflow   Storage   Storage       Error`;
+    if ( UnitSystem == US ) Frpt.contents +=
+`\n  Subcatchment      LID Control             in        in        in        in        in        in        in           %%`;
+    else Frpt.contents +=
++`\n  Subcatchment      LID Control             mm        mm        mm        mm        mm        mm        mm           %%`;
+    Frpt.contents +=
++`\n  --------------------------------------------------------------------------------------------------------------------`;
 
     //... examine each LID unit in each subcatchment
     for ( j = 0; j < GroupCount; j++ )
@@ -2143,16 +2153,19 @@ function lid_writeWaterBalance()
             //... write water balance components to report file
             lidUnit = lidList.lidUnit;
             k = lidUnit.lidIndex;
-            fprintf(Frpt.file, "\n  %-16s  %-16s", Subcatch[j].ID,
-                                                   LidProcs[k].ID);
-            fprintf(Frpt.file, "%10.2f%10.2f%10.2f%10.2f%10.2f%10.2f%10.2f",
-                    lidUnit.waterBalance.inflow*ucf,
-                    lidUnit.waterBalance.evap*ucf,
-                    lidUnit.waterBalance.infil*ucf,
-                    lidUnit.waterBalance.surfFlow*ucf,
-                    lidUnit.waterBalance.drainFlow*ucf,
-                    lidUnit.waterBalance.initVol*ucf,
-                    lidUnit.waterBalance.finalVol*ucf);
+
+            val1 = Subcatch[j].ID.padEnd(16, ' ')
+            val2 = LidProcs[k].ID.padEnd(16, ' ')
+            Frpt.contents += `\n  ${val1}  ${val2}`
+
+            val1 = (lidUnit.waterBalance.inflow*ucf).toFixed(2).padStart(10)
+            val2 = (lidUnit.waterBalance.evap*ucf).toFixed(2).padStart(10)
+            val3 = (lidUnit.waterBalance.infil*ucf).toFixed(2).padStart(10)
+            val4 = (lidUnit.waterBalance.surfFlow*ucf).toFixed(2).padStart(10)
+            val5 = (lidUnit.waterBalance.drainFlow*ucf).toFixed(2).padStart(10)
+            val6 = (lidUnit.waterBalance.initVol*ucf).toFixed(2).padStart(10)
+            val7 = (lidUnit.waterBalance.finalVol*ucf).toFixed(2).padStart(10)
+            Frpt.contents += `${val1}${val2}${val3}${val4}${val5}${val6}${val7}`
 
             //... compute flow balance error
             inflow = lidUnit.waterBalance.initVol + 
@@ -2164,7 +2177,7 @@ function lid_writeWaterBalance()
                       lidUnit.waterBalance.drainFlow;
             if ( inflow > 0.0 ) err = (inflow - outflow) / inflow;
             else                err = 1.0;
-            fprintf(Frpt.file, "  %10.2f", err*100.0);
+            Frpt.contents += `  ${(err*100.0).toFixed(2).padStart(10)}`;
             lidList = lidList.nextLidUnit;
         }
     }
@@ -2205,28 +2218,28 @@ function initLidRptFile(title, lidID, subcatchID, lidUnit)
         "  Content\t", "       mm"];
     let line9 = " ---------";
     let   i;
-    let f = lidUnit.rptFile.file; //FILE*
+    let f = lidUnit.rptFile.contents; //FILE*
 
     //... check that file was opened
     if ( f ==  null ) return;
 
     //... write title lines
-    fprintf(f, "SWMM5 LID Report File\n");
-    fprintf(f, "\nProject:  %s", title);
-    fprintf(f, "\nLID Unit: %s in Subcatchment %s\n", lidID, subcatchID);
+    f += "SWMM5 LID Report File\n"
+    f += "\nProject:  " + title;
+    f += "\nLID Unit: "+lidID+" in Subcatchment "+subcatchID+"\n"
 
     //... write column headings
-    for ( i = 0; i < colCount; i++) fprintf(f, "%s", head1[i]);
-    for ( i = 0; i < colCount; i++) fprintf(f, "%s", head2[i]);
+    for ( i = 0; i < colCount; i++) f += head1[i];
+    for ( i = 0; i < colCount; i++) f += head2[i];
     if (  UnitSystem == US )
     {
-        for ( i = 0; i < colCount; i++) fprintf(f, "%s", units1[i]);
+        for ( i = 0; i < colCount; i++) f += units1[i];
     }
-    else for ( i = 0; i < colCount; i++) fprintf(f, "%s", units2[i]);
-    fprintf(f, "\n----------- --------");
-    for ( i = 1; i < colCount; i++) fprintf(f, "\t%s", line9);
+    else for ( i = 0; i < colCount; i++) f += units2[i];
+    f += "\n----------- --------";
+    for ( i = 1; i < colCount; i++) f += "\t" + line9;
 
     //... initialize LID dryness state
     lidUnit.rptFile.wasDry = 1;
-    strcpy(lidUnit.rptFile.results, "");
+    lidUnit.rptFile.results = "";
 }

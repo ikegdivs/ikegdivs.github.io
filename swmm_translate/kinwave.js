@@ -46,7 +46,7 @@ var pXsect;
 //let returnObj = {qinflow: qin, qoutflow: qout}
 //let returnVal = kinwave_execute(j, returnObj, tStep);
 //qin  = returnObj.qinflow;
-//qout = returnObj.qoutnflow;
+//qout = returnObj.qoutflow;
 ////////////////////////////////////
 //=============================================================================
 // int j, double* qinflow, double* qoutflow, double tStep

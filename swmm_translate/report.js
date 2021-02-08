@@ -479,6 +479,9 @@ function report_writeRunoffError(totals, totalArea)
 //  Purpose: writes runoff continuity error to report file.
 //
 {
+    // Values for string translation
+    let val1 = 0;
+    let val2 = 0;
 
     if ( Frunoff.mode == USE_FILE )
     {
@@ -506,65 +509,65 @@ function report_writeRunoffError(totals, totalArea)
 
     if ( totals.initStorage > 0.0 )
     {
-        Frpt.contents += "\n  Initial LID Storage ......%14.3f%14.3f".format(
-            totals.initStorage * UCF(LENGTH) * UCF(LANDAREA),
-            totals.initStorage / totalArea * UCF(RAINDEPTH));
+        val1 = (totals.initStorage * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+        val2 = (totals.initStorage / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+        Frpt.contents += `\n  Initial LID Storage ......${val1}${val2}`;
     }
 
     if ( Nobjects[SNOWMELT] > 0 )
     {
-        Frpt.contents += "\n  Initial Snow Cover .......%14.3f%14.3f".format(
-            totals.initSnowCover * UCF(LENGTH) * UCF(LANDAREA),
-            totals.initSnowCover / totalArea * UCF(RAINDEPTH));
+        val1 = (totals.initSnowCover * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+        val2 = (totals.initSnowCover / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+        Frpt.contents += `\n  Initial Snow Cover .......${val1}${val2}`;
     }
 
-    Frpt.contents += "\n  Total Precipitation ......%14.3f%14.3f".format(
-            totals.rainfall * UCF(LENGTH) * UCF(LANDAREA),
-            totals.rainfall / totalArea * UCF(RAINDEPTH));
+    val1 = (totals.rainfall * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.rainfall / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Total Precipitation ......${val1}${val2}`;
 
     if ( totals.runon > 0.0 )
     {
-        Frpt.contents += "\n  Outfall Runon ............%14.3f%14.3f".format(
-            totals.runon * UCF(LENGTH) * UCF(LANDAREA),
-            totals.runon / totalArea * UCF(RAINDEPTH));
+        val1 = (totals.runon * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+        val2 = (totals.runon / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+        Frpt.contents += `\n  Outfall Runon ............${val1}${val2}`;
     }
 
-    Frpt.contents += "\n  Evaporation Loss .........%14.3f%14.3f".format(
-            totals.evap * UCF(LENGTH) * UCF(LANDAREA),
-            totals.evap / totalArea * UCF(RAINDEPTH));
+    val1 = (totals.evap * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.evap / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Evaporation Loss .........${val1}${val2}`
 
-    Frpt.contents += "\n  Infiltration Loss ........%14.3f%14.3f".format(
-            totals.infil * UCF(LENGTH) * UCF(LANDAREA),
-            totals.infil / totalArea * UCF(RAINDEPTH));
+    val1 = (totals.infil * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.infil / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Infiltration Loss ........${val1}${val2}`;
 
-    Frpt.contents += "\n  Surface Runoff ...........%14.3f%14.3f".format(
-            totals.runoff * UCF(LENGTH) * UCF(LANDAREA),
-            totals.runoff / totalArea * UCF(RAINDEPTH));
+    val1 = (totals.runoff * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.runoff / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Surface Runoff ...........${val1}${val2}`
 
     if ( totals.drains > 0.0 )
     {
-        Frpt.contents += "\n  LID Drainage .............%14.3f%14.3f".format(
-            totals.drains * UCF(LENGTH) * UCF(LANDAREA),
-            totals.drains / totalArea * UCF(RAINDEPTH));
+        val1 = (totals.drains * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+        val2 = (totals.drains / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+        Frpt.contents += `\n  LID Drainage .............${val1}${val2}`
     }
 
     if ( Nobjects[SNOWMELT] > 0 )
     {
-        Frpt.contents += "\n  Snow Removed .............%14.3f%14.3f".format(
-            totals.snowRemoved * UCF(LENGTH) * UCF(LANDAREA),
-            totals.snowRemoved / totalArea * UCF(RAINDEPTH));
-        Frpt.contents += "\n  Final Snow Cover .........%14.3f%14.3f".format(
-            totals.finalSnowCover * UCF(LENGTH) * UCF(LANDAREA),
-            totals.finalSnowCover / totalArea * UCF(RAINDEPTH));
+        val1 = (totals.snowRemoved * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+        val2 = (totals.snowRemoved / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+        Frpt.contents += `\n  Snow Removed .............${val1}${val2}`
+
+        val1 = (totals.finalSnowCover * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+        val2 = (totals.finalSnowCover / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+        Frpt.contents += `\n  Final Snow Cover .........${val1}${val2}`
     }
 
-    Frpt.contents += "\n  Final Storage ............%14.3f%14.3f".format(
-            totals.finalStorage * UCF(LENGTH) * UCF(LANDAREA),
-            totals.finalStorage / totalArea * UCF(RAINDEPTH));
+    val1 = (totals.finalStorage * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.finalStorage / totalArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Final Storage ............${val1}${val2}`
 
-    Frpt.contents += "\n  Continuity Error (%%) .....%14.3f".format(
-            totals.pctError);
-    WRITE("");
+    Frpt.contents += `\n  Continuity Error (%%) .....${totals.pctError}`
+    WRITE(``);
 }
 
 //=============================================================================
@@ -613,7 +616,7 @@ function report_LoadingErrors(p1, p2, totals)
     Frpt.contents += "\n  **************************";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14s".format(Pollut[p].ID);
+        Frpt.contents += Pollut[p].ID.padStart(14, ' ')
     }
     Frpt.contents += "\n  Runoff Quality Continuity ";
     for (p = p1; p <= p2; p++)
@@ -621,7 +624,7 @@ function report_LoadingErrors(p1, p2, totals)
         i = UnitSystem;
         if ( Pollut[p].units == COUNT ) i = 2;
         units = LoadUnitsWords[i];
-        Frpt.contents += "%14s".format(units);
+        Frpt.contents += units.padStart(14, ' ');
     }
     Frpt.contents += "\n  **************************";
     for (p = p1; p <= p2; p++)
@@ -632,47 +635,47 @@ function report_LoadingErrors(p1, p2, totals)
     Frpt.contents += "\n  Initial Buildup ..........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].initLoad*cf);
+        Frpt.contents += (totals[p].initLoad*cf).toFixed(3).padStart(14, ' ');
     }
     Frpt.contents += "\n  Surface Buildup ..........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].buildup*cf);
+        Frpt.contents += (totals[p].buildup*cf).toFixed(3).padStart(14, ' ');
     }
     Frpt.contents += "\n  Wet Deposition ...........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].deposition*cf);
+        Frpt.contents += (totals[p].deposition*cf).toFixed(3).padStart(14, ' ');
     }
     Frpt.contents += "\n  Sweeping Removal .........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].sweeping*cf);
+        Frpt.contents += (totals[p].sweeping*cf).toFixed(3).padStart(14, ' ');
     }
     Frpt.contents += "\n  Infiltration Loss ........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].infil*cf);
+        Frpt.contents += (totals[p].infil*cf).toFixed(3).padStart(14, ' ');
     }
     Frpt.contents += "\n  BMP Removal ..............";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].bmpRemoval*cf);
+        Frpt.contents += (totals[p].bmpRemoval*cf).toFixed(3).padStart(14, ' ');
     }
     Frpt.contents += "\n  Surface Runoff ...........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].runoff*cf);
+        Frpt.contents += (totals[p].runoff*cf).toFixed(3).padStart(14, ' ');
     }
     Frpt.contents += "\n  Remaining Buildup ........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].finalLoad*cf);
+        Frpt.contents += (totals[p].finalLoad*cf).toFixed(3).padStart(14, ' ');
     }
     Frpt.contents += "\n  Continuity Error (%%) .....";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(totals[p].pctError);
+        Frpt.contents += (totals[p].pctError).toFixed(3).padStart(14, ' ');
     }
     WRITE("");
 }
@@ -688,6 +691,10 @@ function report_writeGwaterError(totals, gwArea)
 //  Purpose: writes groundwater continuity error to report file.
 //
 {
+    // values for strings
+    let val1 = 0;
+    let val2 = 0;
+
     WRITE("");
     Frpt.contents += 
     "\n  **************************        Volume         Depth";
@@ -697,36 +704,36 @@ function report_writeGwaterError(totals, gwArea)
     "\n  Groundwater Continuity         hectare-m            mm";
     Frpt.contents += 
     "\n  **************************     ---------       -------";
-    Frpt.contents += "\n  Initial Storage ..........%14.3f%14.3f".format(
-            totals.initStorage * UCF(LENGTH) * UCF(LANDAREA),
-            totals.initStorage / gwArea * UCF(RAINDEPTH));
+    val1 = (totals.initStorage * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.initStorage / gwArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Initial Storage ..........${val1}${val2}`
 
-    Frpt.contents += "\n  Infiltration .............%14.3f%14.3f".format(
-            totals.infil * UCF(LENGTH) * UCF(LANDAREA),
-            totals.infil / gwArea * UCF(RAINDEPTH));
+    val1 = (totals.infil * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.infil / gwArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Infiltration .............${val1}${val2}`
 
-    Frpt.contents += "\n  Upper Zone ET ............%14.3f%14.3f".format(
-            totals.upperEvap * UCF(LENGTH) * UCF(LANDAREA),
-            totals.upperEvap / gwArea * UCF(RAINDEPTH));
+    val1 = (totals.upperEvap * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.upperEvap / gwArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Upper Zone ET ............${val1}${val2}`
+            
+    val1 = (totals.lowerEvap * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.lowerEvap / gwArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Lower Zone ET ............${val1}${val2}`
+            
+    val1 = (totals.lowerPerc * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.lowerPerc / gwArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Deep Percolation .........${val1}${val2}`
+            
+    val1 = (totals.gwater * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.gwater / gwArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Groundwater Flow .........${val1}${val2}`
+            
+    val1 = (totals.finalStorage * UCF(LENGTH) * UCF(LANDAREA)).toFixed(3).padStart(14, ' ');
+    val2 = (totals.finalStorage / gwArea * UCF(RAINDEPTH)).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Final Storage ............${val1}${val2}`
+            
+    Frpt.contents += `\n  Continuity Error (%%) .....${totals.pctError}`
 
-    Frpt.contents += "\n  Lower Zone ET ............%14.3f%14.3f".format(
-            totals.lowerEvap * UCF(LENGTH) * UCF(LANDAREA),
-            totals.lowerEvap / gwArea * UCF(RAINDEPTH));
-
-    Frpt.contents += "\n  Deep Percolation .........%14.3f%14.3f".format(
-            totals.lowerPerc * UCF(LENGTH) * UCF(LANDAREA),
-            totals.lowerPerc / gwArea * UCF(RAINDEPTH));
-
-    Frpt.contents += "\n  Groundwater Flow .........%14.3f%14.3f".format(
-            totals.gwater * UCF(LENGTH) * UCF(LANDAREA),
-            totals.gwater / gwArea * UCF(RAINDEPTH));
-
-    Frpt.contents += "\n  Final Storage ............%14.3f%14.3f".format(
-            totals.finalStorage * UCF(LENGTH) * UCF(LANDAREA),
-            totals.finalStorage / gwArea * UCF(RAINDEPTH));
-
-    Frpt.contents += "\n  Continuity Error (%%) .....%14.3f".format(
-            totals.pctError);
     WRITE("");
 }
 
@@ -740,6 +747,9 @@ function report_writeFlowError(totals)
 //
 {
     let ucf1, ucf2;
+
+    // String formatting variables
+    let val1, val2;
 
     ucf1 = UCF(LENGTH) * UCF(LANDAREA);
     if ( UnitSystem == US) ucf2 = MGDperCFS / SECperDAY;
@@ -755,41 +765,52 @@ function report_writeFlowError(totals)
     Frpt.contents += 
     "\n  **************************     ---------     ---------";
 
-    Frpt.contents += "\n  Dry Weather Inflow .......%14.3f%14.3f".format(
-            totals.dwInflow * ucf1, totals.dwInflow * ucf2);
+    val1 = (totals.dwInflow * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.dwInflow * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Dry Weather Inflow .......${val1}${val2}`
 
-    Frpt.contents += "\n  Wet Weather Inflow .......%14.3f%14.3f".format(
-            totals.wwInflow * ucf1, totals.wwInflow * ucf2);
+    val1 = (totals.wwInflow * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.wwInflow * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Wet Weather Inflow .......${val1}${val2}`
 
-    Frpt.contents += "\n  Groundwater Inflow .......%14.3f%14.3f".format(
-            totals.gwInflow * ucf1, totals.gwInflow * ucf2);
+    val1 = (totals.gwInflow * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.gwInflow * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Groundwater Inflow .......${val1}${val2}`
+    
+    val1 = (totals.iiInflow * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.iiInflow * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  RDII Inflow ..............${val1}${val2}`
 
-    Frpt.contents += "\n  RDII Inflow ..............%14.3f%14.3f".format(
-            totals.iiInflow * ucf1, totals.iiInflow * ucf2);
+    val1 = (totals.exInflow * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.exInflow * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  External Inflow ..........${val1}${val2}`
 
-    Frpt.contents += "\n  External Inflow ..........%14.3f%14.3f".format(
-            totals.exInflow * ucf1, totals.exInflow * ucf2);
+    val1 = (totals.outflow * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.outflow * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  External Outflow .........${val1}${val2}`
 
-    Frpt.contents += "\n  External Outflow .........%14.3f%14.3f".format(
-            totals.outflow * ucf1, totals.outflow * ucf2);
+    val1 = (totals.flooding * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.flooding * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Flooding Loss ............${val1}${val2}`
 
-    Frpt.contents += "\n  Flooding Loss ............%14.3f%14.3f".format(
-            totals.flooding * ucf1, totals.flooding * ucf2);
+    val1 = (totals.evapLoss * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.evapLoss * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Evaporation Loss .........${val1}${val2}`
 
-    Frpt.contents += "\n  Evaporation Loss .........%14.3f%14.3f".format(
-            totals.evapLoss * ucf1, totals.evapLoss * ucf2);
+    val1 = (totals.seepLoss * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.seepLoss * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Exfiltration Loss ........${val1}${val2}`
 
-    Frpt.contents += "\n  Exfiltration Loss ........%14.3f%14.3f".format(
-            totals.seepLoss * ucf1, totals.seepLoss * ucf2);
+    val1 = (totals.initStorage * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.initStorage * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Initial Stored Volume ....${val1}${val2}`
 
-    Frpt.contents += "\n  Initial Stored Volume ....%14.3f%14.3f".format(
-            totals.initStorage * ucf1, totals.initStorage * ucf2);
+    val1 = (totals.finalStorage * ucf1).toFixed(3).padStart(14, ' ');
+    val2 = (totals.finalStorage * ucf2).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Final Stored Volume ......${val1}${val2}`
 
-    Frpt.contents += "\n  Final Stored Volume ......%14.3f%14.3f".format(
-            totals.finalStorage * ucf1, totals.finalStorage * ucf2);
-
-    Frpt.contents += "\n  Continuity Error (%%) .....%14.3f".format(
-            totals.pctError);
+    val1 = (totals.pctError).toFixed(3).padStart(14, ' ');
+    Frpt.contents += `\n  Continuity Error (%%) .....${val1}`
     WRITE("");
 }
 
@@ -824,19 +845,23 @@ function report_QualErrors(p1, p2, QualTotals)
     let   p;
     let  units;
 
+    // String formatting variables
+    let val, val2;
+
     WRITE("");
     Frpt.contents += "\n  **************************";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14s".format(Pollut[p].ID);
+        Frpt.contents += Pollut[p].ID.padStart(14, ' ');
     }
     Frpt.contents += "\n  Quality Routing Continuity";
     for (p = p1; p <= p2; p++)
     {
         i = UnitSystem;
         if ( Pollut[p].units == COUNT ) i = 2;
-        strcpy(units, LoadUnitsWords[i]);
-        Frpt.contents += "%14s".format(units);
+        //strcpy(units, LoadUnitsWords[i]);
+        units = LoadUnitsWords[i];
+        Frpt.contents += units.padStart(14, ' ');
     }
     Frpt.contents += "\n  **************************";
     for (p = p1; p <= p2; p++)
@@ -847,73 +872,73 @@ function report_QualErrors(p1, p2, QualTotals)
     Frpt.contents += "\n  Dry Weather Inflow .......";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].dwInflow);
+        Frpt.contents += (QualTotals[p].dwInflow).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  Wet Weather Inflow .......";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].wwInflow);
+        Frpt.contents += (QualTotals[p].wwInflow).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  Groundwater Inflow .......";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].gwInflow);
+        Frpt.contents += (QualTotals[p].gwInflow).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  RDII Inflow ..............";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].iiInflow);
+        Frpt.contents += (QualTotals[p].iiInflow).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  External Inflow ..........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format( QualTotals[p].exInflow);
+        Frpt.contents += ( QualTotals[p].exInflow).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  External Outflow .........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].outflow);
+        Frpt.contents += (QualTotals[p].outflow).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  Flooding Loss ............";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].flooding);
+        Frpt.contents += (QualTotals[p].flooding).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  Exfiltration Loss ........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].seepLoss);
+        Frpt.contents += (QualTotals[p].seepLoss).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  Mass Reacted .............";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].reacted);
+        Frpt.contents += (QualTotals[p].reacted).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  Initial Stored Mass ......";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].initStorage);
+        Frpt.contents += (QualTotals[p].initStorage).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  Final Stored Mass ........";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].finalStorage);
+        Frpt.contents += (QualTotals[p].finalStorage).toFixed(3).padStart(14, ' ');
     }
 
     Frpt.contents += "\n  Continuity Error (%%) .....";
     for (p = p1; p <= p2; p++)
     {
-        Frpt.contents += "%14.3f".format(QualTotals[p].pctError);
+        Frpt.contents += (QualTotals[p].pctError).toFixed(3).padStart(14, ' ');
     }
     WRITE("");
 }
@@ -1016,6 +1041,7 @@ function report_writeSysStats(sysStats)
 //  Output:  none
 //  Purpose: writes simulation statistics for overall system to report file.
 //
+// ${sysStats.minTimeStep.toFixed(2).padStart(7, ' ')}
 {
     let x;
     let eventStepCount;  // Routing steps taken during reporting period   //(5.1.015)
@@ -1028,23 +1054,18 @@ function report_writeSysStats(sysStats)
     WRITE("Routing Time Step Summary");
     WRITE("*************************");
     Frpt.contents += 
-        "\n  Minimum Time Step           :  %7.2f sec".format(
-        sysStats.minTimeStep);
+        `\n  Minimum Time Step           :  ${sysStats.minTimeStep.toFixed(2).padStart(7, ' ')} sec`
     Frpt.contents += 
-        "\n  Average Time Step           :  %7.2f sec".format(
-        sysStats.avgTimeStep / eventStepCount);
+        `\n  Average Time Step           :  ${(sysStats.avgTimeStep / eventStepCount).toFixed(2).padStart(7, ' ')} sec`
     Frpt.contents += 
-        "\n  Maximum Time Step           :  %7.2f sec".format(
-        sysStats.maxTimeStep);
+        `\n  Maximum Time Step           :  ${sysStats.maxTimeStep.toFixed(2).padStart(7, ' ')} sec`
     x = (1.0 - sysStats.avgTimeStep * 1000.0 / NewRoutingTime) * 100.0;
     Frpt.contents += 
-        "\n  Percent in Steady State     :  %7.2f".format( MIN(x, 100.0));
+        `\n  Percent in Steady State     :  ${MIN(x, 100.0).toFixed(2).padStart(7, ' ')}`;
     Frpt.contents += 
-        "\n  Average Iterations per Step :  %7.2f".format(
-        sysStats.avgStepCount / eventStepCount);
+        `\n  Average Iterations per Step :  ${(sysStats.avgStepCount / eventStepCount).toFixed(2).padStart(7, ' ')}`
     Frpt.contents += 
-        "\n  Percent Not Converging      :  %7.2f".format(
-        100.0 * NonConvergeCount / eventStepCount);
+        `\n  Percent Not Converging      :  ${(100.0 * NonConvergeCount / eventStepCount).toFixed(2).padStart(7, ' ')}`
 
     // --- write grouped frequency table of variable routing time steps        //(5.1.015)
     if (RouteModel == DW && CourantFactor > 0.0)                               //

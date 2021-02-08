@@ -255,6 +255,11 @@ function datetime_decodeDate(date, inObj)
 //=============================================================================
 
 //function datetime_decodeTime(time, h, m, s)
+//let returnObj = {h: inObj.hrs, m: inObj.mins, s: secs}
+//datetime_decodeTime(x, returnObj);
+//inObj.hrs = returnObj.h;
+//inObj.mins = returnObj.m;
+//inObj.secs = returnObj.s;
 function datetime_decodeTime(time, inObj)
 //  Input:   time = decimal fraction of a day
 //  Output:  h = hour of day (0-23)

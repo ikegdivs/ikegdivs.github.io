@@ -153,7 +153,9 @@ function flowrout_execute(links, routingModel, tStep)
         // --- see if upstream node is a storage unit whose state needs updating
         j = links[i];
         n1 = Link[j].node1;
-        if ( Node[n1].type == STORAGE ) updateStorageState(n1, i, links, tStep);
+        if ( Node[n1].type == STORAGE ) {
+            updateStorageState(n1, i, links, tStep);
+        }
 
         // --- retrieve inflow at upstream end of link
         qin  = getLinkInflow(j, tStep);
@@ -164,7 +166,7 @@ function flowrout_execute(links, routingModel, tStep)
             returnObj = {qinflow: qin, qoutflow: qout}
             returnVal = steadyflow_execute(j, returnObj, tStep);
             qin  = returnObj.qinflow;
-            qout = returnObj.qoutnflow;
+            qout = returnObj.qoutflow;
             ////////////////////////////////////
             //steps += steadyflow_execute(j, qin, qout, tStep);
         }
@@ -173,7 +175,7 @@ function flowrout_execute(links, routingModel, tStep)
             returnObj = {qinflow: qin, qoutflow: qout}
             returnVal = kinwave_execute(j, returnObj, tStep);
             qin  = returnObj.qinflow;
-            qout = returnObj.qoutnflow;
+            qout = returnObj.qoutflow;
             ////////////////////////////////////
             //steps += kinwave_execute(j, qin, qout, tStep);
             steps += returnVal;
@@ -189,7 +191,7 @@ function flowrout_execute(links, routingModel, tStep)
     // --- update state of each non-updated node and link
     for ( j=0; j<Nobjects[NODE]; j++) setNewNodeState(j, tStep);
     for ( j=0; j<Nobjects[LINK]; j++) setNewLinkState(j);
-    return (int)(steps+0.5);
+    return steps+0.5;
 }
 
 //=============================================================================
@@ -745,7 +747,7 @@ function updateNodeDepth(i, y)
 //let returnObj = {qinflow: qin, qoutflow: qout}
 //let returnVal = steadyflow_execute(j, returnObj, tStep);
 //qin  = returnObj.qinflow;
-//qout = returnObj.qoutnflow;
+//qout = returnObj.qoutflow;
 ////////////////////////////////////
 //function steadyflow_execute(j, qin, qout, tStep)
 function steadyflow_execute(j, inObj, tStep)

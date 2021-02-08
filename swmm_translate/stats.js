@@ -54,9 +54,12 @@ var MAX_STATS = 5
 //static TMaxStats       MaxFlowTurns[MAX_STATS];
 //static double          SysOutfallFlow;
 var SysStats = new TSysStats();
-var MaxMassBalErrs = new TMaxStats();
-var MaxCourantCrit = new TMaxStats();
-var MaxFlowTurns = new TMaxStats();
+var MaxMassBalErrs = [];
+for(var i = 0; i < MAX_STATS; i++){MaxMassBalErrs.push(new TMaxStats())}
+var MaxCourantCrit = [];
+for(var i = 0; i < MAX_STATS; i++){MaxCourantCrit.push(new TMaxStats())}
+var MaxFlowTurns = [];
+for(var i = 0; i < MAX_STATS; i++){MaxFlowTurns.push(new TMaxStats())}
 var SysOutfallFlow;
 
 //-----------------------------------------------------------------------------
