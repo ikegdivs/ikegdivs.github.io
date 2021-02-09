@@ -435,6 +435,8 @@ function project_readOption(s1, s2)
     let strDate;
     let aTime;
     let aDate;
+
+    //return facilitators
     let returnObj;
     let returnVal;
 
@@ -718,7 +720,11 @@ function project_readOption(s1, s2)
                 tStep = s;
             }
         } else {
-            tStep = getDouble(s2)
+            ////////////////////////////////////
+            returnObj = {y: tStep}
+            returnVal = getDouble(s2, returnObj);
+            tStep = returnObj.y;
+            ////////////////////////////////////
         }
         if ( k == ROUTE_STEP )
         {
@@ -730,7 +736,13 @@ function project_readOption(s1, s2)
 
      // --- minimum variable time step for dynamic wave routing
       case MIN_ROUTE_STEP:
-        if ( ((MinRouteStep = getDouble(s2)) == null) || MinRouteStep < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: MinRouteStep}
+        returnVal = getDouble(s2, returnObj);
+        MinRouteStep = returnObj.y;
+        ////////////////////////////////////
+        if ( !returnVal || MinRouteStep < 0.0 )
+        //if ( !getDouble(s2, &MinRouteStep) || MinRouteStep < 0.0 )
             return error_setInpError(ERR_NUMBER, s2);
         break;
 
@@ -744,7 +756,13 @@ function project_readOption(s1, s2)
       //     dynamic wave flow routing (value of 0 indicates that variable
       //     time step option not used)
       case VARIABLE_STEP:
-        if ( (CourantFactor = getDouble(s2)) == null )
+        ////////////////////////////////////
+        returnObj = {y: CourantFactor}
+        returnVal = getDouble(s2, returnObj);
+        CourantFactor = returnObj.y;
+        ////////////////////////////////////
+        if ( !returnVal )
+        //if ( (CourantFactor = getDouble(s2)) == null )
             return error_setInpError(ERR_NUMBER, s2);
         if ( CourantFactor < 0.0 || CourantFactor > 2.0 )
             return error_setInpError(ERR_NUMBER, s2);
@@ -753,7 +771,13 @@ function project_readOption(s1, s2)
       // --- minimum surface area (ft2 or sq. meters) associated with nodes
       //     under dynamic wave flow routing 
       case MIN_SURFAREA:
-        if ((MinSurfArea = getDouble(s2)) == null)                                     //(5.1.013)
+        ////////////////////////////////////
+        returnObj = {y: MinSurfArea}
+        returnVal = getDouble(s2, returnObj);
+        MinSurfArea = returnObj.y;
+        ////////////////////////////////////
+        if ( !returnVal )
+        //if ((MinSurfArea = getDouble(s2)) == null)                                     //(5.1.013)
             return error_setInpError(ERR_NUMBER, s2);                          //(5.1.013)
         if (MinSurfArea < 0.0)                                                 //(5.1.013)
             return error_setInpError(ERR_NUMBER, s2);                          //(5.1.013)
@@ -761,7 +785,13 @@ function project_readOption(s1, s2)
 
       // --- minimum conduit slope (%)
       case MIN_SLOPE:
-        if ( (MinSlope = getDouble(s2) ) == null)
+        ////////////////////////////////////
+        returnObj = {y: MinSlope}
+        returnVal = getDouble(s2, returnObj);
+        MinSlope = returnObj.y;
+        ////////////////////////////////////
+        if ( !returnVal )
+        //if ( (MinSlope = getDouble(s2) ) == null)
             return error_setInpError(ERR_NUMBER, s2);
         if ( MinSlope < 0.0 || MinSlope >= 100 )
             return error_setInpError(ERR_NUMBER, s2);
@@ -777,7 +807,13 @@ function project_readOption(s1, s2)
 
       // --- head convergence tolerance for dynamic wave routing
       case HEAD_TOL:
-        if ( (HeadTol = getDouble(s2) ) == null)
+        ////////////////////////////////////
+        returnObj = {y: HeadTol}
+        returnVal = getDouble(s2, returnObj);
+        HeadTol = returnObj.y;
+        ////////////////////////////////////
+        if ( !returnVal )
+        //if ( (HeadTol = getDouble(s2) ) == null)
         {
             return error_setInpError(ERR_NUMBER, s2);
         }
@@ -785,7 +821,13 @@ function project_readOption(s1, s2)
 
       // --- steady state tolerance on system inflow - outflow
       case SYS_FLOW_TOL:
-        if ( (SysFlowTol = getDouble(s2) ) == null)
+        ////////////////////////////////////
+        returnObj = {y: SysFlowTol}
+        returnVal = getDouble(s2, returnObj);
+        SysFlowTol = returnObj.y;
+        ////////////////////////////////////
+        if ( !returnVal )
+        //if ( (SysFlowTol = getDouble(s2) ) == null)
         {
             return error_setInpError(ERR_NUMBER, s2);
         }
@@ -794,7 +836,13 @@ function project_readOption(s1, s2)
 
       // --- steady state tolerance on nodal lateral inflow
       case LAT_FLOW_TOL:
-        if ( (LatFlowTol = getDouble(s2) ) == null)
+        ////////////////////////////////////
+        returnObj = {y: LatFlowTol}
+        returnVal = getDouble(s2, returnObj);
+        LatFlowTol = returnObj.y;
+        ////////////////////////////////////
+        if ( !returnVal )
+        //if ( (LatFlowTol = getDouble(s2) ) == null)
         {
             return error_setInpError(ERR_NUMBER, s2);
         }

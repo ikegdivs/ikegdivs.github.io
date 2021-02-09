@@ -549,11 +549,12 @@ function freeLidGroup(j)
         if ( lidUnit.rptFile )
         {
             if ( lidUnit.rptFile.file ) fclose(lidUnit.rptFile.file);
-            free(lidUnit.rptFile);
+            lidUnit.rptFile = null;
         }
         nextLidUnit = lidList.nextLidUnit;
-        free(lidUnit);
-        free(lidList);
+        
+        lidUnit = null;
+        lidList = null;
         lidList = nextLidUnit;
     }
     lidGroup = [];
@@ -651,6 +652,10 @@ function lid_readGroupParams(toks, ntoks)
     let      fname = null;
     let        drainSubcatch = -1, drainNode = -1;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     //... check for valid number of input tokens
     if ( ntoks < 8 ) return error_setInpError(ERR_ITEMS, "");
 
@@ -670,7 +675,13 @@ function lid_readGroupParams(toks, ntoks)
     //... convert next 4 tokens to doubles
     for (i = 3; i <= 7; i++)
     {
-        if ( null == (x[i-3] = getDouble(toks[i])) || x[i-3] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i-3]}
+        returnVal = getDouble(toks[i], returnObj);
+        x[i-3] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i-3] < 0.0 )
+        //if ( null == (x[i-3] = getDouble(toks[i])) || x[i-3] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -696,7 +707,13 @@ function lid_readGroupParams(toks, ntoks)
     x[5] = 0.0;                                                                //
     if (ntoks >= 11)                                                           //
     {                                                                          //
-        if (null == (x[5] = getDouble(toks[10])) || x[5] < 0.0 || x[5] > 100.0)         //
+        ////////////////////////////////////
+        returnObj = {y: x[5]}
+        returnVal = getDouble(toks[10], returnObj);
+        x[5] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[5] < 0.0 || x[5] > 100.0 )
+        //if (null == (x[5] = getDouble(toks[10])) || x[5] < 0.0 || x[5] > 100.0)         //
             return error_setInpError(ERR_NUMBER, toks[10]);                    //
     }                                                                          //
 
@@ -813,7 +830,13 @@ function readSurfaceData(j, toks, ntoks)
     if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 2; i < 7; i++)
     {
-        if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i-2]}
+        returnVal = getDouble(toks[i], returnObj);
+        x[i-2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i-2] < 0.0 )
+        //if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
     if ( x[1] >= 1.0 ) return error_setInpError(ERR_NUMBER, toks[3]);           
@@ -846,24 +869,46 @@ function readPavementData(j, toks, ntoks)
     let    i;
     let x = new Array(7);                                                               //(5.1.013)
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 2; i < 7; i++)
     {
-        if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i-2]}
+        returnVal = getDouble(toks[i], returnObj);
+        x[i-2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i-2] < 0.0 )
+        //if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
     // ... read optional clogging regeneration properties                      //(5.1.013)
     x[5] = 0.0;                                                                //
     if (ntoks > 7)                                                             //
-    {                                                                          //
-        if (null == (x[5] = getDouble(toks[7])) || x[5] < 0.0)                          //
+    {                
+        ////////////////////////////////////
+        returnObj = {y: x[5]}
+        returnVal = getDouble(toks[7], returnObj);
+        x[5] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[5] < 0.0 )                                                          //
+        //if (null == (x[5] = getDouble(toks[7])) || x[5] < 0.0)                          //
             return error_setInpError(ERR_NUMBER, toks[7]);                     //
     }                                                                          //
     x[6] = 0.0;                                                                //
     if (ntoks > 8)                                                             //
     {                                                                          //
-        if (null == (x[6] = getDouble(toks[8])) || x[6] < 0.0 || x[6] > 1.0)            //
+        ////////////////////////////////////
+        returnObj = {y: x[6]}
+        returnVal = getDouble(toks[8], returnObj);
+        x[6] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[6] < 0.0 || x[6] > 1.0 )
+        //if (null == (x[6] = getDouble(toks[8])) || x[6] < 0.0 || x[6] > 1.0)            //
             return error_setInpError(ERR_NUMBER, toks[8]);                     //
     }                                                                          //
 
@@ -898,10 +943,20 @@ function readSoilData(j, toks, ntoks)
     let    i;
     let x = new Array(7);
 
+    //return facilitators
+    let returnObj;
+    let returnVal;
+
     if ( ntoks < 9 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 2; i < 9; i++)
     {
-        if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i-2]}
+        returnVal = getDouble(toks[i], returnObj);
+        x[i-2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i-2] < 0.0 )
+        //if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
     LidProcs[j].soil.thickness = x[0] / UCF(RAINDEPTH);
@@ -932,11 +987,21 @@ function readStorageData(j, toks, ntoks)
     let    i;
     let x = new Array(6);
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     //... read numerical parameters
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 2; i < 6; i++)
     {
-        if ( null == (x[i-2] = getDouble(toks[i]))  || x[i-2] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i-2]}
+        returnVal = getDouble(toks[i], returnObj);
+        x[i-2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i-2] < 0.0 )
+        //if ( null == (x[i-2] = getDouble(toks[i]))  || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -969,12 +1034,22 @@ function readDrainData(j, toks, ntoks)
     let    i;
     let x = new Array(6);                                                               //(5.1.013)
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     //... read numerical parameters
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     for (i = 0; i < 6; i++) x[i] = 0.0;                                        //(5.1.013)
     for (i = 2; i < 8; i++)                                                    //
     {
-        if ( ntoks > i && null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )      //(5.1.013)
+        ////////////////////////////////////
+        returnObj = {y: x[i-2]}
+        returnVal = getDouble(toks[i], returnObj);
+        x[i-2] = returnObj.y;
+        ////////////////////////////////////
+        if( ntoks > i && !returnVal || x[i-2] < 0.0 )
+        //if ( ntoks > i && null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )      //(5.1.013)
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -1014,12 +1089,22 @@ function readDrainMatData(j, toks, ntoks)
     let    i;
     let x = new Array(3);
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     //... read numerical parameters
     if ( ntoks < 5 ) return error_setInpError(ERR_ITEMS, "");
     if ( LidProcs[j].lidType != GREEN_ROOF ) return 0;
     for (i = 2; i < 5; i++)
     {
-        if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i-2]}
+        returnVal = getDouble(toks[i], returnObj);
+        x[i-2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i-2] < 0.0 )
+        //if ( null == (x[i-2] = getDouble(toks[i])) || x[i-2] < 0.0 )
             return error_setInpError(ERR_NUMBER, toks[i]);
     }
 
@@ -1051,6 +1136,10 @@ function readRemovalsData(j, toks, ntoks)
     let    p;
     let rmvl;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     //... start with 3rd token
     if (ntoks < 4) return error_setInpError(ERR_ITEMS, "");
     while (ntoks > i)
@@ -1064,7 +1153,13 @@ function readRemovalsData(j, toks, ntoks)
         if (ntoks == i) return error_setInpError(ERR_ITEMS, "");
 
         //... get the % removal value from the next token
-        if (!(rmvl = getDouble(toks[i])) || rmvl < 0.0 || rmvl > 100.0)
+        ////////////////////////////////////
+        returnObj = {y: rmvl}
+        returnVal = getDouble(toks[i], returnObj);
+        rmvl = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || rmvl < 0.0 || rmvl > 100.0 )
+        //if (!(rmvl = getDouble(toks[i])) || rmvl < 0.0 || rmvl > 100.0)
             return error_setInpError(ERR_NUMBER, toks[i]);
 
         //... save the pollutant removal for the LID process as a fraction

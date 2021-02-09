@@ -79,7 +79,13 @@ function snow_readMeltParams(tok, ntoks)
     // --- parse each parameter
     for (i=0; i<n; i++)
     {
-        if ( ! getDouble(tok[i+2], x[i]) )
+        ////////////////////////////////////
+        returnObj = {y: x[i]}
+        returnVal = getDouble(tok[i+2], returnObj);
+        x[i] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( ! getDouble(tok[i+2], x[i]) )
             return error_setInpError(ERR_NUMBER, tok[i+2]);
     }
 

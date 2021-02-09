@@ -99,6 +99,10 @@ function transect_readParams(count, tok, ntoks)
     let x = new Array(10);                      // parameter values
     let  id;                         // transect ID name
 
+    //return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- match first token to a transect keyword
     k = findmatch(tok[0], TransectKeyWords);
     if ( k < 0 ) return error_setInpError(ERR_KEYWORD, tok[0]);
@@ -116,7 +120,13 @@ function transect_readParams(count, tok, ntoks)
         if ( ntoks < 4 ) return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i <= 3; i++)
         {
-            if ( null == (x[i] = getDouble(tok[i])) )
+            ////////////////////////////////////
+            returnObj = {y: x[i]}
+            returnVal = getDouble(tok[i], returnObj);
+            x[i] = returnObj.y;
+            ////////////////////////////////////
+            if ( !returnVal )
+            //if ( null == (x[i] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         return setManning(x);
@@ -133,7 +143,13 @@ function transect_readParams(count, tok, ntoks)
         // --- read in rest of numerical values on data line
         for ( i = 2; i < 10; i++ )
         {
-            if ( null == (x[i] = getDouble(tok[i])) )
+            ////////////////////////////////////
+            returnObj = {y: x[i]}
+            returnVal = getDouble(tok[i], returnObj);
+            x[i] = returnObj.y;
+            ////////////////////////////////////
+            if ( !returnVal )
+            //if ( null == (x[i] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
 
@@ -153,9 +169,21 @@ function transect_readParams(count, tok, ntoks)
         i = 1;
         while ( i < ntoks )
         {
-            if ( null == (x[1] = getDouble(tok[i])) )
+            ////////////////////////////////////
+            returnObj = {y: x[1]}
+            returnVal = getDouble(tok[i], returnObj);
+            x[1] = returnObj.y;
+            ////////////////////////////////////
+            if ( !returnVal )
+            //if ( null == (x[1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
-            if ( (x[2] = getDouble(tok[i+1])) == null )
+            ////////////////////////////////////
+            returnObj = {y: x[2]}
+            returnVal = getDouble(tok[i+1], returnObj);
+            x[2] = returnObj.y;
+            ////////////////////////////////////
+            if ( !returnVal )
+            //if ( (x[2] = getDouble(tok[i+1])) == null )
                 return error_setInpError(ERR_NUMBER, tok[i+1]);
             errcode = addStation(x[1], x[2]);
             if ( errcode ) return errcode;

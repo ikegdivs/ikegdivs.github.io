@@ -161,7 +161,7 @@ function treatmnt_delete(j)
     {
         for (p=0; p<Nobjects[POLLUT]; p++)
             mathexpr_delete(Node[j].treatment[p].equation);
-        free(Node[j].treatment);
+        Node[j].treatment = null;
     }
     Node[j].treatment = null;
 }
@@ -403,6 +403,10 @@ function  getRemoval(p)
     //TTreatment* treatment;
     let treatment;
 
+    // return facilitators;
+    let returnObj;
+    let returnVal;
+
     // --- case where removal already being computed for another pollutant
     if ( R[p] > 1.0 || ErrCode )
     {
@@ -427,7 +431,74 @@ function  getRemoval(p)
 
     // --- apply treatment eqn.
     treatment = Node[J].treatment[p];
-    r = mathexpr_eval(treatment.equation, getVariableValue);
+    ////////////////////////////////////
+    returnObj = {expr: treatment.equation, getVariableValue: function (varCode)
+        //
+        //  Input:   varCode = code number of process variable or pollutant
+        //  Output:  returns current value of variable
+        //  Purpose: finds current value of a process variable or pollutant concen.,
+        //           making reference to the node being evaluated which is stored in
+        //           shared variable J.
+        //
+        {
+            let    p;
+            let a1, a2, y;
+            //TTreatment* treatment;
+            let treatment;
+        
+            // --- variable is a process variable
+            if ( varCode < PVMAX )
+            {
+                switch ( varCode )
+                {
+                  case pvHRT:                                 // HRT in hours
+                    if ( Node[J].type == STORAGE )
+                    {
+                        return Storage[Node[J].subIndex].hrt / 3600.0;
+                    }
+                    else return 0.0;
+        
+                  case pvDT:
+                    return Dt;                                // time step in seconds
+        
+                  case pvFLOW:
+                    return Q * UCF(FLOW);                     // flow in user's units
+        
+                  case pvDEPTH:
+                    y = (Node[J].oldDepth + Node[J].newDepth) / 2.0;
+                    return y * UCF(LENGTH);                   // depth in ft or m
+        
+                  case pvAREA:
+                    a1 = node_getSurfArea(J, Node[J].oldDepth);
+                    a2 = node_getSurfArea(J, Node[J].newDepth);
+                    return (a1 + a2) / 2.0 * UCF(LENGTH) * UCF(LENGTH);
+                    
+                  default: return 0.0;
+                }
+            }
+        
+            // --- variable is a pollutant concentration
+            else if ( varCode < PVMAX + Nobjects[POLLUT] )
+            {
+                p = varCode - PVMAX;
+                treatment = Node[J].treatment[p];
+                if ( treatment.treatType == REMOVAL ) return Cin[p];
+                return Node[J].newQual[p];
+            }
+        
+            // --- variable is a pollutant removal
+            else
+            {
+                p = varCode - PVMAX - Nobjects[POLLUT];
+                if ( p >= Nobjects[POLLUT] ) return 0.0;
+                return getRemoval(p);
+            }
+        }}
+    returnVal = mathexpr_eval(returnObj);
+    treatment.equation = returnObj.expr;
+    ////////////////////////////////////
+    r = returnVal;
+    //r = mathexpr_eval(treatment.equation, getVariableValue);
     r = MAX(0.0, r);
 
     // --- case where treatment eqn. is for removal

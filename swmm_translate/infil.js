@@ -218,6 +218,10 @@ function infil_readParams(m, tok, ntoks)
     let   i, j, n, status;
     let x = new Array(5);
 
+    //return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check that subcatchment exists
     j = project_findObject(SUBCATCH, tok[0]);
     if ( j < 0 ) return error_setInpError(ERR_NAME, tok[0]);
@@ -244,14 +248,26 @@ function infil_readParams(m, tok, ntoks)
     for (i = 0; i < 5; i++) x[i] = 0.0;
     for (i = 1; i < n; i++)
     {
-        if (null == (x[i - 1] = getDouble(tok[i])))
+        ////////////////////////////////////
+        returnObj = {y: x[i - 1]}
+        returnVal = getDouble(tok[i], returnObj);
+        x[i - 1] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal ) 
+        //if (null == (x[i - 1] = getDouble(tok[i])))
             return error_setInpError(ERR_NUMBER, tok[i]);
     }
 
     // --- special case for Horton infil. - last parameter is optional
     if ( (m == HORTON || m == MOD_HORTON) && ntoks > n )
     {
-        if ( null == (x[n-1] = getDouble(tok[n])))
+        ////////////////////////////////////
+        returnObj = {y: x[n-1]}
+        returnVal = getDouble(tok[n], returnObj);
+        x[n-1] = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal)
+        //if ( null == (x[n-1] = getDouble(tok[n])))
             return error_setInpError(ERR_NUMBER, tok[n]);
     }
 

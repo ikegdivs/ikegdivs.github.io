@@ -177,7 +177,14 @@ function report_writeLine(line)
 }
 
 //=============================================================================
+function format_time(s) {
+    const dtFormat = new Intl.DateTimeFormat('en-GB', {
+        timeStyle: 'medium',
+        timeZone: 'UTC'
+    });
 
+    return dtFormat.format(new Date(s * 1e3));
+}
 function report_writeSysTime()
 //
 //  Input:   none
@@ -190,10 +197,12 @@ function report_writeSysTime()
     let  endTime;
     if ( Frpt.contents )
     {
-        Frpt.contents += FMT20.format(ctime(SysTime));
+        //Frpt.contents += FMT20.format(ctime(SysTime));
+        Frpt.contents += format_time(SysTime);
         endTime = Math.floor(Date.now() / 1000);;
-        Frpt.contents += FMT20a.format(ctime(endTime));
-        elapsedTime = difftime(endTime, SysTime);
+        //Frpt.contents += FMT20a.format(ctime(endTime));
+        Frpt.contents += format_time(endTime);
+        elapsedTime = endTime - SysTime;
         Frpt.contents += FMT21;
         if ( elapsedTime < 1.0 ) Frpt.contents += "< 1 sec" //Frpt.contents += "< 1 sec");
         else
@@ -202,12 +211,12 @@ function report_writeSysTime()
             if (elapsedTime >= 1.0)
             {
                 //Frpt.contents += "%d.", floor(elapsedTime));
-                Frpt.contents += '%d'.format(elapsedTime)
+                Frpt.contents += `${elapsedTime}`
                 elapsedTime -= Math.floor(elapsedTime);
             }
             theTime = datetime_timeToStr(elapsedTime, theTime);
             //Frpt.contents += "%s", theTime);
-            Frpt.contents += '%s'.format(theTime)
+            Frpt.contents += `${theTime}`
         }
     }
 }
@@ -407,24 +416,24 @@ function report_writeRdiiStats(rainVol, rdiiVol)
     if ( UnitSystem == US) ucf2 = MGDperCFS / SECperDAY;
     else                   ucf2 = MLDperCFS / SECperDAY;
 
-    WRITE("");
+    WRITE(``);
     Frpt.contents +=
-    "\n  **********************           Volume        Volume";
+    `\n  **********************           Volume        Volume`;
     if ( UnitSystem == US) Frpt.contents +=
-    "\n  Rainfall Dependent I/I        acre-feet      10^6 gal";
+    `\n  Rainfall Dependent I/I        acre-feet      10^6 gal`;
     else Frpt.contents +=
-    "\n  Rainfall Dependent I/I        hectare-m      10^6 ltr";
+    `\n  Rainfall Dependent I/I        hectare-m      10^6 ltr`;
     Frpt.contents +=
-    "\n  **********************        ---------     ---------";
+    `\n  **********************        ---------     ---------`;
 
-    Frpt.contents += "\n  Sewershed Rainfall ......%14.3f%14.3f".format(rainVol * ucf1, rainVol * ucf2);
+    Frpt.contents += `\n  Sewershed Rainfall ......${(rainVol * ucf1).toFixed(3).padStart(14, ' ')}${(rainVol * ucf2).toFixed(3).padStart(14, ' ')}`
 
-    Frpt.contents += "\n  RDII Produced ...........%14.3f%14.3f".format(rdiiVol * ucf1, rdiiVol * ucf2);
+    Frpt.contents += `\n  RDII Produced ...........${(rdiiVol * ucf1).toFixed(3).padStart(14, ' ')}${(rdiiVol * ucf2).toFixed(3).padStart(14, ' ')}`
 
     if ( rainVol == 0.0 ) ratio = 0.0;
     else ratio = rdiiVol / rainVol;
-    Frpt.contents += "\n  RDII Ratio ..............%14.3f".format(ratio);
-    WRITE("");
+    Frpt.contents += `\n  RDII Ratio ..............${(ratio).toFixed(3).padStart(14, ' ')}`
+    WRITE(``);
 }
 
 
@@ -460,9 +469,13 @@ function   report_writeControlAction(aDate, linkID, value, ruleID)
     let     theTime;
     theDate = datetime_dateToStr(aDate, theDate);
     theTime = datetime_timeToStr(aDate, theTime);
+    let val1 = theDate.padStart(11, ' ')
+    let val2 = theTime.padStart(8, ' ')
+    let val3 = linkID
+    let val4 = value.toFixed(2).padStart(6)
+    let val5 = ruleID
     Frpt.contents +=
-            "  %11s: %8s Link %s setting changed to %6.2f by Control %s\n"
-                .format(theDate, theTime, linkID, value, ruleID);
+            `  ${val1}: ${val2} Link ${val3} setting changed to ${val5} by Control ${val5}\n`
 }
 
 
@@ -490,7 +503,7 @@ function report_writeRunoffError(totals, totalArea)
         "\n  **************************"
         +"\n  Runoff Quantity Continuity"
         +"\n  **************************"
-        +"\n  Runoff supplied by interface file %s".format(Frunoff.name);
+        +`\n  Runoff supplied by interface file ${Frunoff.name}`
         WRITE("");
         return;
     }
@@ -972,8 +985,7 @@ function report_writeMaxStats(maxMassBalErrs, maxCourantCrit, nMaxStats)
         {
             j = maxMassBalErrs[i].index;
             if ( j < 0 ) continue;
-            Frpt.contents += "\n  Node %s (%.2f%%)".format(
-                Node[j].ID, maxMassBalErrs[i].value);
+            Frpt.contents += `\n  Node "+Node[j].ID+" (${maxMassBalErrs[i].value.toFixed(2)}%%)`
         }
         WRITE("");
     }
@@ -990,9 +1002,9 @@ function report_writeMaxStats(maxMassBalErrs, maxCourantCrit, nMaxStats)
         if ( j < 0 ) continue;
         k++;
         if ( maxCourantCrit[i].objType == NODE )
-             Frpt.contents += "\n  Node %s".format(Node[j].ID);
-        else Frpt.contents += "\n  Link %s".format(Link[j].ID);
-        Frpt.contents += " (%.2f%%)".format(maxCourantCrit[i].value);
+             Frpt.contents += "\n  Node " + Node[j].ID;
+        else Frpt.contents += "\n  Link " + Link[j].ID;
+        Frpt.contents += ` (${maxCourantCrit[i].value.toFixed(2)}%%)`
     }
     if ( k == 0 ) Frpt.contents += "\n  None";
     WRITE("");
@@ -1026,8 +1038,7 @@ function report_writeMaxFlowTurns(flowTurns, nMaxStats)
         {
             j = flowTurns[i].index;
             if ( j < 0 ) continue;
-            Frpt.contents += "\n  Link %s (%.0f)".format(
-                Link[j].ID, flowTurns[i].value);
+            Frpt.contents += "\n  Link "+Link[j].ID+` (${flowTurns[i].value.toFixed(0)}%.0f)`
         }
     }
     WRITE("");
@@ -1090,11 +1101,13 @@ function report_RouteStepFreq(sysStats)
         totalSteps += sysStats.timeStepCounts[i];
     Frpt.contents += 
         "\n  Time Step Frequencies       :";
-    for (i = 1; i < TIMELEVELS; i++)
+    for (i = 1; i < TIMELEVELS; i++){
+        let val1 = sysStats.timeStepIntervals[i-1].toFixed(3).padStart(6, ' ')
+        let val2 = sysStats.timeStepIntervals[i].toFixed(3).padStart(6, ' ')
+        let val3 = (100.0 * (sysStats.timeStepCounts[i]) / totalSteps).toFixed(2).padStart(7, ' ')
         Frpt.contents += 
-            "\n     %6.3f - %6.3f sec      :  %7.2f %%".format(
-            sysStats.timeStepIntervals[i-1], sysStats.timeStepIntervals[i],
-            100.0 * (sysStats.timeStepCounts[i]) / totalSteps);
+            `\n     ${val1} - ${val2} sec      :  ${val3} %%`
+    }
 }
 
 
@@ -1157,22 +1170,21 @@ function report_Subcatchments()
                 theDate = datetime_dateToStr(days, theDate);
                 theTime = datetime_timeToStr(days, theTime);
                 output_readSubcatchResults(period, k);
-                Frpt.contents += "\n  %11s %8s %10.3f%10.3f%10.4f".format(
-                    theDate, theTime, SubcatchResults[SUBCATCH_RAINFALL],
-                    SubcatchResults[SUBCATCH_EVAP]/24.0 +
-                    SubcatchResults[SUBCATCH_INFIL],
-                    SubcatchResults[SUBCATCH_RUNOFF]);
+
+                let val1 = theDate.padStart(11, ' ')
+                let val2 = theTime.padStart(8, ' ')
+                let val3 = SubcatchResults[SUBCATCH_RAINFALL].toFixed(3).padStart(10, ' ')
+                let val4 = (SubcatchResults[SUBCATCH_EVAP]/24.0 + SubcatchResults[SUBCATCH_INFIL]).toFixed(3).padStart(10, ' ')
+                let val5 = SubcatchResults[SUBCATCH_RUNOFF].toFixed(4).padStart(10, ' ')
+                Frpt.contents += `\n  ${val1} ${val2} ${val3}${val4}${val5}`
                 if ( hasSnowmelt )
-                    Frpt.contents += "  %10.3f".format(
-                        SubcatchResults[SUBCATCH_SNOWDEPTH]);
+                    Frpt.contents += `  ${SubcatchResults[SUBCATCH_SNOWDEPTH].toFixed(3).padStart(10, ' ')}`
+                        
                 if ( hasGwater )
-                    Frpt.contents += "%10.3f%10.4f".format(
-                        SubcatchResults[SUBCATCH_GW_ELEV],
-                        SubcatchResults[SUBCATCH_GW_FLOW]);
+                    Frpt.contents += `${SubcatchResults[SUBCATCH_GW_ELEV].toFixed(3).padStart(10, ' ')}${SubcatchResults[SUBCATCH_GW_FLOW].toFixed(4).padStart(10, ' ')}`
                 if ( hasQuality )
                     for (p = 0; p < Nobjects[POLLUT]; p++)
-                        Frpt.contents += "%10.3f".format(
-                            SubcatchResults[SUBCATCH_WASHOFF+p]);
+                        Frpt.contents += SubcatchResults[SUBCATCH_WASHOFF+p].toFixed(3).padStart(10, ' ')
             }
             WRITE("");
             k++;
@@ -1196,7 +1208,7 @@ function  report_SubcatchHeader(id)
 
     // --- print top border of header
     WRITE("");
-    Frpt.contents += "\n  <<< Subcatchment %s >>>".format(id);
+    Frpt.contents += "\n  <<< Subcatchment "+id+" >>>"
     WRITE(LINE_51);
     if ( hasSnowmelt  > 0 ) Frpt.contents += LINE_12;
     if ( hasGwater )
@@ -1215,13 +1227,13 @@ function  report_SubcatchHeader(id)
     if ( hasSnowmelt ) Frpt.contents += "  Snow Depth";
     if ( hasGwater   ) Frpt.contents += "  GW Elev.   GW Flow";
     if ( hasQuality ) for (i = 0; i < Nobjects[POLLUT]; i++)
-        Frpt.contents += "%10s".format( Pollut[i].ID);
+        Frpt.contents += Pollut[i].ID.padStart(10, ' ');
 
     // --- print second line of column headings
     if ( UnitSystem == US ) Frpt.contents += 
-    "\n                            in/hr     in/hr %9s".format(FlowUnitWords[FlowUnits]);
+    `\n                            in/hr     in/hr ${FlowUnitWords[FlowUnits].padStart(9, ' ')}`
     else Frpt.contents += 
-    "\n                            mm/hr     mm/hr %9s".format(FlowUnitWords[FlowUnits]);
+    `\n                            mm/hr     mm/hr ${FlowUnitWords[FlowUnits].padStart(9, ' ')}`
     if ( hasSnowmelt )
     {
         if ( UnitSystem == US ) Frpt.contents += "      inches";
@@ -1230,12 +1242,12 @@ function  report_SubcatchHeader(id)
     if ( hasGwater )
     {
         if ( UnitSystem == US )
-            Frpt.contents += "      feet %9s".format(FlowUnitWords[FlowUnits]);
+            Frpt.contents += `      feet ${FlowUnitWords[FlowUnits].padStart(9, ' ')}`
         else
-            Frpt.contents += "    meters %9s".format(FlowUnitWords[FlowUnits]);
+            Frpt.contents += `    meters ${FlowUnitWords[FlowUnits].padStart(9, ' ')}`
     }
     if ( hasQuality ) for (i = 0; i < Nobjects[POLLUT]; i++)
-        Frpt.contents += "%10s".format(QualUnitsWords[Pollut[i].units]);
+        Frpt.contents += QualUnitsWords[Pollut[i].units].padStart(10, ' ')
 
     // --- print lower border of header
     WRITE(LINE_51);
@@ -1281,12 +1293,16 @@ function report_Nodes()
                 theDate = datetime_dateToStr(days, theDate);
                 theTime = datetime_timeToStr(days, theTime);
                 output_readNodeResults(period, k);
-                Frpt.contents += "\n  %11s %8s  %9.3f %9.3f %9.3f %9.3f".format(
-                    theDate, theTime, NodeResults[NODE_INFLOW],
-                    NodeResults[NODE_OVERFLOW], NodeResults[NODE_DEPTH],
-                    NodeResults[NODE_HEAD]);
+
+                let val1 = theDate.padStart(11, ' ')
+                let val2 = theTime.padStart(8, ' ')
+                let val3 = NodeResults[NODE_INFLOW].toFixed(3).padStart(9, ' ')
+                let val4 = NodeResults[NODE_OVERFLOW].toFixed(3).padStart(9, ' ')
+                let val5 = NodeResults[NODE_DEPTH].toFixed(3).padStart(9, ' ')
+                let val6 = NodeResults[NODE_HEAD].toFixed(3).padStart(9, ' ')
+                Frpt.contents += `\n  ${val1} ${val2}  ${val3} ${val4} ${val5} ${val6}`
                 if ( !IgnoreQuality ) for (p = 0; p < Nobjects[POLLUT]; p++)
-                    Frpt.contents += " %9.3f".format(NodeResults[NODE_QUAL + p]);
+                    Frpt.contents += NodeResults[NODE_QUAL + p].toFixed(3).padStart(9, ' ')
             }
             WRITE("");
             k++;
@@ -1306,22 +1322,25 @@ function  report_NodeHeader(id)
     let i;
     let lengthUnits;
     WRITE("");
-    Frpt.contents += "\n  <<< Node %s >>>".format(id);
+    Frpt.contents += "\n  <<< Node "+id+" >>>"
     WRITE(LINE_64);
     for (i = 0; i < Nobjects[POLLUT]; i++) Frpt.contents += LINE_10;
 
     Frpt.contents += 
     "\n                           Inflow  Flooding     Depth      Head";
     if ( !IgnoreQuality ) for (i = 0; i < Nobjects[POLLUT]; i++)
-        Frpt.contents += "%10s".format(Pollut[i].ID);
+        Frpt.contents += Pollut[i].ID.padStart(10, ' ')
     if ( UnitSystem == US) lengthUnits = "feet";
     else lengthUnits = "meters";
+
+    let val1 = FlowUnitWords[FlowUnits].padStart(9, ' ')
+    let val2 = FlowUnitWords[FlowUnits].padStart(9, ' ')
+    let val3 = lengthUnits.padStart(9, ' ')
+    let val4 = lengthUnits.padStart(9, ' ')
     Frpt.contents += 
-    "\n  Date        Time      %9s %9s %9s %9s".format(
-        FlowUnitWords[FlowUnits], FlowUnitWords[FlowUnits],
-        lengthUnits, lengthUnits);
+    `\n  Date        Time      ${val1} ${val2} ${val3} ${val4}`
     if ( !IgnoreQuality ) for (i = 0; i < Nobjects[POLLUT]; i++)
-        Frpt.contents += "%10s".format(QualUnitsWords[Pollut[i].units]);
+        Frpt.contents += QualUnitsWords[Pollut[i].units].padStart(10, ' ')
 
     WRITE(LINE_64);
     if ( !IgnoreQuality )
@@ -1360,12 +1379,16 @@ function report_Links()
                 theDate = datetime_dateToStr(days, theDate);
                 theTime = datetime_timeToStr(days, theTime);
                 output_readLinkResults(period, k);
-                Frpt.contents += "\n  %11s %8s  %9.3f %9.3f %9.3f %9.3f".format(
-                    theDate, theTime, LinkResults[LINK_FLOW],
-                    LinkResults[LINK_VELOCITY], LinkResults[LINK_DEPTH],
-                    LinkResults[LINK_CAPACITY]);
+
+                let val1 = theDate.padStart(11, ' ')
+                let val2 = theTime.padStart(8, ' ')
+                let val3 = LinkResults[LINK_FLOW].toFixed(3).padStart(9, ' ')
+                let val4 = LinkResults[LINK_VELOCITY].toFixed(3).padStart(9, ' ')
+                let val5 = LinkResults[LINK_DEPTH].toFixed(3).padStart(9, ' ')
+                let val6 = LinkResults[LINK_CAPACITY].toFixed(3).padStart(9, ' ')
+                Frpt.contents += `\n  ${val1} ${val2}  ${val3} ${val4} ${val5} ${val6}`
                 if ( !IgnoreQuality ) for (p = 0; p < Nobjects[POLLUT]; p++)
-                    Frpt.contents += " %9.3f".format(LinkResults[LINK_QUAL + p]);
+                    Frpt.contents += " " + LinkResults[LINK_QUAL + p].toFixed(3).padStart(9, ' ');
             }
             WRITE("");
             k++;
@@ -1384,25 +1407,24 @@ function  report_LinkHeader(id)
 {
     let i;
     WRITE("");
-    Frpt.contents += "\n  <<< Link %s >>>".format(id);
+    Frpt.contents += "\n  <<< Link "+id+" >>>";
     WRITE(LINE_64);
     for (i = 0; i < Nobjects[POLLUT]; i++) Frpt.contents += LINE_10;
 
     Frpt.contents += 
     "\n                             Flow  Velocity     Depth  Capacity/";
     if ( !IgnoreQuality ) for (i = 0; i < Nobjects[POLLUT]; i++)
-        Frpt.contents += "%10s".format(Pollut[i].ID);
+        Frpt.contents += Pollut[i].ID.padStart(10, ' ');
 
     if ( UnitSystem == US )
         Frpt.contents += 
-        "\n  Date        Time     %10s    ft/sec      feet   Setting ".format(
-        FlowUnitWords[FlowUnits]);
+        `\n  Date        Time     ${FlowUnitWords[FlowUnits].padStart(10, ' ')}    ft/sec      feet   Setting `;
     else
         Frpt.contents += 
-        "\n  Date        Time     %10s     m/sec    meters   Setting ".format(
-        FlowUnitWords[FlowUnits]);
+        `\n  Date        Time     ${FlowUnitWords[FlowUnits].padStart(10, ' ')}     m/sec    meters   Setting `;
+
     if ( !IgnoreQuality ) for (i = 0; i < Nobjects[POLLUT]; i++)
-        Frpt.contents += " %9s".format(QualUnitsWords[Pollut[i].units]);
+        Frpt.contents += " " + QualUnitsWords[Pollut[i].units].padStart(9, ' ');
 
     WRITE(LINE_64);
     if ( !IgnoreQuality )
@@ -1426,14 +1448,14 @@ function report_writeErrorMsg(code, s)
     if ( Frpt.contents )
     {
         WRITE("");
-        Frpt.contents += error_getMsg(code).format(s);
+        Frpt.contents += error_getMsg(code) + s;
     }
     ErrorCode = code;
 
     // --- save message to ErrorMsg if it's not for a line of input data
     if ( ErrorCode <= ERR_INPUT || ErrorCode >= ERR_FILE_NAME )
     {                                                
-        ErrorMsg = error_getMsg(ErrorCode).format(s);
+        ErrorMsg = error_getMsg(ErrorCode) + s;
     }
 }
 
@@ -1451,7 +1473,7 @@ function report_writeErrorCode()
         if ( (ErrorCode >= ERR_MEMORY && ErrorCode <= ERR_TIMESTEP)
         ||   (ErrorCode >= ERR_FILE_NAME && ErrorCode <= ERR_OUT_FILE)
         ||   (ErrorCode == ERR_SYSTEM) )
-            Frpt.contents += "%s".format(error_getMsg(ErrorCode));                 //(5.1.013)
+            Frpt.contents += error_getMsg(ErrorCode);                 //(5.1.013)
     }
 }
 
@@ -1470,9 +1492,9 @@ function report_writeInputErrorMsg(k, sect, line, lineCount)
     if ( Frpt.contents )
     {
         report_writeErrorMsg(k, ErrString);
-        if ( sect < 0 ) Frpt.contents += FMT17.format(lineCount);
-        else            Frpt.contents += FMT18.format(lineCount, SectWords[sect]);
-        Frpt.contents += "\n  %s".format(line);
+        if ( sect < 0 ) Frpt.contents += lineCount.toString();
+        else            Frpt.contents += lineCount.toString() + SectWords[sect];
+        Frpt.contents += "\n  " + line;
     }
 }
 
@@ -1486,7 +1508,7 @@ function report_writeWarningMsg(msg, id)
 //  Purpose: writes a warning message to the report file.
 //
 {
-    Frpt.contents += "\n  %s %s".format(msg, id);
+    Frpt.contents += "\n  "+msg+" "+ id;
     Warnings++;
 }
 
@@ -1509,7 +1531,7 @@ function report_writeTSeriesErrorMsg(code, tseries)
         theDate = datetime_dateToStr(x, theDate);
         theTime = datetime_timeToStr(x, theTime);
         report_writeErrorMsg(ERR_TIMESERIES_SEQUENCE, tseries.ID);
-        Frpt.contents += " at %s %s.".format(theDate, theTime);
+        Frpt.contents += " at "+theDate+" "+theTime+"."
     }
     else report_writeErrorMsg(code, tseries.ID);
 }

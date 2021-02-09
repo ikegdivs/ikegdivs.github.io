@@ -121,6 +121,10 @@ function link_readXsectParams(tok, ntoks)
     let    i, j, k;
     let x = new Array(4);
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- get index of link
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     j = project_findObject(LINK, tok[0]);
@@ -149,7 +153,13 @@ function link_readXsectParams(tok, ntoks)
         // --- parse max. depth & shape curve for a custom shape
         if ( k == CUSTOM )
         {
-            if ( null == (x[0] = getDouble(tok[2])) || x[0] <= 0.0 )
+            ////////////////////////////////////
+            returnObj = {y: x[0]}
+            returnVal = getDouble(tok[2], returnObj);
+            x[0] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal || x[0] <= 0.0 )
+            //if ( null == (x[0] = getDouble(tok[2])) || x[0] <= 0.0 )
                return error_setInpError(ERR_NUMBER, tok[2]);
             i = project_findObject(CURVE, tok[3]);
             if ( i < 0 ) return error_setInpError(ERR_NAME, tok[3]);
@@ -161,7 +171,13 @@ function link_readXsectParams(tok, ntoks)
         // --- parse and save geometric parameters
         else for (i = 2; i <= 5; i++)
         {
-            if ( null == ( x[i-2] = getDouble(tok[i])) )
+            ////////////////////////////////////
+            returnObj = {y: x[i-2]}
+            returnVal = getDouble(tok[i], returnObj);
+            x[i-2] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal )
+            //if ( null == ( x[i-2] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
 
@@ -213,12 +229,22 @@ function link_readLossParams(tok, ntoks)
     let x = new Array(3);
     let seepRate = 0.0;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     if ( ntoks < 4 ) return error_setInpError(ERR_ITEMS, "");
     j = project_findObject(LINK, tok[0]);
     if ( j < 0 ) return error_setInpError(ERR_NAME, tok[0]);
     for (i=1; i<=3; i++)
     {
-        if ( null == (x[i-1] = getDouble(tok[i])) || x[i-1] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i-1]}
+        returnVal = getDouble(tok[i], returnObj);
+        x[i-1] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i-1] < 0.0 )
+        //if ( null == (x[i-1] = getDouble(tok[i])) || x[i-1] < 0.0 )
         return error_setInpError(ERR_NUMBER, tok[i]);
     }
     k = 0;
@@ -229,8 +255,14 @@ function link_readLossParams(tok, ntoks)
     }
     if ( ntoks >= 6 )
     {
-        if ( null == (seepRate = getDouble(tok[5])) )
-        return error_setInpError(ERR_NUMBER, tok[5]);
+        ////////////////////////////////////
+        returnObj = {y: seepRate}
+        returnVal = getDouble(tok[5], returnObj);
+        seepRate = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (seepRate = getDouble(tok[5])) )
+            return error_setInpError(ERR_NUMBER, tok[5]);
     }
     Link[j].cLossInlet   = x[0];
     Link[j].cLossOutlet  = x[1];
@@ -873,6 +905,10 @@ function  conduit_readParams(j, k, tok, ntoks)
     let x = new Array(6);
     let id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for valid ID and end node IDs
     if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);                // link ID
@@ -883,31 +919,71 @@ function  conduit_readParams(j, k, tok, ntoks)
     if ( n2 < 0 ) return error_setInpError(ERR_NAME, tok[2]);
 
     // --- parse length & Mannings N
-    if ( null == (x[0] = getDouble(tok[3])) )
+    ////////////////////////////////////
+    returnObj = {y: x[0]}
+    returnVal = getDouble(tok[3], returnObj);
+    x[0] = returnObj.y;
+    ////////////////////////////////////
+    if( !returnVal )
+    //if ( null == (x[0] = getDouble(tok[3])) )
         return error_setInpError(ERR_NUMBER, tok[3]);
-    if ( null == (x[1] = getDouble(tok[4])) )
+    ////////////////////////////////////
+    returnObj = {y: x[1]}
+    returnVal = getDouble(tok[4], returnObj);
+    x[1] = returnObj.y;
+    ////////////////////////////////////
+    if( !returnVal )
+    //if ( null == (x[1] = getDouble(tok[4])) )
         return error_setInpError(ERR_NUMBER, tok[4]);
 
     // --- parse offsets
     if ( LinkOffsets == ELEV_OFFSET && tok[5] == '*' ) x[2] = MISSING;
-    else if ( null == (x[2] = getDouble(tok[5])) )
-        return error_setInpError(ERR_NUMBER, tok[5]);
+    else{
+        ////////////////////////////////////
+        returnObj = {y: x[2]}
+        returnVal = getDouble(tok[5], returnObj);
+        x[2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[2] = getDouble(tok[5])) )
+            return error_setInpError(ERR_NUMBER, tok[5]);
+    } 
     if ( LinkOffsets == ELEV_OFFSET && tok[6] == '*' ) x[3] = MISSING;
-    else if ( null == (x[3] = getDouble(tok[6])) )
-        return error_setInpError(ERR_NUMBER, tok[6]);
+    else{
+        ////////////////////////////////////
+        returnObj = {y: x[3]}
+        returnVal = getDouble(tok[6], returnObj);
+        x[3] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[3] = getDouble(tok[6])) )
+            return error_setInpError(ERR_NUMBER, tok[6]);
+    }
 
    // --- parse optional parameters
     x[4] = 0.0;                                       // init. flow
     if ( ntoks >= 8 )
     {
-        if ( null == (x[4] = getDouble(tok[7])) )
-        return error_setInpError(ERR_NUMBER, tok[7]);
+        ////////////////////////////////////
+        returnObj = {y: x[4]}
+        returnVal = getDouble(tok[7], returnObj);
+        x[4] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[4] = getDouble(tok[7])) )
+            return error_setInpError(ERR_NUMBER, tok[7]);
     }
     x[5] = 0.0;
     if ( ntoks >= 9 )
     {
-        if ( null == (x[5] = getDouble(tok[8])) )
-        return error_setInpError(ERR_NUMBER, tok[8]);
+        ////////////////////////////////////
+        returnObj = {y: x[5]}
+        returnVal = getDouble(tok[8], returnObj);
+        x[5] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[5] = getDouble(tok[8])) )
+            return error_setInpError(ERR_NUMBER, tok[8]);
     }
 
     // --- add parameters to data base
@@ -1334,6 +1410,10 @@ function  pump_readParams(j, k, tok, ntoks)
     let x = new Array(4);
     let  id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for valid ID and end node IDs
     if ( ntoks < 3 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);
@@ -1368,14 +1448,26 @@ function  pump_readParams(j, k, tok, ntoks)
     x[2] = 0.0;
     if ( ntoks >= 6 )
     {
-        if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0)
+        ////////////////////////////////////
+        returnObj = {y: x[2]}
+        returnVal = getDouble(tok[5], returnObj);
+        x[2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[2] < 0.0)
+        //if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0)
         return error_setInpError(ERR_NUMBER, tok[5]);
     }
     x[3] = 0.0;
     if ( ntoks >= 7 )
     {
-        if ( null == (x[3] = getDouble(tok[6])) || x[3] < 0.0 )
-        return error_setInpError(ERR_NUMBER, tok[6]);
+        ////////////////////////////////////
+        returnObj = {y: x[3]}
+        returnVal = getDouble(tok[6], returnObj);
+        x[3] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[3] < 0.0 )
+        //if ( null == (x[3] = getDouble(tok[6])) || x[3] < 0.0 )
+            return error_setInpError(ERR_NUMBER, tok[6]);
     }
 
     // --- add parameters to pump object
@@ -1569,6 +1661,10 @@ function  orifice_readParams(j, k, tok, ntoks)
     let  x = new Array(5);
     let  id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for valid ID and end node IDs
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);
@@ -1583,9 +1679,23 @@ function  orifice_readParams(j, k, tok, ntoks)
     if ( m < 0 ) return error_setInpError(ERR_KEYWORD, tok[3]);
     x[0] = m;                                              // type
     if ( LinkOffsets == ELEV_OFFSET && tok[4] == '*' ) x[1] = MISSING;
-    else if ( null == (x[1] = getDouble(tok[4])) )                 // crest height
-        return error_setInpError(ERR_NUMBER, tok[4]);
-    if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch
+    else {
+        ////////////////////////////////////
+        returnObj = {y: x[3]}
+        returnVal = getDouble(tok[4], returnObj);
+        x[3] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[3] < 0.0 )
+        //if ( null == (x[1] = getDouble(tok[4])) )                 // crest height
+            return error_setInpError(ERR_NUMBER, tok[4]);
+    }
+    ////////////////////////////////////
+    returnObj = {y: x[2]}
+    returnVal = getDouble(tok[5], returnObj);
+    x[2] = returnObj.y;
+    ////////////////////////////////////
+    if( !returnVal || x[2] < 0.0 )
+    //if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch
         return error_setInpError(ERR_NUMBER, tok[5]);
     x[3] = 0.0;
     if ( ntoks >= 7 )
@@ -1597,7 +1707,13 @@ function  orifice_readParams(j, k, tok, ntoks)
     x[4] = 0.0;
     if ( ntoks >= 8 )
     {
-        if ( null == (x[4] = getDouble(tok[7])) || x[4] < 0.0 )    // orate
+        ////////////////////////////////////
+        returnObj = {y: x[4]}
+        returnVal = getDouble(tok[7], returnObj);
+        x[4] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[4] < 0.0 )
+        //if ( null == (x[4] = getDouble(tok[7])) || x[4] < 0.0 )    // orate
             return error_setInpError(ERR_NUMBER, tok[7]);
     }
 
@@ -1938,6 +2054,10 @@ function   weir_readParams(j, k, tok, ntoks)
     let x = new Array(10);                                                              //(5.1.013)
     let id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for valid ID and end node IDs
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);
@@ -1952,9 +2072,23 @@ function   weir_readParams(j, k, tok, ntoks)
     if ( m < 0 ) return error_setInpError(ERR_KEYWORD, tok[3]);
     x[0] = m;                                              // type
     if ( LinkOffsets == ELEV_OFFSET && tok[4] == '*' ) x[1] = MISSING;
-    else if ( null == (x[1] = getDouble(tok[4])) )                 // height
-        return error_setInpError(ERR_NUMBER, tok[4]);
-    if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch1
+    else {
+        ////////////////////////////////////
+        returnObj = {y: x[1]}
+        returnVal = getDouble(tok[4], returnObj);
+        x[1] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[1] = getDouble(tok[4])) )                 // height
+            return error_setInpError(ERR_NUMBER, tok[4]);
+    }
+    ////////////////////////////////////
+    returnObj = {y: x[2]}
+    returnVal = getDouble(tok[5], returnObj);
+    x[2] = returnObj.y;
+    ////////////////////////////////////
+    if( !returnVal || x[2] < 0.0 )
+    //if ( null == (x[2] = getDouble(tok[5])) || x[2] < 0.0 )        // cDisch1
         return error_setInpError(ERR_NUMBER, tok[5]);
     x[3] = 0.0;
     x[4] = 0.0;
@@ -1971,12 +2105,24 @@ function   weir_readParams(j, k, tok, ntoks)
     }
     if ( ntoks >= 8 && tok[7] != '*' ) 
     {
-        if ( null == (x[4] = getDouble(tok[7])) || x[4] < 0.0 )     // endCon
+        ////////////////////////////////////
+        returnObj = {y: x[4]}
+        returnVal = getDouble(tok[7], returnObj);
+        x[4] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[4] < 0.0 )
+        //if ( null == (x[4] = getDouble(tok[7])) || x[4] < 0.0 )     // endCon
             return error_setInpError(ERR_NUMBER, tok[7]);
     }
     if ( ntoks >= 9 && tok[8] != '*' )
     {
-        if ( null == ( x[5] = getDouble(tok[8])) || x[5] < 0.0 )     // cDisch2
+        ////////////////////////////////////
+        returnObj = {y: x[5]}
+        returnVal = getDouble(tok[8], returnObj);
+        x[5] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[5] < 0.0 )
+        //if ( null == ( x[5] = getDouble(tok[8])) || x[5] < 0.0 )     // cDisch2
             return error_setInpError(ERR_NUMBER, tok[8]);
     }
 
@@ -1991,7 +2137,13 @@ function   weir_readParams(j, k, tok, ntoks)
     {
         if ( ntoks >= 11 )                                  // road width
         {
-            if ( null == (x[7] = getDouble(tok[10])) || x[7] < 0.0 ) 
+            ////////////////////////////////////
+            returnObj = {y: x[7]}
+            returnVal = getDouble(tok[10], returnObj);
+            x[7] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal || x[7] < 0.0 )
+            //if ( null == (x[7] = getDouble(tok[10])) || x[7] < 0.0 ) 
                 return error_setInpError(ERR_NUMBER, tok[10]);
         }
         if ( ntoks >= 12 )                                  // road surface
@@ -2453,6 +2605,10 @@ function outlet_readParams(j, k, tok, ntoks)
     let  id;
     let  s;
 
+    //return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for valid ID and end node IDs
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LINK, tok[0]);
@@ -2466,7 +2622,13 @@ function outlet_readParams(j, k, tok, ntoks)
     if ( LinkOffsets == ELEV_OFFSET && tok[3] == '*' ) x[0] = MISSING;
     else
     {
-        if ( null == (x[0] = getDouble(tok[3])) )
+        ////////////////////////////////////
+        returnObj = {y: x[0]}
+        returnVal = getDouble(tok[3], returnObj);
+        x[0] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[0] = getDouble(tok[3])) )
             return error_setInpError(ERR_NUMBER, tok[3]);
 	if ( LinkOffsets == DEPTH_OFFSET && x[0] < 0.0 ) x[0] = 0.0;
     }
@@ -2489,9 +2651,21 @@ function outlet_readParams(j, k, tok, ntoks)
     if ( m == FUNCTIONAL )
     {
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
-        if ( null == (x[1] = getDouble(tok[5])) )
+        ////////////////////////////////////
+        returnObj = {y: x[1]}
+        returnVal = getDouble(tok[5], returnObj);
+        x[1] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[1] = getDouble(tok[5])) )
             return error_setInpError(ERR_NUMBER, tok[5]);
-        if ( null == (x[2] = getDouble(tok[6])) )
+        ////////////////////////////////////
+        returnObj = {y: x[2]}
+        returnVal = getDouble(tok[6], returnObj);
+        x[2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[2] = getDouble(tok[6])) )
             return error_setInpError(ERR_NUMBER, tok[6]);
         n = 7;
     }

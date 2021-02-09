@@ -117,6 +117,10 @@ function  node_validate(j)
 {
     let inflow = new TDwfInflow();
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- see if full depth was increased to accommodate conduit crown
     if ( Node[j].fullDepth > Node[j].oldDepth && Node[j].oldDepth > 0.0 )
     {
@@ -138,7 +142,13 @@ function  node_validate(j)
     inflow = Node[j].dwfInflow;
     while (inflow)
     {
-        inflow_initDwfInflow(inflow);
+        ////////////////////////////////////
+        returnObj = {inflow: inflow}
+        returnVal = inflow_initDwfInflow(inObj)
+        inflow = returnObj.inflow;
+        ////////////////////////////////////
+
+        //inflow_initDwfInflow(inflow);
         inflow = inflow.next;
     }
 }
@@ -530,6 +540,10 @@ function junc_readParams(j, k, tok, ntoks)
     let  x = new Array(6);
     let  id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     if ( ntoks < 2 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(NODE, tok[0]);
     if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
@@ -541,7 +555,13 @@ function junc_readParams(j, k, tok, ntoks)
         x[i-1] = 0.0;
         if ( i < ntoks )
         {
-            if ( null == (x[i-1] = getDouble(tok[i])) )
+            ////////////////////////////////////
+            returnObj = {y: x[i-1]}
+            returnVal = getDouble(tok[i], returnObj);
+            x[i-1] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal )
+            //if ( null == (x[i-1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
     }
@@ -580,6 +600,10 @@ function storage_readParams(j, k, tok, ntoks)
     let x = new Array(9);
     let id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- get ID name
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, '');
     id = project_findID(NODE, tok[0]);
@@ -588,7 +612,13 @@ function storage_readParams(j, k, tok, ntoks)
     // --- get invert elev, max. depth, & init. depth
     for ( i = 1; i <= 3; i++ )
     {
-        if ( null == (x[i-1] = getDouble(tok[i])) )
+        ////////////////////////////////////
+        returnObj = {y: x[i-1]}
+        returnVal = getDouble(tok[i], returnObj);
+        x[i-1] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[i-1] = getDouble(tok[i])) )
             return error_setInpError(ERR_NUMBER, tok[i]);
     }
 
@@ -609,7 +639,13 @@ function storage_readParams(j, k, tok, ntoks)
         {
             if ( i < ntoks )
             {
-                if ( null == (x[i-2] = getDouble(tok[i])) )
+                ////////////////////////////////////
+                returnObj = {y: x[i-2]}
+                returnVal = getDouble(tok[i], returnObj);
+                x[i-2] = returnObj.y;
+                ////////////////////////////////////
+                if( !returnVal )
+                //if ( null == (x[i-2] = getDouble(tok[i])) )
                     return error_setInpError(ERR_NUMBER, tok[i]);
             }
         }
@@ -628,7 +664,13 @@ function storage_readParams(j, k, tok, ntoks)
     // --- ponded area replaced by surcharge depth                             //(5.1.013)
     if ( ntoks > n)
     {
-        if ( null == (x[7] = getDouble(tok[n])) )
+        ////////////////////////////////////
+        returnObj = {y: x[7]}
+        returnVal = getDouble(tok[n], returnObj);
+        x[7] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[7] = getDouble(tok[n])) )
             return error_setInpError(ERR_NUMBER, tok[n]);
         n++;
     }
@@ -636,7 +678,13 @@ function storage_readParams(j, k, tok, ntoks)
     // --- get evaporation fraction if present
     if ( ntoks > n )
     {
-        if ( null == (x[8] = getDouble(tok[n])) )
+        ////////////////////////////////////
+        returnObj = {y: x[8]}
+        returnVal = getDouble(tok[n], returnObj);
+        x[8] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[8] = getDouble(tok[n])) )
             return error_setInpError(ERR_NUMBER, tok[n]);
         n++;
     }
@@ -904,13 +952,24 @@ function divider_readParams(j, k, tok, ntoks)
     let x = new Array(11);
     let id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- get ID name
     if ( ntoks < 4 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(NODE, tok[0]);
     if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
 
     // --- get invert elev.
-    if ( null == (x[0] = getDouble(tok[1])) ) return error_setInpError(ERR_NUMBER, tok[1]);
+    ////////////////////////////////////
+    returnObj = {y: x[0]}
+    returnVal = getDouble(tok[1], returnObj);
+    x[0] = returnObj.y;
+    ////////////////////////////////////
+    if( !returnVal )
+    //if ( null == (x[0] = getDouble(tok[1])) ) 
+        return error_setInpError(ERR_NUMBER, tok[1]);
 
     // --- initialize parameter values
     for ( i=1; i<11; i++) x[i] = 0.0;
@@ -947,7 +1006,13 @@ function divider_readParams(j, k, tok, ntoks)
     if ( m1 == CUTOFF_DIVIDER )
     {
         if ( ntoks < 5 ) return error_setInpError(ERR_ITEMS, "");
-        if ( null == (x[4] = getDouble(tok[4])) )
+        ////////////////////////////////////
+        returnObj = {y: x[4]}
+        returnVal = getDouble(tok[4], returnObj);
+        x[4] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[4] = getDouble(tok[4])) )
             return error_setInpError(ERR_NUMBER, tok[4]);
         n = 5;
     }
@@ -956,9 +1021,16 @@ function divider_readParams(j, k, tok, ntoks)
     if ( m1 == WEIR_DIVIDER )
     {
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
-        for (i=4; i<7; i++)
-             if ( null == (x[i] = getDouble(tok[i])) )
-                 return error_setInpError(ERR_NUMBER, tok[i]);
+        for (i=4; i<7; i++){
+            ////////////////////////////////////
+            returnObj = {y: x[i]}
+            returnVal = getDouble(tok[i], returnObj);
+            x[i] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal )
+            //if ( null == (x[i] = getDouble(tok[i])) )
+                return error_setInpError(ERR_NUMBER, tok[i]);
+        }
         n = 7;
     }
 
@@ -970,7 +1042,13 @@ function divider_readParams(j, k, tok, ntoks)
     m = 7;
     for (i=n; i<ntoks && m<11; i++)
     {
-        if ( null == (x[m] = getDouble(tok[i])) )
+        ////////////////////////////////////
+        returnObj = {y: x[m]}
+        returnVal = getDouble(tok[i], returnObj);
+        x[m] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x[m] = getDouble(tok[i])) )
         {
             return error_setInpError(ERR_NUMBER, tok[i]);
         }
@@ -1123,11 +1201,22 @@ function outfall_readParams(j, k, tok, ntoks)
     let x = new Array(7);
     let id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     if ( ntoks < 3 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(NODE, tok[0]);                      // node ID
     if ( id == null )
         return error_setInpError(ERR_NAME, tok[0]);
-    if ( null == (x[0] = getDouble(tok[1])) )                       // invert elev. 
+
+    ////////////////////////////////////
+    returnObj = {y: x[0]}
+    returnVal = getDouble(tok[1], returnObj);
+    x[0] = returnObj.y;
+    ////////////////////////////////////
+    if( !returnVal )
+    //if ( null == (x[0] = getDouble(tok[1])) )                       // invert elev. 
         return error_setInpError(ERR_NUMBER, tok[1]);
     i = findmatch(tok[2], OutfallTypeWords);               // outfall type
     if ( i < 0 ) return error_setInpError(ERR_KEYWORD, tok[2]);
@@ -1146,7 +1235,13 @@ function outfall_readParams(j, k, tok, ntoks)
         switch ( i )
         {
         case FIXED_OUTFALL:                                // fixed stage
-          if ( null == (x[2] = getDouble(tok[3])) )
+          ////////////////////////////////////
+          returnObj = {y: x[2]}
+          returnVal = getDouble(tok[3], returnObj);
+          x[2] = returnObj.y;
+          ////////////////////////////////////
+          if( !returnVal )
+          //if ( null == (x[2] = getDouble(tok[3])) )
               return error_setInpError(ERR_NUMBER, tok[3]);
           break;
         case TIDAL_OUTFALL:                                // tidal curve
@@ -1199,6 +1294,10 @@ function outfall_setOutletDepth(j, yNorm, yCrit, z)
     let i = Node[j].subIndex;     // outfall index
     let currentDate = new Date();              // current date/time in days
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     switch ( Outfall[i].type )
     {
       case FREE_OUTFALL:
@@ -1226,8 +1325,13 @@ function outfall_setOutletDepth(j, yNorm, yCrit, z)
       case TIMESERIES_OUTFALL:
         k = Outfall[i].stageSeries;
         currentDate = StartDateTime + NewRoutingTime / MSECperDAY;
-        stage = table_tseriesLookup(Tseries[k], currentDate, TRUE) /
-                UCF(LENGTH);
+        ////////////////////////////////////
+        returnObj = {table: Tseries[k]}
+        returnVal = table_tseriesLookup(returnObj, currentDate, true);
+        Tseries[k] = returnObj.table;
+        ////////////////////////////////////
+        stage = returnVal / UCF(LENGTH);
+        //stage = table_tseriesLookup(Tseries[k], currentDate, true) / UCF(LENGTH);
         break;
       default: stage = Node[j].invertElev;
     }

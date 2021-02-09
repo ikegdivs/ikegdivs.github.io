@@ -155,11 +155,11 @@ function datetime_encodeTime(hour, minute, second)
 //  Purpose: encodes hour:minute:second to a DateTime value
 {
     let s;
-    if ((parseInt(hour) >= 0)
-    && (parseInt(minute) >= 0)
-    && (parseInt(second) >= 0))
+    if ((hour >= 0)
+    && (minute >= 0)
+    && (second >= 0))
     {
-        s = (parseInt(hour) * 3600 + parseInt(minute) * 60 + parseInt(second));
+        s = (hour * 3600 + minute * 60 + second);
         return s/SecsPerDay;
     }
     else return 0.0;
@@ -440,8 +440,13 @@ function datetime_strToDate(s, inObj)
 }
 
 //=============================================================================
-//function datetime_strToTime(s, t)
+////////////////////////////////////
+//let returnObj = {t: val1}
+//let returnVal = datetime_strToTime(formula, returnObj);
+//val1 = returnObj.t;
+////////////////////////////////////
 function datetime_strToTime(s, inObj)
+//function datetime_strToTime(s, t)
 //  Input:   s = time as string
 //  Output:  t = encoded time,
 //           returns 1 if conversion successful, 0 if not
@@ -463,12 +468,17 @@ function datetime_strToTime(s, inObj)
     //n = sscanf(s, "%d:%d:%d", &hr, &min, &sec);
     vals = s.split(/[:]+/)
             n = vals.length
-            hr = parseInt(vals[0])
-            min = parseInt(vals[1])
-            sec = parseInt(vals[2])
+            hr = parseInt(vals[n-3])
+            min = parseInt(vals[n-2])
+            sec = parseInt(vals[n-1])
     if ( n == 0 ) return 0;
+    if(isNaN(hr)) hr = 0;
+    if(isNaN(min)) min = 0;
+    if(isNaN(sec)) sec = 0;
     inObj.t = datetime_encodeTime(hr, min, sec);
     if ( (hr >= 0) && (min >= 0) && (sec >= 0) ) return 1;
+    
+    // conversion not successful
     else return 0;
 }
 

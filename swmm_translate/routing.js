@@ -416,6 +416,10 @@ function addDryWeatherInflows(currentDate)
     //TDwfInflow* inflow;
     let inflow;
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- get month (zero-based), day-of-week (zero-based),
     //     & hour-of-day for routing date/time
     month = datetime_monthOfYear(currentDate) - 1;
@@ -434,7 +438,13 @@ function addDryWeatherInflows(currentDate)
         {
             if ( inflow.param < 0 )
             {
-                q = inflow_getDwfInflow(inflow, month, day, hour);
+                ////////////////////////////////////
+                returnObj = {inflow: inflow}
+                returnVal = inflow_getDwfInflow(inObj, month, day, hour)
+                inflow = returnObj.inflow;
+                ////////////////////////////////////
+                q = returnVal;
+                //q = inflow_getDwfInflow(inflow, month, day, hour);
                 break;
             }
             inflow = inflow.next;
@@ -466,7 +476,13 @@ function addDryWeatherInflows(currentDate)
             if ( inflow.param >= 0 )
             {
                 p = inflow.param;
-                w = q * inflow_getDwfInflow(inflow, month, day, hour);
+                ////////////////////////////////////
+                returnObj = {inflow: inflow}
+                returnVal = inflow_getDwfInflow(inObj, month, day, hour)
+                inflow = returnObj.inflow;
+                ////////////////////////////////////
+                w = q * returnVal
+                //w = q * inflow_getDwfInflow(inflow, month, day, hour);
                 Node[j].newQual[p] += w;
                 massbal_addInflowQual(DRY_WEATHER_INFLOW, p, w);
 

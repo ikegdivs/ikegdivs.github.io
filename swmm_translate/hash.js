@@ -133,6 +133,6 @@ function HTfree(ht)
         {
             ht[i] = null;
         }
-        free(ht);
+        ht = null;
 }
 

@@ -8,32 +8,27 @@
 **  LAST UPDATE:   03/20/14
 ******************************************************************************/
 
-#ifndef MATHEXPR_H
-#define MATHEXPR_H
-
-
 //  Node in a tokenized math expression list
-struct ExprNode
+class ExprNode
 {
-    int    opcode;                // operator code
-    int    ivar;                  // variable index
-    double fvalue;                // numerical value
-	struct ExprNode *prev;        // previous node
-    struct ExprNode *next;        // next node
+    constructor(){
+        this.opcode;                // operator code
+        this.ivar;                  // variable index
+        this.fvalue;                // numerical value
+        this.prev; // = new ExprNode();        // previous node
+        this.next; // = new ExprNode();        // next node
+    }
 };
-typedef struct ExprNode MathExpr;
 
-//  Creates a tokenized math expression from a string
-MathExpr* mathexpr_create(char* s, int (*getVar) (char *));
-
-//  Evaluates a tokenized math expression
-double mathexpr_eval(MathExpr* expr, double (*getVal) (int));
-
-//  Deletes a tokenized math expression
-void  mathexpr_delete(MathExpr* expr);
-
-
-#endif //MATHEXPR_H
+class MathExpr{
+    constructor(){
+        this.opcode;                // operator code
+        this.ivar;                  // variable index
+        this.fvalue;                // numerical value
+        prev = new ExprNode();        // previous node
+        next = new ExprNode();        // next node
+    }
+}
 
 /******************************************************************************
 **  MODULE:        MATHEXPR.C
@@ -78,71 +73,77 @@ void  mathexpr_delete(MathExpr* expr);
 **    28 = step (x<=0 ? 0 : 1)
 **	  31 = ^
 ******************************************************************************/
-#define _CRT_SECURE_NO_DEPRECATE
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include "mathexpr.h"
 
-#define MAX_STACK_SIZE  1024
+var MAX_STACK_SIZE = 1024
 
 //  Local declarations
 //--------------------
 //  Structure for binary tree representation of math expression
-struct TreeNode
+class TreeNode
 {
-    int    opcode;                // operator code
-    int    ivar;                  // variable index
-    double fvalue;                // numerical value
-    struct TreeNode *left;        // left sub-tree of tokenized formula
-    struct TreeNode *right;       // right sub-tree of tokenized formula
+    constructor(){
+        this.opcode;                // operator code
+        this.ivar;                  // variable index
+        this.fvalue;                // numerical value
+        this.left; //= new TreeNode();        // left sub-tree of tokenized formula
+        this.right; //= new TreeNode();       // right sub-tree of tokenized formula
+    }
 };
-typedef struct TreeNode ExprTree;
+//  Structure for binary tree representation of math expression
+class ExprTree
+{
+    constructor(){
+        this.opcode;                // operator code
+        this.ivar;                  // variable index
+        this.fvalue;                // numerical value
+        this.left; //= new TreeNode();        // left sub-tree of tokenized formula
+        this.right; //= new TreeNode();       // right sub-tree of tokenized formula
+    }
+};
+
 
 // Local variables
 //----------------
-static int    Err;
-static int    Bc;
-static int    PrevLex, CurLex;
-static int    Len, Pos;
-static char   *S;
-static char   Token[255];
-static int    Ivar;
-static double Fvalue;
+var Err;
+var Bc;
+var PrevLex, CurLex;
+var Len, Pos;
+var S;
+var Token;
+var Ivar;
+var Fvalue;
 
 // math function names
-char *MathFunc[] =  {"COS", "SIN", "TAN", "COT", "ABS", "SGN",
+MathFunc =  ["COS", "SIN", "TAN", "COT", "ABS", "SGN",
                      "SQRT", "LOG", "EXP", "ASIN", "ACOS", "ATAN",
                      "ACOT", "SINH", "COSH", "TANH", "COTH", "LOG10",
-                     "STEP", NULL};
+                     "STEP", null];
 
 // Local functions
 //----------------
-static int        sametext(char *, char *);
-static int        isDigit(char);
-static int        isLetter(char);
-static void       getToken(void);
-static int        getMathFunc(void);
-static int        getVariable(void);
-static int        getOperand(void);
-static int        getLex(void);
-static double     getNumber(void);
-static ExprTree * newNode(void);
-static ExprTree * getSingleOp(int *);
-static ExprTree * getOp(int *);
-static ExprTree * getTree(void);
-static void       traverseTree(ExprTree *, MathExpr **);
-static void       deleteTree(ExprTree *);
+//static int        sametext(char *, char *);
+//static int        isDigit(char);
+//static int        isLetter(char);
+//static void       getToken(void);
+//static int        getMathFunc(void);
+//static int        getVariable(void);
+//static int        getOperand(void);
+//static int        getLex(void);
+//static double     getNumber(void);
+//static ExprTree * newNode(void);
+//static ExprTree * getSingleOp(int *);
+//static ExprTree * getOp(int *);
+//static ExprTree * getTree(void);
+//static void       traverseTree(ExprTree *, MathExpr **);
+//static void       deleteTree(ExprTree *);
 
 // Callback functions
-static int    (*getVariableIndex) (char *); // return index of named variable
+// static int    (*getVariableIndex) (char *); // return index of named variable
 
 //=============================================================================
-
-int  sametext(char *s1, char *s2)
+// char *s1, char *s2
+function  sametext(s1, s2)
 /*
 **  Purpose:
 **    performs case insensitive comparison of two strings.
@@ -155,42 +156,53 @@ int  sametext(char *s1, char *s2)
 **    1 if strings are the same, 0 otherwise.
 */
 {
-   int i;
-   for (i=0; toupper(s1[i]) == toupper(s2[i]); i++)
-     if (!s1[i+1] && !s2[i+1]) return(1);
-   return(0);
+   if(s1.localeCompare(s2) == 0){
+       return 1;
+   } else {
+       return 0;
+   }
+}
+
+//=============================================================================
+// char c
+function isDigit(c)
+{
+    if(Number.isInteger(c.parseInt())){
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+//=============================================================================
+// char c
+// returns: 1 if the character is a letter or an underscore.
+function isLetter(c)
+{
+    if((/[a-zA-Z_]/).test(c)){
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+function setCharAt(str, index, chr){
+    if(index > str.length-1) return str;
+    return str.substring(0, index) + chr + str.substring(index + 1);
 }
 
 //=============================================================================
 
-int isDigit(char c)
+function getToken()
 {
-    if (c >= '1' && c <= '9') return 1;
-    if (c == '0') return 1;
-    return 0;
-}
-
-//=============================================================================
-
-int isLetter(char c)
-{
-    if (c >= 'a' && c <= 'z') return 1;
-    if (c >= 'A' && c <= 'Z') return 1;
-    if (c == '_') return 1;
-    return 0;
-}
-
-//=============================================================================
-
-void getToken()
-{
-    char c[] = " ";
-    strcpy(Token, "");
+    let c = " ";
+    Token = "";
     while ( Pos <= Len &&
-        ( isLetter(S[Pos]) || isDigit(S[Pos]) ) )
+        ( isLetter(S.substring(Pos, Pos + 1)) || isDigit(S.substring(Pos, Pos + 1) ) )) 
     {
-        c[0] = S[Pos];
-        strcat(Token, c);
+        c = setCharAt(c, 0, S.substring(Pos, Pos + 1))
+        c = S.substring(Pos, Pos + 1)
+        Token += c;
         Pos++;
     }
     Pos--;
@@ -198,10 +210,10 @@ void getToken()
 
 //=============================================================================
 
-int getMathFunc()
+function getMathFunc()
 {
-    int i = 0;
-    while (MathFunc[i] != NULL)
+    let i = 0;
+    while (MathFunc[i] != null)
     {
         if (sametext(MathFunc[i], Token)) return i+10;
         i++;
@@ -211,7 +223,7 @@ int getMathFunc()
 
 //=============================================================================
 
-int getVariable()
+function getVariable()
 {
     if ( !getVariableIndex ) return 0;
     Ivar = getVariableIndex(Token);
@@ -221,55 +233,56 @@ int getVariable()
 
 //=============================================================================
 
-double getNumber()
+function getNumber()
 {
-    char c[] = " ";
-    char sNumber[255];
-    int  errflag = 0;
+    let c = " ";
+    let sNumber;
+    let errflag = 0;
 
     /* --- get whole number portion of number */
-    strcpy(sNumber, "");
-    while (Pos < Len && isDigit(S[Pos]))
+    sNumber = "";
+    while (Pos < Len && isDigit(S.substring(Pos, Pos + 1)))
     {
-        c[0] = S[Pos];
-        strcat(sNumber, c);
+        //c[0] = S[Pos]
+        c = setCharAt(c, 0, S.substring(Pos, Pos + 1))
+        sNumber += c;
         Pos++;
     }
 
     /* --- get fractional portion of number */
     if (Pos < Len)
     {
-        if (S[Pos] == '.')
+        if (S.substring(Pos, Pos + 1) === '.')
         {
-            strcat(sNumber, ".");
+            sNumber += ".";
             Pos++;
-            while (Pos < Len && isDigit(S[Pos]))
+            while (Pos < Len && isDigit(S.substring(Pos, Pos + 1)))
             {
-                c[0] = S[Pos];
-                strcat(sNumber, c);  
+                c = setCharAt(c, 0, S.substring(Pos, Pos + 1))
+                sNumber += c;  
                 Pos++;
             }
         }
 
         /* --- get exponent */
-        if (Pos < Len && (S[Pos] == 'e' || S[Pos] == 'E'))
+        if (Pos < Len && (S.substring(Pos, Pos + 1) === 'e' || S.substring(Pos, Pos + 1) === 'E'))
         {
-            strcat(sNumber, "E");  
+            sNumber += "E";  
             Pos++;
             if (Pos >= Len) errflag = 1;
             else
             {
-                if (S[Pos] == '-' || S[Pos] == '+')
+                if (S.substring(Pos, Pos + 1) == '-' || S.substring(Pos, Pos + 1) == '+')
                 {
-                    c[0] = S[Pos];
-                    strcat(sNumber, c);  
+                    c = setCharAt(c, 0, S.substring(Pos, Pos + 1))
+                    sNumber += c;  
                     Pos++;
                 }
-                if (Pos >= Len || !isDigit(S[Pos])) errflag = 1;
-                else while ( Pos < Len && isDigit(S[Pos]))
+                if (Pos >= Len || !isDigit(S.substring(Pos, Pos + 1))) errflag = 1;
+                else while ( Pos < Len && isDigit(S.substring(Pos, Pos + 1)))
                 {
-                    c[0] = S[Pos];
-                    strcat(sNumber, c);  
+                    c = setCharAt(c, 0, S.substring(Pos, Pos + 1))
+                    sNumber += c;  
                     Pos++;
                 }
             }
@@ -277,22 +290,22 @@ double getNumber()
     }
     Pos--;
     if (errflag) return 0;
-    else return atof(sNumber);
+    else return sNumber.parseFloat();
 }
 
 //=============================================================================
 
-int getOperand()
+function getOperand()
 {
-    int code;
-    switch(S[Pos])
+    let code;
+    switch(S.substring(Pos, Pos + 1))
     {
       case '(': code = 1;  break;
       case ')': code = 2;  break;
       case '+': code = 3;  break;
       case '-': code = 4;
         if (Pos < Len-1 &&
-            isDigit(S[Pos+1]) &&
+            isDigit(S.substring(Pos+1, Pos + 2)) &&
             (CurLex == 0 || CurLex == 1))
         {
             Pos++;
@@ -310,12 +323,12 @@ int getOperand()
 
 //=============================================================================
 
-int getLex()
+function getLex()
 {
-    int n;
+    let n;
 
     /* --- skip spaces */
-    while ( Pos < Len && S[Pos] == ' ' ) Pos++;
+    while ( Pos < Len && S.substring(Pos, Pos + 1) === ' ' ) Pos++;
     if ( Pos >= Len ) return 0;
 
     /* --- check for operand */
@@ -324,13 +337,13 @@ int getLex()
     /* --- check for function/variable/number */
     if ( n == 0 )
     {
-        if ( isLetter(S[Pos]) )
+        if ( isLetter(S.substring(Pos, Pos + 1)) )
         {
             getToken();
             n = getMathFunc();
             if ( n == 0 ) n = getVariable();
         }
-        else if ( isDigit(S[Pos]) )
+        else if ( isDigit(S.substring(Pos, Pos + 1)) )
         {
             n = 7;
             Fvalue = getNumber();
@@ -344,34 +357,43 @@ int getLex()
 
 //=============================================================================
 
-ExprTree * newNode()
+function newNode()
 {
-    ExprTree *node;
-    node = (ExprTree *) malloc(sizeof(ExprTree));
+    //ExprTree *node;
+    //node = (ExprTree *) malloc(sizeof(ExprTree));
+    node = new ExprTree()
     if (!node) Err = 2;
     else
     {
-        node->opcode = 0;
-        node->ivar   = -1;
-        node->fvalue = 0.;
-        node->left   = NULL;
-        node->right  = NULL;
+        node.opcode = 0;
+        node.ivar   = -1;
+        node.fvalue = 0.;
+        node.left   = null;
+        node.right  = null;
     }
     return node;
 }
 
 //=============================================================================
-
-ExprTree * getSingleOp(int *lex)
+////////////////////////////////////
+//let returnObj = {lex: val}
+//let returnVal = getSingleOp(returnObj);
+//val = returnObj.lex;
+////////////////////////////////////
+//int *lex
+function getSingleOp(inObj)
 {
-    int bracket;
-    int opcode;
-    ExprTree *left;
-    ExprTree *right;
-    ExprTree *node;
+    let bracket;
+    let opcode;
+    //ExprTree *left;
+    //ExprTree *right;
+    //ExprTree *node;
+    let left;
+    let right;
+    let node;
 
     /* --- open parenthesis, so continue to grow the tree */
-    if ( *lex == 1 )
+    if ( inObj.lex == 1 )
     {
         Bc++;
         left = getTree();
@@ -380,117 +402,143 @@ ExprTree * getSingleOp(int *lex)
     else
     {
         /* --- Error if not a singleton operand */
-        if ( *lex < 7 || *lex == 9 || *lex > 30)
+        if ( inObj.lex < 7 || inObj.lex == 9 || inObj.lex > 30)
         {
             Err = 1;
-            return NULL;
+            return null;
         }
 
-        opcode = *lex;
+        opcode = inObj.lex;
 
         /* --- simple number or variable name */
-        if ( *lex == 7 || *lex == 8 )
+        if ( inObj.lex == 7 || inObj.lex == 8 )
         {
             left = newNode();
-            left->opcode = opcode;
-            if ( *lex == 7 ) left->fvalue = Fvalue;
-            if ( *lex == 8 ) left->ivar = Ivar;
+            left.opcode = opcode;
+            if ( inObj.lex == 7 ) left.fvalue = Fvalue;
+            if ( inObj.lex == 8 ) left.ivar = Ivar;
         }
 
         /* --- function which must have a '(' after it */
         else
         {
-            *lex = getLex();
-            if ( *lex != 1 )
+            inObj.lex = getLex();
+            if ( inObj.lex != 1 )
             {
                Err = 1;
-               return NULL;
+               return null;
             }
             Bc++;
             left = newNode();
-            left->left = getTree();
-            left->opcode = opcode;
+            left.left = getTree();
+            left.opcode = opcode;
         }
     }   
-    *lex = getLex();
+    inObj.lex = getLex();
 
     /* --- exponentiation */
-    while ( *lex == 31 )
+    while ( inObj.lex == 31 )
     {
-        *lex = getLex();
+        inObj.lex = getLex();
         bracket = 0;
-        if ( *lex == 1 )
+        if ( inObj.lex == 1 )
         {
             bracket = 1;
-            *lex = getLex();
+            inObj.lex = getLex();
         }
-        if ( *lex != 7 )
+        if ( inObj.lex != 7 )
         {
             Err = 1;
-            return NULL;
+            return null;
         }
         right = newNode();
-        right->opcode = *lex;
-        right->fvalue = Fvalue;
+        right.opcode = inObj.lex;
+        right.fvalue = Fvalue;
         node = newNode();
-        node->left = left;
-        node->right = right;
-        node->opcode = 31;
+        node.left = left;
+        node.right = right;
+        node.opcode = 31;
         left = node;
         if (bracket)
         {
-            *lex = getLex();
-            if ( *lex != 2 )
+            inObj.lex = getLex();
+            if ( inObj.lex != 2 )
             {
                 Err = 1;
-                return NULL;
+                return null;
             }
         }
-        *lex = getLex();
+        inObj.lex = getLex();
     }
     return left;
 }
 
 //=============================================================================
-
-ExprTree * getOp(int *lex)
+////////////////////////////////////
+//let returnObj = {lex: val}
+//let returnVal = getOp(returnObj);
+//val = returnObj.lex;
+////////////////////////////////////
+function getOp(inObj)
+//ExprTree * getOp(int *lex)
 {
-    int opcode;
-    ExprTree *left;
-    ExprTree *right;
-    ExprTree *node;
-    int neg = 0;
+    let opcode;
+    //ExprTree *left;
+    //ExprTree *right;
+    //ExprTree *node;
+    let left;
+    let right;
+    let node;
+    let neg = 0;
 
-    *lex = getLex();
+    // Return object & value
+    let returnObj;
+    let returnVal;
+
+    inObj.lex = getLex();
     if (PrevLex == 0 || PrevLex == 1)
     {
-        if ( *lex == 4 )
+        if ( inObj.lex == 4 )
         {
             neg = 1;
-            *lex = getLex();
+            inObj.lex = getLex();
         }
-        else if ( *lex == 3) *lex = getLex();
+        else if ( inObj.lex == 3) inObj.lex = getLex();
     }
-    left = getSingleOp(lex);
-    while ( *lex == 5 || *lex == 6 )
+
+    ////////////////////////////////////
+    returnObj = {lex: inObj.lex}
+    returnVal = getSingleOp(returnObj);
+    inObj.lex = returnObj.lex;
+    ////////////////////////////////////
+    left = returnVal;
+    //left = getSingleOp(lex);
+    while ( inObj.lex == 5 || inObj.lex == 6 )
     {
-        opcode = *lex;
-        *lex = getLex();
-        right = getSingleOp(lex);
+        opcode = inObj.lex;
+        inObj.lex = getLex();
+
+        ////////////////////////////////////
+        returnObj = {lex: inObj.lex}
+        returnVal = getSingleOp(returnObj);
+        inObj.lex = returnObj.lex;
+        ////////////////////////////////////
+        right = returnVal;
+        //right = getSingleOp(lex);
         node = newNode();
-        if (Err) return NULL;
-        node->left = left;
-        node->right = right;
-        node->opcode = opcode;
+        if (Err) return null;
+        node.left = left;
+        node.right = right;
+        node.opcode = opcode;
         left = node;
     }
     if ( neg )
     {
         node = newNode();
-        if (Err) return NULL;
-        node->left = left;
-        node->right = NULL;
-        node->opcode = 9;
+        if (Err) return null;
+        node.left = left;
+        node.right = null;
+        node.opcode = 9;
         left = node;
     }
     return left;
@@ -498,15 +546,29 @@ ExprTree * getOp(int *lex)
 
 //=============================================================================
 
-ExprTree * getTree()
+function getTree()
+//ExprTree * getTree()
 {
-    int      lex;
-    int      opcode;
-    ExprTree *left;
-    ExprTree *right;
-    ExprTree *node;
+    let      lex;
+    let      opcode;
+    //ExprTree *left;
+    //ExprTree *right;
+    //ExprTree *node;
+    let left;
+    let right;
+    let node;
 
-    left = getOp(&lex);
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
+    ////////////////////////////////////
+    returnObj = {lex: lex}
+    returnVal = getOp(returnObj);
+    lex = returnObj.lex;
+    ////////////////////////////////////
+    left = returnVal;
+    //left = getOp(&lex);
     for (;;)
     {
         if ( lex == 0 || lex == 2 )
@@ -522,69 +584,134 @@ ExprTree * getTree()
         }
 
         opcode = lex;
-        right = getOp(&lex);
+        ////////////////////////////////////
+        returnObj = {lex: lex}
+        returnVal = getOp(returnObj);
+        lex = returnObj.lex;
+        ////////////////////////////////////
+        right = returnVal;
+        //right = getOp(&lex);
         node = newNode();
         if (Err) break;
-        node->left = left;
-        node->right = right;
-        node->opcode = opcode;
+        node.left = left;
+        node.right = right;
+        node.opcode = opcode;
         left = node;
     } 
     return left;
 }
 
 //=============================================================================
-
-void traverseTree(ExprTree *tree, MathExpr **expr)
+////////////////////////////////////
+//let returnObj = {tree: val1, expr: val2}
+//let returnVal = traverseTree(returnObj);
+//val1 = returnObj.tree;
+//val2 = returnObj.expr;
+////////////////////////////////////
+function traverseTree(inObj)
+//void traverseTree(ExprTree *tree, MathExpr **expr)
 // Converts binary tree to linked list (postfix format)
 {
-    MathExpr *node;
-    if ( tree == NULL) return;
-    traverseTree(tree->left,  expr);
-    traverseTree(tree->right, expr);
-    node = (MathExpr *) malloc(sizeof(MathExpr));
-    node->fvalue = tree->fvalue;
-    node->opcode = tree->opcode;
-    node->ivar = tree->ivar;
-    node->next = NULL;
-    node->prev = (*expr);
-    if (*expr) (*expr)->next = node;
-    (*expr) = node;
+    //MathExpr *node;
+    let node;
+
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
+    if ( inObj.tree == null) return;
+
+    ////////////////////////////////////
+    returnObj = {tree: inObj.tree.left, expr: inObj.expr}
+    returnVal = traverseTree(returnObj);
+    inObj.tree.left = returnObj.tree;
+    inObj.expr = returnObj.expr;
+    ////////////////////////////////////
+    //traverseTree(inObj.tree.left,  inObj.expr);
+    ////////////////////////////////////
+    returnObj = {tree: inObj.tree.right, expr: inObj.expr}
+    returnVal = traverseTree(returnObj);
+    inObj.tree.right = returnObj.tree;
+    inObj.expr = returnObj.expr;
+    ////////////////////////////////////
+    //traverseTree(inObj.tree.right, inObj.expr);
+
+    //node = (MathExpr *) malloc(sizeof(MathExpr));
+    node = new MathExpr();
+    node.fvalue = inObj.tree.fvalue;
+    node.opcode = inObj.tree.opcode;
+    node.ivar = inObj.tree.ivar;
+    node.next = null;
+    node.prev = (inObj.expr);
+    if (inObj.expr) (inObj.expr).next = node;
+    (inObj.expr) = node;
 }
 
 //=============================================================================
-
-void deleteTree(ExprTree *tree)
+////////////////////////////////////
+//let returnObj = {tree: val1}
+//let returnVal = deleteTree(returnObj);
+//val1 = returnObj.tree;
+////////////////////////////////////
+function deleteTree(inObj)
+//void deleteTree(ExprTree *tree)
 {
-    if (tree)
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
+    if (inObj.tree)
     {
-        if (tree->left)  deleteTree(tree->left);
-        if (tree->right) deleteTree(tree->right);
-        free(tree);
+        if (inObj.tree.left){
+            ////////////////////////////////////
+            returnObj = {tree: inObj.tree.left}
+            returnVal = deleteTree(returnObj);
+            inObj.tree.left = returnObj.tree;
+            ////////////////////////////////////
+            //deleteTree(inObj.tree.left);
+        }
+        if (inObj.tree.right){
+            ////////////////////////////////////
+            returnObj = {tree: inObj.tree.right}
+            returnVal = deleteTree(returnObj);
+            inObj.tree.right = returnObj.tree;
+            ////////////////////////////////////
+            //deleteTree(inObj.tree.right);
+        }
+        inObj.tree = null;
     }
 }
 
 //=============================================================================
 
 // Turn on "precise" floating point option
-#pragma float_control(precise, on, push)
+//#pragma float_control(precise, on, push)
+//float_control(precise, on, push)
 
-double mathexpr_eval(MathExpr *expr, double (*getVariableValue) (int))
+
+////////////////////////////////////
+//let returnObj = {expr: val1, getVariableValue: function(){return result;}}
+//let returnVal = mathexpr_eval(returnObj);
+//val1 = returnObj.expr;
+////////////////////////////////////
+function mathexpr_eval(inObj)
+//double mathexpr_eval(MathExpr *expr, double (*getVariableValue) (int))
 //  Mathematica expression evaluation using a stack
 {
     
 // --- Note: the ExprStack array must be declared locally and not globally
 //     since this function can be called recursively.
 
-    double ExprStack[MAX_STACK_SIZE];
-    MathExpr *node = expr;
-    double r1, r2;
-    int stackindex = 0;
+    ExprStack = new Array(MAX_STACK_SIZE);
+    //MathExpr *node = expr;
+    node = inObj.expr;
+    let r1, r2;
+    let stackindex = 0;
     
     ExprStack[0] = 0.0;
-    while(node != NULL)
+    while(node != null)
     {
-	switch (node->opcode)
+	switch (node.opcode)
 	{
 	    case 3:  
 		r1 = ExprStack[stackindex];
@@ -616,13 +743,13 @@ double mathexpr_eval(MathExpr *expr, double (*getVariableValue) (int))
 
         case 7:  
 		stackindex++;
-		ExprStack[stackindex] = node->fvalue;
+		ExprStack[stackindex] = node.fvalue;
 		break;
 
         case 8:
-        if (getVariableValue != NULL)
+        if (inObj.getVariableValue != null)
         {
-           r1 = getVariableValue(node->ivar);
+           r1 = inObj.getVariableValue(node.ivar);
         }
         else r1 = 0.0;
 		stackindex++;
@@ -635,32 +762,32 @@ double mathexpr_eval(MathExpr *expr, double (*getVariableValue) (int))
 
         case 10: 
 		r1 = ExprStack[stackindex];
-		r2 = cos(r1);
+		r2 = Math.cos(r1);
 		ExprStack[stackindex] = r2;
 		break;
 
         case 11: 
 		r1 = ExprStack[stackindex];
-		r2 = sin(r1);
+		r2 = Math.sin(r1);
 		ExprStack[stackindex] = r2;
 		break;
 
         case 12: 
 		r1 = ExprStack[stackindex];
-		r2 = tan(r1);
+		r2 = Math.tan(r1);
 		ExprStack[stackindex] = r2;
 		break;
 
         case 13: 
 		r1 = ExprStack[stackindex];
 		if (r1 == 0.0) r2 = 0.0;
-		else r2 = 1.0/tan( r1 );    
+		else r2 = 1.0/Math.tan( r1 );    
 		ExprStack[stackindex] = r2;
 		break;
 
         case 14: 
 		r1 = ExprStack[stackindex];
-		r2 = fabs( r1 );       
+		r2 = Math.abs( r1 );       
 		ExprStack[stackindex] = r2;
 		break;
 
@@ -675,75 +802,75 @@ double mathexpr_eval(MathExpr *expr, double (*getVariableValue) (int))
         case 16: 
 		r1 = ExprStack[stackindex];
 		if (r1 < 0.0) r2 = 0.0;
-		else r2 = sqrt( r1 );     
+		else r2 = Math.sqrt( r1 );     
 		ExprStack[stackindex] = r2;
 		break;
 
         case 17: 
 		r1 = ExprStack[stackindex];
 		if (r1 <= 0) r2 = 0.0;
-		else r2 = log(r1);
+		else r2 = Math.log(r1);
 		ExprStack[stackindex] = r2;
 		break;
 
         case 18: 
 		r1 = ExprStack[stackindex];
-		r2 = exp(r1);
+		r2 = Math.exp(r1);
 		ExprStack[stackindex] = r2;
 		break;
 
         case 19: 
 		r1 = ExprStack[stackindex];
-		r2 = asin( r1 );
+		r2 = Math.asin( r1 );
 		ExprStack[stackindex] = r2;
 		break;
 
         case 20: 
 		r1 = ExprStack[stackindex];
-		r2 = acos( r1 );      
+		r2 = Math.acos( r1 );      
 		ExprStack[stackindex] = r2;
 		break;
 
         case 21: 
 		r1 = ExprStack[stackindex];
-		r2 = atan( r1 );      
+		r2 = Math.atan( r1 );      
 		ExprStack[stackindex] = r2;
 		break;
 
         case 22: 
 		r1 = ExprStack[stackindex];
-		r2 = 1.57079632679489661923 - atan(r1);  
+		r2 = 1.57079632679489661923 - Math.atan(r1);  
 		ExprStack[stackindex] = r2;
 		break;
 
         case 23:
 		r1 = ExprStack[stackindex];
-		r2 = (exp(r1)-exp(-r1))/2.0;
+		r2 = (Math.exp(r1)-Math.exp(-r1))/2.0;
 		ExprStack[stackindex] = r2;
 		break;
 
         case 24: 
 		r1 = ExprStack[stackindex];
-		r2 = (exp(r1)+exp(-r1))/2.0;
+		r2 = (Math.exp(r1)+Math.exp(-r1))/2.0;
 		ExprStack[stackindex] = r2;
 		break;
 
         case 25: 
 		r1 = ExprStack[stackindex];
-		r2 = (exp(r1)-exp(-r1))/(exp(r1)+exp(-r1));
+		r2 = (Math.exp(r1)-Math.exp(-r1))/(Math.exp(r1)+Math.exp(-r1));
 		ExprStack[stackindex] = r2;
 		break;
 
         case 26: 
 		r1 = ExprStack[stackindex];
-		r2 = (exp(r1)+exp(-r1))/(exp(r1)-exp(-r1));
+		r2 = (Math.exp(r1)+Math.exp(-r1))/(Math.exp(r1)-Math.exp(-r1));
 		ExprStack[stackindex] = r2;
 		break;
 
         case 27: 
 		r1 = ExprStack[stackindex];
 		if (r1 == 0.0) r2 = 0.0;
-		else r2 = log10( r1 );     
+		else r2 = Math.log10( r1 );     
 		ExprStack[stackindex] = r2;
 		break;
 
@@ -758,12 +885,12 @@ double mathexpr_eval(MathExpr *expr, double (*getVariableValue) (int))
 		r1 = ExprStack[stackindex];
 		r2 = ExprStack[stackindex-1];
 		if (r2 <= 0.0) r2 = 0.0;
-		else r2 = exp(r1*log(r2));
+		else r2 = Math.exp(r1*Math.log(r2));
 		ExprStack[stackindex-1] = r2;
 		stackindex--;
 		break;
         }
-        node = node->next;
+        node = node.next;
     }
     r1 = ExprStack[stackindex];
 
@@ -774,42 +901,91 @@ double mathexpr_eval(MathExpr *expr, double (*getVariableValue) (int))
 }
 
 // Turn off "precise" floating point option
-#pragma float_control(pop)
+//#pragma float_control(pop)
+//float_control(pop)
 
 //=============================================================================
-
-void mathexpr_delete(MathExpr *expr)
+////////////////////////////////////
+//let returnObj = {expr: val1}
+//let returnVal = mathexpr_delete(returnObj);
+//val1 = returnObj.expr;
+////////////////////////////////////
+function mathexpr_delete(inObj)
+//void mathexpr_delete(MathExpr *expr)
 {
-    if (expr) mathexpr_delete(expr->next);
-    free(expr);
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
+    
+    if(inObj){
+        if (inObj.expr) {
+            if(inObj.expr.next){
+                ////////////////////////////////////
+                returnObj = {expr: inObj.expr.next}
+                returnVal = mathexpr_delete(returnObj);
+                inObj.expr.next = returnObj.expr;
+                ////////////////////////////////////
+                //mathexpr_delete(inObj.expr.next);
+            }
+        }
+        inObj.expr = null;
+        //free(expr);
+    }
 }
 
 //=============================================================================
 
-MathExpr * mathexpr_create(char *formula, int (*getVar) (char *))
+////////////////////////////////////
+//let returnObj = {getVar: function(){return;}}
+//let returnVal = mathexpr_delete(formula, returnObj);
+//val1 = returnObj.expr;
+////////////////////////////////////
+function mathexpr_create(formula, inObj)
+//MathExpr * mathexpr_create(char *formula, int (*getVar) (char *))
 {
-    ExprTree *tree;
-    MathExpr *expr = NULL;
-    MathExpr *result = NULL;
-    getVariableIndex = getVar;
+    //ExprTree *tree;
+    //MathExpr *expr = null;
+    //MathExpr *result = null;
+    let tree;
+    let expr;
+    let result;
+
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
+
+    getVariableIndex = inObj.getVar;
     Err = 0;
     PrevLex = 0;
     CurLex = 0;
     S = formula;
-    Len = strlen(S);
+    Len = S.length;
     Pos = 0;
     Bc = 0;
     tree = getTree();
     if (Bc == 0 && Err == 0)
     {
-	    traverseTree(tree, &expr);
+        ////////////////////////////////////
+        returnObj = {tree: tree, expr: expr}
+        returnVal = traverseTree(returnObj);
+        tree = returnObj.tree;
+        expr = returnObj.expr;
+        ////////////////////////////////////
+	    //traverseTree(tree, &expr);
 	    while (expr)
 	    {
             result = expr;
-            expr = expr->prev;
+            expr = expr.prev;
         }
     }
-    deleteTree(tree);
+    ////////////////////////////////////
+    returnObj = {tree: tree}
+    returnVal = deleteTree(returnObj);
+    tree = returnObj.tree;
+    ////////////////////////////////////
+    //deleteTree(tree);
     return result;
 }
 

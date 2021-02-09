@@ -118,6 +118,10 @@ function rdii_readRdiiInflow(tok, ntoks)
     //TRdiiInflow* inflow;
     let inflow;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for proper number of items
     if ( ntoks < 3 ) return error_setInpError(ERR_ITEMS, "");
 
@@ -130,7 +134,13 @@ function rdii_readRdiiInflow(tok, ntoks)
     if ( k < 0 ) return error_setInpError(ERR_NAME, tok[1]);
 
     // --- read in sewer area value
-    if ( null == (a = getDouble(tok[2])) || a < 0.0 )
+    ////////////////////////////////////
+    returnObj = {y: a}
+    returnVal = getDouble(tok[2], returnObj);
+    a = returnObj.y;
+    ////////////////////////////////////
+    if ( !returnVal || a < 0.0 )
+    //if ( null == (a = getDouble(tok[2])) || a < 0.0 )
         return error_setInpError(ERR_NUMBER, tok[2]);
 
     // --- create the RDII inflow object if it doesn't already exist
@@ -190,6 +200,10 @@ function rdii_readUnitHydParams(tok, ntoks)
     let i, j, k, m, g;
     let x = new Array(6);
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check that RDII UH object exists in database
     j = project_findObject(UNITHYD, tok[0]);
     if ( j < 0 ) return error_setInpError(ERR_NAME, tok[0]);
@@ -226,7 +240,13 @@ function rdii_readUnitHydParams(tok, ntoks)
     // --- read the R-T-K parameters
     for ( i = 0; i < 3; i++ )
     {
-        if ( ! getDouble(tok[i+3], x[i]) )
+        ////////////////////////////////////
+        returnObj = {y: x[i]}
+        returnVal = getDouble(tok[i+3], returnObj);
+        x[i] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( ! getDouble(tok[i+3], x[i]) )
             return error_setInpError(ERR_NUMBER, tok[i+3]);
     }
 
@@ -236,7 +256,13 @@ function rdii_readUnitHydParams(tok, ntoks)
         x[i] = 0.0;
         if ( ntoks > i+3 )
         {
-            if ( ! getDouble(tok[i+3], x[i]) )
+            ////////////////////////////////////
+            returnObj = {y: x[i]}
+            returnVal = getDouble(tok[i+3], returnObj);
+            x[i] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal )
+            //if ( ! getDouble(tok[i+3], x[i]) )
                 return error_setInpError(ERR_NUMBER, tok[i+2]);
         }
     }
@@ -262,13 +288,23 @@ function readOldUHFormat(j, m, tok, ntoks)
     let    i, k;
     let  p = new Array(9), x = new Array(6);
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for proper number of tokens
     if ( ntoks < 11 ) return error_setInpError(ERR_ITEMS, "");
 
     // --- read 3 sets of r-t-k values
     for ( i = 0; i < 9; i++ )
     {
-        if ( ! getDouble(tok[i+2], p[i]) )
+        ////////////////////////////////////
+        returnObj = {y: p[i]}
+        returnVal = getDouble(tok[i+2], returnObj);
+        p[i] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( ! getDouble(tok[i+2], p[i]) )
             return error_setInpError(ERR_NUMBER, tok[i+2]);
     }
 
@@ -278,7 +314,13 @@ function readOldUHFormat(j, m, tok, ntoks)
         x[i+3] = 0.0;
         if ( ntoks > i+11 )
         {
-            if ( ! getDouble(tok[i+11], x[i+3]) )
+            ////////////////////////////////////
+            returnObj = {y: x[i+3]}
+            returnVal = getDouble(tok[i+11], returnObj);
+            x[i+3] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal )
+            //if ( ! getDouble(tok[i+11], x[i+3]) )
                 return error_setInpError(ERR_NUMBER, tok[i+11]);
         }
     }
@@ -353,7 +395,6 @@ function rdii_deleteRdiiInflow(j)
 {
     if ( Node[j].rdiiInflow )
     {
-        free(Node[j].rdiiInflow);
         Node[j].rdiiInflow = null;
     }
 }

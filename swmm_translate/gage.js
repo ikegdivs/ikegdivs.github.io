@@ -115,6 +115,11 @@ function readGageSeriesFormat(tok, ntoks, x)
     let m, ts;
     let aTime;
 
+    // return facilitators
+    let returnObj;
+    let returnVal1;
+    let returnVal2;
+
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
 
     // --- determine type of rain data
@@ -124,13 +129,18 @@ function readGageSeriesFormat(tok, ntoks, x)
 
     // --- get data time interval & convert to seconds
     ////////////////////////////////////
-    let returnObj = {t: aTime}
-    let returnVal = datetime_strToTime(tok[2], returnObj);
+    returnObj = {y: x[2]}
+    returnVal1 = getDouble(tok[2], returnObj);
+    x[2] = returnObj.y;
+    ////////////////////////////////////
+    ////////////////////////////////////
+    returnObj = {t: aTime}
+    returnVal2 = datetime_strToTime(tok[2], returnObj);
     aTime = returnObj.t;
     ////////////////////////////////////
-    if ( null != (x[2] = getDouble(tok[2]) )) x[2] = Math.floor(x[2]*3600 + 0.5);
+    if ( !returnVal1 ) x[2] = Math.floor(x[2]*3600 + 0.5);
     //else if ( datetime_strToTime(tok[2], aTime) )
-    else if (returnVal)
+    else if (returnVal2)
     {
         x[2] = Math.floor(aTime*SECperDAY + 0.5);
     }
@@ -138,8 +148,14 @@ function readGageSeriesFormat(tok, ntoks, x)
     if ( x[2] <= 0.0 ) return error_setInpError(ERR_DATETIME, tok[2]);
 
     // --- get snow catch deficiency factor
-    if ( null == (x[3] = getDouble(tok[3])))
-        return error_setInpError(ERR_DATETIME, tok[3]);;
+    ////////////////////////////////////
+    returnObj = {y: x[3]}
+    returnVal1 = getDouble(tok[3], returnObj);
+    x[3] = returnObj.y;
+    ////////////////////////////////////
+    if( !returnVal1 )
+    //if ( null == (x[3] = getDouble(tok[3])))
+        return error_setInpError(ERR_DATETIME, tok[3]);
 
     // --- get time series index
     ts = project_findObject(TSERIES, tok[5]);
@@ -157,6 +173,11 @@ function readGageFileFormat(tok, ntoks, x)
     let aDate;
     let aTime;
 
+    // return facilitators
+    let returnObj;
+    let returnVal1;
+    let returnVal2;
+
     // --- determine type of rain data
     m = findmatch(tok[1], RainTypeWords);
     if ( m < 0 ) return error_setInpError(ERR_KEYWORD, tok[1]);
@@ -164,13 +185,19 @@ function readGageFileFormat(tok, ntoks, x)
 
     // --- get data time interval & convert to seconds
     ////////////////////////////////////
-    let returnObj = {t: aTime}
-    let returnVal = datetime_strToTime(tok[2], returnObj);
+    returnObj = {y: x[2]}
+    returnVal1 = getDouble(tok[2], returnObj);
+    x[2] = returnObj.y;
+    ////////////////////////////////////
+
+    ////////////////////////////////////
+    returnObj = {t: aTime}
+    returnVal2 = datetime_strToTime(tok[2], returnObj);
     aTime = returnObj.t;
     ////////////////////////////////////
-    if (  null != (x[2] = getDouble(tok[2])) ) x[2] *= 3600;
+    if (  !returnVal1 ) x[2] *= 3600;
     //else if ( datetime_strToTime(tok[2], aTime) )
-    else if(returnVal)
+    else if(returnVal2)
     {
         x[2] = Math.floor(aTime*SECperDAY + 0.5);
     }
@@ -178,7 +205,13 @@ function readGageFileFormat(tok, ntoks, x)
     if ( x[2] <= 0.0 ) return error_setInpError(ERR_DATETIME, tok[2]);
 
     // --- get snow catch deficiency factor
-    if ( null == ( x[3] = getDouble(tok[3])))
+    ////////////////////////////////////
+    returnObj = {y: x[3]}
+    returnVal1 = getDouble(tok[3], returnObj);
+    x[3] = returnObj.y;
+    ////////////////////////////////////
+    if(!returnVal1) 
+    //if ( null == ( x[3] = getDouble(tok[3])))
         return error_setInpError(ERR_NUMBER, tok[3]);
  
     // --- get rain depth units
@@ -190,12 +223,12 @@ function readGageFileFormat(tok, ntoks, x)
     if ( ntoks > 8 && tok[8] != '*')
     {
         ////////////////////////////////////
-        let returnObj = {d: aDate}
-        let returnVal = datetime_strToDate(tok[8], returnObj);
+        returnObj = {d: aDate}
+        returnVal2 = datetime_strToDate(tok[8], returnObj);
         aDate = returnObj.d;
         ////////////////////////////////////
         //if ( !datetime_strToDate(tok[8], aDate) )
-        if ( !returnVal )
+        if ( !returnVal2 )
             return error_setInpError(ERR_DATETIME, tok[8]);
         x[4] =  aDate;
     }

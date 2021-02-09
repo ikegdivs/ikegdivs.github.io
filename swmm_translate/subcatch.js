@@ -124,6 +124,10 @@ function  subcatch_readParams(j, tok, ntoks)
     let  id;
     let x = new Array(9);
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for enough tokens
     if ( ntoks < 8 ) return error_setInpError(ERR_ITEMS, "");
 
@@ -147,7 +151,13 @@ function  subcatch_readParams(j, tok, ntoks)
     // --- read area, %imperv, width, slope, & curb length
     for ( i = 3; i < 8; i++)
     {
-        if ( null == (x[i] = getDouble(tok[i])) || x[i] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i]}
+        returnVal = getDouble(tok[i], returnObj);
+        x[i] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i] < 0.0 )
+        //if ( null == (x[i] = getDouble(tok[i])) || x[i] < 0.0 )
             return error_setInpError(ERR_NUMBER, tok[i]);
     }
 
@@ -200,6 +210,10 @@ function subcatch_readSubareaParams(tok, ntoks)
     let    i, j, k, m;
     let x = new Array(7);
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for enough tokens
     if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
 
@@ -210,7 +224,13 @@ function subcatch_readSubareaParams(tok, ntoks)
     // --- read in Mannings n, depression storage, & PctZero values
     for (i = 0; i < 5; i++)
     {
-        if ( null == (x[i] = getDouble(tok[i+1]))  || x[i] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i]}
+        returnVal = getDouble(tok[i+1], returnObj);
+        x[i] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal  || x[i] < 0.0 )
+        //if ( null == (x[i] = getDouble(tok[i+1]))  || x[i] < 0.0 )
             return error_setInpError(ERR_NAME, tok[i+1]);
     }
 
@@ -223,7 +243,13 @@ function subcatch_readSubareaParams(tok, ntoks)
     x[6] = 1.0;
     if ( ntoks >= 8 )
     {
-        if ( null == (x[6] = getDouble(tok[7])) || x[6] < 0.0 || x[6] > 100.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[6]}
+        returnVal = getDouble(tok[7], returnObj);
+        x[6] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[6] < 0.0 || x[6] > 100.0 )
+        //if ( null == (x[6] = getDouble(tok[7])) || x[6] < 0.0 || x[6] > 100.0 )
             return error_setInpError(ERR_NUMBER, tok[7]);
         x[6] /= 100.0;
     }
@@ -302,7 +328,13 @@ function subcatch_readLanduseParams(tok, ntoks)
         m = project_findObject(LANDUSE, tok[k-1]);
         if ( m < 0 ) return error_setInpError(ERR_NAME, tok[k-1]);
         if ( k+1 > ntoks ) return error_setInpError(ERR_ITEMS, "");
-        if ( null == (f = getDouble(tok[k])) )
+        ////////////////////////////////////
+        returnObj = {y: f}
+        returnVal = getDouble(tok[k], returnObj);
+        f = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (f = getDouble(tok[k])) )
             return error_setInpError(ERR_NUMBER, tok[k]);
 
         // --- store land use fraction in subcatch's landFactor property
@@ -342,7 +374,13 @@ function subcatch_readInitBuildup(tok, ntoks)
         m = project_findObject(POLLUT, tok[k-1]);
         if ( m < 0 ) return error_setInpError(ERR_NAME, tok[k-1]);
         if ( k+1 > ntoks ) return error_setInpError(ERR_ITEMS, "");
-        if ( null == (x = getDouble(tok[k])) )
+        ////////////////////////////////////
+        returnObj = {y: x}
+        returnVal = getDouble(tok[k], returnObj);
+        x = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x = getDouble(tok[k])) )
             return error_setInpError(ERR_NUMBER, tok[k]);
 
         // --- store loading in subcatch's initBuildup property

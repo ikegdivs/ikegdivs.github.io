@@ -148,6 +148,10 @@ function  climate_readParams(tok, ntoks)
     let y;
     let aDate;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- identify keyword
     k = findmatch(tok[0], TempKeyWords);
     if ( k < 0 ) return error_setInpError(ERR_KEYWORD, tok[0]);
@@ -181,8 +185,8 @@ function  climate_readParams(tok, ntoks)
             if ( tok[2] != '*')
             {
                 ////////////////////////////////////
-                let returnObj = {d: aDate}
-                let returnVal = datetime_strToDate(tok[2], returnObj);
+                returnObj = {d: aDate}
+                returnVal = datetime_strToDate(tok[2], returnObj);
                 aDate = returnObj.d;
                 ////////////////////////////////////
                 //if ( !datetime_strToDate(tok[2], aDate) )
@@ -207,7 +211,13 @@ function  climate_readParams(tok, ntoks)
             Wind.type = MONTHLY_WIND;
             for (i=0; i<12; i++)
             {
-                if ( null == (y = getDouble(tok[i+2])) )
+                ////////////////////////////////////
+                returnObj = {y: y}
+                returnVal = getDouble(tok[i+2], returnObj);
+                y = returnObj.y;
+                ////////////////////////////////////
+                if (!returnVal)
+                //if ( !getDouble(tok[i+2], &y) )
                     return error_setInpError(ERR_NUMBER, tok[i+2]);
                 Wind.aws[i] = y;
             }
@@ -218,7 +228,13 @@ function  climate_readParams(tok, ntoks)
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
         for (i=1; i<7; i++)
         {
-            if ( null == (x[i-1] = getDouble(tok[i])) )
+            ////////////////////////////////////
+            returnObj = {y: x[i-1]}
+            returnVal = getDouble(tok[i], returnObj);
+            x[i-1] = returnObj.y;
+            ////////////////////////////////////
+            if (!returnVal)
+            //if ( null == (x[i-1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         // --- convert deg. C to deg. F for snowfall temperature
@@ -241,7 +257,13 @@ function  climate_readParams(tok, ntoks)
         // --- read 10 fractional values
         for (j=0; j<10; j++)
         {
-            if ( null == (y = getDouble(tok[j+2])) || y < 0.0 || y > 1.0 )
+            ////////////////////////////////////
+            returnObj = {y: y}
+            returnVal = getDouble(tok[j+2], returnObj);
+            y = returnObj.y;
+            ////////////////////////////////////
+            if (!returnVal || y < 0.0 || y > 1.0 )
+            //if ( null == (y = getDouble(tok[j+2])) || y < 0.0 || y > 1.0 )
                 return error_setInpError(ERR_NUMBER, tok[j+2]);
             Snow.adc[i][j] = y;
         }
@@ -271,6 +293,10 @@ function climate_readEvapParams(tok, ntoks)
 {
     let i, k;
     let x;
+
+    // return facilitators
+    let returnObj;
+    let returnVal;
 
     // --- find keyword indicating what form the evaporation data is in
     k = findmatch(tok[0], EvapTypeWords);
@@ -304,7 +330,13 @@ function climate_readEvapParams(tok, ntoks)
     {
       case CONSTANT_EVAP:
         // --- for constant evap., fill monthly avg. values with same number
-        if ( null == (x = getDouble(tok[1])) )
+        ////////////////////////////////////
+        returnObj = {y: x}
+        returnVal = getDouble(tok[1], returnObj);
+        x = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal)
+        //if ( null == (x = getDouble(tok[1])) )
             return error_setInpError(ERR_NUMBER, tok[1]);
         for (i=0; i<12; i++) Evap.monthlyEvap[i] = x;
         break;
@@ -313,7 +345,13 @@ function climate_readEvapParams(tok, ntoks)
         // --- for monthly evap., read a value for each month of year
         if ( ntoks < 13 ) return error_setInpError(ERR_ITEMS, "");
         for ( i=0; i<12; i++)
-            if ( null == (Evap.monthlyEvap[i] = getDouble(tok[i+1])))
+            ////////////////////////////////////
+            returnObj = {y: Evap.monthlyEvap[i]}
+            returnVal = getDouble(tok[i+1], returnObj);
+            Evap.monthlyEvap[i] = returnObj.y;
+            ////////////////////////////////////
+            if(!returnVal)
+            //if ( null == (Evap.monthlyEvap[i] = getDouble(tok[i+1])))
                 return error_setInpError(ERR_NUMBER, tok[i+1]);
         break;
 
@@ -333,7 +371,13 @@ function climate_readEvapParams(tok, ntoks)
             if ( ntoks < 13 ) return error_setInpError(ERR_ITEMS, "");
             for (i=0; i<12; i++)
             {
-                if ( null == (Evap.panCoeff[i] = getDouble(tok[i+1])) )
+                ////////////////////////////////////
+                returnObj = {y: Evap.panCoeff[i]}
+                returnVal = getDouble(tok[i+1], returnObj);
+                Evap.panCoeff[i] = returnObj.y;
+                ////////////////////////////////////
+                if(!returnVal)
+                //if ( null == (Evap.panCoeff[i] = getDouble(tok[i+1])) )
                     return error_setInpError(ERR_NUMBER, tok[i+1]);
             }
         }
@@ -363,6 +407,10 @@ function climate_readAdjustments(tok, ntoks)
 {
     let i, j;                                                                  //(5.1.013)
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     if (ntoks == 1) return 0;
 
     if ( match(tok[0], "TEMP") )
@@ -370,7 +418,13 @@ function climate_readAdjustments(tok, ntoks)
         if ( ntoks < 13 )  return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i < 13; i++)
         {
-            if ( null == (Adjust.temp[i-1] = getDouble(tok[i])) )
+            ////////////////////////////////////
+            returnObj = {y: Adjust.temp[i-1]}
+            returnVal = getDouble(tok[i], returnObj);
+            Adjust.temp[i-1] = returnObj.y;
+            ////////////////////////////////////
+            if(!returnVal)
+            //if ( null == (Adjust.temp[i-1] = getDouble(tok[i])) )
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         return 0;
@@ -381,7 +435,13 @@ function climate_readAdjustments(tok, ntoks)
         if ( ntoks < 13 )  return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i < 13; i++)
         {
-            if ( null == (Adjust.evap[i-1] = getDouble(tok[i])))
+            ////////////////////////////////////
+            returnObj = {y: Adjust.evap[i-1]}
+            returnVal = getDouble(tok[i], returnObj);
+            Adjust.evap[i-1] = returnObj.y;
+            ////////////////////////////////////
+            if(!returnVal)
+            //if ( null == (Adjust.evap[i-1] = getDouble(tok[i])))
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         return 0;
@@ -392,7 +452,13 @@ function climate_readAdjustments(tok, ntoks)
         if ( ntoks < 13 )  return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i < 13; i++)
         {
-            if ( null == (Adjust.rain[i-1] = getDouble(tok[i])))
+            ////////////////////////////////////
+            returnObj = {y: Adjust.rain[i-1]}
+            returnVal = getDouble(tok[i], returnObj);
+            Adjust.rain[i-1] = returnObj.y;
+            ////////////////////////////////////
+            if(!returnVal)
+            //if ( null == (Adjust.rain[i-1] = getDouble(tok[i])))
                 return error_setInpError(ERR_NUMBER, tok[i]);
         }
         return 0;
@@ -403,7 +469,13 @@ function climate_readAdjustments(tok, ntoks)
         if ( ntoks < 13 )  return error_setInpError(ERR_ITEMS, "");
         for (i = 1; i < 13; i++)
         {
-            if ( null == (Adjust.hydcon[i-1] = getDouble(tok[i])))
+            ////////////////////////////////////
+            returnObj = {y: Adjust.hydcon[i-1]}
+            returnVal = getDouble(tok[i], returnObj);
+            Adjust.hydcon[i-1] = returnObj.y;
+            ////////////////////////////////////
+            if(!returnVal)
+            //if ( null == (Adjust.hydcon[i-1] = getDouble(tok[i])))
                 return error_setInpError(ERR_NUMBER, tok[i]);
             if ( Adjust.hydcon[i-1] <= 0.0 ) Adjust.hydcon[i-1] = 1.0;
         }
@@ -790,6 +862,10 @@ function setTemp(theDate)
     let   hour;                     // hour of day
     let   tmp;                      // temporary temperature
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- see if a new day has started
     mon = datetime_monthOfYear(theDate);
     theDay = floor(theDate);
@@ -846,7 +922,13 @@ function setTemp(theDate)
         k = Temp.tSeries;
         if ( k >= 0)
         {
-            Temp.ta = table_tseriesLookup(Tseries[k], theDate, TRUE);
+            ////////////////////////////////////
+            returnObj = {table: Tseries[k]}
+            returnVal = table_tseriesLookup(returnObj, theDate, true);
+            Tseries[k] = returnObj.table;
+            ////////////////////////////////////
+            Temp.ta = returnVal;
+            //Temp.ta = table_tseriesLookup(Tseries[k], theDate, true);
 
             // --- convert from deg. C to deg. F if need be
             if ( UnitSystem == SI )

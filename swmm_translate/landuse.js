@@ -47,6 +47,11 @@ function  landuse_readParams(j, tok, ntoks)
 //
 {
     let id;
+
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     if ( ntoks < 1 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(LANDUSE, tok[0]);
     if ( id == null ) return error_setInpError(ERR_NAME, tok[0]);
@@ -54,11 +59,29 @@ function  landuse_readParams(j, tok, ntoks)
     if ( ntoks > 1 )
     {
         if ( ntoks < 4 ) return error_setInpError(ERR_ITEMS, "");
-        if ( null == (Landuse[j].sweepInterval = getDouble(tok[1]) ))
+        ////////////////////////////////////
+        returnObj = {y: Landuse[j].sweepInterval}
+        returnVal = getDouble(tok[1], returnObj);
+        Landuse[j].sweepInterval = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal)
+        //if ( null == (Landuse[j].sweepInterval = getDouble(tok[1]) ))
             return error_setInpError(ERR_NUMBER, tok[1]);
-        if ( null == (Landuse[j].sweepRemoval = getDouble(tok[2])) )
+        ////////////////////////////////////
+        returnObj = {y: Landuse[j].sweepRemoval}
+        returnVal = getDouble(tok[2], returnObj);
+        Landuse[j].sweepRemoval = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal)
+        //if ( null == (Landuse[j].sweepRemoval = getDouble(tok[2])) )
             return error_setInpError(ERR_NUMBER, tok[2]);
-        if ( null == (Landuse[j].sweepDays0 = getDouble(tok[3])) )
+        ////////////////////////////////////
+        returnObj = {y: Landuse[j].sweepDays0}
+        returnVal = getDouble(tok[3], returnObj);
+        Landuse[j].sweepDays0 = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal)
+        //if ( null == (Landuse[j].sweepDays0 = getDouble(tok[3])) )
             return error_setInpError(ERR_NUMBER, tok[3]);
     }
     else
@@ -91,6 +114,10 @@ function  landuse_readPollutParams(j, tok, ntoks)
     let x = new Array(4), coFrac, cDWF, cInit;
     let id;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- extract pollutant name & units
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
     id = project_findID(POLLUT, tok[0]);
@@ -101,14 +128,26 @@ function  landuse_readPollutParams(j, tok, ntoks)
     // --- extract concen. in rain, gwater, & I&I
     for ( i = 2; i <= 4; i++ )
     {
-        if ( null == (x[i-2] = getDouble(tok[i])) || x[i-2] < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: x[i-2]}
+        returnVal = getDouble(tok[i], returnObj);
+        x[i-2] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || x[i-2] < 0.0 )
+        //if ( null == (x[i-2] = getDouble(tok[i])) || x[i-2] < 0.0 )
         {
             return error_setInpError(ERR_NUMBER, tok[i]);
         }
     }
 
     // --- extract decay coeff. (which can be negative for growth)
-    if ( null == (x[3] = getDouble(tok[5])) )
+    ////////////////////////////////////
+    returnObj = {y: x[3]}
+    returnVal = getDouble(tok[5], returnObj);
+    x[3] = returnObj.y;
+    ////////////////////////////////////
+    if( !returnVal )
+    //if ( null == (x[3] = getDouble(tok[5])) )
     {
         return error_setInpError(ERR_NUMBER, tok[5]);
     }
@@ -134,7 +173,13 @@ function  landuse_readPollutParams(j, tok, ntoks)
         {
             coPollut = project_findObject(POLLUT, tok[7]);
             if ( coPollut < 0 ) return error_setInpError(ERR_NAME, tok[7]);
-            if ( null == (coFrac = getDouble(tok[8])) || coFrac < 0.0 )
+            ////////////////////////////////////
+            returnObj = {y: coFrac}
+            returnVal = getDouble(tok[8], returnObj);
+            coFrac = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal || coFrac < 0.0 )
+            //if ( null == (coFrac = getDouble(tok[8])) || coFrac < 0.0 )
                 return error_setInpError(ERR_NUMBER, tok[8]);
         }
     }
@@ -142,14 +187,26 @@ function  landuse_readPollutParams(j, tok, ntoks)
     // --- check for DWF concen.
     if ( ntoks >= 10 )
     {
-        if ( null == (cDWF = getDouble(tok[9])) || cDWF < 0.0)
+        ////////////////////////////////////
+        returnObj = {y: cDWF}
+        returnVal = getDouble(tok[9], returnObj);
+        cDWF = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || cDWF < 0.0 )
+        //if ( null == (cDWF = getDouble(tok[9])) || cDWF < 0.0)
             return error_setInpError(ERR_NUMBER, tok[9]);
     }
 
     // --- check for initial concen.
     if ( ntoks >= 11 ) 
     {
-        if ( null == (cInit = getDouble(tok[10])) || cInit < 0.0 )
+        ////////////////////////////////////
+        returnObj = {y: cInit}
+        returnVal = getDouble(tok[10], returnObj);
+        cInit = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || cInit < 0.0 )
+        //if ( null == (cInit = getDouble(tok[10])) || cInit < 0.0 )
             return error_setInpError(ERR_NUMBER, tok[9]);
     }
 
@@ -200,7 +257,13 @@ function  landuse_readBuildupParams(tok, ntoks)
         if ( ntoks < 7 ) return error_setInpError(ERR_ITEMS, "");
         if ( k != EXTERNAL_BUILDUP ) for (i=0; i<3; i++)
         {
-            if ( null == (c[i] = getDouble(tok[i+3]))  || c[i] < 0.0  )
+            ////////////////////////////////////
+            returnObj = {y: c[i]}
+            returnVal = getDouble(tok[i+3], returnObj);
+            c[i] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal || c[i] < 0.0 )
+            //if ( null == (c[i] = getDouble(tok[i+3]))  || c[i] < 0.0  )
             {
                 return error_setInpError(ERR_NUMBER, tok[i+3]);
             }
@@ -239,9 +302,21 @@ function  landuse_readBuildupParams(tok, ntoks)
         break;
 
       case EXTERNAL_BUILDUP:
-        if ( null == (c[0] = getDouble(tok[3])) || c[0] < 0.0 )     //max. buildup
+        ////////////////////////////////////
+        returnObj = {y: c[0]}
+        returnVal = getDouble(tok[3], returnObj);
+        c[0] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || c[0] < 0.0 )
+        //if ( null == (c[0] = getDouble(tok[3])) || c[0] < 0.0 )     //max. buildup
             return error_setInpError(ERR_NUMBER, tok[3]);
-        if ( null == (c[1] = getDouble(tok[4])) || c[1] < 0.0 )     //scaling factor
+        ////////////////////////////////////
+        returnObj = {y: c[1]}
+        returnVal = getDouble(tok[4], returnObj);
+        c[1] = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal || c[1] < 0.0 )
+        //if ( null == (c[1] = getDouble(tok[4])) || c[1] < 0.0 )     //scaling factor
             return error_setInpError(ERR_NUMBER, tok[3]);
         n = project_findObject(TSERIES, tok[5]);           //time series
         if ( n < 0 ) return error_setInpError(ERR_NAME, tok[4]);
@@ -277,6 +352,9 @@ function  landuse_readWashoffParams(tok, ntoks)
     let    i, j, p;
     let    func;
     let x = new Array(4);
+    // return facilitators
+    let returnObj;
+    let returnVal;
 
     if ( ntoks < 3 ) return 0;
     for (i=0; i<4; i++) x[i] = 0.0;
@@ -292,18 +370,42 @@ function  landuse_readWashoffParams(tok, ntoks)
         if ( func != NO_WASHOFF )
         {
             if ( ntoks < 5 ) return error_setInpError(ERR_ITEMS, "");
-            if ( null == ( x[0] = getDouble(tok[3])))
+            ////////////////////////////////////
+            returnObj = {y: x[0]}
+            returnVal = getDouble(tok[3], returnObj);
+            x[0] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal )
+            //if ( null == ( x[0] = getDouble(tok[3])))
                     return error_setInpError(ERR_NUMBER, tok[3]);
-            if ( null == ( x[1] = getDouble(tok[4])))
+            ////////////////////////////////////
+            returnObj = {y: x[1]}
+            returnVal = getDouble(tok[4], returnObj);
+            x[1] = returnObj.y;
+            ////////////////////////////////////
+            if( !returnVal )
+            //if ( null == ( x[1] = getDouble(tok[4])))
                     return error_setInpError(ERR_NUMBER, tok[4]);
             if ( ntoks >= 6 )
             {
-                if ( null == (x[2] = getDouble(tok[5])))
+                ////////////////////////////////////
+                returnObj = {y: x[2]}
+                returnVal = getDouble(tok[5], returnObj);
+                x[2] = returnObj.y;
+                ////////////////////////////////////
+                if( !returnVal )
+                //if ( null == (x[2] = getDouble(tok[5])))
                         return error_setInpError(ERR_NUMBER, tok[5]);
             }
             if ( ntoks >= 7 )
             {
-                if ( null == (x[3] = getDouble(tok[6])))
+                ////////////////////////////////////
+                returnObj = {y: x[3]}
+                returnVal = getDouble(tok[6], returnObj);
+                x[3] = returnObj.y;
+                ////////////////////////////////////
+                if( !returnVal )
+                //if ( null == (x[3] = getDouble(tok[6])))
                         return error_setInpError(ERR_NUMBER, tok[6]);
             }
         }
@@ -691,6 +793,10 @@ function landuse_getExternalBuildup(i, p, buildup, tStep)
 //           given time step.
 //
 {
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     let maxBuildup = Landuse[i].buildupFunc[p].coeff[0];
     let sf = Landuse[i].buildupFunc[p].coeff[1];              // scaling factor
     let    ts = floor(Landuse[i].buildupFunc[p].coeff[2]);  // time series index
@@ -702,12 +808,17 @@ function landuse_getExternalBuildup(i, p, buildup, tStep)
     // --- get buildup rate (mass/unit/day) over the interval
     if ( ts >= 0 )
     {        
-        rate = sf * table_tseriesLookup(Tseries[ts],
-               getDateTime(NewRunoffTime), false);
+        ////////////////////////////////////
+        returnObj = {table: Tseries[ts]}
+        returnVal = table_tseriesLookup(returnObj, getDateTime(NewRunoffTime), false);
+        Tseries[ts] = returnObj.table;
+        ////////////////////////////////////
+        //rate = sf * table_tseriesLookup(Tseries[ts], getDateTime(NewRunoffTime), false);
+        rate = sf * returnVal;
     }
 
     // --- compute buildup at end of time interval
     buildup = buildup + rate * tStep / SECperDAY;
-    buildup = MIN(buildup, maxBuildup);
+    buildup = Math.min(buildup, maxBuildup);
     return buildup;
 }

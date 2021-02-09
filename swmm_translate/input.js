@@ -854,8 +854,13 @@ function  getFloat(s)
 }
 
 //=============================================================================
-// char *s, double *y
-function  getDouble(s)
+////////////////////////////////////
+//let returnObj = {y: val1}
+//let returnVal = getDouble(s, returnObj);
+//val1 = returnObj.y;
+////////////////////////////////////
+function  getDouble(s, inObj)
+//int  getDouble(char *s, double *y)
 //
 //  Input:   s = a character string
 //  Output:  y = converted value of s,
@@ -863,11 +868,11 @@ function  getDouble(s)
 //  Purpose: converts a string to a double precision floating point number.
 //
 {
-    /*let endptr;
-    y = strtod(s, endptr);
-    if (endptr > 0) return(0);
-    return(1);*/
-    return parseFloat(s);
+    inObj.y = parseFloat(s);
+    if(isNaN(inObj.y)){
+      return 0;
+    }
+    return 1;
 }
 
 //=============================================================================

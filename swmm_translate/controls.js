@@ -257,6 +257,10 @@ function  controls_addRuleClause(r, keyword, tok, nToks)
 //  Purpose: addd a new clause to a control rule.
 //
 {
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     switch (keyword)
     {
       case r_RULE:
@@ -294,7 +298,14 @@ function  controls_addRuleClause(r, keyword, tok, nToks)
       case r_PRIORITY:
         if ( InputState != r_THEN && InputState != r_ELSE ) return ERR_RULE;
         InputState = r_PRIORITY;
-        if ( !getDouble(tok[1], Rules[r].priority) ) return ERR_NUMBER;
+        ////////////////////////////////////
+        returnObj = {y: Rules[r].priority}
+        returnVal = getDouble(tok[1], returnObj);
+        Rules[r].priority = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal)
+        //if ( !getDouble(tok[1], Rules[r].priority) ) 
+            return ERR_NUMBER;
         if ( nToks > 2 ) return ERR_RULE;
         return 0;
     }
@@ -565,6 +576,10 @@ function getPremiseValue(token, attrib, value)
 //           in the premise clause of a control rule.
 //
 {
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     let   strDate = ''; 
     switch (attrib)
     {
@@ -578,7 +593,13 @@ function getPremiseValue(token, attrib, value)
       case r_CLOCKTIME:
       case r_TIMEOPEN:
       case r_TIMECLOSED:
-        if ( !datetime_strToTime(token, value) )
+        ////////////////////////////////////
+        let returnObj = {t: value}
+        let returnVal = datetime_strToTime(token, returnObj);
+        vaule = returnObj.t;
+        ////////////////////////////////////
+        if ( !returnVal )
+        //if ( !datetime_strToTime(token, value) )
             return error_setInpError(ERR_DATETIME, token);
         break;
 
@@ -588,14 +609,26 @@ function getPremiseValue(token, attrib, value)
         break;
 
       case r_DAY:
-        if ( !getDouble(token, value) ) 
+        ////////////////////////////////////
+        returnObj = {y: value}
+        returnVal = getDouble(token, returnObj);
+        value = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal)
+        //if ( !getDouble(token, value) ) 
             return error_setInpError(ERR_NUMBER, token);
         if ( value < 1.0 || value > 7.0 )
              return error_setInpError(ERR_DATETIME, token);
         break;
 
       case r_MONTH:
-        if ( !getDouble(token, value) )
+        ////////////////////////////////////
+        returnObj = {y: value}
+        returnVal = getDouble(token, returnObj);
+        value = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal)
+        //if ( !getDouble(token, value) )
             return error_setInpError(ERR_NUMBER, token);
         if ( value < 1.0 || value > 12.0 )
              return error_setInpError(ERR_DATETIME, token);
@@ -603,17 +636,32 @@ function getPremiseValue(token, attrib, value)
 
       case r_DAYOFYEAR:
         strncpy(strDate, token, 6);
-        strcat(strDate, "/1947");
+        strDate += "/1947";
         if ( datetime_strToDate(strDate, value) )
         {
             value = datetime_dayOfYear(value);
         }
-        else if ( !getDouble(token, value) || value < 1 || value > 365 )
-            return error_setInpError(ERR_DATETIME, token);
+        else{
+            ////////////////////////////////////
+            returnObj = {y: value}
+            returnVal = getDouble(token, returnObj);
+            value = returnObj.y;
+            ////////////////////////////////////
+            if(!returnVal || value < 1 || value > 365 )
+            //if ( !getDouble(token, value) || value < 1 || value > 365 )
+                return error_setInpError(ERR_DATETIME, token);
+        } 
         break;
        
-      default: if ( !getDouble(token, value) )
-          return error_setInpError(ERR_NUMBER, token);
+      default:
+        ////////////////////////////////////
+        returnObj = {y: value}
+        returnVal = getDouble(token, returnObj);
+        value = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal) 
+        //if ( !getDouble(token, value) )
+            return error_setInpError(ERR_NUMBER, token);
     }
     return 0;
 }
@@ -803,7 +851,13 @@ function  setActionSetting(tok, nToks, curve, tseries,
         if (nToks < 9) return error_setInpError(ERR_ITEMS, "");
         for (m=6; m<=8; m++)
         {
-            if ( !getDouble(tok[m], values[m-6]) )
+            ////////////////////////////////////
+            returnObj = {y: values[m-6]}
+            returnVal = getDouble(tok[m], returnObj);
+            values[m-6] = returnObj.y;
+            ////////////////////////////////////
+            if(!returnVal) 
+            //if ( !getDouble(tok[m], values[m-6]) )
                 return error_setInpError(ERR_NUMBER, tok[m]);
         }
         attrib = r_PID;
@@ -811,7 +865,13 @@ function  setActionSetting(tok, nToks, curve, tseries,
 
     // --- direct numerical control is used
     default:
-        if ( !getDouble(tok[5], values[0]) )
+        ////////////////////////////////////
+        returnObj = {y: values[0]}
+        returnVal = getDouble(tok[5], returnObj);
+        values[0] = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal) 
+        //if ( !getDouble(tok[5], values[0]) )
             return error_setInpError(ERR_NUMBER, tok[5]);
     }
     return 0;
@@ -828,13 +888,23 @@ function  updateActionValue(a, currentTime, dt)
 //  Purpose: updates value of actions found from Curves or Time Series.
 //
 {
+    // ret facil
+    let returnObj;
+    let returnVal;
+    
     if ( a.curve >= 0 )
     {
         a.value = table_lookup(Curve[a.curve], ControlValue);
     }
     else if ( a.tseries >= 0 )
     {
-        a.value = table_tseriesLookup(Tseries[a.tseries], currentTime, true);
+        ////////////////////////////////////
+        returnObj = {table: Tseries[a.tseries]}
+        returnVal = table_tseriesLookup(returnObj, currentTime, true);
+        Tseries[a.tseries] = returnObj.table;
+        ////////////////////////////////////
+        a.value = returnVal;
+        //a.value = table_tseriesLookup(Tseries[a.tseries], currentTime, true);
     }
     else if ( a.attribute == r_PID )
     {
@@ -1171,7 +1241,7 @@ function  deleteActionList()
     while ( listItem )
     {
         nextItem = listItem.next;
-        free(listItem);
+        listItem = null;
         listItem = nextItem;
     }
     ActionList = null;
@@ -1202,21 +1272,21 @@ function  deleteRules()
       while ( p )
       {
          pnext = p.next;
-         free(p);
+         p = null;
          p = pnext;
       }
       a = Rules[r].thenActions;
       while (a )
       {
          anext = a.next;
-         free(a);
+         a = null;
          a = anext;
       }
       a = Rules[r].elseActions;
       while (a )
       {
          anext = a.next;
-         free(a);
+         a = null;
          a = anext;
       }
    }

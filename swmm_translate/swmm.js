@@ -467,11 +467,11 @@ function swmm_close()
     report_writeSysTime();
     if ( Finp.file != null ) fclose(Finp.file);
     if ( Frpt.file != null ) fclose(Frpt.file);
-    if ( Fout.file != null )
-    {
-        fclose(Fout.file);
-        if ( Fout.mode == SCRATCH_FILE ) remove(Fout.name);
-    }
+    //if ( Fout.file != null )
+    //{
+    //    fclose(Fout.file);
+    //    if ( Fout.mode == SCRATCH_FILE ) remove(Fout.name);
+    //}
     IsOpenFlag = false;
     IsStartedFlag = false;
     return 0;
@@ -636,7 +636,7 @@ function getTempFileName(fname)
     else fname = null;
 
     // --- free the pointer returned by _tempnam
-    free(name);
+    name = null;
 
     // --- return the new contents of fname
     return fname;

@@ -118,6 +118,9 @@ function gwater_readAquiferParams(j, tok, ntoks)
     let   i, p;
     let x = new Array(12);
     let id;
+    // return facilitators
+    let returnObj;
+    let returnVal;
 
     // --- check that aquifer exists
     if ( ntoks < 13 ) return error_setInpError(ERR_ITEMS, "");
@@ -128,7 +131,13 @@ function gwater_readAquiferParams(j, tok, ntoks)
     for (i = 0; i < 11; i++) x[i] = 0.0;
     for (i = 1; i < 13; i++)
     {
-        if ( null == (x[i-1] = getDouble(tok[i])))
+        ////////////////////////////////////
+        returnObj = {y: x[i-1]}
+        returnVal = getDouble(tok[i], returnObj);
+        x[i-1] = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal) 
+        //if ( null == (x[i-1] = getDouble(tok[i])))
             return error_setInpError(ERR_NUMBER, tok[i]);
     }
 
@@ -176,6 +185,9 @@ function gwater_readGroundwaterParams(tok, ntoks)
     let    i, j, k, m, n;
     let x = new Array(11);
     let gw; // TGroundwater*
+    // return facilitators
+    let returnVal;
+    let returnObj;
 
     // --- check that specified subcatchment, aquifer & node exist
     if ( ntoks < 3 ) return error_setInpError(ERR_ITEMS, "");
@@ -194,7 +206,13 @@ function gwater_readGroundwaterParams(tok, ntoks)
     // -- read in the flow parameters
     for ( i = 0; i < 7; i++ )
     {
-        if ( null == (x[i] = getDouble(tok[i+3]))) 
+        ////////////////////////////////////
+        returnObj = {y: x[i]}
+        returnVal = getDouble(tok[i+3], returnObj);
+        x[i] = returnObj.y;
+        ////////////////////////////////////
+        if(!returnVal) 
+        //if ( null == (x[i] = getDouble(tok[i+3]))) 
             return error_setInpError(ERR_NUMBER, tok[i+3]);
     }
 
@@ -205,7 +223,13 @@ function gwater_readGroundwaterParams(tok, ntoks)
         m = i + 3;
         if ( ntoks > m && tok[m] != '*' )
         {    
-            if (null == (x[i] = getDouble(tok[m]))) 
+            ////////////////////////////////////
+            returnObj = {y: x[i]}
+            returnVal = getDouble(tok[m], returnObj);
+            x[i] = returnObj.y;
+            ////////////////////////////////////
+            if(!returnVal) 
+            //if (null == (x[i] = getDouble(tok[m]))) 
                 return error_setInpError(ERR_NUMBER, tok[m]);
             if ( i < 10 ) x[i] /= UCF(LENGTH);
         }
@@ -623,6 +647,10 @@ function  getFluxes(theta, lowerDepth)
 {
     let upperDepth;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- find upper zone depth
     lowerDepth = MAX(lowerDepth, 0.0);
     lowerDepth = MIN(lowerDepth, TotalDepth);
@@ -640,18 +668,75 @@ function  getFluxes(theta, lowerDepth)
     UpperPerc = MIN(UpperPerc, MaxUpperPerc);
 
     // --- find loss rate to deep GW
-    if ( DeepFlowExpr != null )
-        LowerLoss = mathexpr_eval(DeepFlowExpr, getVariableValue) /
-                    UCF(RAINFALL);
-    else
+    if ( DeepFlowExpr != null ){
+        ////////////////////////////////////
+        returnObj = {expr: DeepFlowExpr, getVariableValue: function (varIndex)
+            //
+            //  Input:   varIndex = index of a GW variable
+            //  Output:  returns current value of GW variable
+            //  Purpose: finds current value of a GW variable.
+            //
+            {
+                switch (varIndex)
+                {
+                case gwvHGW:  return Hgw * UCF(LENGTH);
+                case gwvHSW:  return Hsw * UCF(LENGTH);
+                case gwvHCB:  return Hstar * UCF(LENGTH);
+                case gwvHGS:  return TotalDepth * UCF(LENGTH);
+                case gwvKS:   return A.conductivity * UCF(RAINFALL);
+                case gwvK:    return HydCon * UCF(RAINFALL);
+                case gwvTHETA:return Theta;
+                case gwvPHI:  return A.porosity;
+                case gwvFI:   return Infil_gw * UCF(RAINFALL); 
+                case gwvFU:   return UpperPerc * UCF(RAINFALL);
+                case gwvA:    return Area * UCF(LANDAREA);
+                default:      return 0.0;
+                }
+            }}
+        returnVal = mathexpr_eval(returnObj);
+        DeepFlowExpr = returnObj.expr;
+        ////////////////////////////////////
+        LowerLoss = returnVal / UCF(RAINFALL)
+        //LowerLoss = mathexpr_eval(DeepFlowExpr, getVariableValue) / UCF(RAINFALL);
+    }
+    else{
         LowerLoss = A.lowerLossCoeff * lowerDepth / TotalDepth;
-    LowerLoss = MIN(LowerLoss, lowerDepth/Tstep);
+    }
+    LowerLoss = Math.min(LowerLoss, lowerDepth/Tstep);
 
     // --- find GW flow rate from lower zone to drainage system node
     GWFlow = getGWFlow(lowerDepth);
     if ( LatFlowExpr != null )
     {
-        GWFlow += mathexpr_eval(LatFlowExpr, getVariableValue) / UCF(GWFLOW);
+        ////////////////////////////////////
+        returnObj = {expr: LatFlowExpr, getVariableValue: function (varIndex)
+            //
+            //  Input:   varIndex = index of a GW variable
+            //  Output:  returns current value of GW variable
+            //  Purpose: finds current value of a GW variable.
+            //
+            {
+                switch (varIndex)
+                {
+                case gwvHGW:  return Hgw * UCF(LENGTH);
+                case gwvHSW:  return Hsw * UCF(LENGTH);
+                case gwvHCB:  return Hstar * UCF(LENGTH);
+                case gwvHGS:  return TotalDepth * UCF(LENGTH);
+                case gwvKS:   return A.conductivity * UCF(RAINFALL);
+                case gwvK:    return HydCon * UCF(RAINFALL);
+                case gwvTHETA:return Theta;
+                case gwvPHI:  return A.porosity;
+                case gwvFI:   return Infil_gw * UCF(RAINFALL); 
+                case gwvFU:   return UpperPerc * UCF(RAINFALL);
+                case gwvA:    return Area * UCF(LANDAREA);
+                default:      return 0.0;
+                }
+            }}
+        returnVal = mathexpr_eval(returnObj);
+        LatFlowExpr = returnObj.expr;
+        ////////////////////////////////////
+        GWFlow += returnVal / UCF(GWFLOW)
+        //GWFlow += mathexpr_eval(LatFlowExpr, getVariableValue) / UCF(GWFLOW);
     }
     if ( GWFlow >= 0.0 ) GWFlow = MIN(GWFlow, MaxGWFlowPos);
     else GWFlow = MAX(GWFlow, MaxGWFlowNeg);

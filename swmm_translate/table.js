@@ -53,6 +53,10 @@ function table_readCurve(tok, ntoks)
     let    j, m, k, k1 = 1;
     let x, y;
 
+    // return facilitators
+    let returnObj;
+    let returnVal;
+
     // --- check for minimum number of tokens
     if ( ntoks < 3 ) return error_setInpError(ERR_ITEMS, "");
 
@@ -76,9 +80,21 @@ function table_readCurve(tok, ntoks)
     for ( k = k1; k < ntoks; k = k+2)
     {
         if ( k+1 >= ntoks ) return error_setInpError(ERR_ITEMS, "");
-        if ( null == (x = getDouble(tok[k])) )
+        ////////////////////////////////////
+        returnObj = {y: x}
+        returnVal = getDouble(tok[k], returnObj);
+        x = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (x = getDouble(tok[k])) )
             return error_setInpError(ERR_NUMBER, tok[k]);
-        if ( null == (y = getDouble(tok[k+1])) )
+        ////////////////////////////////////
+        returnObj = {y: y}
+        returnVal = getDouble(tok[k+1], returnObj);
+        y = returnObj.y;
+        ////////////////////////////////////
+        if( !returnVal )
+        //if ( null == (y = getDouble(tok[k+1])) )
             return error_setInpError(ERR_NUMBER, tok[k+1]);
         table_addEntry(Curve[j], x, y);
     }
@@ -154,18 +170,27 @@ function table_readTimeseries(tok, ntoks)
             if ( k >= ntoks ) return error_setInpError(ERR_ITEMS, "");
 
             
-
+            // --- first check for decimal hours format
             // --- then for an hrs:min format
             ////////////////////////////////////
-            returnObj = {t: t}
-            returnVal = datetime_strToTime(tok[k], returnObj);
-            t = returnObj.t;
+            returnObj = {y: t}
+            returnVal = getDouble(tok[k], returnObj);
+            t = returnObj.y;
             ////////////////////////////////////
-            // --- first check for decimal hours format
-            if ( null != (t = getDouble(tok[k])) ) t /= 24.0;
+            //if ( null != (t = getDouble(tok[k])) ){
+            if( !returnVal ){
+                t /= 24.0;
+            } 
             //else if ( !datetime_strToTime(tok[k], t) )
-            else if(!returnVal)
-                return error_setInpError(ERR_NUMBER, tok[k]);
+            else{
+                ////////////////////////////////////
+                returnObj = {t: t}
+                returnVal = datetime_strToTime(tok[k], returnObj);
+                t = returnObj.t;
+                ////////////////////////////////////
+                if(!returnVal)
+                    return error_setInpError(ERR_NUMBER, tok[k]);
+            }
 
             // --- save date + time in x
             x = Tseries[j].lastDate + t;
@@ -178,7 +203,13 @@ function table_readTimeseries(tok, ntoks)
           case 3:
             // --- extract a numeric value from token
             if ( k >= ntoks ) return error_setInpError(ERR_ITEMS, "");
-            if ( null == (y = getDouble(tok[k])) )
+            ////////////////////////////////////
+            returnObj = {y: y}
+            returnVal = getDouble(tok[k], returnObj);
+            y = returnObj.y;
+            ////////////////////////////////////
+            if ( !returnVal )
+            //if ( null == (y = getDouble(tok[k])) )
                 return error_setInpError(ERR_NUMBER, tok[k]);
 
             // --- add date/time & value to time series
@@ -740,8 +771,13 @@ function   table_tseriesInit(table)
 }
 
 //=============================================================================
-// TTable *table, double x, char extend
-function table_tseriesLookup(table, x, extend)
+////////////////////////////////////
+//returnObj = {table: val1}
+//returnVal = table_tseriesLookup(returnObj, x, extend);
+//val1 = returnObj.table;
+////////////////////////////////////
+function table_tseriesLookup(inObj, x, extend)
+//double table_tseriesLookup(TTable *table, double x, char extend)
 //
 //  Input:   table = pointer to a TTable structure
 //           x = a date/time value
@@ -756,42 +792,41 @@ function table_tseriesLookup(table, x, extend)
 //
 {
     // --- x lies within current time bracket
-    if ( table.x1 <= x
-    &&   table.x2 >= x
-    &&   table.x1 != table.x2 )
-    return table_interpolate(x, table.x1, table.y1, table.x2, table.y2);
+    if ( inObj.table.x1 <= x
+    &&   inObj.table.x2 >= x
+    &&   inObj.table.x1 != table.x2 )
+    return table_interpolate(x, inObj.table.x1, inObj.table.y1, inObj.table.x2, inObj.table.y2);
 
     // --- x lies before current time bracket:
     //     move to start of time series
-    if ( table.x1 == table.x2 || x < table.x1 )
+    if ( inObj.table.x1 == inObj.table.x2 || x < inObj.table.x1 )
     {
-        table_getFirstEntry(table, (table.x1), (table.y1));
-        if ( x < table.x1 )
+        table_getFirstEntry(inObj.table, (inObj.table.x1), (inObj.table.y1));
+        if ( x < inObj.table.x1 )
         {
-            if ( extend == true ) return table.y1;
+            if ( extend == true ) return inObj.table.y1;
             else return 0;
         }
     }
 
     // --- x lies beyond current time bracket:
     //     update start of next time bracket
-    table.x1 = table.x2;
-    table.y1 = table.y2;
+    inObj.table.x1 = inObj.table.x2;
+    inObj.table.y1 = inObj.table.y2;
 
     // --- get end of next time bracket
-    while ( table_getNextEntry(table, (table.x2), (table.y2)) )
+    while ( table_getNextEntry(inObj.table, (inObj.table.x2), (inObj.table.y2)) )
     {
         // --- x lies within the bracket
-        if ( x <= table.x2 )
-            return table_interpolate(x, table.x1, table.y1,
-                                        table.x2, table.y2);
+        if ( x <= inObj.table.x2 )
+            return table_interpolate(x, inObj.table.x1, inObj.table.y1, inObj.table.x2, inObj.table.y2);
         // --- otherwise move to next time bracket
-        table.x1 = table.x2;
-        table.y1 = table.y2;
+        inObj.table.x1 = inObj.table.x2;
+        inObj.table.y1 = inObj.table.y2;
     }
 
     // --- return last value or 0 if beyond last data value
-    if ( extend == true ) return table.y1;
+    if ( extend == true ) return inObj.table.y1;
     else return 0.0;
 }
 
@@ -882,17 +917,38 @@ function  table_parseFileLine(line, table, x, y)
     else return false;
 
     // --- convert time string to numeric value
+    
     ////////////////////////////////////
-    returnObj = {t: t}
-    returnVal = datetime_strToTime(tStr, returnObj);
-    t = returnObj.t;
+    returnObj = {y: t}
+    returnVal = getDouble(tStr, returnObj);
+    t = returnObj.y;
     ////////////////////////////////////
-    if ( null != (t = getDouble(tStr)) ) t /= 24.0;
-    //else if ( !datetime_strToTime(tStr, t) ) return false;
-    else if (!returnVal) return false;
+    //if ( null != (t = getDouble(tStr)) ) t /= 24.0;
+    if ( !returnVal ){
+        t /= 24.0;
+    }
+    else{
+        ////////////////////////////////////
+        returnObj = {t: t}
+        returnVal = datetime_strToTime(tStr, returnObj);
+        t = returnObj.t;
+        ////////////////////////////////////
+        if (!returnVal) {
+        //if ( !datetime_strToTime(tStr, t) )
+            return false;
+        }
+    } 
 
     // --- convert value string to numeric value
-    if ( null == (yy = getDouble(yStr)) ) return false;
+    ////////////////////////////////////
+    returnObj = {y: yy}
+    returnVal = getDouble(yStr, returnObj);
+    yy = returnObj.y;
+    ////////////////////////////////////
+    if ( !returnVal ){
+    //if ( null == (yy = getDouble(yStr)) ) 
+        return false;
+    }
 
     // --- assign values to current date and value
     x = d + t;
