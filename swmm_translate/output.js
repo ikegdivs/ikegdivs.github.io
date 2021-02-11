@@ -652,6 +652,10 @@ function output_saveSubcatchResults(reportTime, file)
     let    totalArea = 0.0; 
     let reportDate = getDateTime(reportTime);
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- update reported rainfall at each rain gage
     for ( j=0; j<Nobjects[GAGE]; j++ )
     {
@@ -665,7 +669,12 @@ function output_saveSubcatchResults(reportTime, file)
     for ( j=0; j<Nobjects[SUBCATCH]; j++)
     {
         // --- retrieve interpolated results for reporting time & write to file
-        subcatch_getResults(j, f, SubcatchResults);
+        ////////////////////////////////////
+        returnObj = {x: SubcatchResults}
+        returnVal = subcatch_getResults(j, f, returnObj)
+        SubcatchResults = returnObj.x;
+        ////////////////////////////////////
+        //subcatch_getResults(j, f, SubcatchResults);
         if ( Subcatch[j].rptFlag )
             fwrite(SubcatchResults, sizeof(REAL4), NumSubcatchVars, file);
 

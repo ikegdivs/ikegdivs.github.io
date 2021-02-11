@@ -202,6 +202,10 @@ function solveContinuity(qin, ain, inObj)
     let fLo, fHi;                   // lower/upper bounds on f
     let tol = EPSIL;                // absolute convergence tol.
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- first determine bounds on 'a' so that f(a) passes through 0.
 
     // --- set upper bound to area at full flow
@@ -243,7 +247,12 @@ function solveContinuity(qin, ain, inObj)
         // --- call the Newton root finder method passing it the 
         //     evalContinuity function to evaluate the function
         //     and its derivatives
-        n = findroot_Newton(aLo, aHi, inObj.aout, tol, evalContinuity, null);
+        ////////////////////////////////////
+        returnObj = {rts: inObj.aout, p: null}
+        returnVal = findroot_Newton(aLo, aHi, returnObj, tol, evalContinuity)
+        inObj.aout = returnObj.rts;
+        ////////////////////////////////////
+        //n = findroot_Newton(aLo, aHi, inObj.aout, tol, evalContinuity, null);
 
         // --- check if root finder succeeded
         if ( n <= 0 ) n = -1;
@@ -268,8 +277,15 @@ function solveContinuity(qin, ain, inObj)
 }
 
 //=============================================================================
-// double a, double* f, double* df, void* p
-function evalContinuity(a, f, df, p)
+////////////////////////////////////
+//let returnObj = {f: val1, df: val2, p: val3}
+//let returnVal = evalContinuity(a, returnObj)
+//val1 = returnObj.f;
+//val2 = returnObj.df;
+//val3 = returnObj.p;
+////////////////////////////////////
+function evalContinuity(a, inObj)
+//void evalContinuity(double a, double* f, double* df, void* p)
 //
 //  Input:   a = outlet normalized area
 //  Output:  f = value of continuity eqn.
@@ -278,8 +294,8 @@ function evalContinuity(a, f, df, p)
 //           w.r.t. normalized area for link with normalized outlet area 'a'.
 //
 {
-    f  = (Beta1 * xsect_getSofA(pXsect, a*Afull)) + (C1 * a) + C2;
-    df = (Beta1 * Afull * xsect_getdSdA(pXsect, a*Afull)) + C1;
+    inObj.f  = (Beta1 * xsect_getSofA(pXsect, a*Afull)) + (C1 * a) + C2;
+    inObj.df = (Beta1 * Afull * xsect_getdSdA(pXsect, a*Afull)) + C1;
 }
 
 //=============================================================================

@@ -742,15 +742,14 @@ function updateNodeDepth(i, y)
 }
 
 //=============================================================================
-// int j, double* qin, double* qout, double tStep
 ////////////////////////////////////
 //let returnObj = {qinflow: qin, qoutflow: qout}
 //let returnVal = steadyflow_execute(j, returnObj, tStep);
 //qin  = returnObj.qinflow;
 //qout = returnObj.qoutflow;
 ////////////////////////////////////
-//function steadyflow_execute(j, qin, qout, tStep)
 function steadyflow_execute(j, inObj, tStep)
+//int steadyflow_execute(int j, double* qin, double* qout, double tStep)
 //
 //  Input:   j = link index
 //           qin = inflow to link (cfs)

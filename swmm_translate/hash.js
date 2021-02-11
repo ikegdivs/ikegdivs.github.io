@@ -17,8 +17,17 @@ class HTentry
     }
 };
 
+class HTtable
+{
+    constructor(){
+        this.key;
+        this.data;
+        //struct HTentry *next
+        this.next;
+    }
+};
+
 //typedef struct HTentry *HTtable;
-var HTtable;
 
 //-----------------------------------------------------------------------------
 //   hash.c
@@ -74,7 +83,8 @@ function hash(str)
 function HTcreate()
 {
         //HTtable *ht = (HTtable *) calloc(HTMAXSIZE, sizeof(HTtable));
-        var ht = new Array(HTMAXSIZE);
+        var ht = [];
+        for(let i = 0; i < HTMAXSIZE; i++){ht.push(new HTtable())}
         //if (ht != null) for (i=0; i<HTMAXSIZE; i++) ht[i] = null;
         return(ht);
 }
@@ -98,7 +108,7 @@ function HTfind(ht, key)
         let i = hash(key);
         if ( i >= HTMAXSIZE ) return(NOTFOUND);
         let entry = ht[i];
-        while (entry != null)
+        while (entry.key != null)
         {
             if ( samestr(entry.key,key) ) {
                 return(entry.data);
@@ -114,7 +124,7 @@ function HTfindKey(ht, key)
         let i = hash(key);
         if ( i >= HTMAXSIZE ) return(null);
         let entry = ht[i];
-        while (entry != null)
+        while (entry.key != null)
         {
             if ( samestr(entry.key,key) ) {
                 return(entry.key);

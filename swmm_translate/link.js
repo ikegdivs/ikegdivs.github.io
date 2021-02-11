@@ -1489,6 +1489,10 @@ function  pump_validate(j, k)
     let m, n1;
     let x, y;
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     Link[j].xsect.yFull = 0.0;
 
     // --- check for valid curve type
@@ -1507,15 +1511,36 @@ function  pump_validate(j, k)
         else
         {
             Pump[k].type = Curve[m].curveType - PUMP1_CURVE;
-            if ( table_getFirstEntry(Curve[m], x, y) )
+            ////////////////////////////////////
+            returnObj = {x: x, y: y}
+            returnVal = table_getFirstEntry(Curve[m], returnObj)
+            x = returnObj.x;
+            y = returnObj.y;
+            ////////////////////////////////////
+            //if ( table_getFirstEntry(Curve[m], x, y) )
+            if( returnVal )
             {
                 Link[j].qFull = y;
                 Pump[k].xMin = x;
                 Pump[k].xMax = x;
-                while ( table_getNextEntry(Curve[m], x, y) )
+
+                ////////////////////////////////////
+                returnObj = {x: x, y: y}
+                returnVal = table_getNextEntry(Curve[m], returnObj)
+                x = returnObj.x;
+                y = returnObj.y;
+                ////////////////////////////////////
+                //while ( table_getNextEntry(Curve[m], x, y) )
+                while ( returnVal )
                 {
-                    Link[j].qFull = MAX(y, Link[j].qFull);
+                    Link[j].qFull = Math.max(y, Link[j].qFull);
                     Pump[k].xMax = x;
+                    ////////////////////////////////////
+                    returnObj = {x: x, y: y}
+                    returnVal = table_getNextEntry(Curve[m], returnObj)
+                    x = returnObj.x;
+                    y = returnObj.y;
+                    ////////////////////////////////////
                 }
             }
             Link[j].qFull /= UCF(FLOW);

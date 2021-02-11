@@ -117,8 +117,7 @@ function readGageSeriesFormat(tok, ntoks, x)
 
     // return facilitators
     let returnObj;
-    let returnVal1;
-    let returnVal2;
+    let returnVal;
 
     if ( ntoks < 6 ) return error_setInpError(ERR_ITEMS, "");
 
@@ -130,21 +129,26 @@ function readGageSeriesFormat(tok, ntoks, x)
     // --- get data time interval & convert to seconds
     ////////////////////////////////////
     returnObj = {y: x[2]}
-    returnVal1 = getDouble(tok[2], returnObj);
+    returnVal = getDouble(tok[2], returnObj);
     x[2] = returnObj.y;
     ////////////////////////////////////
-    ////////////////////////////////////
-    returnObj = {t: aTime}
-    returnVal2 = datetime_strToTime(tok[2], returnObj);
-    aTime = returnObj.t;
-    ////////////////////////////////////
-    if ( !returnVal1 ) x[2] = Math.floor(x[2]*3600 + 0.5);
+    
+    if ( returnVal ) x[2] = Math.floor(x[2]*3600 + 0.5);
     //else if ( datetime_strToTime(tok[2], aTime) )
-    else if (returnVal2)
-    {
-        x[2] = Math.floor(aTime*SECperDAY + 0.5);
+    else{
+        ////////////////////////////////////
+        returnObj = {t: aTime}
+        returnVal = datetime_strToTime(tok[2], returnObj);
+        aTime = returnObj.t;
+        ////////////////////////////////////
+        if (returnVal)
+        {
+            x[2] = Math.floor(aTime*SECperDAY + 0.5);
+        } else {
+            return error_setInpError(ERR_DATETIME, tok[2]);
+        }
     }
-    else return error_setInpError(ERR_DATETIME, tok[2]);
+    
     if ( x[2] <= 0.0 ) return error_setInpError(ERR_DATETIME, tok[2]);
 
     // --- get snow catch deficiency factor
@@ -440,8 +444,14 @@ function gage_getNextRainDate(j, aDate)
 }
 
 //=============================================================================
-// int j, double *rainfall, double *snowfall
-function gage_getPrecip(j, rainfall, snowfall)
+////////////////////////////////////
+//let returnObj = {rainfall: val1, snowfall: val2}
+//let returnVal = gage_getPrecip(j, returnObj)
+//val1 = returnObj.rainfall;
+//val2 = returnObj.snowfall;
+////////////////////////////////////
+function gage_getPrecip(j, inObj)
+//double gage_getPrecip(int j, double *rainfall, double *snowfall)
 //
 //  Input:   j = rain gage index
 //  Output:  rainfall = rainfall rate (ft/sec)
@@ -450,14 +460,14 @@ function gage_getPrecip(j, rainfall, snowfall)
 //  Purpose: determines whether gage's recorded rainfall is rain or snow.
 //
 {
-    rainfall = 0.0;
-    snowfall = 0.0;
+    inObj.rainfall = 0.0;
+    inObj.snowfall = 0.0;
     if ( !IgnoreSnowmelt && Temp.ta <= Snow.snotmp )
     {
-       snowfall = Gage[j].rainfall * Gage[j].snowFactor / UCF(RAINFALL);
+        inObj.snowfall = Gage[j].rainfall * Gage[j].snowFactor / UCF(RAINFALL);
     }
-    else rainfall = Gage[j].rainfall / UCF(RAINFALL);
-    return (rainfall) + (snowfall);
+    else inObj.rainfall = Gage[j].rainfall / UCF(RAINFALL);
+    return (inObj.rainfall) + (inObj.snowfall);
 } 
 
 //=============================================================================
@@ -509,6 +519,10 @@ function getFirstRainfall(j)
     let  vFirst;                     // first rain volume (ft or m)
     let rFirst;                     // first rain intensity (in/hr or mm/hr)
 
+    // rat facil
+    let returnObj;
+    let returnVal;
+
     // --- assign default values to date & rainfall
     Gage[j].startDate = NO_DATE;
     Gage[j].rainfall = 0.0;
@@ -541,8 +555,14 @@ function getFirstRainfall(j)
         if ( k >= 0 )
         {
             // --- retrieve first rainfall value from time series
-            if ( table_getFirstEntry(Tseries[k], Gage[j].startDate,
-                                     rFirst) )
+            ////////////////////////////////////
+            returnObj = {x: Gage[j].startDate, y: rFirst}
+            returnVal = table_getFirstEntry(Tseries[k], returnObj)
+            Gage[j].startDate = returnObj.x;
+            rFirst = returnObj.y;
+            ////////////////////////////////////
+            //if ( table_getFirstEntry(Tseries[k], Gage[j].startDate, rFirst) )
+            if ( returnVal )
             {
                 // --- convert rainfall to intensity
                 Gage[j].rainfall = convertRainfall(j, rFirst);
@@ -571,6 +591,10 @@ function getNextRainfall(j)
     let  vNext;                      // next rain volume (ft or m)
     let rNext;                      // next rain intensity (in/hr or mm/hr)
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     Gage[j].nextRainfall = 0.0;
     do
     {
@@ -592,8 +616,16 @@ function getNextRainfall(j)
             k = Gage[j].tSeries;
             if ( k >= 0 )
             {
-                if ( !table_getNextEntry(Tseries[k],
-                        Gage[j].nextDate, rNext) ) return 0;
+                ////////////////////////////////////
+                returnObj = {x: Gage[j].nextDate, y: rNext}
+                returnVal = table_getNextEntry(Tseries[k], returnObj)
+                Gage[j].nextDate = returnObj.x;
+                rNext = returnObj.y;
+                ////////////////////////////////////
+                if( !returnVal ) {
+                //if ( !table_getNextEntry(Tseries[k], Gage[j].nextDate, rNext) ){
+                    return 0;
+                }
                 rNext = convertRainfall(j, rNext);
             }
             else return 0;

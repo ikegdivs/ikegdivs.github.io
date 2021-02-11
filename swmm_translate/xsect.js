@@ -1713,6 +1713,10 @@ function generic_getAofS(xsect, s)
     let a, a1, a2, tol;
     xsectStar = new TXsectStar();
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     if (s <= 0.0) return 0.0;
 
     // --- if S is between sMax and sFull then
@@ -1740,7 +1744,14 @@ function generic_getAofS(xsect, s)
 
     // use the Newton-Raphson root finder function to find A
     tol = 0.0001 * xsect.aFull;
-    findroot_Newton(a1, a2, a, tol, evalSofA, xsectStar);
+    ////////////////////////////////////
+    returnObj = {rts: a, p: xsectStar}
+    returnVal = findroot_Newton(a1, a2
+                    , returnObj, tol, evalSofA)
+    a = returnObj.rts;
+    xsectStar = returnObj.p
+    ////////////////////////////////////
+    //findroot_Newton(a1, a2, a, tol, evalSofA, xsectStar);
     return a;
 }
 
@@ -1953,8 +1964,13 @@ function locate(y, table, jLast)
 }
 
 //=============================================================================
-// double yc, void* p
-function getQcritical(yc, p)
+////////////////////////////////////
+//returnObj = {p: val1}
+//returnVal = getQcritical(yc, returnObj)
+//val1 = returnObj.p;
+////////////////////////////////////
+function getQcritical(yc, inObj)
+//double getQcritical(double yc, void* p)
 //
 //  Input:   yc = critical depth (ft)
 //           p = pointer to a TXsectStar object
@@ -1966,7 +1982,7 @@ function getQcritical(yc, p)
     let a, w, qc;
     //TXsectStar* xsectStar;
 
-    let xsectStar = p;
+    let xsectStar = inObj.p;
     a = xsect_getAofY(xsectStar.xsect, yc);
     w = xsect_getWofY(xsectStar.xsect, yc);
     qc = -xsectStar.qc;
@@ -2059,6 +2075,10 @@ function getYcritRidder(xsect, q, y0)
     let q0, q1, q2;
     xsectStar = new TXsectStar();
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- store reference to cross section in global pointer
     xsectStar.xsect = xsect;
     xsectStar.qc = 0.0;
@@ -2089,7 +2109,13 @@ function getYcritRidder(xsect, q, y0)
 
     // --- call Ridder root finding procedure with error tolerance
     //     of 0.001 ft. to find critical depth yc
-    yc = findroot_Ridder(y1, y2, 0.001, getQcritical, xsectStar);
+    ////////////////////////////////////
+    returnObj = {p: xsectStar}
+    returnVal = findroot_Ridder(y1, y2, 0.001, getQcritical, returnObj)
+    xsectStar = returnObj.p;
+    yc = returnVal;
+    ////////////////////////////////////
+    //yc = findroot_Ridder(y1, y2, 0.001, getQcritical, xsectStar);
     return yc;
 }
 

@@ -743,8 +743,13 @@ function  getFluxes(theta, lowerDepth)
 }
 
 //=============================================================================
-// double t, double* x, double* dxdt
-function  getDxDt(t, x, dxdt)
+////////////////////////////////////
+//let returnObj = {v1: val1, v2: val2}
+//let returnVal = getDdDt(t, returnObj)
+//val1 = returnObj.v1;
+//val2 = returnObj.v2
+////////////////////////////////////
+function  getDxDt(t, inObj)
 //
 //  Input:   t    = current time (not used)
 //           x    = array of state variables
@@ -757,25 +762,25 @@ function  getDxDt(t, x, dxdt)
     let qLower;    // inflow - outflow for lower zone (ft/sec)
     let denom;
 
-    getFluxes(x[THETA], x[LOWERDEPTH]);
+    getFluxes(inObj.v1[THETA], inObj.v1[LOWERDEPTH]);
     qUpper = Infil_gw - UpperEvap - UpperPerc;
     qLower = UpperPerc - LowerLoss - LowerEvap - GWFlow;
 
     // --- d(upper zone moisture)/dt = (net upper zone flow) /
     //                                 (upper zone depth)
-    denom = TotalDepth - x[LOWERDEPTH];
+    denom = TotalDepth - inObj.v1[LOWERDEPTH];
     if (denom > 0.0)
-        dxdt[THETA] = qUpper / denom;
+        inObj.v2[THETA] = qUpper / denom;
     else
-        dxdt[THETA] = 0.0;
+        inObj.v2[THETA] = 0.0;
 
     // --- d(lower zone depth)/dt = (net lower zone flow) /
     //                              (upper zone moisture deficit)
-    denom = A.porosity - x[THETA];
+    denom = A.porosity - inObj.v1[THETA];
     if (denom > 0.0)
-        dxdt[LOWERDEPTH] = qLower / denom;
+        inObj.v2[LOWERDEPTH] = qLower / denom;
     else
-        dxdt[LOWERDEPTH] = 0.0;
+        inObj.v2[LOWERDEPTH] = 0.0;
 }
 
 //=============================================================================

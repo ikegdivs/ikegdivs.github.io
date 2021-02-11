@@ -363,11 +363,21 @@ function snow_plowSnow(j, tStep)
     //TSnowpack* snowpack;               // ptr. to snow pack object
     let snowpack;
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     snowpack = Subcatch[j].snowpack;
     if ( !snowpack ) return;
 
     // --- see if there's any snowfall
-    gage_getPrecip(Subcatch[j].gage, rainfall, snowfall);
+    ////////////////////////////////////
+    returnObj = {rainfall: rainfall, snowfall: snowfall}
+    returnVal = gage_getPrecip(Subcatch[j].gage, returnObj)
+    rainfall = returnObj.rainfall;
+    snowfall = returnObj.snowfall;
+    ////////////////////////////////////
+    //gage_getPrecip(Subcatch[j].gage, rainfall, snowfall);
 
     // --- add snowfall to snow pack
     for (i=SNOW_PLOWABLE; i<=SNOW_PERV; i++)
@@ -434,7 +444,7 @@ function snow_plowSnow(j, tStep)
             }
 
             // --- reduce snow depth by amount plowed
-            sfracTotal = MIN(sfracTotal, 1.0);
+            sfracTotal = Math.min(sfracTotal, 1.0);
             snowpack.wsnow[SNOW_PLOWABLE] = exc * (1.0 - sfracTotal);
         }
     }

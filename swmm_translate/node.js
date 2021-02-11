@@ -144,7 +144,7 @@ function  node_validate(j)
     {
         ////////////////////////////////////
         returnObj = {inflow: inflow}
-        returnVal = inflow_initDwfInflow(inObj)
+        returnVal = inflow_initDwfInflow(returnObj)
         inflow = returnObj.inflow;
         ////////////////////////////////////
 
@@ -711,7 +711,11 @@ function storage_getDepth(j, v)
     let k = Node[j].subIndex;
     let i = Storage[k].aCurve;
     let d, e;
-	let storageVol = new TStorageVol();
+    let storageVol = new TStorageVol();
+    
+    // ret facil
+    let returnObj;
+    let returnVal;
 
     // --- return max depth if a max. volume has been computed
     //     and volume is > max. volume
@@ -741,8 +745,15 @@ function storage_getDepth(j, v)
             storageVol.k = k;
             storageVol.v = v;
             d = v / (Storage[k].aConst + Storage[k].aCoeff);
-            findroot_Newton(0.0, Node[j].fullDepth*UCF(LENGTH), d,
-                            0.001, storage_getVolDiff, storageVol);            
+            ////////////////////////////////////
+            returnObj = {rts: d, p: storageVol}
+            returnVal = findroot_Newton(0.0, Node[j].fullDepth*UCF(LENGTH)
+                            , returnObj, 0.001, storage_getVolDiff)
+            d = returnObj.rts;
+            storageVol = returnObj.p
+            ////////////////////////////////////
+            //findroot_Newton(0.0, Node[j].fullDepth*UCF(LENGTH), d,
+            //                0.001, storage_getVolDiff, storageVol);            
         }
         d /= UCF(LENGTH);
         if ( d > Node[j].fullDepth ) d = Node[j].fullDepth;
@@ -1316,7 +1327,14 @@ function outfall_setOutletDepth(j, yNorm, yCrit, z)
 
       case TIDAL_OUTFALL:
         k = Outfall[i].tideCurve;
-        table_getFirstEntry(Curve[k], x, y);
+
+        ////////////////////////////////////
+        returnObj = {x: x, y: y}
+        returnVal = table_getFirstEntry(Curve[k], returnObj)
+        x = returnObj.x;
+        y = returnObj.y;
+        ////////////////////////////////////
+        //table_getFirstEntry(Curve[k], x, y);
         currentDate = NewRoutingTime / MSECperDAY;
         x += ( currentDate - Math.floor(currentDate) ) * 24.0;
         stage = table_lookup(Curve[k], x) / UCF(LENGTH);

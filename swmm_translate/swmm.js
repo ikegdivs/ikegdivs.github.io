@@ -104,6 +104,10 @@ function  swmm_run(f1, f2, f3)
     let theDay, theHour;
     let elapsedTime = 0.0;
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- initialize flags                                                    //(5.1.013)
     IsOpenFlag = false;                                                        //
     IsStartedFlag = false;                                                     //
@@ -125,14 +129,19 @@ function  swmm_run(f1, f2, f3)
             writecon("\n o  Simulating day: 0     hour:  0");
             do
             {
-                swmm_step(elapsedTime);
+                ////////////////////////////////////
+                returnObj = {elapsedTime: elapsedTime}
+                returnVal = swmm_step(returnObj)
+                elapsedTime = returnObj.elapsedTime;
+                ////////////////////////////////////
+                //swmm_step(elapsedTime);
                 newHour = (elapsedTime * 24.0);
                 if ( newHour > oldHour )
                 {
                     theDay = elapsedTime;
                     theHour = ((elapsedTime - Math.floor(elapsedTime)) * 24.0);
                     writecon("\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
-                    sprintf(Msg, "%-5ld hour: %-2ld", theDay, theHour);        //(5.1.013)
+                    Msg = `${parseInt(theDay).toString().padEnd(5, ' ')} hour: ${parseInt(theHour).toString().padEnd(2, ' ')}`;        //(5.1.013)
                     writecon(Msg);
                     oldHour = newHour;
                 }
@@ -270,8 +279,13 @@ function swmm_start(saveResults)
     if ( RptFlags.controls ) report_writeControlActionsHeading();
 }
 //=============================================================================
-
-function swmm_step(elapsedTime)
+////////////////////////////////////
+//let returnObj = {elapsedTime: val1}
+//let returnVal = swmm_step(returnObj)
+//val1 = returnObj.elapsedTime;
+////////////////////////////////////
+function swmm_step(inObj)
+// int DLLEXPORT swmm_step(double* elapsedTime)
 //
 //  Input:   elapsedTime = current elapsed time in decimal days
 //  Output:  updated value of elapsedTime,
@@ -312,7 +326,7 @@ function swmm_step(elapsedTime)
 
                 // --- save current average results to binary file
                 //     (which will re-set averages to 0)
-                output_saveResults(ReportTime);
+                //output_saveResults(ReportTime);
 
                 // --- if current time exceeds reporting period then
                 //     start computing averages for next period
@@ -320,7 +334,7 @@ function swmm_step(elapsedTime)
             }
 
             // --- otherwise save interpolated point results
-            else output_saveResults(ReportTime);
+            else //output_saveResults(ReportTime);
 
             // --- advance to next reporting period
             ReportTime = ReportTime + (1000 * ReportStep);
@@ -339,7 +353,7 @@ function swmm_step(elapsedTime)
 
     // --- otherwise end the simulation
     else ElapsedTime = 0.0;
-    elapsedTime = ElapsedTime;
+    inObj.elapsedTime = ElapsedTime;
 
     return error_getCode(ErrorCode);
 }
@@ -359,7 +373,7 @@ function execRouting()
 
     // --- determine when next routing time occurs
     TotalStepCount++;                                                      //(5.1.015)
-    if ( !DoRouting ) routingStep = MIN(WetStep, ReportStep);
+    if ( !DoRouting ) routingStep = Math.min(WetStep, ReportStep);
     else routingStep = routing_getRoutingStep(RouteModel, RouteStep);
     if ( routingStep <= 0.0 )
     {
@@ -372,7 +386,7 @@ function execRouting()
     if ( nextRoutingTime > TotalDuration )
     {
         routingStep = (TotalDuration - NewRoutingTime) / 1000.0;
-        routingStep = MAX(routingStep, 1. / 1000.0);
+        routingStep = Math.max(routingStep, 1. / 1000.0);
         nextRoutingTime = TotalDuration;
     }
 
@@ -722,52 +736,56 @@ function xfilter(xc, module, elapsedTime, step)
     let  rc;                           // result code
     let hour;                         // current hour of simulation
     let msg;                      // exception type text
-    let xmsg;                    // error message text
+    let xmsg = '';                    // error message text
     switch (xc)
     {
     case EXCEPTION_ACCESS_VIOLATION:
-        sprintf(msg, "\n  Access violation ");
+        msg += "\n  Access violation ";
         rc = EXCEPTION_EXECUTE_HANDLER;
         break;
     case EXCEPTION_FLT_DENORMAL_OPERAND:
-        sprintf(msg, "\n  Illegal floating point operand ");
+        msg += "\n  Illegal floating point operand ";
         rc = EXCEPTION_CONTINUE_EXECUTION;
         break;
     case EXCEPTION_FLT_DIVIDE_BY_ZERO:
-        sprintf(msg, "\n  Floating point divide by zero ");
+        msg += "\n  Floating point divide by zero ";
         rc = EXCEPTION_CONTINUE_EXECUTION;
         break;
     case EXCEPTION_FLT_INVALID_OPERATION:
-        sprintf(msg, "\n  Illegal floating point operation ");
+        msg += "\n  Illegal floating point operation ";
         rc = EXCEPTION_CONTINUE_EXECUTION;
         break;
     case EXCEPTION_FLT_OVERFLOW:
-        sprintf(msg, "\n  Floating point overflow ");
+        msg += "\n  Floating point overflow ";
         rc = EXCEPTION_CONTINUE_EXECUTION;
         break;
     case EXCEPTION_FLT_STACK_CHECK:
-        sprintf(msg, "\n  Floating point stack violation ");
+        msg += "\n  Floating point stack violation ";
         rc = EXCEPTION_EXECUTE_HANDLER;
         break;
     case EXCEPTION_FLT_UNDERFLOW:
-        sprintf(msg, "\n  Floating point underflow ");
+        msg += "\n  Floating point underflow ";
         rc = EXCEPTION_CONTINUE_EXECUTION;
         break;
     case EXCEPTION_INT_DIVIDE_BY_ZERO:
-        sprintf(msg, "\n  Integer divide by zero ");
+        msg += "\n  Integer divide by zero ";
         rc = EXCEPTION_CONTINUE_EXECUTION;
         break;
     case EXCEPTION_INT_OVERFLOW:
-        sprintf(msg, "\n  Integer overflow ");
+        msg += "\n  Integer overflow ";
         rc = EXCEPTION_CONTINUE_EXECUTION;
         break;
     default:
-        sprintf(msg, "\n  Exception %d ", xc);
+        msg += "\n  Exception %d ", xc;
         rc = EXCEPTION_EXECUTE_HANDLER;
     }
     hour = (long)(elapsedTime / 1000.0 / 3600.0);
-    sprintf(xmsg, "%sin module %s at step %d, hour %d",
-            msg, module, step, hour);
+
+    let val1 = msg
+    let val2 = module
+    let val3 = step.toString()
+    let val4 = hour.toString()
+    xmsg = `${val1}in module ${val2} at step ${val3}, hour ${val4}`;
     if ( rc == EXCEPTION_EXECUTE_HANDLER ||
          ++ExceptionCount >= MAX_EXCEPTIONS )
     {

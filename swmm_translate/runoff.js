@@ -172,7 +172,7 @@ function runoff_execute()
     {
         OldRunoffTime = NewRunoffTime;
         NewRunoffTime += (1000 * DryStep);
-        NewRunoffTime = MIN(NewRunoffTime, TotalDuration);
+        NewRunoffTime = Math.min(NewRunoffTime, TotalDuration);
         return;
     }
 
@@ -387,7 +387,12 @@ function  runoff_saveToFile(tStep)
     fwrite(tStep, sizeof(float), 1, Frunoff.file);
     for (j=0; j<Nobjects[SUBCATCH]; j++)
     {
-        subcatch_getResults(j, 1.0, SubcatchResults);
+        ////////////////////////////////////
+        returnObj = {x: SubcatchResults}
+        returnVal = subcatch_getResults(j, 1.0, returnObj)
+        SubcatchResults = returnObj.x;
+        ////////////////////////////////////
+        //subcatch_getResults(j, 1.0, SubcatchResults);
         fwrite(SubcatchResults, sizeof(float), n, Frunoff.file);
     }
 }

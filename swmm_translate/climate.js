@@ -669,13 +669,23 @@ function climate_initState()
     NextEvapDate = StartDate;
     NextEvapRate = 0.0;
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- initialize variables for time series evaporation
     if ( Evap.type == TIMESERIES_EVAP && Evap.tSeries >= 0  )
     {
         // --- initialize NextEvapDate & NextEvapRate to first entry of
         //     time series whose date <= the simulation start date
-        table_getFirstEntry(Tseries[Evap.tSeries],
-                            NextEvapDate, NextEvapRate);
+        ////////////////////////////////////
+        returnObj = {x: NextEvapDate, y: NextEvapRate}
+        returnVal = table_getFirstEntry(Tseries[Evap.tSeries], returnObj)
+        NextEvapDate = returnObj.x;
+        NextEvapRate = returnObj.y;
+        ////////////////////////////////////
+        //table_getFirstEntry(Tseries[Evap.tSeries],
+        //                    NextEvapDate, NextEvapRate);
         if ( NextEvapDate < StartDate )
         {  
             setNextEvapDate(StartDate);
@@ -739,6 +749,10 @@ function setNextEvapDate(theDate)
     let    yr, mon, day, k;
     let d, e;
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- do nothing if current date hasn't reached the current next date
     if ( NextEvapDate > theDate ) return;
 
@@ -775,8 +789,14 @@ function setNextEvapDate(theDate)
         if ( k >= 0 )
         {
             NextEvapDate = theDate + 365.;
-            while ( table_getNextEntry(Tseries[k], d, e) &&
-                    d <= EndDateTime )
+            ////////////////////////////////////
+            returnObj = {x: d, y: e}
+            returnVal = table_getNextEntry(Tseries[k], returnObj)
+            d = returnObj.x;
+            e = returnObj.y;
+            ////////////////////////////////////
+            //while ( table_getNextEntry(Tseries[k], d, e) && d <= EndDateTime )
+            while( returnVal && d <= EndDateTime )
             {
                 if ( d >= theDate )
                 {
@@ -784,6 +804,12 @@ function setNextEvapDate(theDate)
                     NextEvapRate = e;
                     break;
                 }
+                ////////////////////////////////////
+                returnObj = {x: d, y: e}
+                returnVal = table_getNextEntry(Tseries[k], returnObj)
+                d = returnObj.x;
+                e = returnObj.y;
+                ////////////////////////////////////
             }
         }
         break;

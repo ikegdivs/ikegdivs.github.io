@@ -687,6 +687,10 @@ function subcatch_getRunoff(j, tStep)
     let vImpervRunoff = 0.0;        // impervious area runoff volume (ft3)  //
     let vPervRunoff = 0.0;          // pervious area runoff volume (ft3)    //
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- initialize shared water balance variables
     Vevap     = 0.0;
     Vpevap    = 0.0;
@@ -711,7 +715,12 @@ function subcatch_getRunoff(j, tStep)
 
     // --- get net precip. (rainfall + snowfall + snowmelt) on the 3 types
     //     of subcatchment sub-areas and update Vinflow with it
-    getNetPrecip(j, netPrecip, tStep);
+    ////////////////////////////////////
+    returnObj = {netPrecip: netPrecip}
+    returnVal = getNetPrecip(j, returnObj, tStep);
+    netPrecip = returnObj.netPrecip;
+    ////////////////////////////////////
+    //getNetPrecip(j, netPrecip, tStep);
 
     // --- find potential evaporation rate
     if ( Evap.dryOnly && Subcatch[j].rainfall > 0.0 ) evapRate = 0.0;
@@ -786,8 +795,13 @@ function subcatch_getRunoff(j, tStep)
 }
 
 //=============================================================================
-// int j, double* netPrecip, double tStep
-function getNetPrecip(j, netPrecip, tStep)
+////////////////////////////////////
+//let returnObj = {netPrecip: val1}
+//let returnVal = getNetPrecip(j, returnObj, tStep);
+//val1 = returnObj.netPrecip;
+////////////////////////////////////
+function getNetPrecip(j, inObj, tStep)
+//void getNetPrecip(int j, double* netPrecip, double tStep)
 {
 //
 //  Purpose: Finds combined rainfall + snowmelt on a subcatchment.
@@ -799,11 +813,21 @@ function getNetPrecip(j, netPrecip, tStep)
     let rainfall = 0.0;             // rainfall (ft/sec)
     let snowfall = 0.0;             // snowfall (ft/sec)
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- get current rainfall or snowfall from rain gage (in ft/sec)
     k = Subcatch[j].gage;
     if ( k >= 0 )
     {
-        gage_getPrecip(k, rainfall, snowfall);
+        ////////////////////////////////////
+        returnObj = {rainfall: rainfall, snowfall: snowfall}
+        returnVal = gage_getPrecip(k, returnObj)
+        rainfall = returnObj.rainfall;
+        snowfall = returnObj.snowfall;
+        ////////////////////////////////////
+        //gage_getPrecip(k, rainfall, snowfall);
     }
 
     // --- assign total precip. rate to subcatch's rainfall property
@@ -815,13 +839,13 @@ function getNetPrecip(j, netPrecip, tStep)
     if ( Subcatch[j].snowpack && !IgnoreSnowmelt )
     {
         Subcatch[j].newSnowDepth = 
-            snow_getSnowMelt(j, rainfall, snowfall, tStep, netPrecip);
+            snow_getSnowMelt(j, rainfall, snowfall, tStep, inObj.netPrecip);
     }
 
     // --- otherwise netPrecip is just sum of rainfall & snowfall
     else
     {
-        for (i=IMPERV0; i<=PERV; i++) netPrecip[i] = rainfall + snowfall;
+        for (i=IMPERV0; i<=PERV; i++) inObj.netPrecip[i] = rainfall + snowfall;
     }
 }
 
@@ -862,8 +886,13 @@ function subcatch_getWtdOutflow(j, f)
 }
 
 //=============================================================================
-// int j, double f, float x[]
-function  subcatch_getResults(j, f, x)
+////////////////////////////////////
+//let returnObj = {x: val1}
+//let returnVal = subcatch_getResults(j, f, returnObj)
+//val1 = returnObj.x;
+////////////////////////////////////
+function  subcatch_getResults(j, f, inObj)
+//void  subcatch_getResults(int j, double f, float x[])
 //
 //  Input:   j = subcatchment index
 //           f = weighting factor
@@ -880,17 +909,17 @@ function  subcatch_getResults(j, f, x)
 
     // --- retrieve rainfall for current report period
     k = Subcatch[j].gage;
-    if ( k >= 0 ) x[SUBCATCH_RAINFALL] = Gage[k].reportRainfall;
-    else          x[SUBCATCH_RAINFALL] = 0.0;
+    if ( k >= 0 ) inObj.x[SUBCATCH_RAINFALL] = Gage[k].reportRainfall;
+    else          inObj.x[SUBCATCH_RAINFALL] = 0.0;
 
     // --- retrieve snow depth
     z = ( f1 * Subcatch[j].oldSnowDepth +
           f * Subcatch[j].newSnowDepth ) * UCF(RAINDEPTH);
-    x[SUBCATCH_SNOWDEPTH] = z;
+          inObj.x[SUBCATCH_SNOWDEPTH] = z;
 
     // --- retrieve runoff and losses
-    x[SUBCATCH_EVAP] = (Subcatch[j].evapLoss * UCF(EVAPRATE));
-    x[SUBCATCH_INFIL] = (Subcatch[j].infilLoss * UCF(RAINFALL));
+    inObj.x[SUBCATCH_EVAP] = (Subcatch[j].evapLoss * UCF(EVAPRATE));
+    inObj.x[SUBCATCH_INFIL] = (Subcatch[j].infilLoss * UCF(RAINFALL));
     runoff = f1 * Subcatch[j].oldRunoff + f * Subcatch[j].newRunoff;
 
     // --- add any LID drain flow to reported runoff
@@ -902,24 +931,24 @@ function  subcatch_getResults(j, f, x)
 
     // --- if runoff is really small, report it as zero
     if ( runoff < MIN_RUNOFF * Subcatch[j].area ) runoff = 0.0;
-    x[SUBCATCH_RUNOFF] = (runoff * UCF(FLOW));
+    inObj.x[SUBCATCH_RUNOFF] = (runoff * UCF(FLOW));
 
     // --- retrieve groundwater results
     gw = Subcatch[j].groundwater;
     if ( gw )
     {
         z = (f1 * gw.oldFlow + f * gw.newFlow) * Subcatch[j].area * UCF(FLOW);
-        x[SUBCATCH_GW_FLOW] = z;
+        inObj.x[SUBCATCH_GW_FLOW] = z;
         z = (gw.bottomElev + gw.lowerDepth) * UCF(LENGTH);
-        x[SUBCATCH_GW_ELEV] = z;
+        inObj.x[SUBCATCH_GW_ELEV] = z;
         z = gw.theta;
-        x[SUBCATCH_SOIL_MOIST] = z;
+        inObj.x[SUBCATCH_SOIL_MOIST] = z;
     }
     else
     {
-        x[SUBCATCH_GW_FLOW] = 0.0;
-        x[SUBCATCH_GW_ELEV] = 0.0;
-        x[SUBCATCH_SOIL_MOIST]  = 0.0;
+        inObj.x[SUBCATCH_GW_FLOW] = 0.0;
+        inObj.x[SUBCATCH_GW_ELEV] = 0.0;
+        inObj.x[SUBCATCH_SOIL_MOIST]  = 0.0;
     }
 
     // --- retrieve pollutant washoff
@@ -927,7 +956,7 @@ function  subcatch_getResults(j, f, x)
     {
         if ( runoff == 0.0 ) z = 0.0;
         else z = f1 * Subcatch[j].oldQual[p] + f * Subcatch[j].newQual[p];
-        x[SUBCATCH_WASHOFF+p] = z;
+        inObj.x[SUBCATCH_WASHOFF+p] = z;
     }
 }
 
@@ -957,6 +986,10 @@ function getSubareaRunoff(j, i, area, precip, evap, tStep)
     let    runoff = 0.0;            // runoff rate (ft/sec)
     let subarea;  // TSubarea*               // pointer to subarea being analyzed
 
+    // ret facil
+    let returnObj;
+    let returnVal;
+
     // --- no runoff if no area
     if ( area == 0.0 ) return 0.0;
 
@@ -968,10 +1001,18 @@ function getSubareaRunoff(j, i, area, precip, evap, tStep)
 
     // --- determine evaporation loss rate
     surfMoisture = subarea.depth / tStep;
-    surfEvap = MIN(surfMoisture, evap);
+    surfEvap = Math.min(surfMoisture, evap);
 
     // --- compute infiltration loss rate
-    if ( i == PERV ) infil = getSubareaInfil(j, subarea, precip, tStep);
+    if ( i == PERV ) {
+        ////////////////////////////////////
+        returnObj = {subarea: subarea}
+        returnVal = getSubareaInfil(j, returnObj, precip, tStep)
+        subarea = returnObj.subarea;
+        ////////////////////////////////////
+        infil = returnVal;
+        //infil = getSubareaInfil(j, subarea, precip, tStep);
+    }
 
     // --- add precip to other subarea inflows
     subarea.inflow += precip;
@@ -999,7 +1040,13 @@ function getSubareaRunoff(j, i, area, precip, evap, tStep)
     else
     {
         subarea.inflow -= surfEvap + infil;
-        updatePondedDepth(subarea, tRunoff);
+        ////////////////////////////////////
+        returnObj = {subarea: subarea, dt: tRunoff}
+        returnVal = updatePondedDepth(returnObj)
+        subarea = returnObj.subarea;
+        tRunoff = returnObj.dt
+        ////////////////////////////////////
+        //updatePondedDepth(subarea, tRunoff);
     }
 
     // --- compute runoff based on updated ponded depth
@@ -1013,8 +1060,13 @@ function getSubareaRunoff(j, i, area, precip, evap, tStep)
 }
 
 //=============================================================================
-// int j, TSubarea* subarea, double precip, double tStep
-function getSubareaInfil(j, subarea, precip, tStep)
+////////////////////////////////////
+//let returnObj = {subarea: val1}
+//let returnVal = getSubareaInfil(j, returnObj, precip, tStep)
+//val1 = returnObj.subarea;
+////////////////////////////////////
+function getSubareaInfil(j, inObj, precip, tStep)
+//double getSubareaInfil(int j, TSubarea* subarea, double precip, double tStep)
 //
 //  Purpose: computes infiltration rate at current time step.
 //  Input:   j = subcatchment index
@@ -1028,7 +1080,7 @@ function getSubareaInfil(j, subarea, precip, tStep)
 
     // --- compute infiltration rate 
     infil = infil_getInfil(j, tStep, precip,                                   //(5.1.015)
-                           subarea.inflow, subarea.depth);
+                            inObj.subarea.inflow, inObj.subarea.depth);
 
     // --- limit infiltration rate by available void space in unsaturated
     //     zone of any groundwater aquifer
@@ -1076,8 +1128,14 @@ function findSubareaRunoff(subarea, tRunoff)
 }
 
 //=============================================================================
-// TSubarea* subarea, double* dt
-function updatePondedDepth(subarea, dt)
+////////////////////////////////////
+//let returnObj = {subarea: val1, dt: val2}
+//let returnVal = updatePondedDepth(returnObj)
+//val1 = returnObj.subarea;
+//val2 = returnObj.dt
+////////////////////////////////////
+function updatePondedDepth(inObj)
+//void updatePondedDepth(TSubarea* subarea, double* dt)
 //
 //  Input:   subarea = ptr. to a subarea,
 //           dt = time step (sec)
@@ -1085,52 +1143,63 @@ function updatePondedDepth(subarea, dt)
 //  Purpose: computes new ponded depth over subarea after current time step.
 //
 {
-    let ix = subarea.inflow;       // excess inflow to subarea (ft/sec)
+    let ix = inObj.subarea.inflow;       // excess inflow to subarea (ft/sec)
     let dx;                         // depth above depression storage (ft)
-    let tx = dt;                   // time over which dx > 0 (sec)
+    let tx = inObj.dt;                   // time over which dx > 0 (sec)
     
     // --- see if not enough inflow to fill depression storage (dStore)
-    if ( subarea.depth + ix*tx <= Dstore )                                    //(5.1.013)
+    if ( inObj.subarea.depth + ix*tx <= Dstore )                                    //(5.1.013)
     {
-        subarea.depth += ix * tx;
+        inObj.subarea.depth += ix * tx;
     }
 
     // --- otherwise use the ODE solver to integrate flow depth
     else
     {
         // --- if depth < Dstore then fill up Dstore & reduce time step        //(5.1.013)
-        dx = Dstore - subarea.depth;                                          //
+        dx = Dstore - inObj.subarea.depth;                                          //
         if ( dx > 0.0 && ix > 0.0 )
         {
             tx -= dx / ix;
-            subarea.depth = Dstore;                                           //(5.1.013)
+            inObj.subarea.depth = Dstore;                                           //(5.1.013)
         }
 
         // --- now integrate depth over remaining time step tx
         if ( Alpha > 0.0 && tx > 0.0 )                                         //(5.1.013)
         {
-            theSubarea = subarea;
-            odesolve_integrate((subarea.depth), 1, 0, tx, ODETOL, tx,
+            theSubarea = inObj.subarea;
+            // Make an array out of subarea.depth in order to pass
+            // depth to odesolve_integrate
+            let val1 = new Array(1);
+            val1[0] = inObj.subarea.depth;
+            odesolve_integrate(val1, 1, 0, tx, ODETOL, tx,
                                getDdDt);
+            inObj.subarea.depth = val1[0];
         }
         else
         {
             if ( tx < 0.0 ) tx = 0.0;
-            subarea.depth += ix * tx;
+            inObj.subarea.depth += ix * tx;
         }
     }
 
     // --- do not allow ponded depth to go negative
-    if ( subarea.depth < 0.0 ) subarea.depth = 0.0;
+    if ( inObj.subarea.depth < 0.0 ) inObj.subarea.depth = 0.0;
 
     // --- replace original time step with time ponded depth
     //     is above depression storage
-    dt = tx;
+    inObj.dt = tx;
 }
 
 //=============================================================================
-// double t, double* d, double* dddt
-function  getDdDt(t, d, dddt)
+////////////////////////////////////
+//let returnObj = {v1: val1, v2: val2}
+//let returnVal = getDdDt(t, returnObj)
+//val1 = returnObj.v1;
+//val2 = returnObj.v2
+////////////////////////////////////
+function  getDdDt(t, inObj)
+//void  getDdDt(double t, double* d, double* dddt)
 //
 //  Input:   t = current time (not used)
 //           d = stored depth (ft)
@@ -1140,7 +1209,8 @@ function  getDdDt(t, d, dddt)
 //
 {
     let ix = theSubarea.inflow;
-    let rx = d - Dstore;                                                   //(5.1.013)
+    //let rx = inObj.d - Dstore;                                                   //(5.1.013)
+    let rx = inObj.v1[0] - Dstore; 
     if ( rx < 0.0 )
     {
         rx = 0.0;
@@ -1149,7 +1219,8 @@ function  getDdDt(t, d, dddt)
     {
         rx = Alpha * Math.pow(rx, MEXP);                                            //(5.1.013)
     }
-    dddt = ix - rx;
+    //inObj.dddt = ix - rx;
+    inObj.v2[0] = ix - rx;
 }
 
 //=============================================================================

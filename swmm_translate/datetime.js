@@ -67,8 +67,14 @@ const SecsPerDay = 86400.;    // seconds per day
 
 //=============================================================================
 
-//function divMod(n, d, result, remainder)
-function divMod(n, d, returnObj)
+////////////////////////////////////
+//returnObj = {result: i, remainder: d}
+//divMod(t, D100, returnObj);
+//i = returnObj.result;
+//d = returnObj.remainder;
+////////////////////////////////////
+function divMod(n, d, inObj)
+//void divMod(int n, int d, int* result, int* remainder)
 //  Input:   n = numerator
 //           d = denominator
 //  Output:  result = integer part of n/d
@@ -77,13 +83,13 @@ function divMod(n, d, returnObj)
 {
     if (d == 0)
     {
-        returnObj.result = 0;
-        returnObj.remainder = 0;
+        inObj.result = 0;
+        inObj.remainder = 0;
     }
     else
     {
-        returnObj.result = n/d;
-        returnObj.remainder = n - d*(returnObj.result);
+        inObj.result = Math.trunc(n/d);
+        inObj.remainder = n - d*(inObj.result);
     }
 }
 
@@ -123,6 +129,7 @@ function datetime_findMonth(month)
 //=============================================================================
 
 function datetime_encodeDate(year, month, day)
+//DateTime datetime_encodeDate(int year, int month, int day)
 //  Input:   year = a year
 //           month = a month (1 to 12)
 //           day = a day of month
@@ -138,9 +145,9 @@ function datetime_encodeDate(year, month, day)
     && (day >= 1)
     && (day <= DaysPerMonth[i][month-1]))
     {
-        for (j = 0; j < parseInt(month-1); j++) day += DaysPerMonth[i][j];
+        for (j = 0; j < month-1; j++) day += DaysPerMonth[i][j];
         i = year - 1;
-        return i*365 + i/4 - i/100 + i/400 + parseInt(day) - DateDelta;
+        return i*365 + i/4 - i/100 + i/400 + day - DateDelta;
     }
     else return -DateDelta;
 }
@@ -373,9 +380,13 @@ function datetime_timeToStr(time, s)
 
 //=============================================================================
 
-// 
-//function datetime_strToDate(s, d)
+////////////////////////////////////
+//let returnObj = {d: val1}
+//datetime_strToDate(time, returnObj);
+//val1 = returnObj.d;
+////////////////////////////////////
 function datetime_strToDate(s, inObj)
+//int datetime_strToDate(char* s, DateTime* d)
 //  Input:   s = date as string
 //  Output:  d = encoded date;
 //           returns 1 if conversion successful, 0 if not
@@ -396,9 +407,9 @@ function datetime_strToDate(s, inObj)
             //n = sscanf(s, "%d%c%d%c%d", &yr, &sep1, &mon, &sep2, &day);
             vals = s.split(/[-//]+/)
             n = vals.length
-            yr = vals[0]
-            mon = vals[1]
-            day = vals[2]
+            yr = parseInt(vals[0])
+            mon = parseInt(vals[1])
+            day = parseInt(vals[2])
             if ( n < 3 )
             {
                 return 0;
@@ -409,9 +420,9 @@ function datetime_strToDate(s, inObj)
             //n = sscanf(s, "%d%c%d%c%d", day, sep1, mon, sep2, yr);
             vals = s.split(/[-//]+/)
             n = vals.length
-            yr = vals[2]
-            mon = vals[1]
-            day = vals[0]
+            yr = parseInt(vals[2])
+            mon = parseInt(vals[1])
+            day = parseInt(vals[0])
             if ( n < 3 )
             {
                 return 0;
@@ -422,9 +433,9 @@ function datetime_strToDate(s, inObj)
             //n = sscanf(s, "%d%c%d%c%d", mon, sep1, day, sep2, yr);
             vals = s.split(/[-//]+/)
             n = vals.length
-            yr = vals[2]
-            mon = vals[0]
-            day = vals[1]
+            yr = parseInt(vals[2])
+            mon = parseInt(vals[0])
+            day = parseInt(vals[1])
             if ( n < 3 )
             {
                 return 0;
@@ -468,9 +479,12 @@ function datetime_strToTime(s, inObj)
     //n = sscanf(s, "%d:%d:%d", &hr, &min, &sec);
     vals = s.split(/[:]+/)
             n = vals.length
-            hr = parseInt(vals[n-3])
-            min = parseInt(vals[n-2])
-            sec = parseInt(vals[n-1])
+            //hr = parseInt(vals[n-3])
+            //min = parseInt(vals[n-2])
+            //sec = parseInt(vals[n-1])
+            hr = parseInt(vals[0])
+            min = parseInt(vals[1])
+            sec = parseInt(vals[2])
     if ( n == 0 ) return 0;
     if(isNaN(hr)) hr = 0;
     if(isNaN(min)) min = 0;

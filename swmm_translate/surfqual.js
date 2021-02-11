@@ -131,7 +131,7 @@ function surfqual_sweepBuildup(j, aDate)
     let  newBuildup;                // buildup after sweeping (lbs or kg)
 
     // --- no sweeping if there is snow on plowable impervious area
-    if ( Subcatch[j].snowpack != NULL &&
+    if ( Subcatch[j].snowpack != null &&
          Subcatch[j].snowpack.wsnow[IMPERV0] > MIN_TOTAL_DEPTH ) return;
 
     // --- consider each land use
@@ -158,8 +158,8 @@ function surfqual_sweepBuildup(j, aDate)
                 oldBuildup = Subcatch[j].landFactor[i].buildup[p];
                 newBuildup = oldBuildup * (1.0 - Landuse[i].sweepRemoval *
                              Landuse[i].washoffFunc[p].sweepEffic);
-                newBuildup = MIN(oldBuildup, newBuildup);
-                newBuildup = MAX(0.0, newBuildup);
+                newBuildup = Math.min(oldBuildup, newBuildup);
+                newBuildup = Math.max(0.0, newBuildup);
                 Subcatch[j].landFactor[i].buildup[p] = newBuildup;
 
                 // --- update mass balance totals

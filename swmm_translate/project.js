@@ -171,7 +171,7 @@ function project_readInput()
     StartDateTime = StartDate + StartTime;
     EndDateTime   = EndDate + EndTime;
     ReportStart   = ReportStartDate + ReportStartTime;
-    ReportStart   = MAX(ReportStart, StartDateTime);
+    ReportStart   = Math.max(ReportStart, StartDateTime);
 
     // --- check for valid starting & ending date/times
     if ( EndDateTime <= StartDateTime )
@@ -473,6 +473,7 @@ function project_readOption(s1, s2)
 
       // --- simulation start date
       case START_DATE:
+
         ////////////////////////////////////
         returnObj = {d: StartDate}
         returnVal = datetime_strToDate(s2, returnObj);
@@ -607,7 +608,7 @@ function project_readOption(s1, s2)
         m = returnObj.m;
         s = returnObj.s;
         ////////////////////////////////////
-        h += 24*aTime;
+        h += 24*Math.floor(aTime);
         s = s + 60*m + 3600*h;
 
         // --- RuleStep allowed to be 0 while other time steps must be > 0     //(5.1.013)

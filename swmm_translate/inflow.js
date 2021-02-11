@@ -449,7 +449,7 @@ function inflow_deleteDwfInflows(j)
 //=============================================================================
 ////////////////////////////////////
 //let returnObj = {inflow: val1}
-//let returnVal = inflow_initDwfInflow(inObj)
+//let returnVal = inflow_initDwfInflow(returnObj)
 //val1 = returnObj.inflow;
 ////////////////////////////////////
 function   inflow_initDwfInflow(inObj)

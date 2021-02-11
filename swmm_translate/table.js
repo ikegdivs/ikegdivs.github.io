@@ -324,13 +324,27 @@ function   table_validate(table)
     }
 
     // --- retrieve the first data entry in the table
-    result = table_getFirstEntry(table, x1, y1);
+    ////////////////////////////////////
+    returnObj = {x: x1, y: y1}
+    returnVal = table_getFirstEntry(table, returnObj)
+    x1 = returnObj.x;
+    y1 = returnObj.y;
+    ////////////////////////////////////
+    //result = table_getFirstEntry(table, x1, y1);
+    result = returnVal;
 
     // --- return error condition if external file has no valid data
     if ( !result && table.file.mode == USE_FILE ) return ERR_TABLE_FILE_READ;
 
     // --- retrieve successive table entries and check for non-increasing x-values
-    while ( table_getNextEntry(table, x2, y2) )
+    ////////////////////////////////////
+    returnObj = {x: x2, y: y2}
+    returnVal = table_getNextEntry(table, returnObj)
+    x2 = returnObj.x;
+    y2 = returnObj.y;
+    ////////////////////////////////////
+    //while ( table_getNextEntry(table, x2, y2) )
+    while ( returnVal )
     {
         dx = x2 - x1;
         if ( dx <= 0.0 )
@@ -338,8 +352,14 @@ function   table_validate(table)
             table.x2 = x2;
             return ERR_CURVE_SEQUENCE;
         }
-        dxMin = MIN(dxMin, dx);
+        dxMin = Math.min(dxMin, dx);
         x1 = x2;
+        ////////////////////////////////////
+        returnObj = {x: x2, y: y2}
+        returnVal = table_getNextEntry(table, returnObj)
+        x2 = returnObj.x;
+        y2 = returnObj.y;
+        ////////////////////////////////////
     }
     table.dxMin = dxMin;
 
@@ -350,8 +370,14 @@ function   table_validate(table)
 }
 
 //=============================================================================
-// TTable *table, double *x, double *y
-function table_getFirstEntry(table, x, y)
+////////////////////////////////////
+//let returnObj = {x: val1, y: val2}
+//let returnVal = table_getFirstEntry(table, returnObj)
+//val1 = returnObj.x;
+//val2 = returnObj.y;
+////////////////////////////////////
+function table_getFirstEntry(table, returnObj)
+//int table_getFirstEntry(TTable *table, double *x, double *y)
 //
 //  Input:   table = pointer to a TTable structure
 //  Output:  x = x-value of first table entry
@@ -364,21 +390,21 @@ function table_getFirstEntry(table, x, y)
 {
     //TTableEntry *entry;
     let entry;
-    x = 0;
-    y = 0.0;
+    returnObj.x = 0;
+    returnObj.y = 0.0;
 
     if ( table.file.mode == USE_FILE )
     {
         if ( table.file.file == null ) return false;
         rewind(table.file.file);
-        return table_getNextFileEntry(table, x, y);
+        return table_getNextFileEntry(table, returnObj.x, returnObj.y);
     }
 
     entry = table.firstEntry;
     if ( entry )
     {
-        x = entry.x;
-        y = entry.y;
+        returnObj.x = entry.x;
+        returnObj.y = entry.y;
         table.thisEntry = entry;
         return true;
     }
@@ -386,8 +412,14 @@ function table_getFirstEntry(table, x, y)
 }
 
 //=============================================================================
-// TTable *table, double *x, double *y
-function table_getNextEntry(table, x, y)
+////////////////////////////////////
+//let returnObj = {x: val1, y: val2}
+//let returnVal = table_getNextEntry(table, returnObj)
+//val1 = returnObj.x;
+//val2 = returnObj.y;
+////////////////////////////////////
+function table_getNextEntry(table, inObj)
+//int table_getNextEntry(TTable *table, double *x, double *y)
 //
 //  Input:   table = pointer to a TTable structure
 //  Output:  x = x-value of next table entry
@@ -401,15 +433,27 @@ function table_getNextEntry(table, x, y)
     //TTableEntry *entry;
     let entry;
 
-    if ( table.file.mode == USE_FILE )
-        return table_getNextFileEntry(table, x, y);
+    // ret facil
+    let returnObj;
+    let returnVal;
+
+    if ( table.file.mode == USE_FILE ){
+        ////////////////////////////////////
+        //returnObj = {x: inObj.x, y: inObj.y}
+        //returnVal = table_getNextEntry(table, returnObj)
+        //inObj.x = returnObj.x;
+        //inObj.y = returnObj.y;
+        ////////////////////////////////////
+        //return returnVal;
+        return table_getNextFileEntry(table, inObj.x, inObj.y);
+    }
     
     if(table.thisEntry){
         entry = table.thisEntry.next;
         if ( entry )
         {
-            x = entry.x;
-            y = entry.y;
+            inObj.x = entry.x;
+            inObj.y = entry.y;
             table.thisEntry = entry;
             return true;
         }
@@ -764,10 +808,22 @@ function   table_tseriesInit(table)
 //  Purpose: initializes the time bracket within a time series table.
 //
 {
-    table_getFirstEntry(table, (table.x1), (table.y1));
+    ////////////////////////////////////
+    returnObj = {x: table.x1, y: table.y1}
+    returnVal = table_getFirstEntry(table, returnObj)
+    table.x1 = returnObj.x;
+    table.y1 = returnObj.y;
+    ////////////////////////////////////
+    //table_getFirstEntry(table, (table.x1), (table.y1));
     table.x2 = table.x1;
     table.y2 = table.y1;
-    table_getNextEntry(table, (table.x2), (table.y2));
+    ////////////////////////////////////
+    returnObj = {x: table.x2, y: table.y2}
+    returnVal = table_getNextEntry(table, returnObj)
+    table.x2 = returnObj.x;
+    table.y2 = returnObj.y;
+    ////////////////////////////////////
+    //table_getNextEntry(table, (table.x2), (table.y2));
 }
 
 //=============================================================================
@@ -801,7 +857,13 @@ function table_tseriesLookup(inObj, x, extend)
     //     move to start of time series
     if ( inObj.table.x1 == inObj.table.x2 || x < inObj.table.x1 )
     {
-        table_getFirstEntry(inObj.table, (inObj.table.x1), (inObj.table.y1));
+        ////////////////////////////////////
+        returnObj = {x: inObj.table.x1, y: inObj.table.y1}
+        returnVal = table_getFirstEntry(inObj.table, returnObj)
+        inObj.table.x1 = returnObj.x;
+        inObj.table.y1 = returnObj.y;
+        ////////////////////////////////////
+        //table_getFirstEntry(inObj.table, (inObj.table.x1), (inObj.table.y1));
         if ( x < inObj.table.x1 )
         {
             if ( extend == true ) return inObj.table.y1;
@@ -815,7 +877,14 @@ function table_tseriesLookup(inObj, x, extend)
     inObj.table.y1 = inObj.table.y2;
 
     // --- get end of next time bracket
-    while ( table_getNextEntry(inObj.table, (inObj.table.x2), (inObj.table.y2)) )
+    ////////////////////////////////////
+    returnObj = {x: inObj.table.x2, y: inObj.table.y2}
+    returnVal = table_getNextEntry(inObj.table, returnObj)
+    inObj.table.x2 = returnObj.x;
+    inObj.table.y2 = returnObj.y;
+    ////////////////////////////////////
+    //while ( table_getNextEntry(inObj.table, (inObj.table.x2), (inObj.table.y2)) )
+    while ( returnVal )
     {
         // --- x lies within the bracket
         if ( x <= inObj.table.x2 )
@@ -823,6 +892,12 @@ function table_tseriesLookup(inObj, x, extend)
         // --- otherwise move to next time bracket
         inObj.table.x1 = inObj.table.x2;
         inObj.table.y1 = inObj.table.y2;
+        ////////////////////////////////////
+        returnObj = {x: inObj.table.x2, y: inObj.table.y2}
+        returnVal = table_getNextEntry(inObj.table, returnObj)
+        inObj.table.x2 = returnObj.x;
+        inObj.table.y2 = returnObj.y;
+        ////////////////////////////////////
     }
 
     // --- return last value or 0 if beyond last data value

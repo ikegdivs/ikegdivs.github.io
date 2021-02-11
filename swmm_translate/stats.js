@@ -822,7 +822,9 @@ function  stats_updateMaxStats(maxStats, i, j, x)
 {
     let   k;
     //TMaxStats maxStats1, maxStats2;
-    let maxStats1, maxStats2;
+    let maxStats1 = new TMaxStats();
+    let maxStats2 = new TMaxStats();
+
     maxStats1.objType = i;
     maxStats1.index   = j;
     maxStats1.value   = x;

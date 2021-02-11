@@ -285,8 +285,14 @@ function iface_saveOutletResults(reportDate, file)
     min = returnObj.m;
     sec = returnObj.s;
     ////////////////////////////////////
-    sprintf(theDate, " %04d %02d  %02d  %02d  %02d  %02d ",
-            yr, mon, day, hr, min, sec);
+
+    let val1 = yr.toString().padStart(4, '0')
+    let val2 = mon.toString().padStart(2, '0')
+    let val3 = day.toString().padStart(2, '0')
+    let val4 = hr.toString().padStart(2, '0')
+    let val5 = min.toString().padStart(2, '0')
+    let val6 = sec.toString().padStart(2, '0')
+    theDate = ` ${val1} ${val2}  ${val3}  ${val4}  ${val5}  ${val6} `;
     for (i=0; i<Nobjects[NODE]; i++)
     {
         // --- check that node is an outlet node
