@@ -1756,8 +1756,15 @@ function generic_getAofS(xsect, s)
 }
 
 //=============================================================================
-// double a, double* f, double* df, void* p
-function evalSofA(a, f, df, p)
+////////////////////////////////////
+//let returnObj = {f: val1, df: val2, p: val3}
+//let returnVal = evalSofA(a, returnObj)
+//val1 = returnObj.f;
+//val2 = returnObj.df;
+//val3 = returnObj.p;
+////////////////////////////////////
+function evalSofA(a, inObj)
+//void evalSofA(double a, double* f, double* df, void* p)
 //
 //  Input:   a = area
 //  Output:  f = root finding function
@@ -1769,15 +1776,16 @@ function evalSofA(a, f, df, p)
     //TXsectStar* xsectStar;
     let s;
 
-    let xsectStar = p;
+    let xsectStar = inObj.p;
     s = xsect_getSofA(xsectStar.xsect, a);
-    f = s - xsectStar.s;
-    df = xsect_getdSdA(xsectStar.xsect, a);
+    inObj.f = s - xsectStar.s;
+    inObj.df = xsect_getdSdA(xsectStar.xsect, a);
 }
 
 //=============================================================================
-// TXsect* xsect, double a, double *table, int nItems
+
 function tabular_getdSdA(xsect, a, table, nItems)
+//double tabular_getdSdA(TXsect* xsect, double a, double *table, int nItems)
 //
 //  Input:   xsect = ptr. to cross section data structure
 //           a = area (ft2)
@@ -1794,7 +1802,7 @@ function tabular_getdSdA(xsect, a, table, nItems)
     let dSdA;
 
     // --- find which segment of table contains alpha
-    i = (alpha / delta);
+    i = Math.trunc(alpha / delta);
     if ( i >= nItems - 1 ) i = nItems - 2;
 
     // --- compute slope from this interval of table
@@ -1841,7 +1849,7 @@ function lookup(x, table, nItems)
 
     // --- find which segment of table contains x
     delta = 1.0 / (nItems-1);
-    i = (x / delta);
+    i = Math.trunc(x / delta);
     if ( i >= nItems - 1 ) return table[nItems-1];
 
     // --- compute x at start and end of segment
@@ -1965,8 +1973,8 @@ function locate(y, table, jLast)
 
 //=============================================================================
 ////////////////////////////////////
-//returnObj = {p: val1}
-//returnVal = getQcritical(yc, returnObj)
+//let returnObj = {p: val1}
+//let returnVal = getQcritical(yc, returnObj)
 //val1 = returnObj.p;
 ////////////////////////////////////
 function getQcritical(yc, inObj)
@@ -2006,16 +2014,27 @@ function getYcritEnum(xsect, q, y0)
     let        i1, i;
     //TXsectStar xsectStar;
     xsectStar = new TXsectStar();
+    
+    // ret facil
+    let returnObj;
+    let returnVal;
 
     // --- divide cross section depth into 25 increments and
     //     locate increment corresponding to initial guess y0
     dy = xsect.yFull / 25.;
-    i1 = (y0 / dy);
+    i1 = Math.trunc(y0 / dy);
 
     // --- evaluate critical flow at this increment
     xsectStar.xsect = xsect;
     xsectStar.qc = 0.0;
-    q0 = getQcritical(i1*dy, xsectStar);
+
+    ////////////////////////////////////
+    returnObj = {p: xsectStar}
+    returnVal = getQcritical(i1*dy, returnObj)
+    xsectStar = returnObj.p;
+    ////////////////////////////////////
+    q0 = returnVal;
+    //q0 = getQcritical(i1*dy, xsectStar);
 
     // --- initial flow lies below target flow
     if ( q0 < q )
@@ -2026,7 +2045,13 @@ function getYcritEnum(xsect, q, y0)
         {
             // --- if critical flow at current depth is above target
             //     then use linear interpolation to compute critical depth
-            qc = getQcritical(i*dy, xsectStar);
+            ////////////////////////////////////
+            returnObj = {p: xsectStar}
+            returnVal = getQcritical(i*dy, returnObj)
+            xsectStar = returnObj.p;
+            ////////////////////////////////////
+            qc = returnVal;
+            //qc = getQcritical(i*dy, xsectStar);
             if ( qc >= q )
             {
                 yc = ( (q-q0) / (qc - q0) + (i-1) ) * dy;
@@ -2045,7 +2070,13 @@ function getYcritEnum(xsect, q, y0)
         {
             // --- if critical flow at current depth is below target
             //     then use linear interpolation to compute critical depth
-            qc = getQcritical(i*dy, xsectStar);
+            ////////////////////////////////////
+            returnObj = {p: xsectStar}
+            returnVal = getQcritical(i*dy, returnObj)
+            xsectStar = returnObj.p;
+            ////////////////////////////////////
+            qc = returnVal;
+            //qc = getQcritical(i*dy, xsectStar);
             if ( qc < q )
             {
                 yc = ( (q-qc) / (q0-qc) + i ) * dy;
@@ -2084,13 +2115,31 @@ function getYcritRidder(xsect, q, y0)
     xsectStar.qc = 0.0;
 
     // --- check if critical flow at (nearly) full depth < target flow
-    q2 = getQcritical(y2, xsectStar);
+    ////////////////////////////////////
+    returnObj = {p: xsectStar}
+    returnVal = getQcritical(y2, returnObj)
+    xsectStar = returnObj.p;
+    ////////////////////////////////////
+    q2 = returnVal;
+    //q2 = getQcritical(y2, xsectStar);
     if (q2 < q ) return xsect.yFull;
 
     // --- evaluate critical flow at initial depth guess y0
     //     and at 1/2 of full depth
-    q0 = getQcritical(y0, xsectStar);
-    q1 = getQcritical(0.5*xsect.yFull, xsectStar);
+    ////////////////////////////////////
+    returnObj = {p: xsectStar}
+    returnVal = getQcritical(y0, returnObj)
+    xsectStar = returnObj.p;
+    ////////////////////////////////////
+    q0 = returnVal;
+    //q0 = getQcritical(y0, xsectStar);
+    ////////////////////////////////////
+    returnObj = {p: xsectStar}
+    returnVal = getQcritical(0.5*xsect.yFull, returnObj)
+    xsectStar = returnObj.p;
+    ////////////////////////////////////
+    q1 = returnVal;
+    //q1 = getQcritical(0.5*xsect.yFull, xsectStar);
 
     // --- adjust search interval on depth so it contains flow q
     if ( q0 > q )
@@ -2971,11 +3020,11 @@ function getScircular(alpha)
     if ( alpha <= 0.0 ) return 0.0;
     if ( alpha <= 1.0e-5 )
     {
-        theta = Math.pow(37.6911*alpha, 1./3.);
-        return Math.pow(theta, 13./3.) / 124.4797;
+        theta = Math.pow(37.6911*alpha, 1.0/3.0);
+        return Math.pow(theta, 13.0/3.0) / 124.4797;
     }
     theta = getThetaOfAlpha(alpha);
-    return Math.pow((theta - Math.sin(theta)), 5./3.) / (2.0 * PI) / Math.pow(theta, 2./3.);
+    return Math.pow((theta - Math.sin(theta)), 5.0/3.0) / (2.0 * PI) / Math.pow(theta, 2.0/3.0);
 }
 
 // double psi

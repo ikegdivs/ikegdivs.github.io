@@ -213,10 +213,6 @@ function rkqs(n, htry, eps, inObj , derivs)
     }
 }
 
-function rkck(){
-    return;
-}
-
 
 function rkck(x, n, h, derivs)
 //void rkck(double x, int n, double h, void (*derivs)(double, double*, double*))
@@ -235,11 +231,16 @@ function rkck(x, n, h, derivs)
     let dc1=c1-2825.0/27648.0, dc3=c3-18575.0/48384.0,
            dc4=c4-13525.0/55296.0, dc6=c6-0.25;
     let i;
-    let ak2 = (ak);
-    let ak3 = ((ak)+(n));
-    let ak4 = ((ak)+(2*n));
-    let ak5 = ((ak)+(3*n));
-    let ak6 = ((ak)+(4*n));
+    //let ak2 = (ak);
+    //let ak3 = ((ak)+(n));
+    //let ak4 = ((ak)+(2*n));
+    //let ak5 = ((ak)+(3*n));
+    //let ak6 = ((ak)+(4*n));
+    let ak2 = ak;
+    let ak3 = ak.slice(n);
+    let ak4 = ak.slice(2*n);
+    let ak5 = ak.slice(3*n);
+    let ak6 = ak.slice(4*n);
 
     // ret facil
     let returnObj;

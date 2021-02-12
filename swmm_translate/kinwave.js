@@ -69,6 +69,12 @@ function kinwave_execute(j,  inObj, tStep)
 //
 //
 {
+    if(inObj.qinflow > 0){
+        let xxx = 0;
+    }
+    if(j === 3 ){
+        let xxx = 0;
+    }
     let    k;
     let    result = 1;
     let dxdt, dq;
@@ -139,7 +145,7 @@ function kinwave_execute(j,  inObj, tStep)
         // --- solve continuity equation for aout
         ////////////////////////////////////
         returnObj = {aout: aout}
-        returnVal = solveContinuity(j, ain, returnObj);
+        returnVal = solveContinuity(qin, ain, returnObj);
         aout  = returnObj.aout;
         ////////////////////////////////////
         //result = solveContinuity(qin, ain, aout);
@@ -252,6 +258,7 @@ function solveContinuity(qin, ain, inObj)
         returnVal = findroot_Newton(aLo, aHi, returnObj, tol, evalContinuity)
         inObj.aout = returnObj.rts;
         ////////////////////////////////////
+        n = returnVal;
         //n = findroot_Newton(aLo, aHi, inObj.aout, tol, evalContinuity, null);
 
         // --- check if root finder succeeded

@@ -1220,7 +1220,8 @@ function  getDdDt(t, inObj)
         rx = Alpha * Math.pow(rx, MEXP);                                            //(5.1.013)
     }
     //inObj.dddt = ix - rx;
-    inObj.v2[0] = ix - rx;
+    thisdddt = ix - rx
+    inObj.v2[0] = thisdddt;
 }
 
 //=============================================================================
