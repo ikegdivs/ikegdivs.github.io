@@ -1,0 +1,356 @@
+<!doctype html>
+
+<!-- this is a comment for human! -->
+
+<html lang="en">
+
+  <header>
+    <title>PJ Divs</title><!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/css/assets.css">
+    <link rel="FaviconIcon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut" href="/favicon.ico" type="image/x-icon">
+    <link href="/node_modules/prismjs/themes/prism-okaidia.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="name" content="PJ Divs">
+    <meta name="robots" content="noindex, nofollow">
+  </header>
+
+  <body>
+    <div class="jumbotron">
+        <div id="particles-js" class="particles-js"></div>
+        <img id="jumboimage" src="/svg/cleanfront.svg" alt="banner">
+    </div>
+    
+    <h1 style="text-align: center">don3ts: D3 styling curve.</h1>
+      
+    <hr>
+    
+    <div class='paperroll top'></div>
+
+    <div class="container nomargin">
+        <div class="row">
+            <div class="col-12 col-sm-12">
+                <h1>Goals:</h1>
+                <ul>
+                    <li>Demonstrate curve.</li>
+                    <li>Create a DataElement class.</li>
+                    <li>Create a ChartSpecs class.</li>
+                    <li>Setup the page structure and data.</li>
+                    <li>Respond to changes in the selector.</li>
+                    <li>Draw the chart.</li>
+                    <li>Create the chart's line using the selected curve type.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class='paperroll bottom'></div>
+    <div class="container nomargin">
+        <div class="row">
+            <div class="col-md-8 col-sm-12 mx-auto">
+                <div id="workspace">
+                    <div id="panel-a" class="workview">
+                        <div class="wall"></div>
+                        <div class="floor"></div>
+                        <div class="whiteboard">
+                            <div id="d3viz002" class="d3viz chartcontainer">
+                                <svg id="viz_svg01" class="chart"></svg>
+                            </div>
+                        </div>
+                        <div class="strawberryDonut">
+                            <img src="/svg/don3ts/donut_strawberry.svg">
+                        </div>
+                        <div class="chocolateDonut">
+                            <img src="/svg/don3ts/donut_bdayCake.svg">
+                        </div>
+                        <div class="chatbubble workbubble strawberrysays">How do you learn binary?
+                            <div class="chatarrow strawberrysays"></div>
+                        </div>
+                        <div class="chatbubble workbubble chocolatesays">You pick up a bit here, a bit there.
+                            <div class="chatarrow chocolatesays"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 d-flex offset-md-2 justify-content-center">
+                <form style="width: 25%;">
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label for="formControlSelector">Choose the style of d3 curve:</label>
+                        <select class="form-control theme-purple" id="formControlSelector">
+                            <option>curveLinear</option>
+                            <option>curveBasis</option>
+                            <option>curveBasisClosed</option>
+                            <option>curveBundle</option>
+                            <option>curveCardinal</option>
+                            <option>curveCatmullRom</option>
+                            <option>curveMonotoneX</option>
+                            <option>curveMonotoneY</option>
+                            <option>curveNatural</option>
+                            <option>curveStep</option>
+                            <option>curveStepAfter</option>
+                            <option>curveStepBefore</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row row-content">
+            <h1>D3 line styling: curve</h1>
+            <p>When drawing a line, you can use the 'curve' method to modify the appearance of the line.
+                The curve method causes the line connecting points to be drawn using curves or bends.
+                This can be helpful when attempting to smooth lines or show transitions between categories.
+                The curve method can use a function to change how this curve is drawn. 
+                This example extends the example located <a href="/viz_linecharts/comic.html">here</a>.
+            </p>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Create a DataElement class.</h3>
+                <p>We will be working with a set of data that will be represented using a class.
+                    I've set up a class below for holding the x/y coordinates for the chart:
+                </p>
+                <pre><code  class="language-js">
+// dataElements are classes for data row/objects.
+class DataElement{
+    constructor(cat){
+        // cat: a category, numeric value.
+        this.cat = cat;
+        // y: independent numeric value.
+        this.y = Math.abs(Math.sin(cat));
+    }
+}
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Create a ChartSpecs class.</h3>
+                <p>Our chart has a few attributes that would work really well in another JavaScript
+                    class. This class will describe the display attributes of the chart specific to the 
+                    data that we are using:
+                </p>
+                <pre><code  class="language-js">
+// ChartSpecs holds the general display parameters and data for a chart.
+class ChartSpecs {
+    // Constructor for parts of the chart that depend upon the data.
+    constructor(data){
+        // The x/y relational data for the chart.
+        this.data = data;
+
+        // Establish the basic parameters of the display
+        // The starting position of the chart.
+        this.chartBodyX = 50;
+        this.chartBodyY = 0;
+        // The relative size of the axes.
+        this.xScaleWidth = 300;
+        this.yScaleHeight = 200;
+        // The number of tick marks on the x axis.
+        this.numTicks = 5;
+        // The amount of space to allocate for text,e etc. on the x and y axes.
+        this.textBuffer = 20;
+        this.topMargin = 10;
+
+        // The maximum value of the independent variable.
+        this.maxVal = d3.max(data, d => d.y);
+
+        this.scaleX = d3.scaleLinear()
+                    .range([0, this.xScaleWidth])
+                    .domain(d3.extent(this.data, d => d.cat))
+
+        this.scaleY = d3.scaleLinear()
+                    .range([this.yScaleHeight, 0])
+                    .domain([0, this.maxVal]);
+    }
+}
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Set up the page structure and data.</h3>
+                <p>Now that the classes are out of the way, we can create instances of the classes and prepare
+                    the data: 
+                </p>
+                <pre><code  class="language-js">
+// When the document is loaded:
+// Create some data
+// Draw a line chart with the data.
+document.addEventListener("DOMContentLoaded", function(){
+    // dataObj is an array of dataElement objects.
+    dataObj = [];
+    let viz_svg01 = d3.select("#viz_svg01");
+
+    // Create a set of 10 dataElements.
+    for(i = 0; i &lt; 10; i++){
+        dataObj.push(new DataElement(i, i));
+    }
+    
+    // Create a new chartSpecs object and populate it with the data.
+    theseSpecs = new ChartSpecs(dataObj);
+
+    // Prepare the chart and draw it.
+    representData(viz_svg01, theseSpecs);
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Respond to changes in the selector.</h3>
+                <p>There's a few different kinds of smoothing functions for curves in D3. In order to implement
+                    a selector to demonstrate each smoothing function, we add the following to an html file: 
+                </p>
+                <pre><code  class="language-html">
+&lt;div class="form-group" style="margin-top: 10px;"&gt;
+    &lt;label for="formControlSelector"&gt;Choose the style of d3 curve:&lt;/label&gt;
+    &lt;select class="form-control theme-purple" id="formControlSelector"&gt;
+        &lt;option&gt;curveLinear&lt;/option&gt;
+        &lt;option&gt;curveBasis&lt;/option&gt;
+        &lt;option&gt;curveBasisClosed&lt;/option&gt;
+        &lt;option&gt;curveBundle&lt;/option&gt;
+        &lt;option&gt;curveCardinal&lt;/option&gt;
+        &lt;option&gt;curveCatmullRom&lt;/option&gt;
+        &lt;option&gt;curveMonotoneX&lt;/option&gt;
+        &lt;option&gt;curveMonotoneY&lt;/option&gt;
+        &lt;option&gt;curveNatural&lt;/option&gt;
+        &lt;option&gt;curveStep&lt;/option&gt;
+        &lt;option&gt;curveStepAfter&lt;/option&gt;
+        &lt;option&gt;curveStepBefore&lt;/option&gt;
+    &lt;/select&gt;
+&lt;/div&gt;
+                 </code></pre>
+                 <p>
+                     Finally, we want to respond to inputs from the selector. The following code allows
+                     D3 to change the smoothing function for the curve. This is done by passing default
+                     curve parameters and calling the name of the D3 smoothing function. D3 allows the 
+                     use of the format 'd3[string]' to identify the curve function.
+                 </p>
+                <pre><code  class="language-js">
+    // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
+    $('#formControlSelector').on('change', function(event){
+        // Establish a variable for the curve function
+        let d3curve = '';
+
+        // Get the input from the drop down.
+        userVal = $(event.currentTarget).prop('value');
+ 
+        drawLine(theseSpecs, d3[userVal])
+    })
+})
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Draw the chart.</h3>
+                <p>Since we have set up all of the parameters for drawing the chart and placed them into
+                    the theseSpecs instance of a ChartSpecs class, we can use the following short segment
+                    of code to make all of the details of the chart, such as the body and the axes. Finally,
+                    we can call the 'drawLine' function which draws the actual line.
+                </p>
+                <pre><code  class="language-js">
+// representData draws the chart
+// location is an svg where the chart will be drawn.
+// theseSpecs is an object of class ChartSpecs
+function representData(location, theseSpecs){
+    // Create the viewbox. This viewbox helps define the visible portions
+    // of the chart, but it also helps when making the chart responsive.
+    location.attr('viewBox', ` 0 0 ${theseSpecs.xScaleWidth + theseSpecs.chartBodyX + theseSpecs.textBuffer} ${theseSpecs.yScaleHeight + theseSpecs.textBuffer + theseSpecs.topMargin}`);
+
+    // Add groups to the svg for the body of the chart, the x axis, and the y axis.
+    body = location.append('g')
+        .attr('id', 'chartBody')
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.topMargin})`);
+    location.append('g')
+        .attr('id', 'yAxis')
+        .call(d3.axisLeft(theseSpecs.scaleY))
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.topMargin})`);
+    location.append('g')
+        .attr('id', 'xAxis')
+        .call(d3.axisBottom(theseSpecs.scaleX))
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.yScaleHeight + theseSpecs.topMargin})`);
+
+    // Create the location for the line
+    body.append('path')
+
+    drawLine(theseSpecs, d3.curveLinear);
+}
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Create the chart's line using the selected curve type.</h3>
+                <p>The following is called when the chart is created, as well as when the 
+                    user selects a type of curve smoothing function. This function redraws the line for 
+                    the given data using the selected curve function. 
+                </p>
+                <pre><code  class="language-js">
+// drawLine creates the line.
+// theseSpecs: an object of class ChartSpecs
+// curveType: a d3 curve type
+function drawLine(theseSpecs, curveType){
+    // Create the line
+    var line = d3.line()
+        .x(function(d) { return theseSpecs.scaleX(d.cat); })
+        .y(function(d) { return theseSpecs.scaleY(d.y); })
+        .curve(curveType)
+
+    var u = body
+        .selectAll('path')
+        .data([theseSpecs.data]);
+    
+    u.enter()
+        .append('path')
+        .merge(u)
+        .style('stroke', 'rgba(255, 0, 0, 1')
+        .style('fill', 'none')
+        .attr('stroke-width', '0.2vw')
+        .attr('d', line);
+}
+                </code></pre>
+            </div>
+        </div>
+        <div class="row row-content">
+            <div class="col-md-8">
+                <h3>Conclusion.</h3>
+                <p>The method presented here is meant to display different ways that a curve smoothing 
+                    function can modify the look of a line chart.  This is usually something that is 
+                    applied as a static effect on a given chart, but in this case I've make it user-selectable. 
+                    If you are interested in the complete code for this demo, you can find it <a href="#">here</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="outputDiv"></div>
+  </body>
+
+<footer class="row footer justify-content-center">
+  <code>Copyright (c) 2020 Issac Gardner</code>
+</footer>
+<!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/js/d3.v6.min.js"></script>
+<script src="/particles/particles.js"></script>
+<script> particlesJS.load('particles-js', '/particles/particles.json', function() {
+  console.log('callback - particles.js config loaded');
+});</script>
+<script src="/node_modules/prismjs/prism.js"></script>
+
+
+
+<script src='js/swmm.js'></script>
+<script src='js.js'></script>
+<script src='swmm_run.js'></script>
+
+
+
+<script src="./script.js"></script>
+<script src="/script.js"></script>
+</html>

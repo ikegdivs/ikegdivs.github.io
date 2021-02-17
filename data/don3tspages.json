@@ -205,5 +205,14 @@
         "category": "don3ts",
         "description": "SWMM: Translate",
         "series": "don3ts"
+    },
+    {
+        "id": 23,
+        "name": "SWMM: Pipe Flow",
+        "href": "swmm_pipeFlow/comic.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "SWMM: Pipe Flow",
+        "series": "don3ts"
     }
 ]

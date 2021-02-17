@@ -1,0 +1,80 @@
+In order to display your swmm model as a web page on github:
+
+start at 
+
+https://github.com/bogdanvaduva/epanet.js-and-swmm.js
+
+use ++//++//++ as a place holder for where I am in the setup.
+
+
+
+Compilation
+A shell like Bash need to be used to build epanet.js.
+
+
+
+Download epanet source files from https://www.epa.gov/sites/production/files/2018-08/swmm51013_engine_0.zip
+
+++//++//++
+
+ - Unzip the files into the desired folder, for example D:/SWMMJS
+ - Fork the github branch.
+ - copy all of the files (.c, .h, .dat, .def, .txt) from D:/SWMMJS/swmm51013_engine_0/source5_1_013 into D:/SWMMJS
+ - Put the content of /epanet.js-and-swmm.js/swmm.js/src/js folder into D:/SWMMJS.
+ - Download empscripten.
+   - Go to https://emscripten.org/docs/getting_started/downloads.html
+   - Read the instructions, as detailed below:
+   - Enter console
+   - Move to github folder: cd [Github Folder]
+   - Type into a console
+     - git clone https://github.com/emscripten-core/emsdk.git
+     - cd emsdk
+     - git pull
+     - emsdk install latest
+     - emsdk activate latest
+     - emsdk_env.bat
+   - Download shell.html or create a new one that has a similar structure. I think this is referring to index.html. I opened that and changed the epanet references to swmm references. I also modified the file structure.
+
+
+
+Run the following command
+emcc -O1 swmm5.c climate.c controls.c culvert.c datetime.c dwflow.c dynwave.c error.c exfil.c findroot.c flowrout.c forcmain.c gage.c gwater.c hash.c hotstart.c iface.c infil.c inflow.c input.c inputrpt.c keywords.c kinwave.c landuse.c lid.c lidproc.c link.c main.c massbal.c mathexpr.c mempool.c node.c odesolve.c output.c project.c qualrout.c rain.c rdii.c report.c roadway.c routing.c runoff.c shape.c snow.c stats.c statsrpt.c subcatch.c surfqual.c table.c toposort.c transect.c treatmnt.c xsect.c -o js.html --pre-js js/pre.js --post-js js/post.js --js-library js/library.js -s EXPORTED_FUNCTIONS="['_main', '_time', '_link']" -s BINARYEN_TRAP_MODE='clamp' -s ASSERTIONS=0
+
+changed to :
+
+emcc -O1 swmm5.c climate.c controls.c culvert.c datetime.c dwflow.c dynwave.c error.c exfil.c findroot.c flowrout.c forcmain.c gage.c gwater.c hash.c hotstart.c iface.c infil.c inflow.c input.c inputrpt.c keywords.c kinwave.c landuse.c lid.c lidproc.c link.c main.c massbal.c mathexpr.c mempool.c node.c odesolve.c output.c project.c qualrout.c rain.c rdii.c report.c roadway.c routing.c runoff.c shape.c snow.c stats.c statsrpt.c subcatch.c surfqual.c table.c toposort.c transect.c treatmnt.c xsect.c -o js.html --pre-js js/pre.js --post-js js/post.js --js-library js/library.js -s EXPORTED_FUNCTIONS="['_main', '_time', '_link']" -s ASSERTIONS=0
+
+Use it and enjoy!
+
+
+
+
+
+
+
+
+
+
+
+
+ - Unzip the files into the desired folder, for example D:/SWMMJS
+ - Fork the github branch.
+ - Download empscripten.
+   - Go to https://emscripten.org/docs/getting_started/downloads.html
+   - Read the instructions, as detailed below:
+   - Enter console
+   - Move to github folder: cd [Github Folder]
+   - Type into a console
+     - git clone https://github.com/emscripten-core/emsdk.git
+     - cd emsdk
+     - git pull
+     - emsdk install latest
+     - emsdk activate latest
+     - emsdk_env.bat
+     
+   - Download shell.html or create a new one that has a similar structure. I think this is referring to index.html. I opened that and changed the epanet references to swmm references. I also modified the file structure.
+
+
+
+Run the following command
+emcc -O1 swmm5.c climate.c controls.c culvert.c datetime.c dwflow.c dynwave.c error.c exfil.c findroot.c flowrout.c forcmain.c gage.c gwater.c hash.c hotstart.c iface.c infil.c inflow.c input.c inputrpt.c keywords.c kinwave.c landuse.c lid.c lidproc.c link.c main.c massbal.c mathexpr.c mempool.c node.c odesolve.c output.c project.c qualrout.c rain.c rdii.c report.c roadway.c routing.c runoff.c shape.c snow.c stats.c statsrpt.c subcatch.c surfqual.c table.c toposort.c transect.c treatmnt.c xsect.c -o js.html --pre-js js/pre.js --post-js js/post.js --js-library js/library.js -s EXPORTED_FUNCTIONS="['_main', '_time', '_link']" -s BINARYEN_TRAP_MODE='clamp' -s ASSERTIONS=0
