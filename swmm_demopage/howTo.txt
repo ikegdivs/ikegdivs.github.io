@@ -1,0 +1,43 @@
+<h1>SWMM-js: Interactive Web Tools.</h1>
+
+<h2>SWMM-js<h2>
+This example project shows how to quickly create an interactive display of EPA-SWMM results for your favorite model. If you are new to web development, don't worry. You'll just need an .out file from your model and the ability to cut and paste text. I'll point out the parts you'll want to modify.
+
+SWMM-js is based upon the code found at the following GitHub link: <a href="#">link</a>. SWMM-js uses an Emscripten translation of the original C code of the popular EPA-SWMM program, which you can find more about <a href="#">here</a>. The web presents a unique opportunity for sharing, visualizing, and running models. The goal of this series of examples is to demonstrate the effectiveness of the browser as a modeling and communication tool.
+
+
+
+<h2>GitHub<h2>
+While you don't need a GitHub account to create your own web page, I'll be framing these examples in GitHub repositories that you can copy and modify on your own. If you wish to follow these directions exactly, you'll need to get a GitHub account <a href="#">here</a>. You may also want to familiarize yourself with the GitHub environment, but hopefully I'll provide enough illustration that you will be able to follow through without any troubles.
+
+<h2>Setting Up</h2>
+The product breakdown for this example is as follows:
+<ul>
+    <li>Github pages site.</li>
+    <li>D3 chart of results.</li>
+    <li>Text description of chart.</li>
+    <li>Interactivity tool.</li>
+</ul>
+
+In order to create these products, we'll use the following input:
+<ul>
+    <li>GitHub account.</li>
+    <li>SWMM .out file.</li>
+</ul>
+
+<h2>Copying the Code</h2>
+The first thing you want to do is perform a 'fork' of the code. Go to <a href="#">this link</a> and click on 'fork'. This will copy all of the code for this project into your own GitHub account. Go through the following steps, then move on to the next section.
+
+<h2>Making it Your Own</h2>
+In order to make this project your own, let's start by deleting the default .out file I've added to the project. Go to xxxx and click. 
+
+Now, upload your own .out file by doing this:
+
+Put your name on your work. Open up file x and change the following to your own name:
+
+name = "";
+
+Finally, you will want to add a bit of text to explain the model and the results you have. Change the following to something that describes your model.
+
+<h2>Show it Off</h2>
+That's it! So easy. There is a lot more that can be done here: this particular chart is fairly bare-bones. You can modify the code to change the colors, add tools and other content. Since I wanted to keep this intro fairly simple, you can find out how to perform some of the more complex modifications in the articles that follow this one. For a simple one, you can offer a viewer a <a href="#">download link</a>.

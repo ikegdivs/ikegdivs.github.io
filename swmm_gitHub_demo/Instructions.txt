@@ -1,0 +1,18 @@
+How to create a swmm-js GitHub page.
+
+- Create a GitHub account.
+
+- Fork the repository <a href="#">here</a>.
+
+- Delete the swmm file in location.
+
+- Upload your own swmm file to location.
+
+- (Code - Optional) Change the file name at this location in this file:
+
+- (Code - Optional) Change the data in the following json file to text of your own:
+  - YourFileName.inp.
+  - Your Name.
+  - Optional Contact info.
+  - Optional Descriptive text.
+

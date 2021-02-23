@@ -53,115 +53,53 @@ class ChartSpecs {
 // Create some data
 // Draw a line chart with the data.
 document.addEventListener("DOMContentLoaded", function(){
-    // dataObj is an array of dataElement objects.
-    dataObj = [];
+    // Name of the input file.
+    inputFileName = "Example1x.inp"
+
     let viz_svg01 = d3.select("#viz_svg01");
-    let inpText = null;
+    let model = null;
 
     // Create a set of dataElements.
     Module.onRuntimeInitialized = _ => {
-        //Get the input file for parsing:
-        fetch('data/Example1x.inp')
+        // Prepare the primary swmm process.
+        const swmm_run = Module.cwrap('swmm_run', 'number', ['string', 'string', 'string']);
+
+        //Get the input file, parse and run swmm.
+        fetch('data/' + inputFileName)
             .then(response => response.text())
             .then((data) => {
-                //console.log(data);
-                inpText = data;
                 input = new d3.inp();
-                val = input.parse(data);
-    
-                //console.log(val.CONDUITS[1])
-                try
-                {
-                    FS.createPath('/', '/', true, true);
-                    FS.ignorePermissions = true;
-                    //var inp = document.getElementById('inpFile').value;
-                    var f = FS.findObject('input.inp');
-                    if (f) {
-                        FS.unlink('input.inp');
-                    }
-                    //FS.createDataFile('/', 'input.inp', inp, true, true);
-                    FS.createDataFile('/', 'input.inp', inpText, true, true);
+                model = input.parse(data);
 
-                    const swmm_run = Module.cwrap('swmm_run', 'number', ['string', 'string', 'string']);
-                    //data = swmm_run("data/Example1.inp", "data/Example1x.rpt", "data/Example1x.out")
-                    data = swmm_run("/input.inp", "data/Example1x.rpt", "data/Example1x.out")
-                } catch (e) {
-                    console.log('/input.inp creation failed');
-                }
+                // Call the primary swmm process.
+                data = swmm_run("data/" + inputFileName, "data/rpt.rpt", "data/out.out")
+
+                // Process the results
+                processResults('data/out.out');
             })
 
         
-
-        
-        
-    
-        fetch('data/Example1x.out')
-            .then(response => response.blob())
-            .then((data) => {
-                //console.log(data);
-    
-                input = new d3.swmmresult();
-                val = input.parse('data/Example1x.out');
-    
-                //console.log('--------------------------')
-                for(let i = 1; !!val[i]; i++){
-                    //console.log(val[i].LINK["1"][3]);
-                    dataObj.push(new DataElement(i, val[i].LINK["1"][3]));
-                }
-                //console.log('--------------------------')
-            
-                // Create a new chartSpecs object and populate it with the data.
-                theseSpecs = new ChartSpecs(dataObj);
-
-                // Prepare the chart and draw it.
-                representData(viz_svg01, theseSpecs);
-
-                // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
-                $('#formControlSelector').on('change', function(event){
-                    // Get the input from the drop down.
-                    userVal = $(event.currentTarget).prop('value');
-
-                    drawLine(theseSpecs, d3[userVal])
-                })
-            })
-
-            fetch('data/Example1.rpt')
-                .then(response => response.text())
-                .then((data) => {
-                    //console.log(data);
-        
-                    input = new d3.swmmresult();
-                    val = input.parse('data/Example1.rpt');
-        
-                    //console.log('--------------------------')
-                    for(let i = 1; !!val[i]; i++){
-                        //console.log(val[i].LINK["1"][3]);
-                        dataObj.push(new DataElement(i, val[i].LINK["1"][3]));
-                    }
-                    //console.log('--------------------------')
-                
-                    // Create a new chartSpecs object and populate it with the data.
-                    theseSpecs = new ChartSpecs(dataObj);
-
-                    // Prepare the chart and draw it.
-                    representData(viz_svg01, theseSpecs);
-
-                    // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
-                    $('#formControlSelector').on('change', function(event){
-                        // Get the input from the drop down.
-                        userVal = $(event.currentTarget).prop('value');
-
-                        drawLine(theseSpecs, d3[userVal])
-                    })
-            })
     }
-    
-    /*for(i = 0; i < 10; i++){
-        dataObj.push(new DataElement(i, i));
-    }*/
-    
-    
 })
+
+// Process the .out file of a swmm run
+function processResults(outFile){
+    // dataObj is an array of dataElement objects.
+    dataObj = [];
+    let results = new d3.swmmresult();
+    let output = results.parse(outFile);
+
+    // Get a value. This can be the flow for link 1.
+    for(let i = 1; !!val[i]; i++){
+        dataObj.push(new DataElement(i, output[i].LINK["1"][3]));
+    }
+
+    // Create a new chartSpecs object and populate it with the data.
+    theseSpecs = new ChartSpecs(dataObj);
+
+    // Prepare the chart and draw it.
+    representData(viz_svg01, theseSpecs);
+}
 
 // representData draws the chart
 // location is an svg where the chart will be drawn.

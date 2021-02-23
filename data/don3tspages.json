@@ -214,5 +214,34 @@
         "category": "don3ts",
         "description": "SWMM: Pipe Flow",
         "series": "don3ts"
+    },
+    {
+        "id": 24,
+        "name": "SWMM: Demo Page",
+        "href": "swmm_demoPage/index.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "SWMM: Demo Page",
+        "series": "don3ts"
+    },
+    {
+        "id": 25,
+        "name": "SWMM: Github Demo Page",
+        "href": "swmm_gitHub_demo/index.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "SWMM: Github Demo Page",
+        "series": "don3ts"
+    },
+    {
+        "id": 26,
+        "name": "SWMM: Github: Open File",
+        "href": "swmm_gitHub_open/index.html",
+        "src": "images/viz_barcharts.JPG",
+        "category": "don3ts",
+        "description": "SWMM: Github Open File",
+        "series": "don3ts"
     }
+
+    
 ]
