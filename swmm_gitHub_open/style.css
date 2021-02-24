@@ -14,28 +14,74 @@ body{
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  }
+}
   
-  /* Modal Content/Box */
-  .modal-content {
+/* Modal Content/Box */
+.modal-content {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
-  }
-  
-  /* The Close Button */
-  .close {
+
+    display:grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+}
+
+.modal-content label {
+    text-align: right;
+}
+
+.modal-content label {
+
+}
+
+/* Container for the project menu. */
+.projectmenu ul, .projectmenu #myUL{
+    list-style-type: none;
+}
+
+.projectmenu #myUL{
+    margin: 0;
+    padding: 0;
+}
+
+.projectmenu .caret, .projectmenu li{
+    cursor: pointer;
+    user-select: none;
+}
+
+.projectmenu .caret::before {
+    content: '\25B6';
+    color: black;
+    display: inline-block;
+    margin-right:6px;
+}
+
+.projectmenu .caret-down::before {
+    transform: rotate(90deg);
+}
+
+.projectmenu .nested {
+    display: none;
+}
+
+.projectmenu .active {
+    display: block;
+}
+
+/* The Close Button */
+.close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
-  }
-  
-  .close:hover,
-  .close:focus {
+}
+
+.close:hover,
+.close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
-  }
+}

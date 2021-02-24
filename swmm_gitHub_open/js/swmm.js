@@ -10,25 +10,33 @@ d3.inp = function() {
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
 
+        
+        // Alter display property of a group of elements.
+        function hideOrShow(classDesc, displayType){
+            items = document.getElementsByClassName(classDesc);
+            Array.from(items).forEach(item => {
+                item.style.display = displayType;
+                item.value = '';
+            })
+        }
+
         // When the user clicks on <span> (x), close the modal
         span.onclick = function() {
             modal.style.display = "none";
-            items = document.getElementsByClassName('modaledit');
-            Array.from(items).forEach(item => {
-                item.style.display = 'none';
-                item.vale = '';
-            })
+            // Make the edit texts disappear
+            hideOrShow('modaledit', 'none');
+            // Make the labels disappear.
+            hideOrShow('modallabel', 'none');
         }
 
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
-                items = document.getElementsByClassName('modaledit');
-                Array.from(items).forEach(item => {
-                    item.style.display = 'none';
-                    item.vale = '';
-                })
+                // Make the edit texts disappear
+                hideOrShow('modaledit', 'none');
+                // Make the labels disappear.
+                hideOrShow('modallabel', 'none');
             }
         }
 
@@ -47,11 +55,15 @@ d3.inp = function() {
             // Check if the classList contains gjunction
             if(this.classList.contains('gjunction')){
                 //;;Junction       Invert     Dmax       Dinit      Dsurch     Aponded 
-                document.getElementById('modaledit01').style.display = 'block';
-                document.getElementById('modaledit02').style.display = 'block';
-                document.getElementById('modaledit03').style.display = 'block';
-                document.getElementById('modaledit04').style.display = 'block';
-                document.getElementById('modaledit05').style.display = 'block';
+                hideOrShow('modallabel', 'block');
+
+                document.getElementById('modallabel01').innerText = 'Invert'; 
+                document.getElementById('modallabel02').innerText = 'Dmax';
+                document.getElementById('modallabel03').innerText = 'Dinit';
+                document.getElementById('modallabel04').innerText = 'Dsurch';
+                document.getElementById('modallabel05').innerText = 'Aponded';
+
+                hideOrShow('modaledit', 'block');
 
                 document.getElementById('modaledit01').value = swmmjs.model.JUNCTIONS[this.id]['Invert']; 
                 document.getElementById('modaledit02').value = swmmjs.model.JUNCTIONS[this.id]['Dmax'];
@@ -78,11 +90,15 @@ d3.inp = function() {
 
             // Check if the classList contains goutfall
             if(this.classList.contains('goutfall')){
-                //;;Outfall        Invert     Type       Stage Data       Gated   
-                document.getElementById('modaledit01').style.display = 'block';
-                document.getElementById('modaledit02').style.display = 'block';
-                document.getElementById('modaledit03').style.display = 'block';
-                document.getElementById('modaledit04').style.display = 'block';
+                //;;Outfall        Invert     Type       Stage Data       Gated  
+                hideOrShow('modallabel', 'block');
+
+                document.getElementById('modallabel01').innerText = 'Invert'; 
+                document.getElementById('modallabel02').innerText = 'Type';
+                document.getElementById('modallabel03').innerText = 'Stage Data';
+                document.getElementById('modallabel04').innerText = 'Gated';
+
+                hideOrShow('modaledit', 'block');
 
                 document.getElementById('modaledit01').value = swmmjs.model.OUTFALLS[this.id]['Invert']; 
                 document.getElementById('modaledit02').value = swmmjs.model.OUTFALLS[this.id]['Type'];
@@ -106,14 +122,26 @@ d3.inp = function() {
             // Check if the classList contains gpolygon
             if(this.classList.contains('gpolygon')){
                 //;;Subcatchment  RainGage  Outlet  Area  %Imperv  Width  %Slope  CurbLen  SnowPack  
-                document.getElementById('modaledit01').style.display = 'block';
-                document.getElementById('modaledit02').style.display = 'block';
-                document.getElementById('modaledit03').style.display = 'block';
-                document.getElementById('modaledit04').style.display = 'block';
-                document.getElementById('modaledit05').style.display = 'block';
-                document.getElementById('modaledit06').style.display = 'block';
-                document.getElementById('modaledit07').style.display = 'block';
-                document.getElementById('modaledit08').style.display = 'block';
+                hideOrShow('modallabel', 'block');
+
+                document.getElementById('modallabel01').innerText = 'Rain Gage'; 
+                document.getElementById('modallabel02').innerText = 'Outlet';
+                document.getElementById('modallabel03').innerText = 'Area';
+                document.getElementById('modallabel04').innerText = '% Impervious';
+                document.getElementById('modallabel05').innerText = 'Width'; 
+                document.getElementById('modallabel06').innerText = '% Slope';
+                document.getElementById('modallabel07').innerText = 'Curb Length';
+                document.getElementById('modallabel08').innerText = 'Snow Pack';
+                document.getElementById('modallabel09').innerText = 'n Impervious';
+                document.getElementById('modallabel10').innerText = 'n Pervious';
+                
+                document.getElementById('modallabel11').innerText = 'Dstore-Imperv';
+                document.getElementById('modallabel12').innerText = 'Dstor-Perv';
+                document.getElementById('modallabel13').innerText = '%Zero-Imperv';
+                document.getElementById('modallabel14').innerText = 'Subarea Routing';
+                document.getElementById('modallabel15').innerText = 'Percent Routed';
+
+                hideOrShow('modaledit', 'block');
 
                 document.getElementById('modaledit01').value = swmmjs.model.SUBCATCHMENTS[this.id]['RainGage']; 
                 document.getElementById('modaledit02').value = swmmjs.model.SUBCATCHMENTS[this.id]['Outlet'];
@@ -123,6 +151,13 @@ d3.inp = function() {
                 document.getElementById('modaledit06').value = swmmjs.model.SUBCATCHMENTS[this.id]['PctSlope'];
                 document.getElementById('modaledit07').value = swmmjs.model.SUBCATCHMENTS[this.id]['CurbLen'];
                 document.getElementById('modaledit08').value = swmmjs.model.SUBCATCHMENTS[this.id]['SnowPack'];
+                document.getElementById('modaledit09').value = swmmjs.model.SUBAREAS[this.id]['NImperv'];
+                document.getElementById('modaledit10').value = swmmjs.model.SUBAREAS[this.id]['NPerv'];
+                document.getElementById('modaledit11').value = swmmjs.model.SUBAREAS[this.id]['SImperv'];
+                document.getElementById('modaledit12').value = swmmjs.model.SUBAREAS[this.id]['SPerv'];
+                document.getElementById('modaledit13').value = swmmjs.model.SUBAREAS[this.id]['PctZero'];
+                document.getElementById('modaledit14').value = swmmjs.model.SUBAREAS[this.id]['RouteTo'];
+                document.getElementById('modaledit15').value = swmmjs.model.SUBAREAS[this.id]['PctRouted'];
 
                 document.getElementById('modaledit01').onkeyup = ()=>{
                     swmmjs.model.SUBCATCHMENTS[this.id]['RainGage'] = document.getElementById('modaledit01').value;
@@ -148,17 +183,35 @@ d3.inp = function() {
                 document.getElementById('modaledit08').onkeyup = ()=>{
                     swmmjs.model.SUBCATCHMENTS[this.id]['SnowPack'] = document.getElementById('modaledit08').value;
                 }
+                document.getElementById('modaledit09').onkeyup = ()=>{
+                    swmmjs.model.SUBAREAS[this.id]['NImperv'] = document.getElementById('modaledit09').value;
+                }
+                document.getElementById('modaledit10').onkeyup = ()=>{
+                    swmmjs.model.SUBAREAS[this.id]['NPerv'] = document.getElementById('modaledit10').value;
+                }
+                document.getElementById('modaledit11').onkeyup = ()=>{
+                    swmmjs.model.SUBAREAS[this.id]['SImperv'] = document.getElementById('modaledit11').value;
+                }
+                document.getElementById('modaledit12').onkeyup = ()=>{
+                    swmmjs.model.SUBAREAS[this.id]['SPerv'] = document.getElementById('modaledit12').value;
+                }
+                document.getElementById('modaledit13').onkeyup = ()=>{
+                    swmmjs.model.SUBAREAS[this.id]['PctZero'] = document.getElementById('modaledit13').value;
+                }
+                document.getElementById('modaledit14').onkeyup = ()=>{
+                    swmmjs.model.SUBAREAS[this.id]['RouteTo'] = document.getElementById('modaledit14').value;
+                }
+                document.getElementById('modaledit15').onkeyup = ()=>{
+                    swmmjs.model.SUBAREAS[this.id]['PctRouted'] = document.getElementById('modaledit15').value;
+                }
             }
-            
-
-            console.log(this.id);
         })
 
         //Bind links for click response.
-        $('.link_').click(function(e){modal.style.display = "block";console.log(this.id);})
+        $('.link_').click(function(e){modal.style.display = "block";})
 
         //Bind polygon for click response.
-        $('.polygon_').click(function(e){modal.style.display = "block";console.log(this.id);})
+        $('.polygon_').click(function(e){modal.style.display = "block";})
     }
 
     inp.parse = function(text) {
