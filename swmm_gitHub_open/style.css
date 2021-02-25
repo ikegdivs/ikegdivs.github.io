@@ -85,3 +85,14 @@ body{
     text-decoration: none;
     cursor: pointer;
 }
+
+
+#svgSimple {
+    height: 100%;
+}
+
+.d3viz {
+    height: 60%;
+    width: 100%;
+    border: 3px solid rgba(0, 0, 0, 1);
+}

@@ -40,13 +40,6 @@ d3.inp = function() {
             }
         }
 
-        //Bind an editor for the title/notes.
-        document.getElementById('TitleNotes').value = swmmjs.model.TITLE[0]['TitleNotes'];
-
-        document.getElementById('TitleNotes').onkeyup = ()=>{
-            swmmjs.model.TITLE[0]['TitleNotes'] = document.getElementById('TitleNotes').value;
-        }
-
         //Bind nodes for click response.
         $('.node_, .polygon_, .link_').click(function(e){
             modal.style.display = 'block';
@@ -1870,7 +1863,7 @@ var swmmjs = function() {
                 text = Array.prototype.slice.call(arguments).join(' ');
             console.error(text);
         };
-        Module.canvas = (function () {
+        /*Module.canvas = (function () {
             var canvas = document.getElementById('canvas');
 
             // As a default initial behavior, pop up an alert when webgl context is lost. To make your
@@ -1882,7 +1875,7 @@ var swmmjs = function() {
             }, false);
 
             return canvas;
-        })();
+        })();*/
         Module.setStatus = function (text) {
             var statusElement = document.getElementById('status');
 
