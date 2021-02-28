@@ -40,171 +40,285 @@ d3.inp = function() {
             }
         }
 
-        //Bind nodes for click response.
-        $('.node_, .polygon_, .link_').click(function(e){
-            modal.style.display = 'block';
+        //Add input and label elements to modal using an ID structure.
+        // For modals that do not use an ID strcture, try populateModal().
+        // Input to this function is an array of objects of the format:
+        //
+        // [{inputName: 'Invert',           The name of the variable when accessed through the parent object.
+        //   labelText: 'Invert',           The text that will show in the label for the input.
+        //   inputType: 'text',             The type of data that is expected for the input object.
+        //   parentObject: 'JUNCTIONS'}]    The name of the parent object.
+        // To use this structure, call swmmjs.model.[parentObject][itemID][inputName]
+        function populateModalID(inputArray, itemID){
+            // iterator
+            let index = 0;
+            // parent element is the modal dialog
+            let parent = document.getElementById('generalModal');
+            // current row element
+            let thisRow = null;
+            // current column element.
+            let thisCol = null;
+            // generic element
+            let thisEl = null;
+
+            if(!parent){
+                console.log('Could not populate general modal');
+                return null;
+            }
+
+            // Remove save button event listeners via cloning
+            $('#save-general-modal').off();
+            let oEl = document.getElementById('save-general-modal');
+            let nEl = oEl.cloneNode(true);
+            oEl.parentNode.replaceChild(nEl, oEl);
+            // Clean up the modal
+            while(parent.firstChild){
+                parent.removeChild(parent.firstChild);
+            }
+
+            // Add an input element
+            thisEl = parent.appendChild(document.createElement('p'));
+            thisEl.classList.add('modalinfo')
+            thisEl.id = 'testid';
+            thisEl.innerText = itemID; 
+
+            // For every entry in the inputArray
+            inputArray.forEach(item => {
+                // Create the modalLabelId and modalEditId strings
+                let modalLabelId = 'modallabel' + (index + 1).toString().padStart(2, '0');
+                let modalEditId =  'modaledit' + (index + 1).toString().padStart(2, '0');
+
+                // If this is the first entry in this row, create the form-row object
+                if(index % 2 == 0){
+                    thisRow = parent.appendChild(document.createElement('div'));
+                    thisRow.classList.add('form-row');
+                }
+
+                // Add a column div
+                thisCol = thisRow.appendChild(document.createElement('div'));
+                thisCol.classList.add('col-md-6');
+                thisCol.classList.add('mb-6');
+
+                // Add a label element
+                thisEl = thisCol.appendChild(document.createElement('label'));
+                thisEl.classList.add('modallabel');
+                thisEl.id = modalLabelId;
+                thisEl.setAttribute('for', modalEditId);
+                thisEl.innerText = item.labelText;
+
+                // Add an input element
+                thisEl = thisCol.appendChild(document.createElement('input'));
+                thisEl.classList.add('form-control')
+                thisEl.classList.add('modaledit')
+                thisEl.id = modalEditId;
+                thisEl.setAttribute('name', modalEditId);
+                thisEl.setAttribute('type', item.inputType);
+                thisEl.value = swmmjs.model[item.parentObject][itemID][item.inputName]
+
+                // Add a tooltip element
+                thisEl = thisCol.appendChild(document.createElement('div'));
+                thisEl.classList.add('valid-tooltip');
+                thisEl.innerText = 'Valid entry';
+
+                // Save the values if the 'Save' button is clicked.
+                document.getElementById('save-general-modal').addEventListener('click', ()=>{
+                    swmmjs.model[item.parentObject][itemID][item.inputName] = document.getElementById(modalEditId).value;
+                })
+
+                // Increase the iterator.
+                index++;
+            })
+        }
+
+        //Add input and label elements to modal using an ID structure.
+        // For modals that do not use an ID strcture, try populateModal().
+        // Input to this function is an array of objects of the format:
+        //
+        // [{inputName: 'Invert',           The name of the variable when accessed through the parent object.
+        //   labelText: 'Invert',           The text that will show in the label for the input.
+        //   inputType: 'text',             The type of data that is expected for the input object.
+        //   parentObject: 'JUNCTIONS'}]    The name of the parent object.
+        // To use this structure, call swmmjs.model.[parentObject][itemID][inputName]
+        function populateModal(inputArray, itemID){
+            // iterator
+            let index = 0;
+            // parent element is the modal dialog
+            let parent = document.getElementById('generalModal');
+            // current row element
+            let thisRow = null;
+            // current column element.
+            let thisCol = null;
+            // generic element
+            let thisEl = null;
+
+            if(!parent){
+                console.log('Could not populate general modal');
+                return null;
+            }
+
+            // Remove save button event listeners via cloning
+            $('#save-general-modal').off();
+            let oEl = document.getElementById('save-general-modal');
+            let nEl = oEl.cloneNode(true);
+            oEl.parentNode.replaceChild(nEl, oEl);
+            // Clean up the modal
+            while(parent.firstChild){
+                parent.removeChild(parent.firstChild);
+            }
+
+            // Add an input element
+            thisEl = parent.appendChild(document.createElement('p'));
+            thisEl.classList.add('modalinfo')
+            thisEl.id = 'testid';
+            thisEl.innerText = itemID; 
+
+            // For every entry in the inputArray
+            inputArray.forEach(item => {
+                // Create the modalLabelId and modalEditId strings
+                let modalLabelId = 'modallabel' + (index + 1).toString().padStart(2, '0');
+                let modalEditId =  'modaledit' + (index + 1).toString().padStart(2, '0');
+
+                // If this is the first entry in this row, create the form-row object
+                if(index % 2 == 0){
+                    thisRow = parent.appendChild(document.createElement('div'));
+                    thisRow.classList.add('form-row');
+                }
+
+                // Add a column div
+                thisCol = thisRow.appendChild(document.createElement('div'));
+                thisCol.classList.add('col-md-6');
+                thisCol.classList.add('mb-6');
+
+                // Add a label element
+                thisEl = thisCol.appendChild(document.createElement('label'));
+                thisEl.classList.add('modallabel');
+                thisEl.id = modalLabelId;
+                thisEl.setAttribute('for', modalEditId);
+                thisEl.innerText = item.labelText;
+
+                // Add an input element
+                thisEl = thisCol.appendChild(document.createElement('input'));
+                thisEl.classList.add('form-control')
+                thisEl.classList.add('modaledit')
+                thisEl.id = modalEditId;
+                thisEl.setAttribute('name', modalEditId);
+                thisEl.setAttribute('type', item.inputType);
+                thisEl.value = swmmjs.model[item.parentObject][itemID][item.inputName]
+
+                // Add a tooltip element
+                thisEl = thisCol.appendChild(document.createElement('div'));
+                thisEl.classList.add('valid-tooltip');
+                thisEl.innerText = 'Valid entry';
+
+                // Save the values if the 'Save' button is clicked.
+                document.getElementById('save-general-modal').addEventListener('click', ()=>{
+                    swmmjs.model[item.parentObject][itemID][item.inputName] = document.getElementById(modalEditId).value;
+                })
+
+                // Increase the iterator.
+                index++;
+            })
+        }
+
+        //Bind project elements for click response.
+        $('#pmTitle').click(function(e){
+            // Show the modal.
+            $('myModal').modal('toggle');
+        })
+
+        $('#pmOptions').click(function(e){
+            // Show the modal.
+            $('myModal').modal('toggle');
+            let modalJSON = [];
+            modalJSON.push({inputName: 'INFILTRATION',    labelText: 'Infiltration',    inputType: 'text', parentObject: 'OPTIONS'});
+            /*document.getElementById('modallabel01').style.display = 'block'; 
+            document.getElementById('modaledit01').style.display = 'block';
+
             document.getElementById('testid').innerText = this.id; 
+
+            document.getElementById('modallabel01').innerText = 'Title'; 
+            document.getElementById('modaledit01').value = swmmjs.model.TITLE[0]['TitleNotes'];
+
+            document.getElementById('modaledit01').onkeyup = ()=>{
+                swmmjs.model.TITLE[0]['TitleNotes'] = document.getElementById('modaledit01').value;
+            }*/
+            populateModal(modalJSON);
+        })
+
+        $('.node_, .polygon_, .link_').click(function(e){
+            // Show the modal.
+            $('#myModal').modal('toggle');
 
             // Check if the classList contains gjunction
             if(this.classList.contains('gjunction')){
-                //;;Junction       Invert     Dmax       Dinit      Dsurch     Aponded 
-                hideOrShow('modallabel', 'block');
-
-                document.getElementById('modallabel01').innerText = 'Invert'; 
-                document.getElementById('modallabel02').innerText = 'Dmax';
-                document.getElementById('modallabel03').innerText = 'Dinit';
-                document.getElementById('modallabel04').innerText = 'Dsurch';
-                document.getElementById('modallabel05').innerText = 'Aponded';
-
-                hideOrShow('modaledit', 'block');
-
-                document.getElementById('modaledit01').value = swmmjs.model.JUNCTIONS[this.id]['Invert']; 
-                document.getElementById('modaledit02').value = swmmjs.model.JUNCTIONS[this.id]['Dmax'];
-                document.getElementById('modaledit03').value = swmmjs.model.JUNCTIONS[this.id]['Dinit'];
-                document.getElementById('modaledit04').value = swmmjs.model.JUNCTIONS[this.id]['Dsurch'];
-                document.getElementById('modaledit05').value = swmmjs.model.JUNCTIONS[this.id]['Aponded'];
-
-                document.getElementById('modaledit01').onkeyup = ()=>{
-                    swmmjs.model.JUNCTIONS[this.id]['Invert'] = document.getElementById('modaledit01').value;
-                }
-                document.getElementById('modaledit02').onkeyup = ()=>{
-                    swmmjs.model.JUNCTIONS[this.id]['Dmax'] = document.getElementById('modaledit02').value;
-                }
-                document.getElementById('modaledit03').onkeyup = ()=>{
-                    swmmjs.model.JUNCTIONS[this.id]['Dinit'] = document.getElementById('modaledit03').value;
-                }
-                document.getElementById('modaledit04').onkeyup = ()=>{
-                    swmmjs.model.JUNCTIONS[this.id]['Dsurch'] = document.getElementById('modaledit04').value;
-                }
-                document.getElementById('modaledit05').onkeyup = ()=>{
-                    swmmjs.model.JUNCTIONS[this.id]['Aponded'] = document.getElementById('modaledit05').value;
-                }
+                // Create object definitions to populate the modal
+                let modalJSON = [];
+                modalJSON.push({inputName: 'Invert',    labelText: 'Invert',    inputType: 'text', parentObject: 'JUNCTIONS'});
+                modalJSON.push({inputName: 'Dmax',      labelText: 'Dmax',      inputType: 'text', parentObject: 'JUNCTIONS'});
+                modalJSON.push({inputName: 'Dinit',     labelText: 'Dinit',     inputType: 'text', parentObject: 'JUNCTIONS'});
+                modalJSON.push({inputName: 'Dsurch',    labelText: 'Dsurch',    inputType: 'text', parentObject: 'JUNCTIONS'});
+                modalJSON.push({inputName: 'Aponded',   labelText: 'Aponded',   inputType: 'text', parentObject: 'JUNCTIONS'});
+                populateModalID(modalJSON, this.id);
             }
 
             // Check if the classList contains goutfall
             if(this.classList.contains('goutfall')){
-                //;;Outfall        Invert     Type       Stage Data       Gated  
-                hideOrShow('modallabel', 'block');
-
-                document.getElementById('modallabel01').innerText = 'Invert'; 
-                document.getElementById('modallabel02').innerText = 'Type';
-                document.getElementById('modallabel03').innerText = 'Stage Data';
-                document.getElementById('modallabel04').innerText = 'Gated';
-
-                hideOrShow('modaledit', 'block');
-
-                document.getElementById('modaledit01').value = swmmjs.model.OUTFALLS[this.id]['Invert']; 
-                document.getElementById('modaledit02').value = swmmjs.model.OUTFALLS[this.id]['Type'];
-                document.getElementById('modaledit03').value = swmmjs.model.OUTFALLS[this.id]['StageData'];
-                document.getElementById('modaledit04').value = swmmjs.model.OUTFALLS[this.id]['Gated'];
-
-                document.getElementById('modaledit01').onkeyup = ()=>{
-                    swmmjs.model.OUTFALLS[this.id]['Invert'] = document.getElementById('modaledit01').value;
-                }
-                document.getElementById('modaledit02').onkeyup = ()=>{
-                    swmmjs.model.OUTFALLS[this.id]['Type'] = document.getElementById('modaledit02').value;
-                }
-                document.getElementById('modaledit03').onkeyup = ()=>{
-                    swmmjs.model.OUTFALLS[this.id]['StageData'] = document.getElementById('modaledit03').value;
-                }
-                document.getElementById('modaledit04').onkeyup = ()=>{
-                    swmmjs.model.OUTFALLS[this.id]['Gated'] = document.getElementById('modaledit04').value;
-                }
+                // Create object definitions to populate the modal
+                let modalJSON = [];
+                modalJSON.push({inputName: 'Invert',    labelText: 'Invert',    inputType: 'text', parentObject: 'OUTFALLS'});
+                modalJSON.push({inputName: 'Type',      labelText: 'Type',      inputType: 'text', parentObject: 'OUTFALLS'});
+                modalJSON.push({inputName: 'Stage Data',labelText: 'StageData', inputType: 'text', parentObject: 'OUTFALLS'});
+                modalJSON.push({inputName: 'Gated',     labelText: 'Gated',     inputType: 'text', parentObject: 'OUTFALLS'});
+                populateModalID(modalJSON, this.id);
             }
 
             // Check if the classList contains gpolygon
-            if(this.classList.contains('gpolygon')){
-                //;;Subcatchment  RainGage  Outlet  Area  %Imperv  Width  %Slope  CurbLen  SnowPack  
-                hideOrShow('modallabel', 'block');
+            if(this.classList.contains('gpolygon')){ 
+                // Create object definitions to populate the modal
+                let modalJSON = [];
+                modalJSON.push({inputName: 'RainGage',  labelText: 'Rain Gage',     inputType: 'text', parentObject: 'SUBCATCHMENTS'});
+                modalJSON.push({inputName: 'Outlet',    labelText: 'Outlet',        inputType: 'text', parentObject: 'SUBCATCHMENTS'});
+                modalJSON.push({inputName: 'Area',      labelText: 'Area',          inputType: 'text', parentObject: 'SUBCATCHMENTS'});
+                modalJSON.push({inputName: 'PctImperv', labelText: '% Impervious',  inputType: 'text', parentObject: 'SUBCATCHMENTS'});
+                modalJSON.push({inputName: 'Width',     labelText: 'Width',         inputType: 'text', parentObject: 'SUBCATCHMENTS'});
+                modalJSON.push({inputName: 'PctSlope',  labelText: '% Slope',       inputType: 'text', parentObject: 'SUBCATCHMENTS'});
+                modalJSON.push({inputName: 'CurbLen',   labelText: 'Curb Length',   inputType: 'text', parentObject: 'SUBCATCHMENTS'});
+                modalJSON.push({inputName: 'SnowPack',  labelText: 'Snow Pack',     inputType: 'text', parentObject: 'SUBCATCHMENTS'});
+                modalJSON.push({inputName: 'NImperv',   labelText: 'n Impervious',  inputType: 'text', parentObject: 'SUBAREAS'});
+                modalJSON.push({inputName: 'NPerv',     labelText: 'n Pervious',    inputType: 'text', parentObject: 'SUBAREAS'});
+                modalJSON.push({inputName: 'SImperv',   labelText: 'Dstore-Imperv', inputType: 'text', parentObject: 'SUBAREAS'});
+                modalJSON.push({inputName: 'SPerv',     labelText: 'Dstor-Perv',    inputType: 'text', parentObject: 'SUBAREAS'});
+                modalJSON.push({inputName: 'PctZero',   labelText: '%Zero-Imperv',  inputType: 'text', parentObject: 'SUBAREAS'});
+                modalJSON.push({inputName: 'RouteTo',   labelText: 'Subarea Routing', inputType: 'text', parentObject: 'SUBAREAS'});
+                modalJSON.push({inputName: 'PctRouted', labelText: 'Percent Routed', inputType: 'text', parentObject: 'SUBAREAS'});
+                populateModalID(modalJSON, this.id);
+            }
 
-                document.getElementById('modallabel01').innerText = 'Rain Gage'; 
-                document.getElementById('modallabel02').innerText = 'Outlet';
-                document.getElementById('modallabel03').innerText = 'Area';
-                document.getElementById('modallabel04').innerText = '% Impervious';
-                document.getElementById('modallabel05').innerText = 'Width'; 
-                document.getElementById('modallabel06').innerText = '% Slope';
-                document.getElementById('modallabel07').innerText = 'Curb Length';
-                document.getElementById('modallabel08').innerText = 'Snow Pack';
-                document.getElementById('modallabel09').innerText = 'n Impervious';
-                document.getElementById('modallabel10').innerText = 'n Pervious';
-                
-                document.getElementById('modallabel11').innerText = 'Dstore-Imperv';
-                document.getElementById('modallabel12').innerText = 'Dstor-Perv';
-                document.getElementById('modallabel13').innerText = '%Zero-Imperv';
-                document.getElementById('modallabel14').innerText = 'Subarea Routing';
-                document.getElementById('modallabel15').innerText = 'Percent Routed';
-
-                hideOrShow('modaledit', 'block');
-
-                document.getElementById('modaledit01').value = swmmjs.model.SUBCATCHMENTS[this.id]['RainGage']; 
-                document.getElementById('modaledit02').value = swmmjs.model.SUBCATCHMENTS[this.id]['Outlet'];
-                document.getElementById('modaledit03').value = swmmjs.model.SUBCATCHMENTS[this.id]['Area'];
-                document.getElementById('modaledit04').value = swmmjs.model.SUBCATCHMENTS[this.id]['PctImperv'];
-                document.getElementById('modaledit05').value = swmmjs.model.SUBCATCHMENTS[this.id]['Width'];
-                document.getElementById('modaledit06').value = swmmjs.model.SUBCATCHMENTS[this.id]['PctSlope'];
-                document.getElementById('modaledit07').value = swmmjs.model.SUBCATCHMENTS[this.id]['CurbLen'];
-                document.getElementById('modaledit08').value = swmmjs.model.SUBCATCHMENTS[this.id]['SnowPack'];
-                document.getElementById('modaledit09').value = swmmjs.model.SUBAREAS[this.id]['NImperv'];
-                document.getElementById('modaledit10').value = swmmjs.model.SUBAREAS[this.id]['NPerv'];
-                document.getElementById('modaledit11').value = swmmjs.model.SUBAREAS[this.id]['SImperv'];
-                document.getElementById('modaledit12').value = swmmjs.model.SUBAREAS[this.id]['SPerv'];
-                document.getElementById('modaledit13').value = swmmjs.model.SUBAREAS[this.id]['PctZero'];
-                document.getElementById('modaledit14').value = swmmjs.model.SUBAREAS[this.id]['RouteTo'];
-                document.getElementById('modaledit15').value = swmmjs.model.SUBAREAS[this.id]['PctRouted'];
-
-                document.getElementById('modaledit01').onkeyup = ()=>{
-                    swmmjs.model.SUBCATCHMENTS[this.id]['RainGage'] = document.getElementById('modaledit01').value;
+            // Check if the classList contains gconduit
+            if(this.classList.contains('gconduit')){ 
+                modalJSON.push({inputName: 'FromNode',  labelText: 'Inlet Node',     inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'ToNode',    labelText: 'Outlet Node',    inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'Description', labelText: 'Description',  inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'Tag',       labelText: 'Tag',            inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'Shape',     labelText: 'Shape',          inputType: 'text', parentObject: 'XSECTIONS'});
+                modalJSON.push({inputName: 'Geom1',     labelText: 'Max. Depth',     inputType: 'text', parentObject: 'XSECTIONS'});
+                modalJSON.push({inputName: 'Length',    labelText: 'Length',         inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'Roughness', labelText: 'Roughness',      inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'InOffset',  labelText: 'Inlet Offset',   inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'OutOffset', labelText: 'Outlet Offset',  inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'InitFlow',  labelText: 'Initial Flow',   inputType: 'text', parentObject: 'CONDUITS'});
+                modalJSON.push({inputName: 'MaxFlow',   labelText: 'Maximum Flow',   inputType: 'text', parentObject: 'CONDUITS'});
+                if(!!swmmjs.model.LOSSES[this.id]){
+                    swmmjs.model.LOSSES[this.id] = {Kin: 0, Kout: 0, Kavg: 0, FlapGate: '', SeepRate: 0};
                 }
-                document.getElementById('modaledit02').onkeyup = ()=>{
-                    swmmjs.model.SUBCATCHMENTS[this.id]['Outlet'] = document.getElementById('modaledit02').value;
-                }
-                document.getElementById('modaledit03').onkeyup = ()=>{
-                    swmmjs.model.SUBCATCHMENTS[this.id]['Area'] = document.getElementById('modaledit03').value;
-                }
-                document.getElementById('modaledit04').onkeyup = ()=>{
-                    swmmjs.model.SUBCATCHMENTS[this.id]['PctImperv'] = document.getElementById('modaledit04').value;
-                }
-                document.getElementById('modaledit05').onkeyup = ()=>{
-                    swmmjs.model.SUBCATCHMENTS[this.id]['Width'] = document.getElementById('modaledit05').value;
-                }
-                document.getElementById('modaledit06').onkeyup = ()=>{
-                    swmmjs.model.SUBCATCHMENTS[this.id]['PctSlope'] = document.getElementById('modaledit06').value;
-                }
-                document.getElementById('modaledit07').onkeyup = ()=>{
-                    swmmjs.model.SUBCATCHMENTS[this.id]['CurbLen'] = document.getElementById('modaledit07').value;
-                }
-                document.getElementById('modaledit08').onkeyup = ()=>{
-                    swmmjs.model.SUBCATCHMENTS[this.id]['SnowPack'] = document.getElementById('modaledit08').value;
-                }
-                document.getElementById('modaledit09').onkeyup = ()=>{
-                    swmmjs.model.SUBAREAS[this.id]['NImperv'] = document.getElementById('modaledit09').value;
-                }
-                document.getElementById('modaledit10').onkeyup = ()=>{
-                    swmmjs.model.SUBAREAS[this.id]['NPerv'] = document.getElementById('modaledit10').value;
-                }
-                document.getElementById('modaledit11').onkeyup = ()=>{
-                    swmmjs.model.SUBAREAS[this.id]['SImperv'] = document.getElementById('modaledit11').value;
-                }
-                document.getElementById('modaledit12').onkeyup = ()=>{
-                    swmmjs.model.SUBAREAS[this.id]['SPerv'] = document.getElementById('modaledit12').value;
-                }
-                document.getElementById('modaledit13').onkeyup = ()=>{
-                    swmmjs.model.SUBAREAS[this.id]['PctZero'] = document.getElementById('modaledit13').value;
-                }
-                document.getElementById('modaledit14').onkeyup = ()=>{
-                    swmmjs.model.SUBAREAS[this.id]['RouteTo'] = document.getElementById('modaledit14').value;
-                }
-                document.getElementById('modaledit15').onkeyup = ()=>{
-                    swmmjs.model.SUBAREAS[this.id]['PctRouted'] = document.getElementById('modaledit15').value;
-                }
+                modalJSON.push({inputName: 'Kin',       labelText: 'Entry Loss Coef.', inputType: 'text', parentObject: 'LOSSES'});
+                modalJSON.push({inputName: 'Kout',      labelText: 'Exit Loss Coef.',  inputType: 'text', parentObject: 'LOSSES'});
+                modalJSON.push({inputName: 'Kave',      labelText: 'Avg. Loss Coef.',  inputType: 'text', parentObject: 'LOSSES'});
+                modalJSON.push({inputName: 'SeepRate',  labelText: 'Seepage Loss Rate',inputType: 'text', parentObject: 'LOSSES'});
+                modalJSON.push({inputName: 'FlapGate',  labelText: 'Flap Gate',        inputType: 'text', parentObject: 'LOSSES'});
+                modalJSON.push({inputName: 'CulvertCode', labelText: 'Culvert Code',   inputType: 'text', parentObject: 'SUBAREAS'});
             }
         })
-
-        //Bind links for click response.
-        $('.link_').click(function(e){modal.style.display = "block";})
-
-        //Bind polygon for click response.
-        $('.polygon_').click(function(e){modal.style.display = "block";})
     }
 
     inp.parse = function(text) {
@@ -214,6 +328,18 @@ d3.inp = function() {
             comment: /^\s*;.*$/
         },
         parser = {
+            LOSSES: function(section, key, line) {
+                var m = [];
+                line = key + line;
+                m.push(line)
+                m.push(line.slice(17,28))
+                m.push(line.slice(28,39))
+                m.push(line.slice(39,50))
+                m.push(line.slice(50,61))
+                m.push(line.slice(61,line.length))
+                if (m && m.length)
+                        section[key] = {Kin: parseFloat(m[1]), Kout: m[2].trim(), Kavg: m[3].trim(), FlapGate: m[4].trim(), SeepRate: m[5].trim()};
+            },
             TITLE: function(section, key, line) {
                 var m = line.match(/(.*)+/);
                 if (m && m.length > 1)
