@@ -138,8 +138,8 @@ d3.inp = function() {
         //   labelText: 'Invert',           The text that will show in the label for the input.
         //   inputType: 'text',             The type of data that is expected for the input object.
         //   parentObject: 'JUNCTIONS'}]    The name of the parent object.
-        // To use this structure, call swmmjs.model.[parentObject][itemID][inputName]
-        function populateModal(inputArray, itemID){
+        // To use this structure, call swmmjs.model.[parentObject][inputName]
+        function populateModal(inputArray){
             // iterator
             let index = 0;
             // parent element is the modal dialog
@@ -169,8 +169,6 @@ d3.inp = function() {
             // Add an input element
             thisEl = parent.appendChild(document.createElement('p'));
             thisEl.classList.add('modalinfo')
-            thisEl.id = 'testid';
-            thisEl.innerText = itemID; 
 
             // For every entry in the inputArray
             inputArray.forEach(item => {
@@ -203,7 +201,7 @@ d3.inp = function() {
                 thisEl.id = modalEditId;
                 thisEl.setAttribute('name', modalEditId);
                 thisEl.setAttribute('type', item.inputType);
-                thisEl.value = swmmjs.model[item.parentObject][itemID][item.inputName]
+                thisEl.value = swmmjs.model[item.parentObject][item.inputName].Value
 
                 // Add a tooltip element
                 thisEl = thisCol.appendChild(document.createElement('div'));
@@ -212,7 +210,7 @@ d3.inp = function() {
 
                 // Save the values if the 'Save' button is clicked.
                 document.getElementById('save-general-modal').addEventListener('click', ()=>{
-                    swmmjs.model[item.parentObject][itemID][item.inputName] = document.getElementById(modalEditId).value;
+                    swmmjs.model[item.parentObject][item.inputName].Value = document.getElementById(modalEditId).value;
                 })
 
                 // Increase the iterator.
@@ -230,18 +228,12 @@ d3.inp = function() {
             // Show the modal.
             $('myModal').modal('toggle');
             let modalJSON = [];
-            modalJSON.push({inputName: 'INFILTRATION',    labelText: 'Infiltration',    inputType: 'text', parentObject: 'OPTIONS'});
-            /*document.getElementById('modallabel01').style.display = 'block'; 
-            document.getElementById('modaledit01').style.display = 'block';
-
-            document.getElementById('testid').innerText = this.id; 
-
-            document.getElementById('modallabel01').innerText = 'Title'; 
-            document.getElementById('modaledit01').value = swmmjs.model.TITLE[0]['TitleNotes'];
-
-            document.getElementById('modaledit01').onkeyup = ()=>{
-                swmmjs.model.TITLE[0]['TitleNotes'] = document.getElementById('modaledit01').value;
-            }*/
+            modalJSON.push({inputName: 'INFILTRATION',      labelText: 'Infiltration',              inputType: 'text',  parentObject: 'OPTIONS'});
+            modalJSON.push({inputName: 'ALLOW_PONDING',     labelText: 'Allow Ponding',             inputType: 'text',  parentObject: 'OPTIONS'});
+            modalJSON.push({inputName: 'CONTROLS',          labelText: 'Report Control Actions',    inputType: 'text',  parentObject: 'REPORT'});
+            modalJSON.push({inputName: 'INPUT',             labelText: 'Report Input Summary',      inputType: 'text',  parentObject: 'REPORT'});
+            modalJSON.push({inputName: 'MIN_SLOPE',         labelText: 'Minimum Conduit Slope %',   inputType: 'text',  parentObject: 'OPTIONS'});
+            modalJSON.push({inputName: 'FLOW_ROUTING',      labelText: 'Routing Model',             inputType: 'text',  parentObject: 'OPTIONS'});
             populateModal(modalJSON);
         })
 

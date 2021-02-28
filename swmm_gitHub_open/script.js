@@ -51,29 +51,6 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }*/
 
-    // Clicking Options li in the Project tree opens a text dialog.
-    let pmOptions = document.getElementById('pmOptions');
-
-    pmOptions.onclick = (e)=>{
-        // Make the edit texts disappear
-        hideOrShow('modaledit', 'none');
-        // Make the labels disappear.
-        hideOrShow('modallabel', 'none');
-
-        
-        document.getElementById('modallabel01').style.display = 'block'; 
-        document.getElementById('modaledit01').style.display = 'block';
-
-        document.getElementById('testid').innerText = this.id; 
-
-        document.getElementById('modallabel01').innerText = 'Title'; 
-        document.getElementById('modaledit01').value = swmmjs.model.TITLE[0]['TitleNotes'];
-
-        document.getElementById('modaledit01').onkeyup = ()=>{
-            swmmjs.model.TITLE[0]['TitleNotes'] = document.getElementById('modaledit01').value;
-        }
-    }
-
     // Setting up to process input file.
     Module.onRuntimeInitialized = _ => {
         // Process the metadata file
