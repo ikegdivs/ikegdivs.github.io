@@ -113,7 +113,46 @@ d3.inp = function() {
                 thisEl.id = modalEditId;
                 thisEl.setAttribute('name', modalEditId);
                 thisEl.setAttribute('type', item.inputType);
-                thisEl.value = swmmjs.model[item.parentObject][itemID][item.inputName]
+
+                if(item.parentObject==='TAGS'){
+                    // With tags, links and nodes can both have the same id, so the menu needs to 
+                    // know if the tag is for a node or a junction.
+                    if(item.inputName==='Node'){
+                        // Check for object.type='Node' and object.ID = itemID;
+                        function tagQuery(thisObj){
+                            return thisObj.Type==='Node' && thisObj.ID === itemID; 
+                        }
+                        // For every tag element
+                        let thisArray = Object.values(swmmjs.model[item.parentObject]);
+
+                        let thisEl = thisArray.findIndex(tagQuery);
+                        if(thisEl >= 0){
+                            document.getElementById(modalEditId).value = swmmjs.model[item.parentObject][thisEl].Tag;
+                        } else {
+                            document.getElementById(modalEditId).value = '';
+                        }
+                    }
+                } else {
+                    // If type === 'button', give the button some text
+                    if(item.inputType==='button'){
+                        thisEl.value = 'Edit';
+                        thisEl.classList.add('btn-secondary');
+                        thisEl.setAttribute('data-toggle', 'modal');
+                        thisEl.setAttribute('data-target', '#myModal2');
+
+                        // Add an event to handle clicks. These usually bring up a modal for editing.
+                        $(thisEl).click(function(e){
+                            // Create object definitions to populate the modal
+                            let modalJSON = [];
+                            populateSecondaryModalID(modalJSON, itemID);
+                        })
+
+
+                    } else{
+                        // If type is 'text', just place the value into the text box.
+                        thisEl.value = swmmjs.model[item.parentObject][itemID][item.inputName]
+                    }
+                }
 
                 // Add a tooltip element
                 thisEl = thisCol.appendChild(document.createElement('div'));
@@ -122,7 +161,36 @@ d3.inp = function() {
 
                 // Save the values if the 'Save' button is clicked.
                 document.getElementById('save-general-modal').addEventListener('click', ()=>{
-                    swmmjs.model[item.parentObject][itemID][item.inputName] = document.getElementById(modalEditId).value;
+                    if(item.parentObject==='TAGS'){
+                        if(document.getElementById(modalEditId).value.length > 0){
+                            // With tags, links and nodes can both have the same id, so the menu needs to 
+                            // know if the tag is for a node or a junction.
+                            if(item.inputName==='Node'){
+                                // Check for object.type='Node' and object.ID = itemID;
+                                function tagQuery(thisObj){
+                                    return thisObj.Type==='Node' && thisObj.ID === itemID; 
+                                }
+                                // For every tag element
+                                let thisArray = Object.values(swmmjs.model[item.parentObject]);
+
+                                let thisEl = thisArray.findIndex(tagQuery);
+                                if(thisEl >= 0){
+                                    swmmjs.model[item.parentObject][thisEl].Tag = document.getElementById(modalEditId).value;
+                                } else {
+                                    let arraySize = Object.keys(swmmjs.model[item.parentObject]).length
+                                    swmmjs.model[item.parentObject][arraySize] = [];
+                                    swmmjs.model[item.parentObject][arraySize].Type = 'Node';
+                                    swmmjs.model[item.parentObject][arraySize].ID = itemID;
+                                    swmmjs.model[item.parentObject][arraySize].Tag = document.getElementById(modalEditId).value;
+                                }
+                            }
+                        }
+                    } else {
+                        if(swmmjs.model[item.parentObject][itemID][item.inputName]){
+                            swmmjs.model[item.parentObject][itemID][item.inputName] = document.getElementById(modalEditId).value;
+                        }
+                        
+                    }
                 })
 
                 // Increase the iterator.
@@ -132,6 +200,99 @@ d3.inp = function() {
 
         //Add input and label elements to modal using an ID structure.
         // For modals that do not use an ID strcture, try populateModal().
+        // Input to this function is an array of objects of the format:
+        //
+        // [{inputName: 'Invert',           The name of the variable when accessed through the parent object.
+        //   labelText: 'Invert',           The text that will show in the label for the input.
+        //   inputType: 'text',             The type of data that is expected for the input object.
+        //   parentObject: 'JUNCTIONS'}]    The name of the parent object.
+        // To use this structure, call swmmjs.model.[parentObject][itemID][inputName]
+        function populateSecondaryModalID(inputArray, itemID){
+            // iterator
+            let index = 0;
+            // parent element is the modal dialog
+            let parent = document.getElementById('generalModal2');
+            // current row element
+            let thisRow = null;
+            // current column element.
+            let thisCol = null;
+            // generic element
+            let thisEl = null;
+
+            if(!parent){
+                console.log('Could not populate general modal');
+                return null;
+            }
+
+            // Remove save button event listeners via cloning
+            $('#save-general-modal2').off();
+            let oEl = document.getElementById('save-general-modal2');
+            let nEl = oEl.cloneNode(true);
+            oEl.parentNode.replaceChild(nEl, oEl);
+            // Clean up the modal
+            while(parent.firstChild){
+                parent.removeChild(parent.firstChild);
+            }
+
+            // Add an input element
+            thisEl = parent.appendChild(document.createElement('p'));
+            thisEl.classList.add('modalinfo')
+            thisEl.id = 'testid2';
+            thisEl.innerText = itemID; 
+
+            // For every entry in the inputArray
+            inputArray.forEach(item => {
+                // Create the modalLabelId and modalEditId strings
+                let modalLabelId = 'modal2label' + (index + 1).toString().padStart(2, '0');
+                let modalEditId =  'modal2edit' + (index + 1).toString().padStart(2, '0');
+
+                // If this is the first entry in this row, create the form-row object
+                if(index % 2 == 0){
+                    thisRow = parent.appendChild(document.createElement('div'));
+                    thisRow.classList.add('form-row');
+                }
+
+                // Add a column div
+                thisCol = thisRow.appendChild(document.createElement('div'));
+                thisCol.classList.add('col-md-6');
+                thisCol.classList.add('mb-6');
+
+                // Add a label element
+                thisEl = thisCol.appendChild(document.createElement('label'));
+                thisEl.classList.add('modallabel');
+                thisEl.id = modalLabelId;
+                thisEl.setAttribute('for', modalEditId);
+                thisEl.innerText = item.labelText;
+
+                // Add an input element
+                thisEl = thisCol.appendChild(document.createElement('input'));
+                thisEl.classList.add('form-control')
+                thisEl.classList.add('modaledit')
+                thisEl.id = modalEditId;
+                thisEl.setAttribute('name', modalEditId);
+                thisEl.setAttribute('type', item.inputType);
+                
+                // If type is 'text', just place the value into the text box.
+                thisEl.value = swmmjs.model[item.parentObject][itemID][item.inputName];
+
+                // Add a tooltip element
+                thisEl = thisCol.appendChild(document.createElement('div'));
+                thisEl.classList.add('valid-tooltip');
+                thisEl.innerText = 'Valid entry';
+
+                // Save the values if the 'Save' button is clicked.
+                document.getElementById('save-general-modal').addEventListener('click', ()=>{
+                    if(swmmjs.model[item.parentObject][itemID][item.inputName]){
+                        swmmjs.model[item.parentObject][itemID][item.inputName] = document.getElementById(modalEditId).value;
+                    }
+                })
+
+                // Increase the iterator.
+                index++;
+            })
+        }
+
+        //Add input and label elements to modal using an ID structure.
         // Input to this function is an array of objects of the format:
         //
         // [{inputName: 'Invert',           The name of the variable when accessed through the parent object.
@@ -150,6 +311,8 @@ d3.inp = function() {
             let thisCol = null;
             // generic element
             let thisEl = null;
+            let oEl = document.getElementById('save-general-modal');
+            let nEl = oEl.cloneNode(true);
 
             if(!parent){
                 console.log('Could not populate general modal');
@@ -158,8 +321,6 @@ d3.inp = function() {
 
             // Remove save button event listeners via cloning
             $('#save-general-modal').off();
-            let oEl = document.getElementById('save-general-modal');
-            let nEl = oEl.cloneNode(true);
             oEl.parentNode.replaceChild(nEl, oEl);
             // Clean up the modal
             while(parent.firstChild){
@@ -225,6 +386,220 @@ d3.inp = function() {
         })
 
         $('#pmOptions').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Options');
+
+            // Create the structure of the subselect list.
+            let listJSON = [];
+            listJSON.push({labelText: 'General',    elementId: 'subselectlist-general'});
+            listJSON.push({labelText: 'Dates',    elementId: 'subselectlist-dates'});
+            listJSON.push({labelText: 'Time Steps',    elementId: 'subselectlist-timesteps'});
+            listJSON.push({labelText: 'Dynamic Wave',    elementId: 'subselectlist-dynamicwave'});
+            listJSON.push({labelText: 'Interface Files',    elementId: 'subselectlist-interfacefiles'});
+            listJSON.push({labelText: 'Reporting',    elementId: 'subselectlist-reporting'});
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmClimatology').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Climatology');
+
+            // Create the structure of the subselect list.
+            let listJSON = [];
+            listJSON.push({labelText: 'Temperature',    elementId: 'subselectlist-temperature'});
+            listJSON.push({labelText: 'Evaporation',    elementId: 'subselectlist-evaporation'});
+            listJSON.push({labelText: 'Wind Speed',    elementId: 'subselectlist-windspeed'});
+            listJSON.push({labelText: 'Snow Melt',    elementId: 'subselectlist-snowmelt'});
+            listJSON.push({labelText: 'Areal Depletion',    elementId: 'subselectlist-arealdepletion'});
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmJunctions').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Junctions');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.JUNCTIONS){
+                Object.entries(swmmjs.model.JUNCTIONS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-junction' + item.key, function: modalEditJunction});
+                })
+            }
+
+            
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmOutfalls').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Outfalls');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.OUTFALLS){
+                Object.entries(swmmjs.model.OUTFALLS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-outfall' + item.key});
+                })
+            }
+            populateSelectList(listJSON);
+        })
+
+        $('#pmDividers').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Dividers');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.DIVIDERS){
+                Object.entries(swmmjs.model.DIVIDERS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-divider' + item.key});
+                })
+            }
+            populateSelectList(listJSON);
+        })
+
+        $('#pmStorageUnits').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Storage Units');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.STORAGE){
+                Object.entries(swmmjs.model.STORAGE).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-storageunits' + item.key});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmConduits').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Conduits');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.CONDUITS){
+                Object.entries(swmmjs.model.CONDUITS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-conduits' + item.key});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmPumps').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Pumps');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            
+            if(!!swmmjs.model.PUMPS){
+                Object.entries(swmmjs.model.PUMPS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-pumps' + item.key});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmOrifices').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Orifices');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.ORIFICES){
+                Object.entries(swmmjs.model.ORIFICES).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-orifices' + item.key});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmWeirs').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Weirs');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.WEIRS){
+                Object.entries(swmmjs.model.WEIRS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-weirs' + item.key});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmOutlets').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Outlets');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.OUTLETS){
+                Object.entries(swmmjs.model.OUTLETS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-outlets' + item.key});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
+        //Add input and label elements to modal using an ID structure.
+        // Input to this function is an array of objects of the format:
+        //
+        // [{labelText: 'General',                      The printed name of the element.
+        //   elementId: 'subselectlist-general',        The id of the element.
+        //   [optional]function: modalEditJunction}]    The function fired on click.
+        // To use this structure, call swmmjs.model.[parentObject][inputName]
+        function populateSelectList(inputArray){
+            // Identify where objects will be placed.
+            let parent = document.getElementById('subselectlist');
+            // Generic Element
+            let el;
+
+            // Clean up the list
+            while(parent.firstChild){
+                parent.removeChild(parent.firstChild);
+            }
+
+            // For every entry in the inputArray
+            inputArray.forEach(item => {
+
+                // Add list element
+                el = parent.appendChild(document.createElement('li'));
+                el.classList.add('nav-item');
+    
+                // Add a
+                el = el.appendChild(document.createElement('a'));
+                el.classList.add('nav-link');
+                el.setAttribute('aria-current', 'page');
+                el.setAttribute('href', '#');
+    
+                // Add div
+                el = el.appendChild(document.createElement('div'));
+                el.setAttribute('data-toggle', 'modal');
+                el.setAttribute('data-target', '#myModal');
+                el.setAttribute('id', item.elementId);
+                el.innerText = item.labelText;
+                // If a function was passed in itemArray, use it on click
+                if(typeof item.function !== 'undefined'){
+                    $(el).click(function(e){
+                        item.function(item.labelText);
+                    })
+                }
+            })
+        }
+
+        function menuOptionsGeneral(){
+
             // Show the modal.
             $('myModal').modal('toggle');
             let modalJSON = [];
@@ -235,7 +610,23 @@ d3.inp = function() {
             modalJSON.push({inputName: 'MIN_SLOPE',         labelText: 'Minimum Conduit Slope %',   inputType: 'text',  parentObject: 'OPTIONS'});
             modalJSON.push({inputName: 'FLOW_ROUTING',      labelText: 'Routing Model',             inputType: 'text',  parentObject: 'OPTIONS'});
             populateModal(modalJSON);
-        })
+        }
+
+        var modalEditJunction = function(id){
+            // Create object definitions to populate the modal
+            let modalJSON = [];
+            modalJSON.push({inputName: 'Description',   labelText: 'Description',    inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Node',       labelText: 'Tag',        inputType: 'text',   parentObject: 'TAGS'});
+            modalJSON.push({inputName: 'Inflows',   labelText: 'Inflows',    inputType: 'button', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Treatment', labelText: 'Treatment',  inputType: 'button', parentObject: 'JUNCTIONS'});
+
+            modalJSON.push({inputName: 'Invert',    labelText: 'Invert El.',     inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Dmax',      labelText: 'Max. Depth',     inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Dinit',     labelText: 'Initial Depth',  inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Dsurch',    labelText: 'Surcharge Depth',inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Aponded',   labelText: 'Ponded Area',    inputType: 'text', parentObject: 'JUNCTIONS'});
+            populateModalID(modalJSON, id);
+        }
 
         $('.node_, .polygon_, .link_').click(function(e){
             // Show the modal.
@@ -243,14 +634,7 @@ d3.inp = function() {
 
             // Check if the classList contains gjunction
             if(this.classList.contains('gjunction')){
-                // Create object definitions to populate the modal
-                let modalJSON = [];
-                modalJSON.push({inputName: 'Invert',    labelText: 'Invert',    inputType: 'text', parentObject: 'JUNCTIONS'});
-                modalJSON.push({inputName: 'Dmax',      labelText: 'Dmax',      inputType: 'text', parentObject: 'JUNCTIONS'});
-                modalJSON.push({inputName: 'Dinit',     labelText: 'Dinit',     inputType: 'text', parentObject: 'JUNCTIONS'});
-                modalJSON.push({inputName: 'Dsurch',    labelText: 'Dsurch',    inputType: 'text', parentObject: 'JUNCTIONS'});
-                modalJSON.push({inputName: 'Aponded',   labelText: 'Aponded',   inputType: 'text', parentObject: 'JUNCTIONS'});
-                populateModalID(modalJSON, this.id);
+                modalEditJunction(this.id);
             }
 
             // Check if the classList contains goutfall
@@ -305,7 +689,7 @@ d3.inp = function() {
                 }
                 modalJSON.push({inputName: 'Kin',       labelText: 'Entry Loss Coef.', inputType: 'text', parentObject: 'LOSSES'});
                 modalJSON.push({inputName: 'Kout',      labelText: 'Exit Loss Coef.',  inputType: 'text', parentObject: 'LOSSES'});
-                modalJSON.push({inputName: 'Kave',      labelText: 'Avg. Loss Coef.',  inputType: 'text', parentObject: 'LOSSES'});
+                modalJSON.push({inputName: 'Kavg',      labelText: 'Avg. Loss Coef.',  inputType: 'text', parentObject: 'LOSSES'});
                 modalJSON.push({inputName: 'SeepRate',  labelText: 'Seepage Loss Rate',inputType: 'text', parentObject: 'LOSSES'});
                 modalJSON.push({inputName: 'FlapGate',  labelText: 'Flap Gate',        inputType: 'text', parentObject: 'LOSSES'});
                 modalJSON.push({inputName: 'CulvertCode', labelText: 'Culvert Code',   inputType: 'text', parentObject: 'SUBAREAS'});
@@ -317,7 +701,8 @@ d3.inp = function() {
         var regex = {
             section: /^\s*\[\s*([^\]]*)\s*\].*$/,
             value: /\s*([^\s]+)([^;]*).*$/,
-            comment: /^\s*;.*$/
+            description: /^\s*;.*$/,
+            comment: /^\s*;;.*$/
         },
         parser = {
             LOSSES: function(section, key, line) {
@@ -357,10 +742,10 @@ d3.inp = function() {
                     if (m && m.length)
                         section[key] = {MaxRate: parseFloat(m[1]), MinRate: parseFloat(m[2]), Decay: parseFloat(m[3]), DryTime: parseFloat(m[4]), MaxInfil: parseFloat(m[5])};
             },
-            JUNCTIONS: function(section, key, line) {
+            JUNCTIONS: function(section, key, line, curDesc) {
                     var m = line.match(/\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)/);
                     if (m && m.length)
-                        section[key] = {Invert: parseFloat(m[1]), Dmax: parseFloat(m[2]), Dinit: parseFloat(m[3]), Dsurch: parseFloat(m[4]), Aponded: parseFloat(m[5])};
+                        section[key] = {Invert: parseFloat(m[1]), Dmax: parseFloat(m[2]), Dinit: parseFloat(m[3]), Dsurch: parseFloat(m[4]), Aponded: parseFloat(m[5]), Description: curDesc};
             },
             OUTFALLS: function(section, key, line) {
                 var m = [];
@@ -503,6 +888,7 @@ d3.inp = function() {
                 var m = [];
                 line = key + line;
                 m.push(line)
+                m.push(line.slice(0, 17))
                 m.push(line.slice(17,34))
                 m.push(line.slice(34,45))
                 m.push(line.slice(45,56))
@@ -510,17 +896,20 @@ d3.inp = function() {
                 m.push(line.slice(67,78))
                 m.push(line.slice(78,line.length))
                 if (m && m.length)
-                        section[key] = {Pollutant: m[1].trim(), 
-                                        Function: m[2].trim(),
-                                        Coeff1: parseFloat(m[3]),
-                                        Coeff2: parseFloat(m[4]),
-                                        Coeff3: parseFloat(m[5]),
-                                        Normalizer: m[6].trim()};
+                        section[Object.keys(section).length] = {
+                                        LandUse: m[1].trim(), 
+                                        Pollutant: m[2].trim(), 
+                                        Function: m[3].trim(),
+                                        Coeff1: parseFloat(m[4]) || 0,
+                                        Coeff2: parseFloat(m[5]) || 0,
+                                        Coeff3: parseFloat(m[6]) || 0,
+                                        Normalizer: m[7].trim()};
             },  
             WASHOFF: function(section, key, line) {
                 var m = [];
                 line = key + line;
                 m.push(line)
+                m.push(line.slice(0, 17))
                 m.push(line.slice(17,34))
                 m.push(line.slice(34,45))
                 m.push(line.slice(45,56))
@@ -528,13 +917,18 @@ d3.inp = function() {
                 m.push(line.slice(67,78))
                 m.push(line.slice(78,line.length))
                 if (m && m.length)
-                        section[key] = {Pollutant: m[1].trim(), 
-                                        Function: m[2].trim(),
-                                        Coeff1: parseFloat(m[3]),
-                                        Coeff2: parseFloat(m[4]),
-                                        Ecleaning: parseFloat(m[5]),
-                                        Ebmp: m[6].trim()};
+                        section[Object.keys(section).length] = {
+                                        LandUse: m[1].trim(), 
+                                        Pollutant: m[2].trim(), 
+                                        Function: m[3].trim(),
+                                        Coeff1: parseFloat(m[4]) || 0,
+                                        Coeff2: parseFloat(m[5]) || 0,
+                                        Ecleaning: parseFloat(m[6]) || 0,
+                                        Ebmp: m[7].trim()};
             },    
+
+
+
             TIMESERIES: function(section, key, line) {
                 var m = [];
                 line = key + line;
@@ -565,6 +959,19 @@ d3.inp = function() {
                     if (m && m.length)
                         section[key] = {Value: m[1]};
             },
+            TAGS: function(section, key, line) {
+                var m = [];
+                line = key + line;
+                m.push(line)
+                m.push(line.slice(0, 11))
+                m.push(line.slice(11,28))
+                m.push(line.slice(28,line.length))
+                if (m && m.length)
+                        section[Object.keys(section).length] = {
+                                        Type: m[1].trim(), 
+                                        ID: m[2].trim(), 
+                                        Tag: m[3].trim()};
+            },
             SYMBOLS: function(section, key, line) {
                 var m = [];
                 line = key + line;
@@ -589,9 +996,18 @@ d3.inp = function() {
         model = {COORDINATES: {}, LABELS: [], STORAGE: {}, OUTFALLS: {}},
         lines = text.split(/\r\n|\r|\n/),
             section = null;
+        let curDesc = '';
         lines.forEach(function(line) {
+            // If the entry is a comment, then attempt to assign it as the description for the current
+            // object, or return nothing.
             if (regex.comment.test(line)) {
+                curDesc = '';
                 return;
+            }
+            else if (regex.description.test(line)) {
+                // Get the comment without the semicolon
+                curDesc = line.slice(1, line.length);
+
             } else if (regex.section.test(line)) {
                 var s = line.match(regex.section);
                 if ('undefined' === typeof model[s[1]])
@@ -600,9 +1016,10 @@ d3.inp = function() {
             } else if (regex.value.test(line)) {
                 var v = line.match(regex.value);
                 if (parser[section])
-                    parser[section](model[section], v[1], v[2]);
+                    parser[section](model[section], v[1], v[2], curDesc);
                 else
                     model[section][v[1]] = v[2];
+                curDesc = '';
             };
         });
 
@@ -1118,6 +1535,7 @@ var swmmjs = function() {
         inpString += '[TITLE]\n'
         inpString += model.TITLE[0]['TitleNotes'];
         inpString += '\n';
+        inpString += '\n';
         
         secStr = 'OPTIONS';
         inpString +='[OPTIONS]\n;;Option             Value\n'
@@ -1126,6 +1544,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Value;
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'EVAPORATION';
         inpString +='[EVAPORATION]\n;;Evap Data      Parameters\n;;-------------- ----------------\n'
@@ -1134,6 +1553,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Value;
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'RAINGAGES';
         inpString +='[RAINGAGES]\n;;Gage           Format    Interval SCF      Source\n;;-------------- --------- ------ ------ ----------\n'
@@ -1145,6 +1565,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Source.padEnd(31, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'SUBCATCHMENTS';
         inpString +='[SUBCATCHMENTS]\n;;Subcatchment   Rain Gage        Outlet           Area     %Imperv  Width    %Slope   CurbLen  Snow Pack       \n;;-------------- ---------------- ---------------- -------- -------- -------- -------- -------- ----------------\n'
@@ -1160,6 +1581,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].SnowPack.padEnd(17, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'SUBAREAS';
         inpString +='[SUBAREAS]\n;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     PctZero    RouteTo    PctRouted \n;;-------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------\n'
@@ -1174,6 +1596,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].PctRouted.padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'INFILTRATION';
         inpString +='[INFILTRATION]\n;;Subcatchment   MaxRate    MinRate    Decay      DryTime    MaxInfil  \n;;-------------- ---------- ---------- ---------- ---------- ----------\n'        
@@ -1186,10 +1609,15 @@ var swmmjs = function() {
             inpString += model[secStr][entry].MaxInfil.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'JUNCTIONS';
         inpString +='[JUNCTIONS]\n;;Junction       Invert     Dmax       Dinit      Dsurch     Aponded   \n;;-------------- ---------- ---------- ---------- ---------- ----------\n'        
         for (let entry in model[secStr]) {
+            // If there is a description, save it.
+            if(model[secStr][entry].Description.length > 0){
+                inpString += ';' + model[secStr][entry].Description + '\n';
+            }
             inpString += entry.padEnd(17, ' ');
             inpString += model[secStr][entry].Invert.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].Dmax.toString().padEnd(11, ' ');
@@ -1198,6 +1626,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Aponded.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'OUTFALLS';
         inpString +='[OUTFALLS]\n;;Outfall        Invert     Type       Stage Data       Gated   \n;;-------------- ---------- ---------- ---------------- --------\n'        
@@ -1209,6 +1638,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Gated.padEnd(9, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'CONDUITS';
         inpString +='[CONDUITS]\n;;Conduit        From Node        To Node          Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow   \n;;-------------- ---------------- ---------------- ---------- ---------- ---------- ---------- ---------- ----------\n'        
@@ -1224,6 +1654,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].MaxFlow.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'XSECTIONS';
         inpString +='[XSECTIONS]\n;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels   \n;;-------------- ------------ ---------------- ---------- ---------- ---------- ----------\n'        
@@ -1237,6 +1668,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Barrels.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'LOSSES';
         inpString +='[LOSSES]\n;;Link           Kin        Kout       Kavg       Flap Gate  SeepRate  \n;;-------------- ---------- ---------- ---------- ---------- ----------\n'        
@@ -1244,11 +1676,12 @@ var swmmjs = function() {
             inpString += entry.padEnd(17, ' ');
             inpString += model[secStr][entry].Kin.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].Kout.toString().padEnd(11, ' ');
-            inpString += model[secStr][entry].Kave.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].Kavg.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].FlapGate.padEnd(11, ' ');
             inpString += model[secStr][entry].SeepRate.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'POLLUTANTS';
         inpString +='[POLLUTANTS]\n;;Pollutant      Units  Cppt       Cgw        Crdii      Kdecay     SnowOnly   Co-Pollutant     Co-Frac    Cdwf       Cinit     \n;;-------------- ------ ---------- ---------- ---------- ---------- ---------- ---------------- ---------- ---------- ----------\n'        
@@ -1266,6 +1699,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Cinit.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'LANDUSES';
         inpString +='[LANDUSES]\n;;               Cleaning   Fraction   Last      \n;;Land Use       Interval   Available  Cleaned   \n;;-------------- ---------- ---------- ----------\n'        
@@ -1276,6 +1710,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Cleaned.padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'COVERAGES';
         inpString +='[COVERAGES]\n;;Subcatchment   Land Use         Percent   \n;;-------------- ---------------- ----------\n'        
@@ -1285,6 +1720,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Percent.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'LOADINGS';
         inpString +='[LOADINGS]\n;;Subcatchment   Pollutant        InitLoad  \n;;-------------- ---------------- ----------\n'        
@@ -1294,11 +1730,12 @@ var swmmjs = function() {
             inpString += model[secStr][entry].InitLoad.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'BUILDUP';
         inpString +='[BUILDUP]\n;;Land Use       Pollutant        Function   Coeff1     Coeff2     Coeff3     Normalizer\n;;-------------- ---------------- ---------- ---------- ---------- ---------- ----------\n'        
         for (let entry in model[secStr]) {
-            inpString += entry.padEnd(17, ' ');
+            inpString += model[secStr][entry].LandUse.padEnd(17, ' ');
             inpString += model[secStr][entry].Pollutant.padEnd(17, ' ');
             inpString += model[secStr][entry].Function.padEnd(11, ' ');
             inpString += model[secStr][entry].Coeff1.toString().padEnd(11, ' ');
@@ -1307,11 +1744,12 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Normalizer.padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'WASHOFF';
         inpString +='[WASHOFF]\n;;Land Use       Pollutant        Function   Coeff1     Coeff2     Ecleaning  Ebmp      \n;;-------------- ---------------- ---------- ---------- ---------- ---------- ----------\n'        
         for (let entry in model[secStr]) {
-            inpString += entry.padEnd(17, ' ');
+            inpString += model[secStr][entry].LandUse.padEnd(17, ' ');
             inpString += model[secStr][entry].Pollutant.padEnd(17, ' ');
             inpString += model[secStr][entry].Function.padEnd(11, ' ');
             inpString += model[secStr][entry].Coeff1.toString().padEnd(11, ' ');
@@ -1320,6 +1758,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Ebmp.padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'TIMESERIES';
         inpString +='[TIMESERIES]\n;;Time Series    Date       Time       Value     \n;;-------------- ---------- ---------- ----------\n'        
@@ -1330,6 +1769,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Value.toString().padEnd(11, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'REPORT';
         inpString +='[REPORT]\n;;Reporting Options\n'
@@ -1338,14 +1778,17 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Value;
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'TAGS';
         inpString +='[TAGS]\n'
-        for (let entry in model[secStr]) {
-            inpString += entry.padEnd(21, ' ');
-            inpString += model[secStr][entry].Value;
+        for (let entry in Object.values(model[secStr])) {
+            inpString += model[secStr][entry].Type.padEnd(11, ' ');
+            inpString += model[secStr][entry].ID.padEnd(17, ' ');
+            inpString += model[secStr][entry].Tag;
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'MAP';
         inpString +='[MAP]\n'
@@ -1354,6 +1797,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].Value;
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'COORDINATES';
         inpString +='[COORDINATES]\n;;Node           X-Coord            Y-Coord           \n;;-------------- ------------------ ------------------\n'        
@@ -1363,6 +1807,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].y.toString().padEnd(19, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         secStr = 'VERTICES';
         inpString +='[VERTICES]\n;;Link           X-Coord            Y-Coord           \n;;-------------- ------------------ ------------------\n'        
@@ -1374,6 +1819,7 @@ var swmmjs = function() {
                 inpString += '\n';
             }
         }
+        inpString += '\n';
 
         secStr = 'Polygons';
         inpString +='[Polygons]\n;;Subcatchment   X-Coord            Y-Coord           \n;;-------------- ------------------ ------------------\n'        
@@ -1385,6 +1831,7 @@ var swmmjs = function() {
                 inpString += '\n';
             }
         }
+        inpString += '\n';
 
         secStr = 'Symbols';
         inpString +='[Symbols]\n;;Gage           X-Coord            Y-Coord           \n;;-------------- ------------------ ------------------\n'        
@@ -1394,6 +1841,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].y.toString().padEnd(19, ' ');
             inpString += '\n';
         }
+        inpString += '\n';
 
         let fileOut = 'AutoInp.inp';
         let blob = new Blob([inpString], {type: 'text/csv'});

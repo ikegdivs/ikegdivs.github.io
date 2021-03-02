@@ -189,6 +189,28 @@
         </div>
     </div>
 </div>
+
+<div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newModalTitle2" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newModalTitle2">Edit</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="generalModal2" novalidate>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+                <button type="button" id="save-general-modal2" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
           
 
 <div class="container-fluid">
@@ -203,7 +225,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">
-                <div id="pmOptions" data-toggle="modal" data-target="#myModal">Options</div>
+                <div id="pmOptions">Options</div>
             </a>
           </li>
           <li class="nav-item">
@@ -428,19 +450,18 @@
         
       </div>
       <div id="subselect">
-        <ul class="nav flex-column">
+        <ul class="nav flex-column bg-dark">
             <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="#" >
-                    <div id="subselectcaption">Title/Notes</div>
+                    <div id="subselectcaption"></div>
                 </a>
             </li>
         </ul>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="#" >
-                    <div id="subselectcaption" data-toggle="modal" data-target="#myModal">Title/Notes</div>
-                </a>
-            </li>
+        <span>+</span>
+        <span>-</span>
+        <span>0</span>
+        <span>X</span>
+        <ul id="subselectlist" class="nav flex-column">
         </ul>
       </div>
     </nav>
@@ -451,17 +472,17 @@
         <svg id="svgSimple"></svg>
       </div>
 
-        <div id="legend" hidden></div>
-        <div id="linkResult" hidden></div>
-        <div id="nodeResult" hidden></div>
-        <div id="time" hidden></div>
-        <div id="tooltip" hidden></div>
-        <div id="xy" hidden></div>
-        <div id="progress" hidden></div>
-        <div id="status" hidden></div>
-        <div id="inpFile" hidden></div>
-        <div id="rptFile" hidden></div>
-        <div id="output" hidden></div>
+        <span id="legend" hidden></span>
+        <span id="linkResult" hidden></span>
+        <span id="nodeResult" hidden></span>
+        <span id="time" hidden></span>
+        <span id="tooltip" hidden></span>
+        <span id="xy" hidden></span>
+        <span id="progress" hidden></span>
+        <span id="status" hidden></span>
+        <span id="inpFile" hidden></span>
+        <span id="rptFile" hidden></span>
+        <span id="output" hidden></span>
     </main>
   </div>
 </div>
