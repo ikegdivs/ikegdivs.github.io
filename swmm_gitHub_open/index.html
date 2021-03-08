@@ -111,7 +111,7 @@
                     <a class="dropdown-item" href="#">Defaults</a>
                     <a class="dropdown-item" href="#">Calibration Data...</a>
                     <hr>
-                    <a class="dropdown-item" href="#">Run Simulation</a>
+                    <a class="dropdown-item" id="nav-project-runsimulation" href="#">Run Simulation</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
@@ -211,7 +211,520 @@
     </div>
 </div>
 
-          
+<!--Inflows Modal-->
+<div id="modalInflows" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalInflowsTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalInflowsTitle">Edit Inflows</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="modalInflowsBody" novalidate>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active" id="inflow-direct-tab" data-toggle="tab" data-target="#inflow-direct" type="button" role="tab" aria-controls="inflow-direct" aria-selected="true">Direct</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="inflow-dryweather-tab" data-toggle="tab" data-target="#inflow-dryweather" type="button" role="tab" aria-controls="inflow-dryweather" aria-selected="false">Dry Weather</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="inflow-rdii-tab" data-toggle="tab" data-target="#inflow-rdii" type="button" role="tab" aria-controls="inflow-rdii" aria-selected="false">RDII</button>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="inflow-direct" role="tabpanel" aria-labelledby="inflow-direct-tab">
+
+
+                            <form class="needs-validation" id="inflows-direct-form" novalidate="">
+                                <p class="modalinfo" id="testid">9</p>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-direct-constituent-label" for="inflows-direct-constituent">Constituent</label>
+                                        <select class="form-control selectpicker form-select-lg mb-3" id="inflows-direct-constituent" aria-label="Constituent">
+                                            <option selected value="FLOW">FLOW</option>
+                                            <option value="TSS">TSS</option>
+                                            <option value="Poop">Poop</option>
+                                        </select>
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-direct-baseline-label" for="inflows-direct-baseline">Baseline</label>
+                                        <input class="form-control modaledit" id="inflows-direct-baseline" name="inflows-direct-baseline" type="text">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-direct-baselinepattern-label" for="inflows-direct-baselinepattern">Baseline Pattern</label>
+                                        <input class="form-control modaledit btn-secondary" id="inflows-direct-baselinepattern" name="inflows-direct-baselinepattern" type="button" value="Edit" data-toggle="modal" data-target="#modalTimepattern">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-direct-timeseries-label" for="inflows-direct-timeseries">Time Series</label>
+                                        <input class="form-control modaledit btn-secondary" id="inflows-direct-timeseries" name="inflows-direct-timeseries" type="button" value="Edit" data-toggle="modal" data-target="#modalTimeseries">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-direct-scalefactor-label" for="inflows-direct-scalefactor">Scale Factor</label>
+                                        <input class="form-control modaledit" id="inflows-direct-scalefactor" name="inflows-direct-scalefactor" type="text">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-direct-inflowtype-label" for="inflows-direct-inflowtype">Inflow Type</label>
+                                        <select class="form-control selectpicker form-select-lg mb-3" id="inflows-direct-inflowtype" aria-label="inflowtype">
+                                            <option selected value="CONCEN">CONCEN</option>
+                                            <option value="MASS">MASS</option>
+                                        </select>
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-direct-unitsfactor-label" for="inflows-direct-unitsfactor">Units Factor</label>
+                                        <input class="form-control modaledit" id="inflows-direct-unitsfactor" name="inflows-direct-unitsfactor" type="text">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                </div>
+                            </form>
+
+
+
+                        </div>
+                        <div class="tab-pane fade" id="inflow-dryweather" role="tabpanel" aria-labelledby="inflow-dryweather-tab">
+                            <form class="needs-validation" id="inflows-dryweather-form" novalidate="">
+                                <p class="modalinfo" id="testid">9</p>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-dryweather-constituent-label" for="inflows-dryweather-constituent">Constituent</label>
+                                        <select class="form-control selectpicker form-select-lg mb-3" id="inflows-dryweather-constituent" aria-label="Constituent">
+                                            <option selected value="FLOW">FLOW</option>
+                                            <option value="TSS">TSS</option>
+                                            <option value="Poop">Poop</option>
+                                        </select>
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-dryweather-avgval-label" for="inflows-dryweather-avgval">Average Value (CFS)</label>
+                                        <input class="form-control modaledit" id="inflows-dryweather-avgval" name="inflows-dryweather-avgval" type="text">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-dryweather-timepattern1-label" for="inflows-dryweather-timepattern1">Time Pattern 1</label>
+                                        <input class="form-control modaledit btn-secondary" id="inflows-dryweather-timepattern1" name="inflows-dryweather-timepattern1" type="button" value="Edit" data-toggle="modal" data-target="#modalTimepattern">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-dryweather-timepattern2-label" for="inflows-dryweather-timepattern2">Time Pattern 2</label>
+                                        <input class="form-control modaledit btn-secondary" id="inflows-dryweather-timepattern2" name="inflows-dryweather-timepattern2" type="button" value="Edit" data-toggle="modal" data-target="#modalTimepattern">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-dryweather-timepattern3-label" for="inflows-dryweather-timepattern3">Time Pattern 3</label>
+                                        <input class="form-control modaledit btn-secondary" id="inflows-dryweather-timepattern3" name="inflows-dryweather-timepattern3" type="button" value="Edit" data-toggle="modal" data-target="#modalTimepattern">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-dryweather-timepattern1-label" for="inflows-dryweather-timepattern1">Time Pattern 4</label>
+                                        <input class="form-control modaledit btn-secondary" id="inflows-dryweather-timepattern4" name="inflows-dryweather-timepattern4" type="button" value="Edit" data-toggle="modal" data-target="#modalTimepattern">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="inflow-rdii" role="tabpanel" aria-labelledby="inflow-rdii-tab">
+
+
+
+                            <form class="needs-validation" id="inflows-rdii-form" novalidate="">
+                                <p class="modalinfo" id="testid">9</p>
+                                <div class="form-row">
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-rdii-uhg-label" for="inflows-rdii-uhg">Unit Hydrograph Group</label>
+                                        <select class="form-control selectpicker form-select-lg mb-3" id="inflows-rdii-uhg" aria-label="uhg">
+                                            <option selected value="UHG1">UHG1</option>
+                                            <option value="UHG2">UHG2</option>
+                                            <option value="UHG3">UHG3</option>
+                                        </select>
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                    <div class="col-md-6 mb-6">
+                                        <label class="modallabel" id="inflows-rdii-ssarea-label" for="inflows-rdii-ssarea">Sewershed Area (acres)</label>
+                                        <input class="form-control modaledit" id="inflows-rdii-ssarea" name="inflows-rdii-ssarea" type="text">
+                                        <div class="valid-tooltip">Valid entry</div>
+                                    </div>
+                                </div>
+                            </form>
+
+
+
+                        </div>
+                      </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+                <button type="button" id="save-modal-inflows" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Time Pattern Modal-->
+<div id="modalTimepattern" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTimepatternTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTimepatternTitle">Time Pattern Editor</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="inflows-direct-timepattern-form" novalidate="">
+                    <p class="modalinfo" id="inflows-direct-timepattern-form-id">9</p>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="inflows-direct-timepattern-name-label" for="inflows-direct-timepattern-name">Name</label>
+                            <input class="form-control modaledit" id="inflows-direct-timepattern-name" name="inflows-direct-timepattern-name" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="inflows-direct-timepattern-type-label" for="inflows-direct-timepattern-type">Type</label>
+                            <select class="form-control selectpicker form-select-lg mb-3" id="inflows-direct-timepattern-type" aria-label="Type">
+                                <option selected value="MONTHLY">MONTHLY</option>
+                                <option value="DAILY">DAILY</option>
+                                <option value="HOURLY">HOURLY</option>
+                                <option value="WEEKEND">WEEKEND</option>
+                            </select>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="inflows-direct-timepattern-description-label" for="inflows-direct-timepattern-description">Description</label>
+                            <input class="form-control modaledit" id="inflows-direct-timepattern-description" name="inflows-direct-timepattern-description" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="inflows-direct-timepattern-multipliers-label" for="inflows-direct-timepattern-multipliers">Multipliers</label>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm">
+                                  <thead>
+                                    <tr>
+                                      <th>Month</th>
+                                      <th>Multiplier</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>1,001</td>
+                                      <td>random</td>
+                                    </tr>
+                                    <tr>
+                                      <td>1,002</td>
+                                      <td>placeholder</td>
+                                    </tr>
+                                    <tr>
+                                      <td>1,003</td>
+                                      <td>data</td>
+                                    </tr>
+                                    <tr>
+                                      <td>1,003</td>
+                                      <td>information</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                </form>
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+                <button type="button" id="save-modal-inflows" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Time Series Modal-->
+<div id="modalTimeseries" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTimeseriesTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTimeseriesTitle">Time Series Editor</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="inflows-direct-timeseries-form" novalidate="">
+                    <p class="modalinfo" id="inflows-direct-timeseries-form-id">9</p>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="inflows-direct-timeseries-name-label" for="inflows-direct-timeseries-name">Time Series Name</label>
+                            <input class="form-control modaledit" id="inflows-direct-timeseries-name" name="inflows-direct-timeseries-name" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="inflows-direct-timeseries-description-label" for="inflows-direct-timeseries-description">Description</label>
+                            <input class="form-control modaledit" id="inflows-direct-timeseries-description" name="inflows-direct-timeseries-description" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="inflows-direct-timeseries-external-label" for="inflows-direct-timeseries-external">Use external data file named below.</label>
+                            <input class="form-control modaledit" id="inflows-direct-timeseries-external" name="inflows-direct-timeseries-external" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="inflows-direct-timeseries-values-label" for="inflows-direct-timeseries-values">Enter time series data in the table below.</label>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm">
+                                  <thead>
+                                    <tr>
+                                      <th>Date (M/D/Y)</th>
+                                      <th>Time (H:M)</th>
+                                      <th>Value</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>1/1/2001</td>
+                                      <td>1:00</td>
+                                      <td>0.1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1/1/2001</td>
+                                        <td>2:00</td>
+                                        <td>0.2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1/1/2001</td>
+                                        <td>3:00</td>
+                                        <td>0.3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1/1/2001</td>
+                                        <td>4:00</td>
+                                        <td>0.4</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+                <button type="button" id="save-modal-timeseries" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Unit Hydrograph Modal-->
+<div id="modalUnithydrograph" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalUnithydrographTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalUnithydrographTitle">Unit Hydrograph Editor</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="unithydrograph-form" novalidate="">
+                    <p class="modalinfo" id="unithydrograph-form-id">9</p>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="unithydrograph-name-label" for="unithydrograph-name">Name of UH Group</label>
+                            <input class="form-control modaledit" id="unithydrograph-name" name="unithydrograph-name" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="unithydrograph-raingageused-label" for="unithydrograph-raingageused">Rain Gage Used</label>
+                            <input class="form-control modaledit" id="unithydrograph-raingageused" name="unithydrograph-raingageused" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="unithydrograph-hydrographsfor-label" for="unithydrograph-hydrographsfor">Hydrographs for</label>
+                            <select class="form-control selectpicker form-select-lg mb-3" id="unithydrograph-hydrographsfor" aria-label="Type">
+                                <option selected value="ALL">All Months</option>
+                                <option value="JANUARY">JANUARY</option>
+                                <option value="FEBRUARY">FEBRUARY</option>
+                                <option value="MARCH">MARCH</option>
+                                <option value="APRIL">APRIL</option>
+                                <option value="MAY">MAY</option>
+                                <option value="JUNE">JUNE</option>
+                                <option value="JULY">JULY</option>
+                                <option value="AUGUST">AUGUST</option>
+                                <option value="SEPTEMBER">SEPTEMBER</option>
+                                <option value="OCTOBER">OCTOBER</option>
+                                <option value="NOVEMBER">NOVEMBER</option>
+                                <option value="JANUARY">JANUARY</option>
+                            </select>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="inflows-direct-timeseries-values-label" for="inflows-direct-timeseries-values">Enter time series data in the table below.</label>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm">
+                                  <thead>
+                                    <tr>
+                                      <th>Date (M/D/Y)</th>
+                                      <th>Time (H:M)</th>
+                                      <th>Value</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>1/1/2001</td>
+                                      <td>1:00</td>
+                                      <td>0.1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1/1/2001</td>
+                                        <td>2:00</td>
+                                        <td>0.2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1/1/2001</td>
+                                        <td>3:00</td>
+                                        <td>0.3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1/1/2001</td>
+                                        <td>4:00</td>
+                                        <td>0.4</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+                <button type="button" id="save-modal-timeseries" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Dates Modal-->
+<div id="modalDates" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalDatesTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDatesTitle">Dates Editor</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="dates-form" novalidate="">
+                    <p class="modalinfo" id="dates-form-id"></p>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="dates-startdateanalysis-label" for="dates-startdateanalysis">Analysis Start Date</label>
+                            <input class="form-control modaledit" id="dates-startdateanalysis" name="dates-startdateanalysis" type="date">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="dates-starttimeanalysis-label" for="dates-starttimeanalysis">Analysis Start Time</label>
+                            <input class="form-control modaledit" id="dates-starttimeanalysis" name="dates-starttimeanalysis" type="time">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="dates-startdatereport-label" for="dates-startdatereport">Report Start Date</label>
+                            <input class="form-control modaledit" id="dates-startdatereport" name="dates-startdatereport" type="date">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="dates-starttimereport-label" for="dates-starttimereport">Report Start Time</label>
+                            <input class="form-control modaledit" id="dates-starttimereport" name="dates-starttimereport" type="time">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="dates-enddateanalysis-label" for="dates-enddateanalysis">Analysis End Date</label>
+                            <input class="form-control modaledit" id="dates-enddateanalysis" name="dates-enddateanalysis" type="date">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="dates-endtimeanalysis-label" for="dates-endtimeanalysis">Analysis End Time</label>
+                            <input class="form-control modaledit" id="dates-endtimeanalysis" name="dates-endtimeanalysis" type="time">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="dates-startsweeping-label" for="dates-startsweeping">Start sweeping on</label>
+                            <input class="form-control modaledit date" id="dates-startsweeping" name="dates-startsweeping" type="date" placeholder="YYYY-MM-DD" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="dates-endsweeping-label" for="dates-endsweeping">End sweeping on</label>
+                            <input class="form-control modaledit" id="dates-endsweeping" name="dates-endsweeping" type="date">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="dates-antecedentdrydays-label" for="dates-antecedentdrydays">Antecedent Dry Days</label>
+                            <input class="form-control modaledit" id="dates-antecedentdrydays" name="dates-antecedentdrydays" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+                <button type="button" id="save-modal-dates" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="container-fluid">
   <div class="row">
@@ -491,12 +1004,12 @@
 
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
-<script src="/node_modules/jquery/dist/jquery.min.js"></script>
-<script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
-<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script src="/node_modules/popper.js/dist/umd/popper.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
 <script src="js/d3.min.js"></script>
-<script src='js/swmm.js'></script>
 <script src='js.js'></script>
+<script src='js/swmm.js'></script>
 <script src='swmm_run.js'></script>
 <script src="./script.js"></script>
   </body>

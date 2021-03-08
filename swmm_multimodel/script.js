@@ -1,3 +1,4 @@
+// Chartspecs and DataElement should be eliminated, so do not do anything with it.
 // dataElements are classes for data row/objects.
 class DataElement{
     constructor(cat, y){
@@ -53,15 +54,45 @@ class ChartSpecs {
 // When the document is loaded:
 // Create some data
 // Draw a line chart with the data.
-document.addEventListener("DOMContentLoaded", function(){
-    console.log('DOMContentLoaded')
+document.addEventListener("DOMContentLoaded", function() {
+
+    // Personalization variables.
+    let fileName = null;
+    let authorName = null;
+    let description = null;
+
+    /////////////////////////////////////////////
+    // Visualization elements - temporary
+    /////////////////////////////////////////////
     // dataObj is an array of dataElement objects.
     dataObj = [];
     let viz_svg01 = d3.select("#viz_svg01");
     let inpText = null;
 
-    // Create a set of dataElements.
+
+    /////////////////////////////////////////////
+    // Modal controls.
+    /////////////////////////////////////////////
+    // Get the modal
+    let modal = document.getElementById("myModal");
+    $('.modal-backdrop').remove();
+    
+
+    /////////////////////////////////////////////
+    // Project Tree controls.
+    /////////////////////////////////////////////
+
+    // Setting up to process input file.
     Module.onRuntimeInitialized = _ => {
+        // Process the metadata file
+        // Load info.json into an object
+        fetch('data/info.json')
+            .then(response => response.json())
+            .then((info) => {
+                authorName = info[0].Name;
+                fileName = info[0].FileName;
+                description = info[0].Description;
+            })
         //Get the input file for parsing:
         fetch('data/Example1x.inp')
             .then(response => response.text())
@@ -70,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 inpText = data;
                 input = new d3.inp();
                 val = input.parse(data);
-    
+
                 //console.log(val.CONDUITS[1])
                 try
                 {
@@ -90,21 +121,17 @@ document.addEventListener("DOMContentLoaded", function(){
                 } catch (e) {
                     console.log('/input.inp creation failed');
                 }
-            })
+        })
 
-        
 
-        
-        
-    
         fetch('data/Example1x.out')
             .then(response => response.blob())
             .then((data) => {
                 //console.log(data);
-    
+
                 input = new d3.swmmresult();
                 val = input.parse('data/Example1x.out');
-    
+
                 //console.log('--------------------------')
                 for(let i = 1; !!val[i]; i++){
                     //console.log(val[i].LINK["1"][3]);
@@ -125,45 +152,96 @@ document.addEventListener("DOMContentLoaded", function(){
 
                     drawLine(theseSpecs, d3[userVal])
                 })
-            })
+        })
 
-            fetch('data/Example1.rpt')
-                .then(response => response.text())
-                .then((data) => {
-                    //console.log(data);
-        
-                    input = new d3.swmmresult();
-                    val = input.parse('data/Example1.rpt');
-        
-                    //console.log('--------------------------')
-                    for(let i = 1; !!val[i]; i++){
-                        //console.log(val[i].LINK["1"][3]);
-                        dataObj.push(new DataElement(i, val[i].LINK["1"][3]));
-                    }
-                    //console.log('--------------------------')
-                
-                    // Create a new chartSpecs object and populate it with the data.
-                    theseSpecs = new ChartSpecs(dataObj);
+        fetch('data/Example1.rpt')
+            .then(response => response.text())
+            .then((data) => {
+                //console.log(data);
 
-                    // Prepare the chart and draw it.
-                    representData(viz_svg01, theseSpecs);
+                input = new d3.swmmresult();
+                val = input.parse('data/Example1.rpt');
 
-                    // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
-                    $('#formControlSelector').on('change', function(event){
-                        // Get the input from the drop down.
-                        userVal = $(event.currentTarget).prop('value');
+                //console.log('--------------------------')
+                for(let i = 1; !!val[i]; i++){
+                    //console.log(val[i].LINK["1"][3]);
+                    dataObj.push(new DataElement(i, val[i].LINK["1"][3]));
+                }
+                //console.log('--------------------------')
+            
+                // Create a new chartSpecs object and populate it with the data.
+                theseSpecs = new ChartSpecs(dataObj);
 
-                        drawLine(theseSpecs, d3[userVal])
-                    })
-            })
+                // Prepare the chart and draw it.
+                representData(viz_svg01, theseSpecs);
+
+                // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
+                $('#formControlSelector').on('change', function(event){
+                    // Get the input from the drop down.
+                    userVal = $(event.currentTarget).prop('value');
+
+                    drawLine(theseSpecs, d3[userVal])
+                })
+        })
     }
-    
-    /*for(i = 0; i < 10; i++){
-        dataObj.push(new DataElement(i, i));
-    }*/
-    
-    
+
+    // Listen for requests to open the default file.
+    const demoElement = document.getElementById("nav-file-demo");
+    demoElement.addEventListener('click', loadDemo, false);
+    function loadDemo() {
+        jQuery.get('./data/Mod.inp', function(contents){
+            processInput(contents);
+        })
+    }
+
+    // Listen for requests to run the simulation.
+    const runElement = document.getElementById("nav-project-runsimulation");
+    runElement.addEventListener('click', runSimulation, false);
+    function runSimulation() {
+        //processInput(document.getElementById('inpFile').value);
+        runModelClick();
+    }
+
+    // Listen for requests to open an .inp file.
+    const inputElement = document.getElementById("nav-file-input");
+    inputElement.addEventListener('change', handleFiles, false);
+    function handleFiles() {
+        const fileList = this.files;
+
+        let fr = new FileReader();
+        fr.onload=function(){
+            if(fr.result){inpText = 
+                processInput(fr.result)
+            }
+        }
+
+        fr.readAsText(fileList[0]);
+    }
+
+    // Listen for requests to save an .inp file.
+    const saveElement = document.getElementById("save");
+    saveElement.addEventListener('click', saveFile, false);
+    function saveFile() {
+        swmmjs.svg.save();
+    }
 })
+
+
+// Read the input file (text). 
+// Parse the data into memory. 
+// Run the model.
+
+function processInput(inpText){
+    try
+    {
+        document.getElementById('inpFile').value = inpText;
+        swmmjs.loadModel(swmmjs.Module)
+        //swmmjs.run(swmmjs.Module);
+    } catch (e) {
+        console.log('/input.inp creation failed');
+    }
+}
+
 
 // representData draws the chart
 // location is an svg where the chart will be drawn.
@@ -230,8 +308,7 @@ function drawLine(theseSpecs, curveType){
 }
 
 
-
-$('#refreshButton').click(function(){
+function runModelClick(){
         // dataObj is an array of dataElement objects.
         dataObj = [];
         let viz_svg01 = d3.select("#viz_svg01");
@@ -241,15 +318,24 @@ $('#refreshButton').click(function(){
         // Create a set of dataElements.
 
             //Get the input file for parsing:
-            fetch('data/Example2.inp')
+            // Since we are running a model, it would be a good idea to
+            // instead, write the current model objects into a string field,
+            // then send that string field to the executable.
+            // --1: How does save translate the model to a string:
+            //   A: Via svg.save() in swmm.js
+            // --2: Can I modify svg.save to instead call a string creation function.
+            //      This function can then be called by this click event as well, so no files
+            //      need to be saved (though it would be a good idea to save a file before you run it, right?)
+            // --3: New function is called svg.dataToInpString().
+            // --4: How can I send the inpString to the swmm_run file? it looks like inpText can be used for that.
+            fetch('data/tendays.inp')
                 .then(response => response.text())
                 .then((data) => {
                     //console.log(data);
-                    inpText = data;
-                    input = new d3.inp();
-                    val = input.parse(data);
+                    inpText = swmmjs.svg.dataToInpString();
+                    //input = new d3.inp();
+                    //val = input.parse(data);
         
-                    //console.log(val.CONDUITS[1])
                     try
                     {
                         FS.createPath('/', '/', true, true);
@@ -271,13 +357,8 @@ $('#refreshButton').click(function(){
                     console.log('runran')
                 })
             
-            console.log('what the heck')
+            /*console.log('what the heck')
     
-            
-    
-            
-            
-        
             fetch('data/Example1x.out')
                 .then(response => response.blob())
                 .then((data) => {
@@ -306,41 +387,5 @@ $('#refreshButton').click(function(){
     
                         drawLine(theseSpecs, d3[userVal])
                     })
-                })
-                
-    /*
-                fetch('data/Example1.rpt')
-                    .then(response => response.text())
-                    .then((data) => {
-                        //console.log(data);
-            
-                        input = new d3.swmmresult();
-                        val = input.parse('data/Example1.rpt');
-            
-                        //console.log('--------------------------')
-                        for(let i = 1; !!val[i]; i++){
-                            //console.log(val[i].LINK["1"][3]);
-                            dataObj.push(new DataElement(i, val[i].LINK["1"][3]));
-                        }
-                        //console.log('--------------------------')
-                    
-                        // Create a new chartSpecs object and populate it with the data.
-                        theseSpecs = new ChartSpecs(dataObj);
-    
-                        // Prepare the chart and draw it.
-                        representData(viz_svg01, theseSpecs);
-    
-                        // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
-                        $('#formControlSelector').on('change', function(event){
-                            // Get the input from the drop down.
-                            userVal = $(event.currentTarget).prop('value');
-    
-                            drawLine(theseSpecs, d3[userVal])
-                        })
-                })
-        */
-        /*for(i = 0; i < 10; i++){
-            dataObj.push(new DataElement(i, i));
-        }*/
-        
-})
+                })  */
+}

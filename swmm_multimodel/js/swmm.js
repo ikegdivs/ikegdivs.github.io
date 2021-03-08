@@ -425,7 +425,7 @@ d3.inp = function() {
         //Bind project elements for click response.
         $('#pmTitle').click(function(e){
             // Show the modal.
-            $('myModal').modal('toggle');
+            modalEditTitlenotes();
         })
 
         $('#pmOptions').click(function(e){
@@ -434,24 +434,24 @@ d3.inp = function() {
 
             // Create the structure of the subselect list.
             let listJSON = [];
-            listJSON.push({labelText: 'General',    elementId: 'subselectlist-general'});
+            listJSON.push({labelText: 'General',    elementId: 'subselectlist-general', function: modalEditGeneral});
             listJSON.push({labelText: 'Dates',    elementId: 'subselectlist-dates', function: modalEditDates});
-            listJSON.push({labelText: 'Time Steps',    elementId: 'subselectlist-timesteps'});
-            listJSON.push({labelText: 'Dynamic Wave',    elementId: 'subselectlist-dynamicwave'});
-            listJSON.push({labelText: 'Interface Files',    elementId: 'subselectlist-interfacefiles'});
-            listJSON.push({labelText: 'Reporting',    elementId: 'subselectlist-reporting'});
+            listJSON.push({labelText: 'Time Steps',    elementId: 'subselectlist-timesteps', function: modalEditTimesteps});
+            listJSON.push({labelText: 'Dynamic Wave',    elementId: 'subselectlist-dynamicwave', function: modalEditDynamicwave});
+            listJSON.push({labelText: 'Interface Files',    elementId: 'subselectlist-interfacefiles', function: modalEditInterfacefiles});
+            listJSON.push({labelText: 'Reporting',    elementId: 'subselectlist-reporting', function: modalEditReporting});
 
             populateSelectList(listJSON);
         })
 
         $('#pmClimatology').click(function(e){
-            // Place 'Options' in the subselectcaption text.
+            // Place 'Climatology' in the subselectcaption text.
             $('#subselectcaption').text('Climatology');
 
             // Create the structure of the subselect list.
             let listJSON = [];
-            listJSON.push({labelText: 'Temperature',    elementId: 'subselectlist-temperature'});
-            listJSON.push({labelText: 'Evaporation',    elementId: 'subselectlist-evaporation'});
+            listJSON.push({labelText: 'Temperature',    elementId: 'subselectlist-temperature', function: modalEditTemperature});
+            listJSON.push({labelText: 'Evaporation',    elementId: 'subselectlist-evaporation', function: modalEditEvaporation});
             listJSON.push({labelText: 'Wind Speed',    elementId: 'subselectlist-windspeed'});
             listJSON.push({labelText: 'Snow Melt',    elementId: 'subselectlist-snowmelt'});
             listJSON.push({labelText: 'Areal Depletion',    elementId: 'subselectlist-arealdepletion'});
@@ -459,8 +459,38 @@ d3.inp = function() {
             populateSelectList(listJSON);
         })
 
+        $('#pmRaingages').click(function(e){
+            // Place 'Rain Gages' in the subselectcaption text.
+            $('#subselectcaption').text('Rain Gages');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.RAINGAGES){
+                Object.entries(swmmjs.model.RAINGAGES).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-raingage' + item.key, function: modalEditRaingages});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmSubcatchments').click(function(e){
+            // Place 'Subcatchments' in the subselectcaption text.
+            $('#subselectcaption').text('Subcatchments');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.SUBCATCHMENTS){
+                Object.entries(swmmjs.model.SUBCATCHMENTS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-subcatchment' + item.key, function: modalEditSubcatchments});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
         $('#pmJunctions').click(function(e){
-            // Place 'Options' in the subselectcaption text.
+            // Place 'Junctions' in the subselectcaption text.
             $('#subselectcaption').text('Junctions');
             let listJSON = [];
 
@@ -471,13 +501,11 @@ d3.inp = function() {
                 })
             }
 
-            
-
             populateSelectList(listJSON);
         })
 
         $('#pmOutfalls').click(function(e){
-            // Place 'Options' in the subselectcaption text.
+            // Place 'Outfalls' in the subselectcaption text.
             $('#subselectcaption').text('Outfalls');
             let listJSON = [];
 
@@ -491,7 +519,7 @@ d3.inp = function() {
         })
 
         $('#pmDividers').click(function(e){
-            // Place 'Options' in the subselectcaption text.
+            // Place 'Dividers' in the subselectcaption text.
             $('#subselectcaption').text('Dividers');
             let listJSON = [];
 
@@ -505,7 +533,7 @@ d3.inp = function() {
         })
 
         $('#pmStorageUnits').click(function(e){
-            // Place 'Options' in the subselectcaption text.
+            // Place 'Storage Units' in the subselectcaption text.
             $('#subselectcaption').text('Storage Units');
             let listJSON = [];
 
@@ -589,6 +617,21 @@ d3.inp = function() {
             if(!!swmmjs.model.OUTLETS){
                 Object.entries(swmmjs.model.OUTLETS).forEach(item => {
                     listJSON.push({labelText: item[0],    elementId: 'subselectlist-outlets' + item.key});
+                })
+            }
+
+            populateSelectList(listJSON);
+        })
+
+        $('#pmTimeSeries').click(function(e){
+            // Place 'Options' in the subselectcaption text.
+            $('#subselectcaption').text('Time Series');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.TIMESERIES){
+                Object.entries(swmmjs.model.TIMESERIES).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-timeseries' + item.key});
                 })
             }
 
@@ -681,17 +724,305 @@ d3.inp = function() {
             return outVal;
         }
 
+        // Translate a date from the model format (MM/DD/YYYY) to datetime input format (yyyy-MM-dd)
+        function translateDate(date){
+            let thisDate = new Date(date.split('/'));
+            let outVal = thisDate.toLocaleDateString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit'});
+            return outVal;
+        }
+
+        // Translate a date from the datetime input format (yyyy-MM-dd) to sweep format (MM/DD) 
+        function untranslateSweepDate(date){
+            let thisDate = date.split('-');
+            let outVal = thisDate[1]+'/'+thisDate[2]
+            return outVal;
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Title/Notes Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditTitlenotes = function(id){
+            // Show the modal.
+            $('#modalTitlenotes').modal('toggle');
+
+            // Build the text string
+            let textStr = ''
+
+            for (let entry in swmmjs.model['TITLE']) {
+                textStr += swmmjs.model['TITLE'][entry].TitleNotes + '\n';
+            }
+
+            $('#titlenotes').val(textStr)
+        }
+
+        $('#save-modal-titlenotes').click(function(e){
+            saveModalTitlenotes()
+        })
+
+        function saveModalTitlenotes(){
+            let lines = [];
+            swmmjs.model['TITLE'] = [];
+
+            lines = $('#titlenotes').val().split('\n')
+            for(let line in lines){
+                swmmjs.model['TITLE'].push({TitleNotes: lines[line]});
+            }
+            // Show the modal.
+            $('#modalTitlenotes').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // General Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditGeneral = function(id){
+            // Show the modal.
+            $('#modalGeneral').modal('toggle');
+            
+            // Process Models
+            document.getElementById('general-rainfallrunoff').checked = true;
+            if(swmmjs.model['OPTIONS']['IGNORE_RAINFALL']){
+                if(swmmjs.model['OPTIONS']['IGNORE_RAINFALL'].Value === 'YES'){
+                    document.getElementById('general-rainfallrunoff').checked = false;
+                }
+            }
+            document.getElementById('general-rdii').checked = true;
+            if(swmmjs.model['OPTIONS']['IGNORE_RDII']){
+                if(swmmjs.model['OPTIONS']['IGNORE_RDII'].Value === 'YES'){
+                    document.getElementById('general-rdii').checked = false;
+                }
+            }
+            document.getElementById('general-snowmelt').checked = true;
+            if(swmmjs.model['OPTIONS']['IGNORE_SNOWMELT']){
+                if(swmmjs.model['OPTIONS']['IGNORE_SNOWMELT'].Value === 'YES'){
+                    document.getElementById('general-snowmelt').checked = false;
+                }
+            }
+            document.getElementById('general-groundwater').checked = true;
+            if(swmmjs.model['OPTIONS']['IGNORE_GROUNDWATER']){
+                if(swmmjs.model['OPTIONS']['IGNORE_GROUNDWATER'].Value === 'YES'){
+                    document.getElementById('general-groundwater').checked = false;
+                }
+            }
+            document.getElementById('general-flowrouting').checked = true;
+            if(swmmjs.model['OPTIONS']['IGNORE_ROUTING']){
+                if(swmmjs.model['OPTIONS']['IGNORE_ROUTING'].Value === 'YES'){
+                    document.getElementById('general-flowrouting').checked = false;
+                }
+            }
+            document.getElementById('general-wq').checked = true;
+            if(swmmjs.model['OPTIONS']['IGNORE_QUALITY']){
+                if(swmmjs.model['OPTIONS']['IGNORE_QUALITY'].Value === 'YES'){
+                    document.getElementById('general-wq').checked = false;
+                }
+            }
+
+            //Miscellaneous
+            if(swmmjs.model['OPTIONS']['ALLOW_PONDING']){
+                if(swmmjs.model['OPTIONS']['ALLOW_PONDING'].Value === 'YES'){
+                    document.getElementById('general-allowponding').checked = true;
+                }
+            }
+            if(swmmjs.model['REPORT']['CONTROLS']){
+                if(swmmjs.model['REPORT']['CONTROLS'].Value === 'YES'){
+                    document.getElementById('general-reportcontrolactions').checked = true;
+                }
+            }
+            if(swmmjs.model['REPORT']['INPUT']){
+                if(swmmjs.model['REPORT']['INPUT'].Value === 'YES'){
+                    document.getElementById('general-reportinputsummary').checked = true;
+                }
+            }
+            if(swmmjs.model['OPTIONS']['MIN_SLOPE']){
+                $('#general-minconduitslope').val(swmmjs.model['OPTIONS']['MIN_SLOPE'].Value);
+            }
+
+            // Infiltration Model
+            if(swmmjs.model['OPTIONS']['INFILTRATION'].Value === 'HORTON'){
+                document.getElementById('general-horton').checked = true;
+            } else if(swmmjs.model['OPTIONS']['INFILTRATION'].Value === 'MODIFIED_HORTON'){
+                document.getElementById('general-modifiedhorton').checked = true;
+            } else if(swmmjs.model['OPTIONS']['INFILTRATION'].Value === 'GREEN_AMPT'){
+                document.getElementById('general-greenampt').checked = true;
+            } else if(swmmjs.model['OPTIONS']['INFILTRATION'].Value === 'CURVE_NUMBER'){
+                document.getElementById('general-curvenumber').checked = true;
+            }
+
+            // Routing Model
+            if(swmmjs.model['OPTIONS']['FLOW_ROUTING'].Value === 'STEADY'){
+                document.getElementById('general-steadyflow').checked = true;
+            } else if(swmmjs.model['OPTIONS']['FLOW_ROUTING'].Value === 'KINWAVE'){
+                document.getElementById('general-kinematicwave').checked = true;
+            } else if(swmmjs.model['OPTIONS']['FLOW_ROUTING'].Value === 'DYNWAVE'){
+                document.getElementById('general-dynamicwave').checked = true;
+            } 
+
+            $('#save-modal-general').click(function(e){
+                saveModalGeneral()
+            })
+        }
+
+        function saveModalGeneral(){
+            // Process Models
+            if(document.getElementById('general-rainfallrunoff').checked){
+                swmmjs.model['OPTIONS']['IGNORE_RAINFALL'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_RAINFALL'].Value = 'NO'
+            } else {
+                swmmjs.model['OPTIONS']['IGNORE_RAINFALL'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_RAINFALL'].Value = 'YES'
+            }
+
+            if(document.getElementById('general-rdii').checked){
+                swmmjs.model['OPTIONS']['IGNORE_RDII'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_RDII'].Value = 'NO'
+            } else {
+                swmmjs.model['OPTIONS']['IGNORE_RDII'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_RDII'].Value = 'YES'
+            }
+            
+            if(document.getElementById('general-snowmelt').checked){
+                swmmjs.model['OPTIONS']['IGNORE_SNOWMELT'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_SNOWMELT'].Value = 'NO'
+            } else {
+                swmmjs.model['OPTIONS']['IGNORE_SNOWMELT'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_SNOWMELT'].Value = 'YES'
+            }
+            
+            if(document.getElementById('general-groundwater').checked){
+                swmmjs.model['OPTIONS']['IGNORE_GROUNDWATER'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_GROUNDWATER'].Value = 'NO'
+            } else {
+                swmmjs.model['OPTIONS']['IGNORE_GROUNDWATER'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_GROUNDWATER'].Value = 'YES'
+            }
+            
+            if(document.getElementById('general-flowrouting').checked){
+                swmmjs.model['OPTIONS']['IGNORE_ROUTING'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_ROUTING'].Value = 'NO'
+            } else {
+                swmmjs.model['OPTIONS']['IGNORE_ROUTING'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_ROUTING'].Value = 'YES'
+            }
+            
+            if(document.getElementById('general-wq').checked){
+                swmmjs.model['OPTIONS']['IGNORE_QUALITY'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_QUALITY'].Value = 'NO'
+            } else {
+                swmmjs.model['OPTIONS']['IGNORE_QUALITY'] = [];
+                swmmjs.model['OPTIONS']['IGNORE_QUALITY'].Value = 'YES'
+            }
+
+            // Miscellaneous
+            if(document.getElementById('general-allowponding').checked){
+                swmmjs.model['OPTIONS']['ALLOW_PONDING'] = [];
+                swmmjs.model['OPTIONS']['ALLOW_PONDING'].Value = 'YES'
+            } else {
+                swmmjs.model['OPTIONS']['ALLOW_PONDING'] = [];
+                swmmjs.model['OPTIONS']['ALLOW_PONDING'].Value = 'NO'
+            }
+            if(document.getElementById('general-reportcontrolactions').checked){
+                swmmjs.model['REPORT']['CONTROLS'] = [];
+                swmmjs.model['REPORT']['CONTROLS'].Value = 'YES'
+            } else {
+                swmmjs.model['REPORT']['CONTROLS'] = [];
+                swmmjs.model['REPORT']['CONTROLS'].Value = 'NO'
+            }
+            if(document.getElementById('general-reportinputsummary').checked){
+                swmmjs.model['REPORT']['INPUT'] = [];
+                swmmjs.model['REPORT']['INPUT'].Value = 'YES'
+            } else {
+                swmmjs.model['REPORT']['INPUT'] = [];
+                swmmjs.model['REPORT']['INPUT'].Value = 'NO'
+            }
+
+            // Infiltration Model
+            if(document.getElementById('general-horton').checked === true){
+                swmmjs.model['OPTIONS']['INFILTRATION'].Value = 'HORTON';
+            } else if(document.getElementById('general-modifiedhorton').checked === true){
+                swmmjs.model['OPTIONS']['INFILTRATION'].Value = 'MODIFIED_HORTON';
+            } else if(document.getElementById('general-greenampt').checked === true){
+                swmmjs.model['OPTIONS']['INFILTRATION'].Value = 'GREEN_AMPT';
+            } else if(document.getElementById('general-curvenumber').checked === true){
+                swmmjs.model['OPTIONS']['INFILTRATION'].Value = 'CURVE_NUMBER';
+            }
+
+            // Routing Model
+            if(document.getElementById('general-steadyflow').checked === true){
+                swmmjs.model['OPTIONS']['FLOW_ROUTING'].Value = 'STEADY';
+            } else if(document.getElementById('general-kinematicwave').checked === true){
+                swmmjs.model['OPTIONS']['FLOW_ROUTING'].Value = 'KINWAVE';
+            } else if(document.getElementById('general-dynamicwave').checked === true){
+                swmmjs.model['OPTIONS']['FLOW_ROUTING'].Value = 'DYNWAVE';
+            }
+
+            swmmjs.model['OPTIONS']['MIN_SLOPE'].Value = $('#general-minconduitslope').val();
+        }
+
+        // Establish HH:MM:SS styles for text timepickers
+        let hhmmssitems = document.getElementsByClassName('texthhmmss');
+        Array.from(hhmmssitems).forEach(item => {
+            item.addEventListener('change', function(e){
+                item.style.color = 'rgba(0, 0, 0, 1)';
+                item.checkValidity();
+            })
+            item.addEventListener('invalid', function(e){
+                item.style.color = 'rgba(255, 125, 125, 1)';
+            })
+        })
+
+        /////////////////////////////////////////////////////////////
+        // Timesteps Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditTimesteps = function(id){
+            // Show the modal.
+            $('#modalTimesteps').modal('toggle');
+
+            $('#timesteps-reportingperiod').val(swmmjs.model['OPTIONS']['REPORT_STEP'].Value)
+            $('#timesteps-dwrperiod').val(swmmjs.model['OPTIONS']['DRY_STEP'].Value)
+            $('#timesteps-wwrperiod').val(swmmjs.model['OPTIONS']['WET_STEP'].Value)
+            $('#timesteps-routing').val(swmmjs.model['OPTIONS']['ROUTING_STEP'].Value)
+            $('#timesteps-skip').val(swmmjs.model['OPTIONS']['SKIP_STEADY_STATE'].Value)
+
+            if(swmmjs.model['OPTIONS']['SKIP_STEADY_STATE'].Value === 'YES'){
+                document.getElementById('timesteps-skip').checked = true
+            } else {
+                document.getElementById('timesteps-skip').checked = false;
+            }
+
+            $('#timesteps-systemflowtolerance').val(swmmjs.model['OPTIONS']['SYS_FLOW_TOL'].Value)
+            $('#timesteps-lateralflowtolerance').val(swmmjs.model['OPTIONS']['LAT_FLOW_TOL'].Value)
+
+            $('#save-modal-timesteps').click(function(e){
+                saveModalTimesteps()
+            })
+        }
+        
+        function saveModalTimesteps(){
+            swmmjs.model['OPTIONS']['REPORT_STEP'].Value = $('#timesteps-reportingperiod').val()
+            swmmjs.model['OPTIONS']['DRY_STEP'].Value = $('#timesteps-dwrperiod').val()
+            swmmjs.model['OPTIONS']['WET_STEP'].Value = $('#timesteps-wwrperiod').val()
+            swmmjs.model['OPTIONS']['ROUTING_STEP'].Value = $('#timesteps-routing').val()
+            swmmjs.model['OPTIONS']['SKIP_STEADY_STATE'].Value = $('#timesteps-skip').val()
+
+            if(document.getElementById('timesteps-skip').checked === true){
+                swmmjs.model['OPTIONS']['SKIP_STEADY_STATE'].Value = 'YES'
+            } else {
+                swmmjs.model['OPTIONS']['SKIP_STEADY_STATE'].Value = 'NO'
+            }
+
+            swmmjs.model['OPTIONS']['SYS_FLOW_TOL'].Value = $('#timesteps-systemflowtolerance').val()
+            swmmjs.model['OPTIONS']['LAT_FLOW_TOL'].Value = $('#timesteps-lateralflowtolerance').val()
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Dates Modal 
+        /////////////////////////////////////////////////////////////
+
         var modalEditDates = function(id){
             // Show the modal.
             $('#modalDates').modal('toggle');
-
-            // Translate a date from the model format (MM/DD/YYYY) to datetime input format (yyyy-MM-dd)
-            function translateDate(date){
-                let thisDate = new Date(date.split('/'));
-                let outVal = thisDate.toLocaleDateString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit'});
-                return outVal;
-            }
-
 
             $('#dates-startdateanalysis').val(translateDate(swmmjs.model['OPTIONS']['START_DATE'].Value))
             $('#dates-starttimeanalysis').val(swmmjs.model['OPTIONS']['START_TIME'].Value)
@@ -701,6 +1032,7 @@ d3.inp = function() {
             $('#dates-endtimeanalysis').val(swmmjs.model['OPTIONS']['END_TIME'].Value)
             $('#dates-startsweeping').val(translateDate(swmmjs.model['OPTIONS']['SWEEP_START'].Value))
             $('#dates-endsweeping').val(translateDate(swmmjs.model['OPTIONS']['SWEEP_END'].Value))
+            $('#dates-antecedentdrydays').val(swmmjs.model['OPTIONS']['DRY_DAYS'].Value)
 
             $('#save-modal-dates').click(function(e){
                 saveModalDates()
@@ -714,10 +1046,324 @@ d3.inp = function() {
             swmmjs.model['OPTIONS']['REPORT_START_TIME'].Value = $('#dates-starttimereport').val()
             swmmjs.model['OPTIONS']['END_DATE'].Value = untranslateDate($('#dates-enddateanalysis').val())
             swmmjs.model['OPTIONS']['END_TIME'].Value = $('#dates-endtimeanalysis').val()
-            swmmjs.model['OPTIONS']['SWEEP_START'].Value = untranslateDate($('#dates-startsweeping').val())
-            swmmjs.model['OPTIONS']['SWEEP_END'].Value = untranslateDate($('#dates-endsweeping').val())
+            swmmjs.model['OPTIONS']['SWEEP_START'].Value = untranslateSweepDate($('#dates-startsweeping').val())
+            swmmjs.model['OPTIONS']['SWEEP_END'].Value = untranslateSweepDate($('#dates-endsweeping').val())
+            swmmjs.model['OPTIONS']['DRY_DAYS'].Value = $('#dates-antecedentdrydays').val()
         }
 
+        /////////////////////////////////////////////////////////////
+        // Dynamic Wave Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditDynamicwave = function(id){
+            // Show the modal.
+            $('#modalDynamicwave').modal('toggle');
+
+            if(swmmjs.model['OPTIONS']['INERTIAL_DAMPING'].Value === 'NONE'){
+                document.getElementById('dynamicwave-keep').checked = true;
+            } else if(swmmjs.model['OPTIONS']['INERTIAL_DAMPING'].Value === 'PARTIAL'){
+                document.getElementById('dynamicwave-dampen').checked = true;
+            } else if(swmmjs.model['OPTIONS']['INERTIAL_DAMPING'].Value === 'FULL'){
+                document.getElementById('dynamicwave-ignore').checked = true;
+            } 
+            if(swmmjs.model['OPTIONS']['NORMAL_FLOW_LIMITED'].Value === 'SLOPE'){
+                document.getElementById('dynamicwave-slope').checked = true;
+            } else if(swmmjs.model['OPTIONS']['NORMAL_FLOW_LIMITED'].Value === 'FROUDE'){
+                document.getElementById('dynamicwave-froudeno').checked = true;
+            } else if(swmmjs.model['OPTIONS']['NORMAL_FLOW_LIMITED'].Value === 'BOTH'){
+                document.getElementById('dynamicwave-both').checked = true;
+            } 
+            if(swmmjs.model['OPTIONS']['FORCE_MAIN_EQUATION'].Value === 'H-W'){
+                document.getElementById('dynamicwave-hw').checked = true;
+            } else if(swmmjs.model['OPTIONS']['FORCE_MAIN_EQUATION'].Value === 'D-W'){
+                document.getElementById('dynamicwave-dw').checked = true;
+            } 
+            if(swmmjs.model['OPTIONS']['VARIABLE_STEP'] && swmmjs.model['OPTIONS']['VARIABLE_STEP'].Value != "0"){
+                document.getElementById('dynamicwave-variablesteps').checked = true;
+            } else {
+                swmmjs.model['OPTIONS']['VARIABLE_STEP'] = [];
+                swmmjs.model['OPTIONS']['VARIABLE_STEP'].Value = 0.00;
+                document.getElementById('dynamicwave-variablesteps').checked = false;
+            } 
+            $('#dynamicwave-adjustedby').val(swmmjs.model['OPTIONS']['VARIABLE_STEP'].Value)
+            $('#dynamicwave-timestep').val(swmmjs.model['OPTIONS']['LENGTHENING_STEP'].Value)
+            $('#dynamicwave-surfarea').val(swmmjs.model['OPTIONS']['MIN_SURFAREA'].Value)
+            $('#dynamicwave-maxtrials').val(swmmjs.model['OPTIONS']['MAX_TRIALS'].Value)
+            $('#dynamicwave-ctol').val(swmmjs.model['OPTIONS']['HEAD_TOLERANCE'].Value)
+        }
+
+        $('#save-modal-dynamicwave').click(function(e){
+            saveModalDynamicwave()
+        })
+
+        function saveModalDynamicwave(){
+            // Show the modal.
+            $('#modalDynamicwave').modal('toggle');
+
+
+            if(document.getElementById('dynamicwave-keep').checked === true){
+                swmmjs.model['OPTIONS']['INERTIAL_DAMPING'].Value = 'NONE';
+            } else if(document.getElementById('dynamicwave-dampen').checked === true){
+                swmmjs.model['OPTIONS']['INERTIAL_DAMPING'].Value = 'PARTIAL';
+            } else if(document.getElementById('dynamicwave-ignore').checked === true){
+                swmmjs.model['OPTIONS']['INERTIAL_DAMPING'].Value = 'FULL';
+            } 
+            if(document.getElementById('dynamicwave-slope').checked === true){
+                swmmjs.model['OPTIONS']['NORMAL_FLOW_LIMITED'].Value = 'SLOPE';
+            } else if(document.getElementById('dynamicwave-froudeno').checked === true){
+                swmmjs.model['OPTIONS']['NORMAL_FLOW_LIMITED'].Value = 'FROUDE';
+            } else if(document.getElementById('dynamicwave-both').checked === true){
+                swmmjs.model['OPTIONS']['NORMAL_FLOW_LIMITED'].Value = 'BOTH';
+            } 
+            if(document.getElementById('dynamicwave-hw').checked === true){
+                swmmjs.model['OPTIONS']['FORCE_MAIN_EQUATION'].Value = 'H-W';
+            } else if(document.getElementById('dynamicwave-dw').checked === true){
+                swmmjs.model['OPTIONS']['FORCE_MAIN_EQUATION'].Value = 'D-W';
+            } 
+            if(document.getElementById('dynamicwave-variablesteps').checked === true){
+                swmmjs.model['OPTIONS']['VARIABLE_STEP'] = [];
+                swmmjs.model['OPTIONS']['VARIABLE_STEP'].Value = $('#dynamicwave-adjustedby').val();
+            } else {
+                swmmjs.model['OPTIONS']['VARIABLE_STEP'] = [];
+                swmmjs.model['OPTIONS']['VARIABLE_STEP'].Value = "0";
+            } 
+
+            swmmjs.model['OPTIONS']['LENGTHENING_STEP'].Value = $('#dynamicwave-timestep').val()
+            swmmjs.model['OPTIONS']['MIN_SURFAREA'].Value = $('#dynamicwave-surfarea').val()
+            swmmjs.model['OPTIONS']['MAX_TRIALS'].Value = $('#dynamicwave-maxtrials').val()
+            swmmjs.model['OPTIONS']['HEAD_TOLERANCE'].Value = $('#dynamicwave-ctol').val()
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Interface Files Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditInterfacefiles = function(id){
+            // Show the modal.
+            $('#modalInterfacefiles').modal('toggle');
+        }
+
+        $('#save-modal-interfacefiles').click(function(e){
+            saveModalInterfacefiles()
+        })
+
+        function saveModalInterfacefiles(){
+            // Show the modal.
+            $('#modalInterfacefiles').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Reporting Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditReporting = function(id){
+            // Show the modal.
+            $('#modalReporting').modal('toggle');
+        }
+
+        $('#save-modal-reporting').click(function(e){
+            saveModalReporting()
+        })
+
+        function saveModalReporting(){
+            // Show the modal.
+            $('#modalReporting').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Temperature Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditTemperature = function(id){
+            // Show the modal.
+            $('#modalTemperature').modal('toggle');
+            
+            // Add a set of options to the temperature-ts selectbox
+            //<option value="TS2">TS2</option>
+            // Each option is the Gage (id) value of a raingage. This is usually a string, like "RG1"
+            // You can find the selected value in swmmjs.model['TEMPERATURE']['TIMESERIES'], but
+            // the list of available options is found in swmmjs.model['TIMESERIES'][n].TimeSeries, but this is
+            // not condensed, so the values in swmmjs.model['TIMESERIES'][n].TimeSeries should be iterated over,
+            // then added to a list of availabe timeseries. This dynamic iteration is necesary because 
+            // the timeseries themselves are also editable.
+
+            // Array to hold names of TimeSeries
+            let tsNames = [];
+
+            // Empty the timeseries select options
+            $('#temperature-ts').empty();
+
+            // Add a default empty 'None' option to the timeseries select options.
+            $('#temperature-ts').append('<option value="">None</option>')
+
+            // If the value of any of these options matches the one in the model,
+            // then mark that option as selected.
+            // Make sure to check if the TEMPERATURE object exists.
+            if(typeof swmmjs.model['TEMPERATURE'] === 'undefined'){
+                swmmjs.model['TEMPERATURE'] = [];
+                swmmjs.model['TEMPERATURE'].TimeSeries = [];
+                swmmjs.model['TEMPERATURE'].TimeSeries.Value = ''
+            }
+
+            // Foreach el in swmmjs.model['TIMESERIES']
+            Object.entries(swmmjs.model.TIMESERIES).forEach(el => {
+                // Get the value el.TimeSeries
+                if(tsNames.indexOf(el[1].TimeSeries) === -1){
+                    let selected = '';
+                    if(swmmjs.model['TEMPERATURE'].TimeSeries.Value === el[1].TimeSeries){
+                        selected = 'selected'
+                    }
+                    tsNames.push(el[1].TimeSeries)
+                    // Use tsNames to populate #temperature-ts with <option> elements
+                    $('#temperature-ts').append('<option value="'+el[1].TimeSeries+'" '+selected+'>'+el[1].TimeSeries+'</option>')
+                }
+            })
+        }
+
+        $('#save-modal-temperature').click(function(e){
+            saveModalTemperature()
+        })
+
+        function saveModalTemperature(){
+            // Show the modal.
+            $('#modalTemperature').modal('toggle');
+
+            // Get the selected option: none, data, or file
+            // If no data is checked, remove the temperature timeseries from the model
+            if(document.getElementById('temperature-nodata').checked === true){
+                // If there is no TEMPERATURE data interface, make one
+                if(typeof swmmjs.model['TEMPERATURE'] === 'undefined'){
+                    swmmjs.model['TEMPERATURE'] = [];
+                    swmmjs.model['TEMPERATURE'].TimeSeries = ''
+                }
+                swmmjs.model['TEMPERATURE']['TimeSeries'] = null;
+            } else if(document.getElementById('temperature-timeseries').checked === true){
+                // If there is no TEMPERATURE data interface, make one
+                if(typeof swmmjs.model['TEMPERATURE'] === 'undefined'){
+                    swmmjs.model['TEMPERATURE'] = [];
+                }
+                swmmjs.model['TEMPERATURE']['TimeSeries'] = [];
+                // Use the selected option from the timeseries window
+                let thisEl = document.getElementById('temperature-ts')
+                swmmjs.model['TEMPERATURE']['TimeSeries'].Value = thisEl.options[thisEl.selectedIndex].value;
+            } 
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Evaporation Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditEvaporation = function(id){
+            // Show the modal.
+            $('#modalEvaporation').modal('toggle');
+
+            // Make sure to check if the EVAPORATION object exists.
+            if(typeof swmmjs.model['EVAPORATION'] === 'undefined'){
+                swmmjs.model['EVAPORATION'] = [];
+            }
+        }
+
+        $('#save-modal-evaporation').click(function(e){
+            saveModalEvaporation()
+        })
+
+        function saveModalEvaporation(){
+            // Show the modal.
+            $('#modalEvaporation').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Rain Gages Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditRaingages = function(id){
+            // Show the modal.
+            $('#modalRaingages').modal('toggle');
+
+            // Make sure to check if the RAINGAGES object exists.
+            if(typeof swmmjs.model['RAINGAGES'] === 'undefined'){
+                swmmjs.model['RAINGAGES'] = [];
+            } else {
+                $('#raingages-name').val(id)
+                $('#raingages-rainformat').val(swmmjs.model['RAINGAGES'][id]['Format'])
+                $('#raingages-timeinterval').val(swmmjs.model['RAINGAGES'][id]['Interval'])
+                $('#raingages-snowcatchfactor').val(swmmjs.model['RAINGAGES'][id]['SCF'])
+                $('#raingages-datasource').val(swmmjs.model['RAINGAGES'][id]['Source'])
+                $('#raingages-timeseriesname').val(swmmjs.model['RAINGAGES'][id]['Source'])
+            }
+        }
+
+        $('#save-modal-raingages').click(function(e){
+            saveModalRaingages()
+        })
+
+        function saveModalRaingages(){
+            // Show the modal.
+            $('#modalRaingages').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Subcatchments Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditSubcatchments = function(id){
+            // Show the modal.
+            $('#modalSubcatchments').modal('toggle');
+
+            // Make sure to check if the SUBCATCHMENTS object exists.
+            if(typeof swmmjs.model['SUBCATCHMENTS'] === 'undefined'){
+                swmmjs.model['SUBCATCHMENTS'] = [];
+            } else {
+                $('#subcatchments-name').val(id)
+                $('#subcatchments-outlet').val(swmmjs.model['SUBCATCHMENTS'][id]['Outlet'])
+                $('#subcatchments-area').val(swmmjs.model['SUBCATCHMENTS'][id]['Area'])
+                $('#subcatchments-width').val(swmmjs.model['SUBCATCHMENTS'][id]['Width'])
+                $('#subcatchments-pctslope').val(swmmjs.model['SUBCATCHMENTS'][id]['pctslope'])
+            }
+        }
+
+        $('#save-modal-subcatchments').click(function(e){
+            saveModalSubcatchments()
+        })
+
+        function saveModalSubcatchments(){
+            // Show the modal.
+            $('#modalSubcatchments').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Junctions Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditJunctions = function(id){
+            // Show the modal.
+            $('#modalJunctions').modal('toggle');
+
+            // Make sure to check if the JUNCTIONS object exists.
+            if(typeof swmmjs.model['JUNCTIONS'] === 'undefined'){
+                swmmjs.model['JUNCTIONS'] = [];
+            } else {
+                $('#junctions-name').val(id)
+                $('#junctions-invertel').val(swmmjs.model['JUNCTIONS'][id]['Invert'])
+                $('#junctions-maxdepth').val(swmmjs.model['JUNCTIONS'][id]['Dmax'])
+                $('#junctions-initdepth').val(swmmjs.model['JUNCTIONS'][id]['Dinit'])
+                $('#junctions-surchdepth').val(swmmjs.model['JUNCTIONS'][id]['Dsurch'])
+                $('#junctions-pondedarea').val(swmmjs.model['JUNCTIONS'][id]['Aponded'])
+            }
+        }
+
+        $('#save-modal-junctions').click(function(e){
+            saveModalJunctions()
+        })
+
+        function saveModalJunctions(){
+            // Show the modal.
+            $('#modalJunctions').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Node, Polygon, Link Modal 
+        /////////////////////////////////////////////////////////////
         $('.node_, .polygon_, .link_').click(function(e){
             // Show the modal.
             $('#myModal').modal('toggle');
@@ -807,10 +1453,12 @@ d3.inp = function() {
                 if (m && m.length)
                         section[key] = {Kin: parseFloat(m[1]), Kout: m[2].trim(), Kavg: m[3].trim(), FlapGate: m[4].trim(), SeepRate: m[5].trim()};
             },
+            // TITLE Title/Notes needs to consume all of the lines until the next section.
+            // Older code just takes in a single line.
             TITLE: function(section, key, line) {
                 var m = line.match(/(.*)+/);
                 if (m && m.length > 1)
-                    section[0] = {TitleNotes: key + line};
+                    section[Object.keys(section).length] = {TitleNotes: key + line};
             },
             OPTIONS: function(section, key, line) {
                     var m = line.match(/\s+([//\-:a-zA-Z0-9\.]+)/);
@@ -822,6 +1470,15 @@ d3.inp = function() {
                     if (m && m.length)
                         section[key] = {Value: m[1]};
             },
+            TEMPERATURE: function(section, key, line) {
+                var m = [];
+                line = key + line;
+                m.push(line)
+                m.push(line.slice(19,line.length))
+                if (m && m.length)
+                        section[key] = {Value: m[1].trim()};
+            },
+
             RAINGAGES: function(section, key, line) {
                     var m = line.match(/\s+([a-zA-Z0-9\.]+)\s+([:0-9\.]+)\s+([0-9\.]+)\s+([\sA-Za-z0-9\.]+)/);
                     if (m && m.length)
@@ -867,7 +1524,7 @@ d3.inp = function() {
             LABELS: function(section, key, line) {
                 var m = line.match(/\s+([-?[0-9\.]+)\s+"([^"]+)"/);
                 if (m && m.length && 3 === m.length)
-                    section[section.length] = {x: parseFloat(key), y: parseFloat(m[1]), label: m[2]};
+                    section[Object.keys(section).length] = {x: parseFloat(key), y: parseFloat(m[1]), label: m[2]};
             },
             CONDUITS: function(section, key, line) {
                 var m = line.match(/\s*([^\s;]+)\s+([^\s;]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([^;]).*/);
@@ -1617,16 +2274,20 @@ var swmmjs = function() {
 	};
 
 
-    svg.save = function() {
+    // Creates a string in the style of an .inp file. This is used for either running a model
+    // or saving a model. Once saving is more seamless, models should be autosaved before running.
+    // Right now, autosaving just adds more clicks.
+    svg.dataToInpString = function(){
         let model = swmmjs.model;
         let inpString = '';
         let secStr = '';
         
-        secStr = '[TITLE]';
+        secStr = 'TITLE';
         inpString += '[TITLE]\n'
-        inpString += model.TITLE[0]['TitleNotes'];
-        inpString += '\n';
-        inpString += '\n';
+        for (let entry in model[secStr]) {
+            inpString += model[secStr][entry].TitleNotes;
+            inpString += '\n';
+        }
         
         secStr = 'OPTIONS';
         inpString +='[OPTIONS]\n;;Option             Value\n'
@@ -1641,6 +2302,15 @@ var swmmjs = function() {
         inpString +='[EVAPORATION]\n;;Evap Data      Parameters\n;;-------------- ----------------\n'
         for (let entry in model[secStr]) {
             inpString += entry.padEnd(17, ' ');
+            inpString += model[secStr][entry].Value;
+            inpString += '\n';
+        }
+        inpString += '\n';
+
+        secStr = 'TEMPERATURE';
+        inpString +='[TEMPERATURE]\n;;Temp/Wind/Snow   Source/Data\n'
+        for (let entry in model[secStr]) {
+            inpString += entry.padEnd(19, ' ');
             inpString += model[secStr][entry].Value;
             inpString += '\n';
         }
@@ -1933,6 +2603,13 @@ var swmmjs = function() {
             inpString += '\n';
         }
         inpString += '\n';
+
+        return inpString;
+    }
+
+    // svg.save is called when a save button is clicked.
+    svg.save = function() {
+        inpString = svg.dataToInpString();
 
         let fileOut = 'AutoInp.inp';
         let blob = new Blob([inpString], {type: 'text/csv'});

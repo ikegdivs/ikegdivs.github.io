@@ -4481,9 +4481,6 @@ function callMain(args) {
 
 /** @type {function(Array=)} */
 function run(args) {
-  console.log('Entered run...')
-  calledRun = false;
-  Module['calledRun'] = false;
   args = args || arguments_;
 
   if (runDependencies > 0) {
@@ -4515,7 +4512,6 @@ function run(args) {
     if (shouldRunNow) callMain(args);
 
     postRun();
-    console.log('postRun completed...')
   }
 
   if (Module['setStatus']) {

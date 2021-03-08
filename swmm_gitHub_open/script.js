@@ -41,6 +41,13 @@ document.addEventListener("DOMContentLoaded", function(){
         })
     }
 
+    // Listen for requests to run the simulation.
+    const runElement = document.getElementById("nav-project-runsimulation");
+    runElement.addEventListener('click', runSimulation, false);
+    function runSimulation() {
+        processInput(document.getElementById('inpFile').value);
+    }
+
     // Listen for requests to open an .inp file.
     const inputElement = document.getElementById("nav-file-input");
     inputElement.addEventListener('change', handleFiles, false);
@@ -49,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
         let fr = new FileReader();
         fr.onload=function(){
-            if(fr.result){
+            if(fr.result){inpText = 
                 processInput(fr.result)
             }
         }
@@ -73,25 +80,11 @@ function processInput(inpText){
     try
     {
         document.getElementById('inpFile').value = inpText;
-        swmmjs.run();
+        swmmjs.loadModel(swmmjs.Module)
+        //swmmjs.run(swmmjs.Module);
     } catch (e) {
         console.log('/input.inp creation failed');
     }
-}
-
-// Project tree display controls
-let toggler = document.getElementsByClassName('caret');
-let iter;
-
-for (iter = 0; iter < toggler.length; iter++){
-    toggler[iter].addEventListener('click', function(){
-        this.parentElement.querySelector('.nested')
-            .classList.toggle('active');
-        this.classList.toggle('active');
-        //this.querySelector('.nested')
-        //    .classList.toggle('active');
-        this.classList.toggle('caret-down');
-    })
 }
 
 
