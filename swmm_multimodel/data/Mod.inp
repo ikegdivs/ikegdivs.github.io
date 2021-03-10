@@ -216,6 +216,8 @@ NODES ALL
 LINKS ALL
 
 [TAGS]
+Gage       RG1              RGTag1          
+Subcatch  1                Subc1tag        
 
 [MAP]
 DIMENSIONS 0.000 0.000 10000.000 10000.000
