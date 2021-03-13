@@ -6,6 +6,7 @@
     <title>SWMM-js</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/node_modules/tabulator-tables/dist/css/tabulator.min.css">
     <link rel="stylesheet" href="./style.css">
 
     <style>
@@ -579,7 +580,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
-                <button type="button" id="save-modal-timeseries" class="btn btn-primary">Save changes</button>
+                <button type="button" id="save-modal-unithydrograph" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
@@ -1676,7 +1677,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
-                <button type="button" id="save-modal-outfall" class="btn btn-primary">Save changes</button>
+                <button type="button" id="save-modal-outfalls" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
@@ -2844,9 +2845,8 @@
                     <div style="border: 3px solid rgba(0, 0, 0, 0.15); border-radius: 3px; padding: 5px;">
                         <div class="form-row">
                             <div class="col-md-12 mb-12">
-                                <label class="modallabel" id="landuses-bpollutant-label" for="landuses-bpollutant">Pollutant</label>
-                                <input class="form-control modaledit" id="landuses-bpollutant" name="landuses-bpollutant" type="text">
-                                <div class="valid-tooltip">Valid entry</div>
+                                <select class="form-control selectpicker form-select-lg mb-3" id="landuses-bpollutant" aria-label="Pollutant">
+                                </select>
                             </div>
                         </div>
                         <div class="form-row">
@@ -2889,9 +2889,8 @@
                     <div style="border: 3px solid rgba(0, 0, 0, 0.15); border-radius: 3px; padding: 5px;">
                         <div class="form-row">
                             <div class="col-md-12 mb-12">
-                                <label class="modallabel" id="landuses-wpollutant-label" for="landuses-wpollutant">Pollutant</label>
-                                <input class="form-control modaledit" id="landuses-wpollutant" name="landuses-wpollutant" type="text">
-                                <div class="valid-tooltip">Valid entry</div>
+                                <select class="form-control selectpicker form-select-lg mb-3" id="landuses-wpollutant" aria-label="Pollutant">
+                                </select>
                             </div>
                         </div>
                         <div class="form-row">
@@ -3267,64 +3266,38 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form class="needs-validation" id="inflows-direct-timeseries-form" novalidate="">
-                    <p class="modalinfo" id="inflows-direct-timeseries-form-id">9</p>
+                <form class="needs-validation" id="timeseries-form" novalidate="">
+                    <p class="modalinfo" id="timeseries-form-id">9</p>
                     <div class="form-row">
                         <div class="col-md-6 mb-6">
-                            <label class="modallabel" id="inflows-direct-timeseries-name-label" for="inflows-direct-timeseries-name">Time Series Name</label>
-                            <input class="form-control modaledit" id="inflows-direct-timeseries-name" name="inflows-direct-timeseries-name" type="text">
+                            <label class="modallabel" id="timeseries-name-label" for="timeseries-name">Time Series Name</label>
+                            <input class="form-control modaledit" id="timeseries-name" name="timeseries-name" type="text">
                             <div class="valid-tooltip">Valid entry</div>
                         </div>
                         <div class="col-md-6 mb-6">
-                            <label class="modallabel" id="inflows-direct-timeseries-description-label" for="inflows-direct-timeseries-description">Description</label>
-                            <input class="form-control modaledit" id="inflows-direct-timeseries-description" name="inflows-direct-timeseries-description" type="text">
+                            <label class="modallabel" id="timeseries-description-label" for="timeseries-description">Description</label>
+                            <input class="form-control modaledit" id="timeseries-description" name="timeseries-description" type="text" disabled>
                             <div class="valid-tooltip">Valid entry</div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-12 mb-12">
-                            <label class="modallabel" id="inflows-direct-timeseries-external-label" for="inflows-direct-timeseries-external">Use external data file named below.</label>
-                            <input class="form-control modaledit" id="inflows-direct-timeseries-external" name="inflows-direct-timeseries-external" type="text">
+                            <label class="modallabel" id="timeseries-view-label" for="timeseries-view">Display a chart of this time series.</label>
+                            <button id="timeseries-view" type="button" class="btn btn-secondary btn-block">View</button>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="timeseries-external-label" for="timeseries-external">Use external data file named below.</label>
+                            <input class="form-control modaledit" id="timeseries-external" name="timeseries-external" type="text" disabled>
                             <div class="valid-tooltip">Valid entry</div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-12 mb-12">
-                            <label class="modallabel" id="inflows-direct-timeseries-values-label" for="inflows-direct-timeseries-values">Enter time series data in the table below.</label>
-                            <div class="table-responsive">
-                                <table class="table table-striped table-sm">
-                                  <thead>
-                                    <tr>
-                                      <th>Date (M/D/Y)</th>
-                                      <th>Time (H:M)</th>
-                                      <th>Value</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td>1/1/2001</td>
-                                      <td>1:00</td>
-                                      <td>0.1</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1/1/2001</td>
-                                        <td>2:00</td>
-                                        <td>0.2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1/1/2001</td>
-                                        <td>3:00</td>
-                                        <td>0.3</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1/1/2001</td>
-                                        <td>4:00</td>
-                                        <td>0.4</td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </div>
-                            <div class="valid-tooltip">Valid entry</div>
+                            <label class="modallabel" id="timeseries-values-label" for="timeseries-values">Enter time series data in the table below.</label>
+                            <div id="tableTimeseries">
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -3332,6 +3305,27 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
                 <button type="button" id="save-modal-timeseries" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Time Series Chart Modal-->
+<div id="modalTimeserieschart" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTimeserieschartTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTimeserieschartTitle">Time Series Chart Display</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <svg id="viz_svg01"></svg>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -3553,7 +3547,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a id="pmLandUses" class="nav-link" href="#">
+                        <a id="pmLanduses" class="nav-link" href="#">
                             -&nbsp;&nbsp;&nbsp;&nbsp;Land Uses
                         </a>
                     </li>
@@ -3670,10 +3664,11 @@
 <script src="/node_modules/jquery/dist/jquery.js"></script>
 <script src="/node_modules/popper.js/dist/umd/popper.js"></script>
 <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+<script type="text/javascript" src="/node_modules/moment/min/moment.min.js"></script>
+<script type="text/javascript" src="/node_modules/tabulator-tables/dist/js/tabulator.min.js"></script>
 <script src="js/d3.min.js"></script>
 <script src='js.js'></script>
 <script src='js/swmm.js'></script>
-<script src='swmm_run.js'></script>
 <script src="./script.js"></script>
   </body>
 </html>

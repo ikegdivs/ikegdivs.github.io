@@ -1,3 +1,110 @@
+
+
+// When the document is loaded:
+// Create some data
+// Draw a line chart with the data.
+function drawTimeseries(){
+    // dataObj is an array of dataElement objects.
+    dataObj = [];
+    let viz_svg01 = d3.select("#viz_svg01");
+
+    // Create a set of 10 dataElements.
+    /*for(i = 0; i < 10; i++){
+        dataObj.push(new DataElement(i, i));
+    }*/
+    let table = Tabulator.prototype.findTable('#tableTimeseries')[0];
+    id = $('#timeseries-name').val()
+
+    table.getData().forEach(function(el){
+        // - 3: Place a new entry in the timeseries entries with el.TimeSeries = id
+        //swmmjs.model['TIMESERIES'].push({TimeSeries:id, Value:el.Value, Date:el.Date, Time:el.Time})
+        dataObj.push(new DataElement(el.Time, el.Value))
+    })
+    
+    // Create a new chartSpecs object and populate it with the data.
+    theseSpecs = new ChartSpecs(dataObj);
+
+    // Prepare the chart and draw it.
+    representData(viz_svg01, theseSpecs);
+
+    // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
+    /*$('#formControlSelector').on('change', function(event){
+        // Get the input from the drop down.
+        userVal = $(event.currentTarget).prop('value');
+
+        drawLine(theseSpecs, d3[userVal])
+    })*/
+}
+
+// representData draws the chart
+// location is an svg where the chart will be drawn.
+// theseSpecs is an object of class ChartSpecs
+function representData(location, theseSpecs){
+    // Create the viewbox. This viewbox helps define the visible portions
+    // of the chart, but it also helps when making the chart responsive.
+    location.attr('viewBox', ` 0 0 ${theseSpecs.xScaleWidth + theseSpecs.chartBodyX + theseSpecs.textBuffer} ${theseSpecs.yScaleHeight + theseSpecs.textBuffer + theseSpecs.topMargin}`);
+
+    // Add groups to the svg for the body of the chart, the x axis, and the y axis.
+    body = location.append('g')
+        .attr('id', 'chartBody')
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.topMargin})`);
+    location.append('g')
+        .attr('id', 'yAxis')
+        .call(d3.axisLeft(theseSpecs.scaleY))
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.topMargin})`);
+    location.append('g')
+        .attr('id', 'xAxis')
+        .call(d3.axisBottom(theseSpecs.scaleX))
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.yScaleHeight + theseSpecs.topMargin})`);
+
+    // Create the location for the line
+    body.append('path')
+
+    drawLine(theseSpecs, d3.curveLinear);
+}
+
+// drawLine creates the line.
+// theseSpecs: an object of class ChartSpecs
+// curveType: a d3 curve type
+function drawLine(theseSpecs, curveType){
+    // Create the line
+    let line = d3.line()
+        .x(function(d) { return theseSpecs.scaleX(d.cat); })
+        .y(function(d) { return theseSpecs.scaleY(d.y); })
+        .curve(curveType)
+
+    // Create a join on 'path' and the data
+    let join = d3.selectAll('#chartBody path')
+        .data([theseSpecs.data]);
+
+    // Establish the styles for the line
+    join.style('stroke', 'rgba(255, 0, 0, 1')
+        .style('fill', 'none')
+        .style('stroke-width', '0.2vw')
+
+    // Perform a transition, if there is any data to transition.
+    join.transition()
+        .duration(1000)
+        .attr('d', line)
+    
+    // Remove any unnecesary objects.
+    join.exit()
+        .remove()
+
+    // Update the y axis.
+    d3.selectAll('#yAxis')
+        .call(d3.axisLeft(theseSpecs.scaleY))
+
+    // Update the x axis.
+    d3.selectAll('#xAxis')
+        .call(d3.axisBottom(theseSpecs.scaleX))
+}
+
+
+
+
+
+
 // Parser for SWMM INP files
 d3.inp = function() {
     function inp() {
@@ -582,6 +689,44 @@ d3.inp = function() {
             populateSelectList(listJSON);
         }
 
+        $('#pmPollutants').click(function(e){
+            populatePollutantsList();
+        })
+
+        function populatePollutantsList(){
+            // Place 'Pollutants' in the subselectcaption text.
+            $('#subselectcaption').text('Pollutants');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.POLLUTANTS){
+                Object.entries(swmmjs.model.POLLUTANTS).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-pollutants' + item.key, function: modalEditPollutants});
+                })
+            }
+
+            populateSelectList(listJSON);
+        }
+
+        $('#pmLanduses').click(function(e){
+            populateLandusesList();
+        })
+
+        function populateLandusesList(){
+            // Place 'Land Uses' in the subselectcaption text.
+            $('#subselectcaption').text('Land Uses');
+            let listJSON = [];
+
+            // Create the structure of the subselect list.
+            if(!!swmmjs.model.LANDUSES){
+                Object.entries(swmmjs.model.LANDUSES).forEach(item => {
+                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-landuses' + item.key, function: modalEditLanduses});
+                })
+            }
+
+            populateSelectList(listJSON);
+        }
+
         $('#pmPumps').click(function(e){
             // Place 'Options' in the subselectcaption text.
             $('#subselectcaption').text('Pumps');
@@ -643,35 +788,29 @@ d3.inp = function() {
             populateSelectList(listJSON);
         })
 
-        $('#pmPollutants').click(function(e){
-            // Place 'Options' in the subselectcaption text.
-            $('#subselectcaption').text('Pollutants');
-            let listJSON = [];
-
-            // Create the structure of the subselect list.
-            if(!!swmmjs.model.POLLUTANTS){
-                Object.entries(swmmjs.model.POLLUTANTS).forEach(item => {
-                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-timeseries' + item.key, function: modalEditPollutants});
-                })
-            }
-
-            populateSelectList(listJSON);
+        $('#pmTimeSeries').click(function(e){
+            populateTimeseriesList();
         })
 
-        $('#pmTimeSeries').click(function(e){
-            // Place 'Options' in the subselectcaption text.
+        function populateTimeseriesList(){
+            // Place 'Time SEries' in the subselectcaption text.
             $('#subselectcaption').text('Time Series');
             let listJSON = [];
+            let listVals = []
 
             // Create the structure of the subselect list.
             if(!!swmmjs.model.TIMESERIES){
                 Object.entries(swmmjs.model.TIMESERIES).forEach(item => {
-                    listJSON.push({labelText: item[0],    elementId: 'subselectlist-timeseries' + item.key});
+                    // If this timeseries isn't in the list yet, add it to listJSON
+                    if(listVals.indexOf(item[1].TimeSeries) === -1){
+                        listVals.push(item[1].TimeSeries)
+                        listJSON.push({labelText: item[1].TimeSeries,    elementId: 'subselectlist-timeseries' + item.key, function: modalEditTimeseries});
+                    }
                 })
             }
 
             populateSelectList(listJSON);
-        })
+        }
 
         //Add input and label elements to modal using an ID structure.
         // Input to this function is an array of objects of the format:
@@ -1502,12 +1641,12 @@ d3.inp = function() {
 
                 // Copy the elements of the old object into a new object using the key name
                 Object.defineProperty(
-                    swmmjs.model['SYMBOLS'], 
+                    swmmjs.model['SUBAREAS'], 
                     $('#subcatchments-name').val(), 
-                    Object.getOwnPropertyDescriptor(swmmjs.model['SYMBOLS'], id)
+                    Object.getOwnPropertyDescriptor(swmmjs.model['SUBAREAS'], id)
                 );
                 // Delete the old object
-                delete swmmjs.model['SYMBOLS'][id];
+                delete swmmjs.model['SUBAREAS'][id]
 
                 id = $('#subcatchments-name').val();
             }
@@ -1889,109 +2028,390 @@ d3.inp = function() {
                 modalEditConduits(this.id);
             }
         })
-    }
 
-    /////////////////////////////////////////////////////////////
-    // Pollutants Modal 
-    /////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////
+        // Pollutants Modal 
+        /////////////////////////////////////////////////////////////
 
-    var modalEditPollutants = function(id){
-        // Show the modal.
-        $('#modalPollutants').modal('toggle');
+        var modalEditPollutants = function(id){
+            // Show the modal.
+            $('#modalPollutants').modal('toggle');
 
-        // Retain the original ID for editing purposes.
-        $('#pollutants-form-id').val(id);
+            // Retain the original ID for editing purposes.
+            $('#pollutants-form-id').val(id);
 
-        // Make sure to check if the POLLUTANTS object exists.
-        if(typeof swmmjs.model['POLLUTANTS'] === 'undefined'){
-            swmmjs.model['POLLUTANTS'] = [];
-        } else {
-            $('#pollutants-name').val(id)
+            // Make sure to check if the POLLUTANTS object exists.
+            if(typeof swmmjs.model['POLLUTANTS'] === 'undefined'){
+                swmmjs.model['POLLUTANTS'] = [];
+            } else {
+                $('#pollutants-name').val(id)
 
-            
-            $('#pollutants-units').val(swmmjs.model['POLLUTANTS'][id]['Units'])
-            $('#pollutants-rainconcen').val(swmmjs.model['POLLUTANTS'][id]['RainConcen'])
-            $('#pollutants-gwconcen').val(swmmjs.model['POLLUTANTS'][id]['GwConcen'])
-            $('#pollutants-iiconcen').val(swmmjs.model['POLLUTANTS'][id]['IIConcen'])
-            $('#pollutants-dwfconcen').val(swmmjs.model['POLLUTANTS'][id]['DWFConcen'])
-            $('#pollutants-decaycoeff').val(swmmjs.model['POLLUTANTS'][id]['DecayCoeff'])
-            $('#pollutants-snowonly').val(swmmjs.model['POLLUTANTS'][id]['SnowOnly'])
-            $('#pollutants-copollutant').val(swmmjs.model['POLLUTANTS'][id]['CoPollutant'])
-            $('#pollutants-cofraction').val(swmmjs.model['POLLUTANTS'][id]['CoFraction'])
-        }
-    }
-
-    $('#save-modal-raingages').click(function(e){
-        saveModalRaingages()
-    })
-
-    function saveModalRaingages(){
-        // Reassign the id of the raingage if the user has changed the name value
-        id = $('#raingages-form-id').val();
-
-        // If the user has changed the value
-        if(id !== $('#raingages-name').val()) {
-            // Copy the elements of the old object into a new object using the key name
-            Object.defineProperty(
-                swmmjs.model['RAINGAGES'], 
-                $('#raingages-name').val(), 
-                Object.getOwnPropertyDescriptor(swmmjs.model['RAINGAGES'], id)
-            );
-            // Delete the old object
-            delete swmmjs.model['RAINGAGES'][id]
-
-            // Copy the elements of the old object into a new object using the key name
-            Object.defineProperty(
-                swmmjs.model['SYMBOLS'], 
-                $('#raingages-name').val(), 
-                Object.getOwnPropertyDescriptor(swmmjs.model['SYMBOLS'], id)
-            );
-            // Delete the old object
-            delete swmmjs.model['SYMBOLS'][id];
-
-            id = $('#raingages-name').val();
-        }
-
-        // If the are values in the x-coordinate/ycoordinate box, save them
-        if($('#raingages-xcoordinate').val() !== '' && $('#raingages-ycoordinate').val() !== ''){
-            swmmjs.model['SYMBOLS'][id] = [];
-            swmmjs.model['SYMBOLS'][id]['XCoord'] = $('#raingages-xcoordinate').val()
-            swmmjs.model['SYMBOLS'][id]['YCoord'] = $('#raingages-ycoordinate').val()
-        }
-
-
-        // If there are tags, and one of the tags has this RG id, use the tag
-        // Check for object.type='Node' and object.ID = itemID;
-        function tagQuery(thisObj){
-            return thisObj.Type==='Gage' && thisObj.ID === id; 
-        }
-        // For every tag element
-        let thisArray = Object.values(swmmjs.model['TAGS']);
-
-        // Find the tag that matches this RG id
-        let thisEl = thisArray.findIndex(tagQuery);
-        if(thisEl >= 0){
-            swmmjs.model['TAGS'][thisEl].Tag = $('#raingages-tag').val();
-        } else {
-            // If there is no tag with this value, and there is a value in the input, 
-            // create a new tag
-            if($('#raingages-tag').val() !== ''){
-                swmmjs.model['TAGS'][Object.keys(swmmjs.model['TAGS']).length] = {Type: 'Gage', ID: id, Tag: $('#raingages-tag').val()}
+                $('#pollutants-units').val(swmmjs.model['POLLUTANTS'][id]['Units'])
+                $('#pollutants-rainconcen').val(swmmjs.model['POLLUTANTS'][id]['Crdii'])
+                $('#pollutants-gwconcen').val(swmmjs.model['POLLUTANTS'][id]['Cgw'])
+                $('#pollutants-iiconcen').val(swmmjs.model['POLLUTANTS'][id]['Crdii'])
+                $('#pollutants-dwfconcen').val(swmmjs.model['POLLUTANTS'][id]['Cdwf'])
+                $('#pollutants-decaycoeff').val(swmmjs.model['POLLUTANTS'][id]['Kdecay'])
+                $('#pollutants-snowonly').val(swmmjs.model['POLLUTANTS'][id]['SnowOnly'])
+                $('#pollutants-copollutant').val(swmmjs.model['POLLUTANTS'][id]['CoPollutant'])
+                $('#pollutants-cofraction').val(swmmjs.model['POLLUTANTS'][id]['CoFrac'])
             }
         }
-        
-        swmmjs.model['RAINGAGES'][id]['Description'] = $('#raingages-description').val()
-        swmmjs.model['RAINGAGES'][id]['Format'] = $('#raingages-rainformat').val()
-        swmmjs.model['RAINGAGES'][id]['Interval'] = $('#raingages-timeinterval').val()
-        swmmjs.model['RAINGAGES'][id]['SCF'] = $('#raingages-snowcatchfactor').val()
-        swmmjs.model['RAINGAGES'][id]['Source'] = $('#raingages-datasource').val()
-        swmmjs.model['RAINGAGES'][id]['Source'] = $('#raingages-timeseriesname').val()
 
-        // Close the modal.
-        $('#modalRaingages').modal('toggle');
+        $('#save-modal-pollutants').click(function(e){
+            saveModalPollutants()
+        })
 
-        // Refresh the Raingages list.
-        populateRaingagesList();
+        function saveModalPollutants(){
+            // Reassign the id of the pollutant if the user has changed the name value
+            id = $('#pollutants-form-id').val();
+
+            // If the user has changed the value
+            if(id !== $('#pollutants-name').val()) {
+                // Copy the elements of the old object into a new object using the key name
+                Object.defineProperty(
+                    swmmjs.model['POLLUTANTS'], 
+                    $('#pollutants-name').val(), 
+                    Object.getOwnPropertyDescriptor(swmmjs.model['POLLUTANTS'], id)
+                );
+                // Delete the old object
+                delete swmmjs.model['POLLUTANTS'][id]
+
+                id = $('#pollutants-name').val();
+            }
+            
+            swmmjs.model['POLLUTANTS'][id]['Units'] = $('#pollutants-units').val()
+            swmmjs.model['POLLUTANTS'][id]['Crdii'] = $('#pollutants-rainconcen').val()
+            swmmjs.model['POLLUTANTS'][id]['Cgw'] = $('#pollutants-gwconcen').val()
+            swmmjs.model['POLLUTANTS'][id]['Crdii'] = $('#pollutants-iiconcen').val()
+            swmmjs.model['POLLUTANTS'][id]['Cdwf'] = $('#pollutants-dwfconcen').val()
+            swmmjs.model['POLLUTANTS'][id]['Kdecay'] = $('#pollutants-decaycoeff').val()
+            swmmjs.model['POLLUTANTS'][id]['SnowOnly'] = $('#pollutants-snowonly').val()
+            swmmjs.model['POLLUTANTS'][id]['CoPollutant'] = $('#pollutants-copollutant').val()
+            swmmjs.model['POLLUTANTS'][id]['CoFrac'] = $('#pollutants-cofraction').val()
+
+            // Close the modal.
+            $('#modalPollutants').modal('toggle');
+
+            // Refresh the Pollutants list.
+            populatePollutantsList();
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Land Uses Modal 
+        /////////////////////////////////////////////////////////////
+
+        // When the buildup pollutant is selected, change the values in the buildup section
+        //let thisEl = document.getElementById('landuses-bpollutant');
+        // 2: For the/When a pollutant is selected:
+        // 3: If there is an association between the pollutant and the land use in the BUILDUP table,
+        // If there are buildup values, and the 'selected' pollutant is in the buildup values table 
+        function selectBPollutant(id){
+            function buildupQuery(thisObj){
+                let thisEl = document.getElementById('landuses-bpollutant');
+                return thisObj.LandUse===id && thisObj.Pollutant === thisEl.options[thisEl.selectedIndex].value;
+            }
+            // For every pollutant element
+            let thisArray = Object.values(swmmjs.model['BUILDUP']);
+
+            // Find the pollutant that matches this land use id
+            let thisEl = thisArray.findIndex(buildupQuery);
+            if(thisEl >= 0){
+                // The currently selected pollutant has values associated with this land use
+                // fill the data with the associated values
+                $('#landuses-bfunction').val(swmmjs.model['BUILDUP'][thisEl].Function)
+                $('#landuses-maxbuildup').val(swmmjs.model['BUILDUP'][thisEl].Coeff1)
+                $('#landuses-rateconstant').val(swmmjs.model['BUILDUP'][thisEl].Coeff2)
+                $('#landuses-powersatconstant').val(swmmjs.model['BUILDUP'][thisEl].Coeff3)
+                $('#landuses-normalizer').val(swmmjs.model['BUILDUP'][thisEl].Normalizer)
+            } else {
+                $('#landuses-bfunction').val('NONE');
+                $('#landuses-maxbuildup').val('')
+                $('#landuses-rateconstant').val('')
+                $('#landuses-powersatconstant').val('')
+                $('#landuses-normalizer').val('')
+            }
+        }
+
+        // When the washoff pollutant is selected, change the values in the washoff section
+        //thisEl = document.getElementById('landuses-wpollutant');
+        // 2: For the/When a pollutant is selected:
+        // 3: If there is an association between the pollutant and the land use in the WASHOFF table,
+        // If there are washoff values, and the 'selected' pollutant is in the washoff values table 
+        function selectWPollutant(id){
+            function washoffQuery(thisObj){
+                let thisEl = document.getElementById('landuses-wpollutant');
+                return thisObj.LandUse===id && thisObj.Pollutant === thisEl.options[thisEl.selectedIndex].value;
+            }
+            // For every pollutant element
+            let thisArray = Object.values(swmmjs.model['WASHOFF']);
+
+            // Find the pollutant that matches this land use id
+            let thisEl = thisArray.findIndex(washoffQuery);
+            if(thisEl >= 0){
+                // The currently selected pollutant has values associated with this land use
+                // fill the data with the associated values
+                $('#landuses-wfunction').val(swmmjs.model['WASHOFF'][thisEl].Function)
+                $('#landuses-coefficient').val(swmmjs.model['WASHOFF'][thisEl].Coeff1)
+                $('#landuses-exponent').val(swmmjs.model['WASHOFF'][thisEl].Coeff2)
+                $('#landuses-cleaningeffic').val(swmmjs.model['WASHOFF'][thisEl].Coeff3)
+                $('#landuses-bmpeffic').val(swmmjs.model['WASHOFF'][thisEl].Normalizer)
+
+            } else {
+                $('#landuses-bfunction').val('NONE');
+                $('#landuses-maxbuildup').val('')
+                $('#landuses-rateconstant').val('')
+                $('#landuses-powersatconstant').val('')
+                $('#landuses-normalizer').val('')
+            }
+        }
+
+        // When a Buildup pollutant is selected, refresh the interface
+        $('#landuses-bpollutant').on('change', function(){
+            selectBPollutant($('#landuses-name').val())
+        })
+
+        // When a Buildup pollutant is selected, refresh the interface
+        $('#landuses-wpollutant').on('change', function(){
+            selectWPollutant($('#landuses-name').val())
+        })
+
+        var modalEditLanduses = function(id){
+            // Show the modal.
+            $('#modalLanduses').modal('toggle');
+
+            // Retain the original ID for editing purposes.
+            $('#landuses-form-id').val(id);
+
+            // Make sure to check if the LANDUSES object exists.
+            if(typeof swmmjs.model['LANDUSES'] === 'undefined'){
+                swmmjs.model['LANDUSES'] = [];
+            } else {
+                $('#landuses-name').val(id)
+
+                $('#landuses-description').val(swmmjs.model['LANDUSES'][id]['Description'])
+                $('#landuses-sweepinterval').val(swmmjs.model['LANDUSES'][id]['SweepInterval'])
+                $('#landuses-sweepavailability').val(swmmjs.model['LANDUSES'][id]['FractionAvailable'])
+                $('#landuses-sweeplastswept').val(swmmjs.model['LANDUSES'][id]['LastCleaned'])
+                // Buildup section
+                // Buildup has two keys: 'Land Use' and 'Pollutant'.
+                // Should use a search function to populate these values
+                // This also means this should be a drop-down menu that changes when the drop-downs
+                // are selected. I'm starting to think this might do better as a tabbed modal also, but 
+                // I'm not going to go that way right now.
+
+                // TODO:
+                // Create a select/option structure.
+                // Fill that select/option structure with all of the available pollutant options.
+                // It is possible for a Land Use to have no associated pollutant structure in the 
+                // buildup-washoff section, and it is a good idea to keep them separate: 10,000 taxlots
+                // with 10,000 pollutants is goofy. Test if this Land Use does not have a buildup washoff relationship
+                // with a pollutant and if one doesn't exist, create one. Unfortunately, SWMM may already
+                // create relationships between ALL pollutants and ALL landuses, so this may be something
+                // that needs to be cleaned up from the original code.
+
+                // IF the equation is NONE, then eliminate the pollutant/landuse combo from 
+                // the buildup/washoff arrays/tables. Current swmm ui seems to require the association,
+                // but I'm hoping that's just a UI thing.
+
+                // 1: Populate a select list with all of the pollutants
+                
+                let selected = 'selected';
+
+                $('#landuses-bpollutant').empty();
+                Object.entries(swmmjs.model.POLLUTANTS).forEach(el => {
+                    // populate #landuses-bpollutant with <option> elements
+                    $('#landuses-bpollutant').append('<option value="'+el[0]+'" '+selected+'>'+el[0]+'</option>')
+                    selected = '';
+                })
+
+                $('#landuses-wpollutant').empty();
+                Object.entries(swmmjs.model.POLLUTANTS).forEach(el => {
+                    // populate #landuses-bpollutant with <option> elements
+                    $('#landuses-wpollutant').append('<option value="'+el[0]+'" '+selected+'>'+el[0]+'</option>')
+                    selected = '';
+                })
+
+                selectBPollutant(id);
+                selectWPollutant(id);
+            }
+        }
+
+        $('#save-modal-landuses').click(function(e){
+            saveModalLanduses()
+        })
+
+        function saveModalLanduses(){
+            // Reassign the id of the pollutant if the user has changed the name value
+            id = $('#landuses-form-id').val();
+
+            // If the user has changed the value
+            if(id !== $('#landuses-name').val()) {
+                // Copy the elements of the old object into a new object using the key name
+                Object.defineProperty(
+                    swmmjs.model['LANDUSES'], 
+                    $('#landuses-name').val(), 
+                    Object.getOwnPropertyDescriptor(swmmjs.model['LANDUSES'], id)
+                );
+                // Delete the old object
+                delete swmmjs.model['LANDUSES'][id]
+
+                id = $('#landuses-name').val();
+            }
+
+            
+
+            swmmjs.model['LANDUSES'][id]['Description'] = $('#landuses-description').val()
+            swmmjs.model['LANDUSES'][id]['SweepInterval'] = $('#landuses-sweepinterval').val()
+            swmmjs.model['LANDUSES'][id]['FractionAvailable'] = $('#landuses-sweepavailability').val()
+            swmmjs.model['LANDUSES'][id]['LastCleaned'] = $('#landuses-sweeplastswept').val()
+
+            // If the buildup function is not 'NONE', save the buildup parameters to the BUILDUP object
+            if($('#landuses-bfunction').val() !== 'NONE'){
+                // Copy the TAGS method for saving to tables that involve two keys.
+                function buildupQuery(thisObj){
+                    let thisEl = document.getElementById('landuses-bpollutant');
+                    return thisObj.LandUse===id && thisObj.Pollutant === thisEl.options[thisEl.selectedIndex].value;
+                }
+                // For every tag element
+                let thisArray = Object.values(swmmjs.model['BUILDUP']);
+
+                // Find the pollutant that matches this landuse id
+                let thisEl = thisArray.findIndex(buildupQuery);
+                if(thisEl >= 0){
+                    swmmjs.model['BUILDUP'][thisEl].Function = $('#landuses-bfunction').val()
+                    swmmjs.model['BUILDUP'][thisEl].Coeff1 = $('#landuses-maxbuildup').val()
+                    swmmjs.model['BUILDUP'][thisEl].Coeff2 = $('#landuses-rateconstant').val()
+                    swmmjs.model['BUILDUP'][thisEl].Coeff3 = $('#landuses-powersatconstant').val()
+                    swmmjs.model['BUILDUP'][thisEl].Normalizer = $('#landuses-normalizer').val()
+                } else {
+                    // If there is no buildup with this value, and there is a value in the input, 
+                    // create a new buildup
+                    if($('#landuses-bpollutant').val() !== ''){
+                        swmmjs.model['BUILDUP'].push({  'Coeff1': $('#landuses-maxbuildup').val(), 
+                                                        'Coeff2': $('#landuses-rateconstant').val(), 
+                                                        'Coeff3': $('#landuses-powersatconstant').val(), 
+                                                        'Function': $('#landuses-bfunction').val(), 
+                                                        'LandUse': id, 
+                                                        'Normalizer': $('#landuses-normalizer').val(), 
+                                                        'Pollutant': $('#landuses-bpollutant').val()})
+                    }
+                }
+            }
+
+            // If the washoff function is not 'NONE', save the washoff parameters to the WASHOFF object
+            if($('#landuses-wfunction').val() !== 'NONE'){
+                // Copy the TAGS method for saving to tables that involve two keys.
+                function washoffQuery(thisObj){
+                    let thisEl = document.getElementById('landuses-wpollutant');
+                    return thisObj.LandUse===id && thisObj.Pollutant === thisEl.options[thisEl.selectedIndex].value;
+                }
+                // For every washoff element
+                let thisArray = Object.values(swmmjs.model['WASHOFF']);
+
+                // Find the pollutant that matches this landuse id
+                let thisEl = thisArray.findIndex(washoffQuery);
+                if(thisEl >= 0){
+                    swmmjs.model['WASHOFF'][thisEl].Function = $('#landuses-wfunction').val()
+                    swmmjs.model['WASHOFF'][thisEl].Coeff1 = $('#landuses-coefficient').val()
+                    swmmjs.model['WASHOFF'][thisEl].Coeff2 = $('#landuses-exponent').val()
+                    swmmjs.model['WASHOFF'][thisEl].Ecleaning = $('#landuses-cleaningeffic').val()
+                    swmmjs.model['WASHOFF'][thisEl].Ebmp = $('#landuses-bmpeffic').val()
+                } else {
+                    // If there is no buildup with this value, and there is a value in the input, 
+                    // create a new buildup
+                    if($('#landuses-wpollutant').val() !== ''){
+                        swmmjs.model['WASHOFF'].push({  'Coeff1': $('#landuses-coefficient').val(), 
+                                                        'Coeff2': $('#landuses-exponent').val(), 
+                                                        'Ecleaning': $('#landuses-cleaningeffic').val(), 
+                                                        'Function': $('#landuses-wfunction').val(), 
+                                                        'LandUse': id, 
+                                                        'Ebmp': $('#landuses-bmpeffic').val(), 
+                                                        'Pollutant': $('#landuses-wpollutant').val()})
+                    }
+                }
+            }
+            
+
+            // Close the modal.
+            $('#modalLanduses').modal('toggle');
+
+            // Refresh the Landuses list.
+            populateLandusesList();
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Time Series Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditTimeseries = function(id){
+            // Show the modal.
+            $('#modalTimeseries').modal('toggle');
+            $('#timeseries-form-id').val(id);
+            $('#timeseries-form-id').text(id);
+            $('#timeseries-name').val(id);
+
+            // Make sure to check if the TIMESERIES object exists.
+            if(typeof swmmjs.model['TIMESERIES'] === 'undefined'){
+                swmmjs.model['TIMESERIES'] = [];
+            }
+
+            // Create an editable object type for the time series table
+            // because the time series tables are all just one table in the data so:
+            let timeseriesTabulatorData = [];
+            swmmjs.model['TIMESERIES'].forEach(function(el){
+                if(el.TimeSeries === id){
+                    timeseriesTabulatorData.push({Date: el.Date, Time: el.Time, Value:el.Value})
+                }
+            })
+
+            let timeseriesTabulator = new Tabulator("#tableTimeseries", {
+                data: timeseriesTabulatorData,
+                layout: "fitColumns",
+                columns:[{title:"Date", sorter:"date", field:"Date", editor:"input"},
+                        {title:"Time", sorter:"number", field:"Time", editor:"input"},
+                        {title:"Value", field:"Value", editor:"number", editorParams:{min:0, step:0.01}},],
+            } );
+        }
+
+        // Clicking on the timeseries-view button will bring up the timeseries chart modal.
+        $('#timeseries-view').click(function(e){
+            modalDisplayTimeseries();
+        })
+
+        function modalDisplayTimeseries(){
+            // Show the modal.
+            $('#modalTimeserieschart').modal('toggle');
+            drawTimeseries();
+        }
+
+        $('#save-modal-timeseries').click(function(e){
+            saveModalTimeseries()
+        })
+
+        function saveModalTimeseries(){
+            id = $('#timeseries-form-id').val();
+            // On save:
+            // - 1: delete the timeseries entries where el.TimeSeries === id
+            //swmmjs.model['TIMESERIES'].forEach(function(el){
+            for(let i = swmmjs.model['TIMESERIES'].length - 1; i >=0; i--){
+                if(swmmjs.model['TIMESERIES'][i].TimeSeries === id){
+                    swmmjs.model['TIMESERIES'].splice(i, 1);
+                }
+            }
+            // - 2: for every row in the '#tableTimeseries' table
+            let table = Tabulator.prototype.findTable('#tableTimeseries')[0];
+            id = $('#timeseries-name').val()
+
+            table.getData().forEach(function(el){
+                // - 3: Place a new entry in the timeseries entries with el.TimeSeries = id
+                swmmjs.model['TIMESERIES'].push({TimeSeries:id, Value:el.Value, Date:el.Date, Time:el.Time})
+            })
+            // Hide the modal.
+            $('#modalTimeseries').modal('toggle');
+
+            populateTimeseriesList();
+        }
     }
 
     

@@ -179,9 +179,9 @@ Undeveloped
 ;;Land Use       Pollutant        Function   Coeff1     Coeff2     Coeff3     Normalizer
 ;;-------------- ---------------- ---------- ---------- ---------- ---------- ----------
 Residential      TSS              SAT        50         0          2          AREA      
-Residential      Lead             NONE       0          0          0          AREA      
+Residential      Lead             SAT        75         0          0          AREA      
 Undeveloped      TSS              SAT        100        0          3          AREA      
-Undeveloped      Lead             NONE       0          0          0          AREA      
+Undeveloped      Lead             SAT        69         0          0          AREA      
 
 [WASHOFF]
 ;;Land Use       Pollutant        Function   Coeff1     Coeff2     Ecleaning  Ebmp      

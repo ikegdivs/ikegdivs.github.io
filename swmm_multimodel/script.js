@@ -3,7 +3,7 @@
 class DataElement{
     constructor(cat, y){
         // cat: a category, numeric value.
-        this.cat = cat;
+        this.cat = new Date(2000, 0, 1, cat.split(':')[0], cat.split(':')[1]);
         // y: independent numeric value.
         this.y = y;
     }
@@ -44,7 +44,7 @@ class ChartSpecs {
 
     // To create a scaling X function for the chart, use this getter.
     get scaleX() {
-        return d3.scaleLinear()
+        return d3.scaleTime()
             .range([0, this.xScaleWidth])
             .domain(d3.extent(this.data, d=>d.cat))
     }
