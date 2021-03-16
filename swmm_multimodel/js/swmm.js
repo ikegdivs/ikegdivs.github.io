@@ -529,6 +529,173 @@ d3.inp = function() {
             })
         }
 
+        /*d3.select('#svgSimple').on('mousemove', function() {
+            swmmjs.currentPosition = [d3.event.pageX, d3.event.pageY]; // log the mouse x,y position
+            let svgEl = document.getElementById('svgSimple');
+            let pt = svgEl.createSVGPoint();
+            
+            pt.x = d3.event.pageX;
+            pt.y = d3.event.pageY;
+            let globalPoint = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+            document.getElementById('xy').innerHTML = 'X: ' + (pt.x) + ', Y: ' + (pt.y);
+            document.getElementById('xy2').innerHTML = 'X: ' + (globalPoint.x).toFixed(0) + ', Y: ' + (globalPoint.y).toFixed(0);
+        });*/
+
+        // Enable clicking to create junctions
+        $('#addJunction').click(function(e){
+            let svg = d3.select('#svgSimple');
+
+            /*function drawCircle(x, y, size){
+                console.log('Drawing Circle at', x, y , size);
+                svg.append('circle')
+                .attr('class', 'click-circle')
+                .attr('cx', x)
+                .attr('cy', y)
+                .attr('r', size)
+            }*/
+
+            var coords = d3.values(swmmjs.model.COORDINATES),
+		    x = function(c) {
+                return c.x
+            },
+		    y = function(c) {
+                return c.y
+            };
+            svg.minx = d3.min(coords, x);
+            svg.maxx = d3.max(coords, x);
+            svg.miny = d3.min(coords, y);
+            svg.maxy = d3.max(coords, y);
+            
+            if (!svg.minx || !svg.maxx || !svg.miny || !svg.maxy)
+                return;
+            
+            var height = (svg.maxy - svg.miny),
+                width = (svg.maxx - svg.minx),
+                scale = width * 0.1;
+            
+            svg.strokeWidth = height / 200;
+            svg.top = svg.maxy + scale;
+
+
+
+
+
+            svg.on('click', function() {
+                /*let svgEl = svg.node();
+                let pt = svgEl.createSVGPoint();
+                let g = svg.select('g')
+                pt.x = d3.event.x;
+                pt.y = d3.event.y;
+                //globalPoint = pt.matrixTransform(g.node().getCTM().inverse());
+                let globalPoint = pt.matrixTransform(svgEl.getScreenCTM().inverse());*/
+
+                let xy = d3.mouse(this);
+                let transform = d3.zoomTransform(svg.node());
+                let xy1 = transform.invert(xy);
+
+                // Create a new id
+                swmmjs.model.JUNCTIONS.push({Description: 'Desc', Invert: '', Dmax: '', Dinit: '', Dsurch: '', Aponded: ''})
+                let id = swmmjs.model.JUNCTIONS.length - 1;
+                swmmjs.model['COORDINATES'][id] = [];
+
+
+                swmmjs.model['COORDINATES'][id]['x'] = Math.floor(xy1[0])
+                swmmjs.model['COORDINATES'][id]['y'] = Math.floor(svg.top - xy1[1])
+
+
+                // Refresh the view
+                // The d3 structure that controls the nodes is called:
+                /*var el = d3.select('#svgSimple').select('g')
+                el.append('g').attr('id',id).attr('class', 'node_ gjunction').append('circle')
+                .attr('cx', xy1[0])
+                .attr('cy', xy1[1])
+                .attr('r', svg.nodeSize)
+                .attr('data-x', xy1[0])
+                .attr('data-y', xy1[1])
+                .attr('title', id)
+                .attr('onclick', 'modalEditJunctions('+id+');')
+                .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                    .attr('class', 'junction')
+                .attr('fill', 'black');*/
+
+                function getJunctionx(d) {
+                    pos = swmmjs.model.COORDINATES.map(function(e) { return e.x; }).indexOf(d.x)
+                    return typeof swmmjs.model.JUNCTIONS[pos] !== 'undefined'
+                }
+
+                var filtered = swmmjs.model.COORDINATES.reduce((acc, next, i) => {
+                    //return getJunctionx(next) && acc.push(i), acc
+                    return getJunctionx(next) && (acc[i] = swmmjs.model.COORDINATES[i]), acc
+                }, []);
+
+                console.log(filtered)
+
+                junctionData = filtered;
+
+
+                /*function getJunctions(d) {
+                    pos = swmmjs.model.COORDINATES.map(function(e) { return e.x; }).indexOf(d.x)
+                    return typeof swmmjs.model.JUNCTIONS[pos] !== 'undefined'
+                }
+        
+                junctionData = swmmjs.model.COORDINATES.filter(getJunctions);*/
+                /*d3.select('#svgSimple').select('g').selectAll('.gjunction')
+                    .data(junctionData)
+                    .enter().append('circle')
+                    .attr('cx', function(c) {return c.x})
+                    .attr('cy', function(c) {return svg.top - c.y})
+                    .attr('r', svg.nodeSize)
+                    .attr('data-x', function(c) {return c.x})
+                    .attr('data-y', function(c) {return svg.top - c.y})
+                    .attr('onclick', 'modalEditJunctions('+id+');')
+                    .attr('title', id)
+                    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                        .attr('class', 'junction')
+                    .attr('fill', 'black');*/
+                let jnodes = d3.select('#svgSimple').select('g').selectAll('.gjunction')
+                //jnodes.exit().remove();
+                //jnodes.remove();
+
+
+                //el.append('g').attr('id',id).attr('class', 'node_ gjunction').append('circle')
+			    color = (swmmjs.INPUT === swmmjs.mode ? swmmjs.defaultColor: nodeColors[r(v)]);
+                d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'node_ gjunction').append('circle')
+                //jnodes.append('g').attr('id', id).attr('class', 'node_ gjunction').append('circle')
+                    .attr('cx', xy1[0])
+                    .attr('cy', xy1[1])
+                    .attr('r', swmmjs.svg.nodeSize)
+                    .attr('data-x', xy1[0])
+                    .attr('data-y', xy1[1])
+                    .attr('onclick', 'modalEditJunctions('+id+');')
+                    .attr('title', id)
+                    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                        .attr('class', 'junction')
+                    .attr('fill', color);
+
+                /*jnodes.transition()
+                    .duration(500)
+                    .attr('cx', xy1[0])
+                    .attr('cy', xy1[1])*/
+
+                    
+                // Spawn an editing window for the junction object
+                modalEditJunctions(id);
+
+                svg.on('click', null);
+
+                //swmmjs.applyScale(svg)
+
+                //swmmjs.svg.render();
+
+                // restore normal click effects
+
+
+            })
+        })
+
         //Bind project elements for click response.
         $('#pmTitle').click(function(e){
             // Show the modal.
@@ -1706,49 +1873,6 @@ d3.inp = function() {
         // Junctions Modal 
         /////////////////////////////////////////////////////////////
 
-        var modalEditJunctions = function(id){
-            // Show the modal.
-            $('#modalJunctions').modal('toggle');
-
-            // Retain the original ID for editing purposes.
-            $('#junctions-form-id').val(id);
-
-            // Make sure to check if the JUNCTIONS object exists.
-            if(typeof swmmjs.model['JUNCTIONS'] === 'undefined'){
-                swmmjs.model['JUNCTIONS'] = [];
-            } else {
-                $('#junctions-name').val(id)
-                // If there are coordinates, and one of the coordinates has this junction id, use the xy position of that
-                if(typeof swmmjs.model['COORDINATES'] !== 'undefined'){
-                    $('#junctions-xcoordinate').val(swmmjs.model['COORDINATES'][id]['x'])
-                    $('#junctions-ycoordinate').val(swmmjs.model['COORDINATES'][id]['y'])
-                }
-
-                // If there are tags, and one of the tags has this id, use the tag
-                // Check for object.type='Node' and object.ID = itemID;
-                function tagQuery(thisObj){
-                    return thisObj.Type==='Node' && thisObj.ID === id; 
-                }
-                // For every tag element
-                let thisArray = Object.values(swmmjs.model['TAGS']);
-
-                // Find the tag that matches this RG id
-                let thisEl = thisArray.findIndex(tagQuery);
-                if(thisEl >= 0){
-                    $('#junctions-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
-                } else {
-                    $('#junctions-tag').val('');
-                }
-
-                $('#junctions-name').val(id)
-                $('#junctions-description').val(swmmjs.model['JUNCTIONS'][id]['Description'])
-                $('#junctions-invertel').val(swmmjs.model['JUNCTIONS'][id]['Invert'])
-                $('#junctions-maxdepth').val(swmmjs.model['JUNCTIONS'][id]['Dmax'])
-                $('#junctions-initialdepth').val(swmmjs.model['JUNCTIONS'][id]['Dinit'])
-                $('#junctions-surchargedepth').val(swmmjs.model['JUNCTIONS'][id]['Dsurch'])
-                $('#junctions-pondedarea').val(swmmjs.model['JUNCTIONS'][id]['Aponded'])
-            }
-        }
 
         $('#save-modal-junctions').click(function(e){
             saveModalJunctions()
@@ -2731,7 +2855,7 @@ d3.inp = function() {
             }
                 // add other if neccesary
         },
-        model = {COORDINATES: {}, LABELS: [], STORAGE: {}, OUTFALLS: {}},
+        model = {COORDINATES: [], LABELS: [], STORAGE: {}, OUTFALLS: {}},
         lines = text.split(/\r\n|\r|\n/),
             section = null;
         let curDesc = '';
@@ -3625,6 +3749,8 @@ var swmmjs = function() {
     }
 
 	svg.render = function() {
+        // If there is a current zoome applied, record that zoom and apply it at the end of the rerender.
+
 	    var el = d3.select('#svgSimple').select('g'),
 		    model = swmmjs.model,		
 		    linksections = ['CONDUITS', 'PUMPS'],
@@ -3664,7 +3790,7 @@ var swmmjs = function() {
             svg.top = svg.maxy + scale;
 
             d3.select('#svgSimple').attr('viewBox', (svg.minx - scale) + ' ' + 0 + ' ' + (width + 2 * scale) + ' ' + (height + 2 * scale));
-	    el.attr('viewBox', (svg.minx - scale) + ' ' + 0 + ' ' + (width + 2 * scale) + ' ' + (height + 2 * scale));
+	    //el.attr('viewBox', (svg.minx - scale) + ' ' + 0 + ' ' + (width + 2 * scale) + ' ' + (height + 2 * scale));
 
 	    svg.nodeSize = height / 75,
 	    el.append('circle')
@@ -3830,6 +3956,7 @@ var swmmjs = function() {
 			    .attr('r', svg.nodeSize)
 			    .attr('data-x', c.x)
 			    .attr('data-y', svg.top - c.y)
+                .attr('onclick', 'modalEditJunctions('+coordinate+');')
 			    .attr('title', coordinate)
 			    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
 			    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
@@ -3837,6 +3964,44 @@ var swmmjs = function() {
 			    .attr('fill', color);
 		}
 	    }
+
+        /*function getJunctions(d) {
+            pos = model.COORDINATES.map(function(e) { return e.x; }).indexOf(d.x)
+            return typeof model.JUNCTIONS[pos] !== 'undefined'
+        }
+
+        junctionData = model.COORDINATES.filter(getJunctions);
+
+        d3.select('#svgSimple').select('g').selectAll('.gjunction')
+            .data(junctionData)
+            .enter().append('circle')
+            .attr('cx', function(c) {return c.x})
+            .attr('cy', function(c) {return svg.top - c.y})
+            .attr('r', svg.nodeSize)
+            .attr('data-x', function(c) {return c.x})
+            .attr('data-y', function(c) {return svg.top - c.y})
+            .attr('onclick', 'modalEditJunctions('+coordinate+');')
+            .attr('title', coordinate)
+            .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+            .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                .attr('class', 'junction')
+            .attr('fill', color);
+*/
+        /*el.append('g').attr('id',coordinate).attr('class', 'node_ gjunction').append('circle')
+        .attr('cx', c.x)
+        .attr('cy', svg.top - c.y)
+        .attr('r', svg.nodeSize)
+        .attr('data-x', c.x)
+        .attr('data-y', svg.top - c.y)
+        .attr('onclick', 'modalEditJunctions('+coordinate+');')
+        .attr('title', coordinate)
+        .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+        .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+            .attr('class', 'junction')
+        .attr('fill', color);*/
+
+
+
         // Render Title
             if (model.TITLE){
                 var c = model.TITLE[0];
@@ -3928,14 +4093,21 @@ var swmmjs = function() {
             
             vis.on('mousemove', function() {
                 swmmjs.currentPosition = [d3.event.pageX, d3.event.pageY]; // log the mouse x,y position
-                var svgEl = document.getElementById('svgSimple');
-                var pt = svgEl.createSVGPoint();
+                let svgEl = document.getElementById('svgSimple');
+                let pt = svgEl.createSVGPoint();
                 pt.x = d3.event.pageX;
                 pt.y = d3.event.pageY;
-                var globalPoint = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+                let globalPoint = pt.matrixTransform(svgEl.getScreenCTM().inverse());
                 document.getElementById('xy').innerHTML = 'X: ' + (pt.x) + ', Y: ' + (pt.y);
+
+                var xy = d3.mouse(this);
+                var transform = d3.zoomTransform(vis.node());
+                let xy1 = transform.invert(xy);
+                
+                document.getElementById('xy2').innerHTML = 'X: ' + (xy1[0]).toFixed(0) + ', Y: ' + (svg.top - xy1[1]).toFixed(0);
             });
-	};
+    };
+
         
         return svg;
     };
@@ -4281,3 +4453,50 @@ var swmmjs = function() {
 swmmjs = swmmjs();
 
 
+        /////////////////////////////////////////////////////////////
+        // Junctions Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditJunctions = function(id){
+            // Show the modal.
+            $('#modalJunctions').modal('toggle');
+
+            // Retain the original ID for editing purposes.
+            $('#junctions-form-id').val(id);
+
+            // Make sure to check if the JUNCTIONS object exists.
+            if(typeof swmmjs.model['JUNCTIONS'] === 'undefined'){
+                swmmjs.model['JUNCTIONS'] = [];
+            } else {
+                $('#junctions-name').val(id)
+                // If there are coordinates, and one of the coordinates has this junction id, use the xy position of that
+                if(typeof swmmjs.model['COORDINATES'] !== 'undefined'){
+                    $('#junctions-xcoordinate').val(swmmjs.model['COORDINATES'][id]['x'])
+                    $('#junctions-ycoordinate').val(swmmjs.model['COORDINATES'][id]['y'])
+                }
+
+                // If there are tags, and one of the tags has this id, use the tag
+                // Check for object.type='Node' and object.ID = itemID;
+                function tagQuery(thisObj){
+                    return thisObj.Type==='Node' && thisObj.ID === id; 
+                }
+                // For every tag element
+                let thisArray = Object.values(swmmjs.model['TAGS']);
+
+                // Find the tag that matches this RG id
+                let thisEl = thisArray.findIndex(tagQuery);
+                if(thisEl >= 0){
+                    $('#junctions-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+                } else {
+                    $('#junctions-tag').val('');
+                }
+
+                $('#junctions-name').val(id)
+                $('#junctions-description').val(swmmjs.model['JUNCTIONS'][id]['Description'])
+                $('#junctions-invertel').val(swmmjs.model['JUNCTIONS'][id]['Invert'])
+                $('#junctions-maxdepth').val(swmmjs.model['JUNCTIONS'][id]['Dmax'])
+                $('#junctions-initialdepth').val(swmmjs.model['JUNCTIONS'][id]['Dinit'])
+                $('#junctions-surchargedepth').val(swmmjs.model['JUNCTIONS'][id]['Dsurch'])
+                $('#junctions-pondedarea').val(swmmjs.model['JUNCTIONS'][id]['Aponded'])
+            }
+        }
