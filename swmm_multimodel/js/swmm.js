@@ -529,30 +529,12 @@ d3.inp = function() {
             })
         }
 
-        /*d3.select('#svgSimple').on('mousemove', function() {
-            swmmjs.currentPosition = [d3.event.pageX, d3.event.pageY]; // log the mouse x,y position
-            let svgEl = document.getElementById('svgSimple');
-            let pt = svgEl.createSVGPoint();
-            
-            pt.x = d3.event.pageX;
-            pt.y = d3.event.pageY;
-            let globalPoint = pt.matrixTransform(svgEl.getScreenCTM().inverse());
-            document.getElementById('xy').innerHTML = 'X: ' + (pt.x) + ', Y: ' + (pt.y);
-            document.getElementById('xy2').innerHTML = 'X: ' + (globalPoint.x).toFixed(0) + ', Y: ' + (globalPoint.y).toFixed(0);
-        });*/
-
         // Enable clicking to create junctions
         $('#addJunction').click(function(e){
-            let svg = d3.select('#svgSimple');
+            // Set the click effect to 'createJunction'
+            swmmjs.model.clickEffect = 'createJunction';
 
-            /*function drawCircle(x, y, size){
-                console.log('Drawing Circle at', x, y , size);
-                svg.append('circle')
-                .attr('class', 'click-circle')
-                .attr('cx', x)
-                .attr('cy', y)
-                .attr('r', size)
-            }*/
+            let svg = d3.select('#svgSimple');
 
             var coords = d3.values(swmmjs.model.COORDINATES),
 		    x = function(c) {
@@ -576,93 +558,70 @@ d3.inp = function() {
             svg.strokeWidth = height / 200;
             svg.top = svg.maxy + scale;
 
-
-
-
-
             svg.on('click', function() {
-                /*let svgEl = svg.node();
-                let pt = svgEl.createSVGPoint();
-                let g = svg.select('g')
-                pt.x = d3.event.x;
-                pt.y = d3.event.y;
-                //globalPoint = pt.matrixTransform(g.node().getCTM().inverse());
-                let globalPoint = pt.matrixTransform(svgEl.getScreenCTM().inverse());*/
+                // If the model is not in create junction mode, return.
+                if(swmmjs.model.clickEffect !== 'createJunction'){
+                    // Remove this click effect.
+                    svg.on('click', null);
+                    return;
+                // Change the model click effect to edit.
+                } else {
+                    swmmjs.model.clickEffect = 'edit';
+                }
 
                 let xy = d3.mouse(this);
                 let transform = d3.zoomTransform(svg.node());
                 let xy1 = transform.invert(xy);
+                let id = 0;
 
                 // Create a new id
-                swmmjs.model.JUNCTIONS.push({Description: 'Desc', Invert: '', Dmax: '', Dinit: '', Dsurch: '', Aponded: ''})
-                let id = swmmjs.model.JUNCTIONS.length - 1;
+                // The next id will be the next available integer from a set
+                // That excludes all values from JUNCTIONS.Junction and SUBCATCHMENTS.Subcatchment
+                // This should likely be a function that is called by all of the methods that may create a new
+                // coordinate value
+                let numlist = [];
+                // Push indexes from JUNCTIONS to numlist
+                swmmjs.model.JUNCTIONS.forEach(function(value, i){
+                    numlist.push(i);
+                })
+                // Push indexes from SUBCATCHMENTS to numlist
+                swmmjs.model.SUBCATCHMENTS.forEach(function(value, i){
+                    numlist.push(i);
+                })
+
+                // Get the first integer that is not in numlist
+                for(let i = 1; id === 0; i++){
+                    if(numlist.indexOf(i) === -1){
+                        id = i;
+                    }
+                }
+
+                
+                swmmjs.model.JUNCTIONS[id] = {Description: 'Desc', Invert: 0, Dmax: 0, Dinit: 0, Dsurch: 0, Aponded: 0}
+
+                //let id = swmmjs.model.JUNCTIONS.length - 1;
                 swmmjs.model['COORDINATES'][id] = [];
 
 
                 swmmjs.model['COORDINATES'][id]['x'] = Math.floor(xy1[0])
                 swmmjs.model['COORDINATES'][id]['y'] = Math.floor(svg.top - xy1[1])
 
-
-                // Refresh the view
-                // The d3 structure that controls the nodes is called:
-                /*var el = d3.select('#svgSimple').select('g')
-                el.append('g').attr('id',id).attr('class', 'node_ gjunction').append('circle')
-                .attr('cx', xy1[0])
-                .attr('cy', xy1[1])
-                .attr('r', svg.nodeSize)
-                .attr('data-x', xy1[0])
-                .attr('data-y', xy1[1])
-                .attr('title', id)
-                .attr('onclick', 'modalEditJunctions('+id+');')
-                .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
-                .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                    .attr('class', 'junction')
-                .attr('fill', 'black');*/
-
-                function getJunctionx(d) {
+                // This function is used by the function filtered() below to 
+                /*function getJunctionx(d) {
                     pos = swmmjs.model.COORDINATES.map(function(e) { return e.x; }).indexOf(d.x)
                     return typeof swmmjs.model.JUNCTIONS[pos] !== 'undefined'
-                }
+                }*/
 
-                var filtered = swmmjs.model.COORDINATES.reduce((acc, next, i) => {
-                    //return getJunctionx(next) && acc.push(i), acc
+                // Match the junction ID to the COORDINATE ID
+                /*var filtered = swmmjs.model.COORDINATES.reduce((acc, next, i) => {
                     return getJunctionx(next) && (acc[i] = swmmjs.model.COORDINATES[i]), acc
-                }, []);
+                }, []);*/
 
-                console.log(filtered)
+                //junctionData = filtered;
 
-                junctionData = filtered;
-
-
-                /*function getJunctions(d) {
-                    pos = swmmjs.model.COORDINATES.map(function(e) { return e.x; }).indexOf(d.x)
-                    return typeof swmmjs.model.JUNCTIONS[pos] !== 'undefined'
-                }
-        
-                junctionData = swmmjs.model.COORDINATES.filter(getJunctions);*/
-                /*d3.select('#svgSimple').select('g').selectAll('.gjunction')
-                    .data(junctionData)
-                    .enter().append('circle')
-                    .attr('cx', function(c) {return c.x})
-                    .attr('cy', function(c) {return svg.top - c.y})
-                    .attr('r', svg.nodeSize)
-                    .attr('data-x', function(c) {return c.x})
-                    .attr('data-y', function(c) {return svg.top - c.y})
-                    .attr('onclick', 'modalEditJunctions('+id+');')
-                    .attr('title', id)
-                    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
-                    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                        .attr('class', 'junction')
-                    .attr('fill', 'black');*/
                 let jnodes = d3.select('#svgSimple').select('g').selectAll('.gjunction')
-                //jnodes.exit().remove();
-                //jnodes.remove();
-
-
-                //el.append('g').attr('id',id).attr('class', 'node_ gjunction').append('circle')
 			    color = (swmmjs.INPUT === swmmjs.mode ? swmmjs.defaultColor: nodeColors[r(v)]);
                 d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'node_ gjunction').append('circle')
-                //jnodes.append('g').attr('id', id).attr('class', 'node_ gjunction').append('circle')
                     .attr('cx', xy1[0])
                     .attr('cy', xy1[1])
                     .attr('r', swmmjs.svg.nodeSize)
@@ -674,25 +633,87 @@ d3.inp = function() {
                     .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
                         .attr('class', 'junction')
                     .attr('fill', color);
-
-                /*jnodes.transition()
-                    .duration(500)
-                    .attr('cx', xy1[0])
-                    .attr('cy', xy1[1])*/
-
                     
                 // Spawn an editing window for the junction object
                 modalEditJunctions(id);
 
+                swmmjs.model.clickEffect = 'edit';
                 svg.on('click', null);
+            })
+        })
 
-                //swmmjs.applyScale(svg)
+        // Enable clicking to create conduits
+        $('#addConduit').click(function(e){
+            // Set the edit mode to 'createConduit'
+            swmmjs.model.clickEffect = 'createConduit'
+            // idlist keeps track of which nodes are used to create the conduit.
+            let idlist = [];
 
-                //swmmjs.svg.render();
+            let svg = d3.select('#svgSimple');
 
-                // restore normal click effects
+            // Prepare to click only on nodes to create a junction.
+            // The UI should stay in createConduit mode until the
+            // complete link has been created.
 
+            // 1: user clicks on a node
+            // 2: Node is given a class of 'usnode' (changes node color)
+            // 3: user clicks on a second node
+            // 4: using the usnode and dsnode, add an entry into the CONDUITS array.
 
+            // When a user clicks on a node, push the id of the node to the idlist
+            //$('.node_').click(function(e){
+            d3.selectAll('.node_').on('click', function(){
+                // Get the first circle child of this element
+                let child = this.firstChild;
+                idlist.push({ID: this.id, x: $(child).attr('cx'), y: $(child).attr('cy')})
+                
+                // If there are more than two objects in idlist, end the edit and create the conduit
+                if(idlist.length >= 2){
+                    // Remove the click effect from the nodes
+                    d3.selectAll('.node_').on('click', null);
+
+                    // Create a CONDUITS object.
+                    // Create a new id
+                    let id = 0;
+                    // The next id will be the next available integer from a set
+                    // That excludes all values from CONDUITS.Conduit 
+                    // This should likely be a function that is called by all of the methods that may create a new
+                    // link value
+                    let numlist = [];
+                    // Push indexes from CONDUITS to numlist
+                    swmmjs.model.CONDUITS.forEach(function(value, i){
+                        numlist.push(i);
+                    })
+
+                    // Get the first integer that is not in numlist
+                    for(let i = 1; id === 0; i++){
+                        if(numlist.indexOf(i) === -1){
+                            id = i;
+                        }
+                    }
+
+                    // Create the conduit
+                    swmmjs.model['CONDUITS'][id] = {FromNode: idlist[0].ID, InOffset: 0, InitFlow: 0, Length: 400, MaxFlow: 0, OutOffset: 0, Roughness: 0.01, ToNode: idlist[1].ID};
+                         
+                    swmmjs.model['XSECTIONS'][id] = {Shape: 'CIRCULAR', Geom1: 1.5, Geom2: 0, Geom3: 0, Geom4: 0, Barrels: 1}
+                    swmmjs.model['LOSSES'][id] = {Kin: 0, Kout: 0, Kavg: 0, FlapGate: 'NO', SeepRate: 0};
+                    // Add the conduit to the map
+                    d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'link_ gconduit').append('line')
+                    .attr('x1', idlist[0].x)
+                    .attr('y1', idlist[0].y)
+                    .attr('x2', idlist[1].x)
+                    .attr('y2', idlist[1].y)
+                    .attr('onclick', 'modalEditConduits('+id+');')
+                    .attr('title', id)
+                    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                        .attr('class', 'conduit')
+                    .attr('stroke', color)
+                    .attr('stroke-width', 45);
+
+                    // Change back to an editing environment
+                    swmmjs.model.clickEffect = 'edit';
+                }
             })
         })
 
@@ -1734,140 +1755,7 @@ d3.inp = function() {
             populateRaingagesList();
         }
 
-        /////////////////////////////////////////////////////////////
-        // Subcatchments Modal 
-        /////////////////////////////////////////////////////////////
-
-        var modalEditSubcatchments = function(id){
-            // Show the modal.
-            $('#modalSubcatchments').modal('toggle');
-
-            // Track the id of the original object
-            $('#subcatchments-form-id').val(id);
-
-            // Make sure to check if the SUBCATCHMENTS object exists.
-            if(typeof swmmjs.model['SUBCATCHMENTS'] === 'undefined'){
-                swmmjs.model['SUBCATCHMENTS'] = [];
-            } else {
-                $('#subcatchments-name').val(id)
-                // If there are tags, and one of the tags has this Subcatchment id, use the tag
-                // Check for object.type='Subcatch' and object.ID = itemID;
-                function tagQuery(thisObj){
-                    return thisObj.Type==='Subcatch' && thisObj.ID === id; 
-                }
-                // For every tag element
-                let thisArray = Object.values(swmmjs.model['TAGS']);
-
-                // Find the tag that matches this RG id
-                let thisEl = thisArray.findIndex(tagQuery);
-                if(thisEl >= 0){
-                    $('#subcatchments-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
-                } else {
-                    $('#subcatchments-tag').val('');
-                }
-
-                $('#subcatchments-description').val(swmmjs.model['SUBCATCHMENTS'][id]['Description'])
-                $('#subcatchments-raingage').val(swmmjs.model['SUBCATCHMENTS'][id]['RainGage'])
-                $('#subcatchments-outlet').val(swmmjs.model['SUBCATCHMENTS'][id]['Outlet'])
-                $('#subcatchments-area').val(swmmjs.model['SUBCATCHMENTS'][id]['Area'])
-                $('#subcatchments-width').val(swmmjs.model['SUBCATCHMENTS'][id]['Width'])
-                $('#subcatchments-pctslope').val(swmmjs.model['SUBCATCHMENTS'][id]['PctSlope'])
-                $('#subcatchments-pctimperv').val(swmmjs.model['SUBCATCHMENTS'][id]['PctImperv'])
-                $('#subcatchments-nimperv').val(swmmjs.model['SUBAREAS'][id]['NImperv'])
-                $('#subcatchments-nperv').val(swmmjs.model['SUBAREAS'][id]['NPerv'])
-                $('#subcatchments-dstoreimperv').val(swmmjs.model['SUBAREAS'][id]['SImperv'])
-                $('#subcatchments-dstoreperv').val(swmmjs.model['SUBAREAS'][id]['SPerv'])
-                $('#subcatchments-pctzeroimperv').val(swmmjs.model['SUBAREAS'][id]['PctZero'])
-                $('#subcatchments-subarearouting').val(swmmjs.model['SUBAREAS'][id]['RouteTo'])
-                $('#subcatchments-pctrouted').val(swmmjs.model['SUBAREAS'][id]['PctRouted'])
-                $('#subcatchments-curblength').val(swmmjs.model['SUBCATCHMENTS'][id]['CurbLen'])
-                
-
-            }
-        }
-
-        $('#save-modal-subcatchments').click(function(e){
-            saveModalSubcatchments()
-        })
-
-        function saveModalSubcatchments(){
-            
-            // Reassign the id of the subcatchment if the user has changed the name value
-            id = $('#subcatchments-form-id').val();
-
-            // If the user has changed the value
-            if(id !== $('#subcatchments-name').val()) {
-                // Copy the elements of the old object into a new object using the key name
-                Object.defineProperty(
-                    swmmjs.model['SUBCATCHMENTS'], 
-                    $('#subcatchments-name').val(), 
-                    Object.getOwnPropertyDescriptor(swmmjs.model['SUBCATCHMENTS'], id)
-                );
-                // Delete the old object
-                delete swmmjs.model['SUBCATCHMENTS'][id]
-
-                // Copy the elements of the old object into a new object using the key name
-                Object.defineProperty(
-                    swmmjs.model['SUBAREAS'], 
-                    $('#subcatchments-name').val(), 
-                    Object.getOwnPropertyDescriptor(swmmjs.model['SUBAREAS'], id)
-                );
-                // Delete the old object
-                delete swmmjs.model['SUBAREAS'][id]
-
-                id = $('#subcatchments-name').val();
-            }
-
-            // If there are tags, and one of the tags has this subcatchment id, use the tag
-            // Check for object.type='Node' and object.ID = itemID;
-            function tagQuery(thisObj){
-                return thisObj.Type==='Subcatch' && thisObj.ID === id; 
-            }
-            // For every tag element
-            let thisArray = Object.values(swmmjs.model['TAGS']);
-
-            // Find the tag that matches this RG id
-            let thisEl = thisArray.findIndex(tagQuery);
-            if(thisEl >= 0){
-                swmmjs.model['TAGS'][thisEl].Tag = $('#subcatchments-tag').val();
-            } else {
-                // If there is no tag with this value, and there is a value in the input, 
-                // create a new tag
-                if($('#subcatchments-tag').val() !== ''){
-                    swmmjs.model['TAGS'][Object.keys(swmmjs.model['TAGS']).length] = {Type: 'Subcatch', ID: id, Tag: $('#subcatchments-tag').val()}
-                }
-            }
-            
-            swmmjs.model['SUBCATCHMENTS'][id]['Description'] = $('#subcatchments-description').val()
-            swmmjs.model['SUBCATCHMENTS'][id]['RainGage'] = $('#subcatchments-raingage').val()
-            swmmjs.model['SUBCATCHMENTS'][id]['Outlet'] =$('#subcatchments-outlet').val()
-            swmmjs.model['SUBCATCHMENTS'][id]['Area'] = $('#subcatchments-area').val()
-            swmmjs.model['SUBCATCHMENTS'][id]['Width'] = $('#subcatchments-width').val()
-            swmmjs.model['SUBCATCHMENTS'][id]['PctSlope'] = $('#subcatchments-pctslope').val()
-            swmmjs.model['SUBCATCHMENTS'][id]['PctImperv'] = $('#subcatchments-pctimperv').val()
-            swmmjs.model['SUBAREAS'][id]['NImperv'] = $('#subcatchments-nimperv').val()
-            swmmjs.model['SUBAREAS'][id]['NPerv'] = $('#subcatchments-nperv').val()
-            swmmjs.model['SUBAREAS'][id]['SImperv'] = $('#subcatchments-dstoreimperv').val()
-            swmmjs.model['SUBAREAS'][id]['SPerv'] = $('#subcatchments-dstoreperv').val()
-            swmmjs.model['SUBAREAS'][id]['PctZero'] = $('#subcatchments-pctzeroimperv').val()
-            swmmjs.model['SUBAREAS'][id]['RouteTo'] = $('#subcatchments-subarearouting').val()
-            swmmjs.model['SUBAREAS'][id]['PctRouted'] = $('#subcatchments-pctrouted').val()
-            swmmjs.model['SUBCATCHMENTS'][id]['CurbLen'] = $('#subcatchments-curblength').val()
-
-            
-            // Close the modal.
-            $('#modalSubcatchments').modal('toggle');
-
-            // Refresh the Raingages list.
-            populateSubcatchmentsList();
-        }
-
-        // Clicking on a polygon in the map will open a modal
-        $('.polygon_').click(function(e){
-            if(this.classList.contains('gpolygon')){
-                modalEditSubcatchments(this.id);
-            }
-        })
+        
 
         /////////////////////////////////////////////////////////////
         // Junctions Modal 
@@ -1948,11 +1836,11 @@ d3.inp = function() {
         }
 
         // Clicking on a junction in the map will open a modal
-        $('.node_').click(function(e){
+        /*$('.node_').click(function(e){
             if(this.classList.contains('gjunction')){
                 modalEditJunctions(this.id);
             }
-        })
+        })*/
 
         /////////////////////////////////////////////////////////////
         // Outfalls Modal 
@@ -2082,76 +1970,6 @@ d3.inp = function() {
             }
         })
 
-        /////////////////////////////////////////////////////////////
-        // Conduits Modal 
-        /////////////////////////////////////////////////////////////
-
-        var modalEditConduits = function(id){
-            // Show the modal.
-            $('#modalConduits').modal('toggle');
-
-            // Retain the original ID for editing purposes.
-            $('#conduits-form-id').val(id);
-
-            // Make sure to check if the CONDUITS object exists.
-            if(typeof swmmjs.model['CONDUITS'] === 'undefined'){
-                swmmjs.model['CONDUITS'] = [];
-            } else {
-                // If there are tags, and one of the tags has this id, use the tag
-                // Check for object.type='Link' and object.ID = itemID;
-                function tagQuery(thisObj){
-                    return thisObj.Type==='Link' && thisObj.ID === id; 
-                }
-                // For every tag element
-                let thisArray = Object.values(swmmjs.model['TAGS']);
-
-                // Find the tag that matches this RG id
-                let thisEl = thisArray.findIndex(tagQuery);
-                if(thisEl >= 0){
-                    $('#conduits-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
-                } else {
-                    $('#conduits-tag').val('');
-                }
-
-                $('#conduits-name').val(id)
-                $('#conduits-inletnode').val(swmmjs.model['CONDUITS'][id]['FromNode'])
-                $('#conduits-outletnode').val(swmmjs.model['CONDUITS'][id]['ToNode'])
-                $('#conduits-description').val(swmmjs.model['CONDUITS'][id]['Description'])
-                $('#conduits-shape').val(swmmjs.model['XSECTIONS'][id]['Shape'])
-                $('#conduits-maxdepth').val(swmmjs.model['XSECTIONS'][id]['Geom1'])
-                $('#conduits-length').val(swmmjs.model['CONDUITS'][id]['Length'])
-                $('#conduits-roughness').val(swmmjs.model['CONDUITS'][id]['Roughness'])
-                $('#conduits-inletoffset').val(swmmjs.model['CONDUITS'][id]['InOffset'])
-                $('#conduits-outletoffset').val(swmmjs.model['CONDUITS'][id]['OutOffset'])
-                $('#conduits-initialflow').val(swmmjs.model['CONDUITS'][id]['InitFlow'])
-                $('#conduits-maximumflow').val(swmmjs.model['CONDUITS'][id]['MaxFlow'])
-                // If there are no losses for this pipe, create some
-                if(typeof swmmjs.model.LOSSES[id] === 'undefined'){
-                    swmmjs.model.LOSSES[id] = {Kin: 0, Kout: 0, Kavg: 0, FlapGate: '', SeepRate: 0};
-                }
-                $('#conduits-entrylosscoeff').val(swmmjs.model['LOSSES'][id]['Kin'])
-                $('#conduits-exitlosscoeff').val(swmmjs.model['LOSSES'][id]['Kout'])
-                $('#conduits-avglosscoeff').val(swmmjs.model['LOSSES'][id]['Kavg'])
-                $('#conduits-seepagelossrate').val(swmmjs.model['LOSSES'][id]['SeepRate'])
-                $('#conduits-flapgate').val(swmmjs.model['LOSSES'][id]['FlapGate'])
-            }
-        }
-
-        $('#save-modal-conduits').click(function(e){
-            saveModalConduits()
-        })
-
-        function saveModalConduits(){
-            // Show the modal.
-            $('#modalConduits').modal('toggle');
-        }
-
-        // Clicking on a conduit in the map will open a modal
-        $('.link_').click(function(e){
-            if(this.classList.contains('gconduit')){
-                modalEditConduits(this.id);
-            }
-        })
 
         /////////////////////////////////////////////////////////////
         // Pollutants Modal 
@@ -2855,7 +2673,7 @@ d3.inp = function() {
             }
                 // add other if neccesary
         },
-        model = {COORDINATES: [], LABELS: [], STORAGE: {}, OUTFALLS: {}},
+        model = {COORDINATES: [], LABELS: [], STORAGE: [], OUTFALLS: [], clickEffect: 'edit'},
         lines = text.split(/\r\n|\r|\n/),
             section = null;
         let curDesc = '';
@@ -3822,6 +3640,7 @@ var swmmjs = function() {
                             .attr('title', polygon)
                             .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                             .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                            .attr('onclick', 'modalEditSubcatchments('+polygon+');')
                             .attr('class', 'polygon')
                             .attr('fill', 'transparent')
                             .attr("stroke-width", 7)
@@ -3874,11 +3693,12 @@ var swmmjs = function() {
                         .attr('x2', c2.x)
                         .attr('y2', svg.top - c2.y)
                                             .attr('title', link)
-                                            .on('mouseover', swmmjs.svg.tooltip)
-                                            .on('mouseout', swmmjs.svg.clearTooltips)
+                                            .attr('onclick', 'modalEditConduits('+link+');')
+                                            .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                                            .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
                         .attr('stroke', color)
                                             .attr('class', 'conduit')
-                        .attr('stroke-width', svg.strokeWidth);
+                        .attr('stroke-width', svg.strokeWidth)
                     } else if ('PUMPS' === s) {
                                     // line
                     el.append('g').attr('id',link).attr('class', 'link_ PUMP').append('line')
@@ -4453,50 +4273,339 @@ var swmmjs = function() {
 swmmjs = swmmjs();
 
 
-        /////////////////////////////////////////////////////////////
-        // Junctions Modal 
-        /////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+// Junctions Modal 
+/////////////////////////////////////////////////////////////
 
-        var modalEditJunctions = function(id){
-            // Show the modal.
-            $('#modalJunctions').modal('toggle');
+var modalEditJunctions = function(id){
+    // If the model is not in edit mode, return
+    if(swmmjs.model.clickEffect !== 'edit'){
+        return;
+    }
 
-            // Retain the original ID for editing purposes.
-            $('#junctions-form-id').val(id);
+    // Show the modal.
+    $('#modalJunctions').modal('toggle');
 
-            // Make sure to check if the JUNCTIONS object exists.
-            if(typeof swmmjs.model['JUNCTIONS'] === 'undefined'){
-                swmmjs.model['JUNCTIONS'] = [];
-            } else {
-                $('#junctions-name').val(id)
-                // If there are coordinates, and one of the coordinates has this junction id, use the xy position of that
-                if(typeof swmmjs.model['COORDINATES'] !== 'undefined'){
-                    $('#junctions-xcoordinate').val(swmmjs.model['COORDINATES'][id]['x'])
-                    $('#junctions-ycoordinate').val(swmmjs.model['COORDINATES'][id]['y'])
-                }
+    // Retain the original ID for editing purposes.
+    $('#junctions-form-id').val(id);
 
-                // If there are tags, and one of the tags has this id, use the tag
-                // Check for object.type='Node' and object.ID = itemID;
-                function tagQuery(thisObj){
-                    return thisObj.Type==='Node' && thisObj.ID === id; 
-                }
-                // For every tag element
-                let thisArray = Object.values(swmmjs.model['TAGS']);
-
-                // Find the tag that matches this RG id
-                let thisEl = thisArray.findIndex(tagQuery);
-                if(thisEl >= 0){
-                    $('#junctions-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
-                } else {
-                    $('#junctions-tag').val('');
-                }
-
-                $('#junctions-name').val(id)
-                $('#junctions-description').val(swmmjs.model['JUNCTIONS'][id]['Description'])
-                $('#junctions-invertel').val(swmmjs.model['JUNCTIONS'][id]['Invert'])
-                $('#junctions-maxdepth').val(swmmjs.model['JUNCTIONS'][id]['Dmax'])
-                $('#junctions-initialdepth').val(swmmjs.model['JUNCTIONS'][id]['Dinit'])
-                $('#junctions-surchargedepth').val(swmmjs.model['JUNCTIONS'][id]['Dsurch'])
-                $('#junctions-pondedarea').val(swmmjs.model['JUNCTIONS'][id]['Aponded'])
-            }
+    // Make sure to check if the JUNCTIONS object exists.
+    if(typeof swmmjs.model['JUNCTIONS'] === 'undefined'){
+        swmmjs.model['JUNCTIONS'] = [];
+    } else {
+        $('#junctions-name').val(id)
+        // If there are coordinates, and one of the coordinates has this junction id, use the xy position of that
+        if(typeof swmmjs.model['COORDINATES'] !== 'undefined'){
+            $('#junctions-xcoordinate').val(swmmjs.model['COORDINATES'][id]['x'])
+            $('#junctions-ycoordinate').val(swmmjs.model['COORDINATES'][id]['y'])
         }
+
+        // If there are tags, and one of the tags has this id, use the tag
+        // Check for object.type='Node' and object.ID = itemID;
+        function tagQuery(thisObj){
+            return thisObj.Type==='Node' && thisObj.ID === id; 
+        }
+        // For every tag element
+        let thisArray = Object.values(swmmjs.model['TAGS']);
+
+        // Find the tag that matches this RG id
+        let thisEl = thisArray.findIndex(tagQuery);
+        if(thisEl >= 0){
+            $('#junctions-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+        } else {
+            $('#junctions-tag').val('');
+        }
+
+        $('#junctions-name').val(id)
+        $('#junctions-description').val(swmmjs.model['JUNCTIONS'][id]['Description'])
+        $('#junctions-invertel').val(swmmjs.model['JUNCTIONS'][id]['Invert'])
+        $('#junctions-maxdepth').val(swmmjs.model['JUNCTIONS'][id]['Dmax'])
+        $('#junctions-initialdepth').val(swmmjs.model['JUNCTIONS'][id]['Dinit'])
+        $('#junctions-surchargedepth').val(swmmjs.model['JUNCTIONS'][id]['Dsurch'])
+        $('#junctions-pondedarea').val(swmmjs.model['JUNCTIONS'][id]['Aponded'])
+    }
+}
+
+/////////////////////////////////////////////////////////////
+// Subcatchments Modal 
+/////////////////////////////////////////////////////////////
+
+var modalEditSubcatchments = function(id){
+    // If the model is not in edit mode, return
+    if(swmmjs.model.clickEffect !== 'edit'){
+        return;
+    }
+    // Show the modal.
+    $('#modalSubcatchments').modal('toggle');
+
+    // Track the id of the original object
+    $('#subcatchments-form-id').val(id);
+
+    // Make sure to check if the SUBCATCHMENTS object exists.
+    if(typeof swmmjs.model['SUBCATCHMENTS'] === 'undefined'){
+        swmmjs.model['SUBCATCHMENTS'] = [];
+    } else {
+        $('#subcatchments-name').val(id)
+        // If there are tags, and one of the tags has this Subcatchment id, use the tag
+        // Check for object.type='Subcatch' and object.ID = itemID;
+        function tagQuery(thisObj){
+            return thisObj.Type==='Subcatch' && thisObj.ID === id; 
+        }
+        // For every tag element
+        let thisArray = Object.values(swmmjs.model['TAGS']);
+
+        // Find the tag that matches this RG id
+        let thisEl = thisArray.findIndex(tagQuery);
+        if(thisEl >= 0){
+            $('#subcatchments-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+        } else {
+            $('#subcatchments-tag').val('');
+        }
+
+        $('#subcatchments-description').val(swmmjs.model['SUBCATCHMENTS'][id]['Description'])
+        $('#subcatchments-raingage').val(swmmjs.model['SUBCATCHMENTS'][id]['RainGage'])
+        $('#subcatchments-outlet').val(swmmjs.model['SUBCATCHMENTS'][id]['Outlet'])
+        $('#subcatchments-area').val(swmmjs.model['SUBCATCHMENTS'][id]['Area'])
+        $('#subcatchments-width').val(swmmjs.model['SUBCATCHMENTS'][id]['Width'])
+        $('#subcatchments-pctslope').val(swmmjs.model['SUBCATCHMENTS'][id]['PctSlope'])
+        $('#subcatchments-pctimperv').val(swmmjs.model['SUBCATCHMENTS'][id]['PctImperv'])
+        $('#subcatchments-nimperv').val(swmmjs.model['SUBAREAS'][id]['NImperv'])
+        $('#subcatchments-nperv').val(swmmjs.model['SUBAREAS'][id]['NPerv'])
+        $('#subcatchments-dstoreimperv').val(swmmjs.model['SUBAREAS'][id]['SImperv'])
+        $('#subcatchments-dstoreperv').val(swmmjs.model['SUBAREAS'][id]['SPerv'])
+        $('#subcatchments-pctzeroimperv').val(swmmjs.model['SUBAREAS'][id]['PctZero'])
+        $('#subcatchments-subarearouting').val(swmmjs.model['SUBAREAS'][id]['RouteTo'])
+        $('#subcatchments-pctrouted').val(swmmjs.model['SUBAREAS'][id]['PctRouted'])
+        $('#subcatchments-curblength').val(swmmjs.model['SUBCATCHMENTS'][id]['CurbLen'])
+        
+
+    }
+}
+
+$('#save-modal-subcatchments').click(function(e){
+    saveModalSubcatchments()
+})
+
+function saveModalSubcatchments(){
+    
+    // Reassign the id of the subcatchment if the user has changed the name value
+    id = $('#subcatchments-form-id').val();
+
+    // If the user has changed the value
+    if(id !== $('#subcatchments-name').val()) {
+        // Copy the elements of the old object into a new object using the key name
+        Object.defineProperty(
+            swmmjs.model['SUBCATCHMENTS'], 
+            $('#subcatchments-name').val(), 
+            Object.getOwnPropertyDescriptor(swmmjs.model['SUBCATCHMENTS'], id)
+        );
+        // Delete the old object
+        delete swmmjs.model['SUBCATCHMENTS'][id]
+
+        // Copy the elements of the old object into a new object using the key name
+        Object.defineProperty(
+            swmmjs.model['SUBAREAS'], 
+            $('#subcatchments-name').val(), 
+            Object.getOwnPropertyDescriptor(swmmjs.model['SUBAREAS'], id)
+        );
+        // Delete the old object
+        delete swmmjs.model['SUBAREAS'][id]
+
+        id = $('#subcatchments-name').val();
+    }
+
+    // If there are tags, and one of the tags has this subcatchment id, use the tag
+    // Check for object.type='Node' and object.ID = itemID;
+    function tagQuery(thisObj){
+        return thisObj.Type==='Subcatch' && thisObj.ID === id; 
+    }
+    // For every tag element
+    let thisArray = Object.values(swmmjs.model['TAGS']);
+
+    // Find the tag that matches this RG id
+    let thisEl = thisArray.findIndex(tagQuery);
+    if(thisEl >= 0){
+        swmmjs.model['TAGS'][thisEl].Tag = $('#subcatchments-tag').val();
+    } else {
+        // If there is no tag with this value, and there is a value in the input, 
+        // create a new tag
+        if($('#subcatchments-tag').val() !== ''){
+            swmmjs.model['TAGS'][Object.keys(swmmjs.model['TAGS']).length] = {Type: 'Subcatch', ID: id, Tag: $('#subcatchments-tag').val()}
+        }
+    }
+    
+    swmmjs.model['SUBCATCHMENTS'][id]['Description'] = $('#subcatchments-description').val()
+    swmmjs.model['SUBCATCHMENTS'][id]['RainGage'] = $('#subcatchments-raingage').val()
+    swmmjs.model['SUBCATCHMENTS'][id]['Outlet'] =$('#subcatchments-outlet').val()
+    swmmjs.model['SUBCATCHMENTS'][id]['Area'] = $('#subcatchments-area').val()
+    swmmjs.model['SUBCATCHMENTS'][id]['Width'] = $('#subcatchments-width').val()
+    swmmjs.model['SUBCATCHMENTS'][id]['PctSlope'] = $('#subcatchments-pctslope').val()
+    swmmjs.model['SUBCATCHMENTS'][id]['PctImperv'] = $('#subcatchments-pctimperv').val()
+    swmmjs.model['SUBAREAS'][id]['NImperv'] = $('#subcatchments-nimperv').val()
+    swmmjs.model['SUBAREAS'][id]['NPerv'] = $('#subcatchments-nperv').val()
+    swmmjs.model['SUBAREAS'][id]['SImperv'] = $('#subcatchments-dstoreimperv').val()
+    swmmjs.model['SUBAREAS'][id]['SPerv'] = $('#subcatchments-dstoreperv').val()
+    swmmjs.model['SUBAREAS'][id]['PctZero'] = $('#subcatchments-pctzeroimperv').val()
+    swmmjs.model['SUBAREAS'][id]['RouteTo'] = $('#subcatchments-subarearouting').val()
+    swmmjs.model['SUBAREAS'][id]['PctRouted'] = $('#subcatchments-pctrouted').val()
+    swmmjs.model['SUBCATCHMENTS'][id]['CurbLen'] = $('#subcatchments-curblength').val()
+
+    
+    // Close the modal.
+    $('#modalSubcatchments').modal('toggle');
+
+    // Refresh the Project menu list.
+    populateSubcatchmentsList();
+
+    // Set the clickEffect to 'edit'
+    swmmjs.model.clicEffect = 'edit';
+}
+
+// Clicking on a polygon in the map will open a modal
+/*$('.polygon_').click(function(e){
+    if(this.classList.contains('gpolygon')){
+        modalEditSubcatchments(this.id);
+    }
+})*/
+
+/////////////////////////////////////////////////////////////
+// Project Summary Modal 
+/////////////////////////////////////////////////////////////
+
+var modalProjectSummary = function(){
+    // Show the modal.
+    $('#modalProjectSummary').modal('toggle');
+    if(typeof swmmjs.model['RAINGAGES'] !== 'undefined')
+    $('#summary-raingages').val(Object.keys(swmmjs.model['RAINGAGES']).length)
+    if(typeof swmmjs.model['SUBCATCHMENTS'] !== 'undefined')
+    $('#summary-subcatchments').val(Object.keys(swmmjs.model['SUBCATCHMENTS']).length)
+    if(typeof swmmjs.model['AQUIFERS'] !== 'undefined')
+    $('#summary-aquifers').val(Object.keys(swmmjs.model['AQUIFERS']).length)
+    if(typeof swmmjs.model['SNOWPACKS'] !== 'undefined')
+    $('#summary-snowpacks').val(Object.keys(swmmjs.model['SNOWPACKS']).length)
+    if(typeof swmmjs.model['HYDROGRAPHS'] !== 'undefined')
+    $('#summary-rdiihydrographs').val(Object.keys(swmmjs.model['HYDROGRAPHS']).length)
+    $('#summary-infiltrationmodel').val(swmmjs.model['OPTIONS']['INFILTRATION'].Value)
+    if(typeof swmmjs.model['JUNCTIONS'] !== 'undefined')
+    $('#summary-junctionnodes').val(Object.keys(swmmjs.model['JUNCTIONS']).length)
+    if(typeof swmmjs.model['OUTFALLS'] !== 'undefined')
+    $('#summary-outfallnodes').val(Object.keys(swmmjs.model['OUTFALLS']).length)
+    if(typeof swmmjs.model['DIVIDERS'] !== 'undefined')
+    $('#summary-dividernodes').val(Object.keys(swmmjs.model['DIVIDERS']).length)
+    if(typeof swmmjs.model['STORAGE'] !== 'undefined')
+    $('#summary-storagenodes').val(Object.keys(swmmjs.model['STORAGE']).length)
+    if(typeof swmmjs.model['CONDUITS'] !== 'undefined')
+    $('#summary-conduitlinks').val(Object.keys(swmmjs.model['CONDUITS']).length)
+    if(typeof swmmjs.model['PUMPS'] !== 'undefined')
+    $('#summary-pumplinks').val(Object.keys(swmmjs.model['PUMPS']).length)
+    if(typeof swmmjs.model['ORIFICES'] !== 'undefined')
+    $('#summary-orificelinks').val(Object.keys(swmmjs.model['ORIFICES']).length)
+    if(typeof swmmjs.model['WEIRS'] !== 'undefined')
+    $('#summary-weirlinks').val(Object.keys(swmmjs.model['WEIRS']).length)
+    if(typeof swmmjs.model['OUTLETS'] !== 'undefined')
+    $('#summary-outletlinks').val(Object.keys(swmmjs.model['OUTLETS']).length)
+    $('#summary-flowunits').val(swmmjs.model['OPTIONS']['FLOW_UNITS'].Value)
+    $('#summary-flowrouting').val(swmmjs.model['OPTIONS']['FLOW_ROUTING'].Value)
+    if(typeof swmmjs.model['CONTROLS'] !== 'undefined')
+    $('#summary-controlrules').val(Object.keys(swmmjs.model['CONTROLS']).length)
+    if(typeof swmmjs.model['POLLUTANTS'] !== 'undefined')
+    $('#summary-pollutants').val(Object.keys(swmmjs.model['POLLUTANTS']).length)
+    if(typeof swmmjs.model['LANDUSES'] !== 'undefined')
+    $('#summary-landuses').val(Object.keys(swmmjs.model['LANDUSES']).length)
+    if(typeof swmmjs.model['INFLOWS'] !== 'undefined')
+    $('#summary-tsinflows').val(Object.keys(swmmjs.model['INFLOWS']).length)
+    if(typeof swmmjs.model['DWF'] !== 'undefined')
+    $('#summary-dwinflows').val(Object.keys(swmmjs.model['DWF']).length)
+    if(typeof swmmjs.model['GROUNDWATER'] !== 'undefined')
+    $('#summary-gwinflows').val(Object.keys(swmmjs.model['GROUNDWATER']).length)
+    if(typeof swmmjs.model['RDII'] !== 'undefined')
+    $('#summary-rdiiinflows').val(Object.keys(swmmjs.model['RDII']).length)
+    if(typeof swmmjs.model['LID_CONTROLS'] !== 'undefined')
+    $('#summary-lidcontrols').val(Object.keys(swmmjs.model['LID_CONTROLS']).length)
+    if(typeof swmmjs.model['TREATMENT'] !== 'undefined')
+    $('#summary-treatmentunits').val(Object.keys(swmmjs.model['TREATMENT']).length)
+}
+
+
+/////////////////////////////////////////////////////////////
+// Report Status Modal 
+/////////////////////////////////////////////////////////////
+
+var modalReportStatus = function(){
+    // Show the modal.
+    $('#modalReportStatus').modal('toggle');
+    $('#reportStatusTextbox').text(document.getElementById('rptFile').innerHTML)
+    //if(typeof swmmjs.model['RAINGAGES'] !== 'undefined')
+    //$('#summary-raingages').val(Object.keys(swmmjs.model['RAINGAGES']).length)
+}
+
+/////////////////////////////////////////////////////////////
+// Conduits Modal 
+/////////////////////////////////////////////////////////////
+
+var modalEditConduits = function(id){
+    // Show the modal.
+    $('#modalConduits').modal('toggle');
+
+    // Retain the original ID for editing purposes.
+    $('#conduits-form-id').val(id);
+
+    // Make sure to check if the CONDUITS object exists.
+    if(typeof swmmjs.model['CONDUITS'] === 'undefined'){
+        swmmjs.model['CONDUITS'] = [];
+    } else {
+        // If there are tags, and one of the tags has this id, use the tag
+        // Check for object.type='Link' and object.ID = itemID;
+        function tagQuery(thisObj){
+            return thisObj.Type==='Link' && thisObj.ID === id; 
+        }
+        // For every tag element
+        let thisArray = Object.values(swmmjs.model['TAGS']);
+
+        // Find the tag that matches this RG id
+        let thisEl = thisArray.findIndex(tagQuery);
+        if(thisEl >= 0){
+            $('#conduits-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+        } else {
+            $('#conduits-tag').val('');
+        }
+
+        $('#conduits-name').val(id)
+        $('#conduits-inletnode').val(swmmjs.model['CONDUITS'][id]['FromNode'])
+        $('#conduits-outletnode').val(swmmjs.model['CONDUITS'][id]['ToNode'])
+        $('#conduits-description').val(swmmjs.model['CONDUITS'][id]['Description'])
+        $('#conduits-shape').val(swmmjs.model['XSECTIONS'][id]['Shape'])
+        $('#conduits-maxdepth').val(swmmjs.model['XSECTIONS'][id]['Geom1'])
+        $('#conduits-length').val(swmmjs.model['CONDUITS'][id]['Length'])
+        $('#conduits-roughness').val(swmmjs.model['CONDUITS'][id]['Roughness'])
+        $('#conduits-inletoffset').val(swmmjs.model['CONDUITS'][id]['InOffset'])
+        $('#conduits-outletoffset').val(swmmjs.model['CONDUITS'][id]['OutOffset'])
+        $('#conduits-initialflow').val(swmmjs.model['CONDUITS'][id]['InitFlow'])
+        $('#conduits-maximumflow').val(swmmjs.model['CONDUITS'][id]['MaxFlow'])
+        // If there are no losses for this pipe, create some
+        if(typeof swmmjs.model.LOSSES[id] === 'undefined'){
+            swmmjs.model.LOSSES[id] = {Kin: 0, Kout: 0, Kavg: 0, FlapGate: 'NO', SeepRate: 0};
+        }
+        $('#conduits-entrylosscoeff').val(swmmjs.model['LOSSES'][id]['Kin'])
+        $('#conduits-exitlosscoeff').val(swmmjs.model['LOSSES'][id]['Kout'])
+        $('#conduits-avglosscoeff').val(swmmjs.model['LOSSES'][id]['Kavg'])
+        $('#conduits-seepagelossrate').val(swmmjs.model['LOSSES'][id]['SeepRate'])
+        $('#conduits-flapgate').val(swmmjs.model['LOSSES'][id]['FlapGate'])
+    }
+}
+
+$('#save-modal-conduits').click(function(e){
+    saveModalConduits()
+})
+
+function saveModalConduits(){
+    // Show the modal.
+    $('#modalConduits').modal('toggle');
+}
+
+// Clicking on a conduit in the map will open a modal
+$('.link_').click(function(e){
+    if(this.classList.contains('gconduit')){
+        modalEditConduits(this.id);
+    }
+})

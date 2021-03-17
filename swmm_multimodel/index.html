@@ -29,7 +29,9 @@
     <!-- Custom styles for this template -->
     <link href="dashboard.css" rel="stylesheet">
   </head>
-  <body>
+  <body >
+      
+
     
 <header class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">SWMM-js</a>
@@ -107,7 +109,7 @@
                 Project
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="#">Summary</a>
+                    <a class="dropdown-item" id="nav-project-summary" href="#">Summary</a>
                     <a class="dropdown-item" href="#">Details</a>
                     <a class="dropdown-item" href="#">Defaults</a>
                     <a class="dropdown-item" href="#">Calibration Data...</a>
@@ -120,7 +122,7 @@
                 Report
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="#">Status</a>
+                    <a class="dropdown-item" id="nav-report-status" href="#">Status</a>
                     <a class="dropdown-item" href="#">Summary</a>
                     <a class="dropdown-item" href="#">Graph</a>
                     <a class="dropdown-item" href="#">Title</a>
@@ -3382,10 +3384,231 @@
     </div>
 </div>
 
+<!-- Project Summary Modal -->
+<div id="modalProjectSummary" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalProjectSummaryTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalProjectSummaryTitle">Project Summary</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="summary-form" novalidate="">
+                    <p class="modalinfo" id="summary-form-id"></p>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-raingages-label" for="summary-raingages">Raingages</label>
+                            <input class="form-control modaledit" id="summary-raingages" name="summary-raingages" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-subcatchments-label" for="summary-subcatchments">Subcatchments</label>
+                            <input class="form-control modaledit" id="summary-subcatchments" name="summary-subcatchments" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-aquifers-label" for="summary-aquifers">Aquifers</label>
+                            <input class="form-control modaledit" id="summary-aquifers" name="summary-aquifers" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-snowpacks-label" for="summary-snowpacks">Snowpacks</label>
+                            <input class="form-control modaledit" id="summary-snowpacks" name="summary-snowpacks" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-rdiihydrographs-label" for="summary-rdiihydrographs">RDII Hydrographs</label>
+                            <input class="form-control modaledit" id="summary-rdiihydrographs" name="summary-rdiihydrographs" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-infiltrationmodel-label" for="summary-infiltrationmodel">Infiltration Model</label>
+                            <input class="form-control modaledit" id="summary-infiltrationmodel" name="summary-infiltrationmodel" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-junctionnodes-label" for="summary-junctionnodes">Junction Nodes</label>
+                            <input class="form-control modaledit" id="summary-junctionnodes" name="summary-junctionnodes" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-outfallnodes-label" for="summary-outfallnodes">Outfall Nodes</label>
+                            <input class="form-control modaledit" id="summary-outfallnodes" name="summary-outfallnodes" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-dividernodes-label" for="summary-dividernodes">Divider Nodes</label>
+                            <input class="form-control modaledit" id="summary-dividernodes" name="summary-dividernodes" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-storagenodes-label" for="summary-storagenodes">Storage Nodes</label>
+                            <input class="form-control modaledit" id="summary-storagenodes" name="summary-storagenodes" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-conduitlinks-label" for="summary-conduitlinks">Conduit Links</label>
+                            <input class="form-control modaledit" id="summary-conduitlinks" name="summary-conduitlinks" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-pumplinks-label" for="summary-pumplinks">Pump Links</label>
+                            <input class="form-control modaledit" id="summary-pumplinks" name="summary-pumplinks" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-orificelinks-label" for="summary-orificelinks">Orifice Links</label>
+                            <input class="form-control modaledit" id="summary-orificelinks" name="summary-orificelinks" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-weirlinks-label" for="summary-weirlinks">Weir Links</label>
+                            <input class="form-control modaledit" id="summary-weirlinks" name="summary-weirlinks" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-outletlinks-label" for="summary-outletlinks">Outlet Links</label>
+                            <input class="form-control modaledit" id="summary-outletlinks" name="summary-outletlinks" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-flowunits-label" for="summary-flowunits">Flow Units</label>
+                            <input class="form-control modaledit" id="summary-flowunits" name="summary-flowunits" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-flowrouting-label" for="summary-flowrouting">Flow Routing</label>
+                            <input class="form-control modaledit" id="summary-flowrouting" name="summary-flowrouting" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-controlrules-label" for="summary-controlrules">Control Rules</label>
+                            <input class="form-control modaledit" id="summary-controlrules" name="summary-controlrules" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-pollutants-label" for="summary-pollutants">Pollutants</label>
+                            <input class="form-control modaledit" id="summary-pollutants" name="summary-pollutants" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-landuses-label" for="summary-landuses">Land Uses</label>
+                            <input class="form-control modaledit" id="summary-landuses" name="summary-landuses" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-tsinflows-label" for="summary-tsinflows">Time Series Inflows</label>
+                            <input class="form-control modaledit" id="summary-tsinflows" name="summary-tsinflows" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-dwinflows-label" for="summary-dwinflows">Dry Weather Inflows</label>
+                            <input class="form-control modaledit" id="summary-dwinflows" name="summary-dwinflows" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-gwinflows-label" for="summary-gwinflows">Groundwater Inflows</label>
+                            <input class="form-control modaledit" id="summary-gwinflows" name="summary-gwinflows" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-rdiiinflows-label" for="summary-rdiiinflows">RDII Inflows</label>
+                            <input class="form-control modaledit" id="summary-rdiiinflows" name="summary-rdiiinflows" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-lidcontrols-label" for="summary-lidcontrols">LID Controls</label>
+                            <input class="form-control modaledit" id="summary-lidcontrols" name="summary-lidcontrols" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="summary-treatmentunits-label" for="summary-treatmentunits">Treatment Units</label>
+                            <input class="form-control modaledit" id="summary-treatmentunits" name="summary-treatmentunits" type="text" readonly>
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Report Status Modal-->
+<div id="modalReportStatus" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalReportStatusTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalReportStatusTitle">Report Status</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <pre id="reportStatusTextbox"></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--Project window-->
 <div class="container-fluid">
   <div class="row">
-    <nav id="sidebarMenu" class="col-md-2 d-none d-md-block bg-light sidebar">
+    <nav id="sidebarMenu" class="col-md-2 col-sm-2 d-md-block bg-light sidebar overflow-scroll">
       <div id="projectmenu" class="position-sticky pt-3">
         <ul class="nav flex-column">
             
@@ -3400,6 +3623,11 @@
             <li class="nav-item">
                 <a id="addJunction" class="nav-link" href="#" >
                     Add Junction
+                </a>
+              </li>
+              <li class="nav-item">
+                <a id="addConduit" class="nav-link" href="#" >
+                    Add Conduit
                 </a>
               </li>
           <li class="nav-item">
@@ -3634,17 +3862,17 @@
         
       </div>
       <div id="subselect">
-        <ul class="nav flex-column bg-dark">
-            <li class="nav-item">
+        <div class="nav flex-column bg-dark">
+            <div class="nav-item">
                 <a class="nav-link" aria-current="page" href="#" >
                     <div id="subselectcaption"></div>
                 </a>
-            </li>
-        </ul>
-        <span>+</span>
-        <span>-</span>
-        <span>0</span>
-        <span>X</span>
+            </div>
+        </div>
+        <button id="btnPMAdd">+</button>
+        <button id="btnPMDelete">-</button>
+        <button id="btnPMEdit">0</button>
+        <button id="btnPMSort">X</button>
         <ul id="subselectlist" class="nav flex-column">
         </ul>
       </div>
@@ -3655,21 +3883,22 @@
       <div class="d3viz">
         <svg id="svgSimple"></svg>
       </div>
-
-        <span id="legend" hidden></span>
-        <span id="linkResult" hidden></span>
-        <span id="nodeResult" hidden></span>
-        <span id="time" hidden></span>
-        <span id="tooltip" hidden></span>
-        <span id="xy" hidden></span>
-        <span id="progress" hidden></span>
-        <span id="status" hidden></span>
-        <span id="inpFile" hidden></span>
-        <span id="rptFile" hidden></span>
-        <span id="output" hidden></span>
     </main>
   </div>
 </div>
+
+
+<span id="legend" hidden></span>
+<span id="linkResult" hidden></span>
+<span id="nodeResult" hidden></span>
+<span id="time" hidden></span>
+<span id="tooltip" hidden></span>
+<span id="xy" hidden></span>
+<span id="progress" hidden></span>
+<span id="status" hidden></span>
+<span id="inpFile" hidden></span>
+<span id="rptFile" hidden></span>
+<span id="output" hidden></span>
 
 
 

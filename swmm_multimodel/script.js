@@ -127,7 +127,6 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch('data/Example1x.out')
             .then(response => response.blob())
             .then((data) => {
-                //console.log(data);
 
                 input = new d3.swmmresult();
                 val = input.parse('data/Example1x.out');
@@ -200,6 +199,20 @@ document.addEventListener("DOMContentLoaded", function() {
     function runSimulation() {
         //processInput(document.getElementById('inpFile').value);
         runModelClick();
+    }
+
+    // Listen for requests to display a project summary.
+    const summaryElement = document.getElementById("nav-project-summary");
+    summaryElement.addEventListener('click', displayProjectSummary, false);
+    function displayProjectSummary(){
+        modalProjectSummary();
+    }
+
+    // Listen for requests to display a report status 
+    const reportstatusElement = document.getElementById("nav-report-status");
+    reportstatusElement.addEventListener('click', displayReportStatus, false);
+    function displayReportStatus() {
+        modalReportStatus();
     }
 
     // Listen for requests to open an .inp file.
@@ -309,83 +322,48 @@ function drawLine(theseSpecs, curveType){
 
 
 function runModelClick(){
-        // dataObj is an array of dataElement objects.
-        dataObj = [];
-        let viz_svg01 = d3.select("#viz_svg01");
-        let inpText = null;
-    
-        console.log('refreshbutton clicked')
-        // Create a set of dataElements.
+    // dataObj is an array of dataElement objects.
+    dataObj = [];
+    let viz_svg01 = d3.select("#viz_svg01");
+    let inpText = null;
 
-            //Get the input file for parsing:
-            // Since we are running a model, it would be a good idea to
-            // instead, write the current model objects into a string field,
-            // then send that string field to the executable.
-            // --1: How does save translate the model to a string:
-            //   A: Via svg.save() in swmm.js
-            // --2: Can I modify svg.save to instead call a string creation function.
-            //      This function can then be called by this click event as well, so no files
-            //      need to be saved (though it would be a good idea to save a file before you run it, right?)
-            // --3: New function is called svg.dataToInpString().
-            // --4: How can I send the inpString to the swmm_run file? it looks like inpText can be used for that.
-            fetch('data/tendays.inp')
-                .then(response => response.text())
-                .then((data) => {
-                    //console.log(data);
-                    inpText = swmmjs.svg.dataToInpString();
-                    //input = new d3.inp();
-                    //val = input.parse(data);
-        
-                    try
-                    {
-                        FS.createPath('/', '/', true, true);
-                        FS.ignorePermissions = true;
-                        //var inp = document.getElementById('inpFile').value;
-                        var f = FS.findObject('input.inp');
-                        if (f) {
-                            FS.unlink('input.inp');
-                        }
-                        //FS.createDataFile('/', 'input.inp', inp, true, true);
-                        FS.createDataFile('/', 'input.inp', inpText, true, true);
-    
-                        const swmm_run = Module.cwrap('swmm_run', 'number', ['string', 'string', 'string']);
-                        //data = swmm_run("data/Example1.inp", "data/Example1x.rpt", "data/Example1x.out")
-                        data = swmm_run("/input.inp", "data/Example1x.rpt", "data/out.out")
-                    } catch (e) {
-                        console.log('/input.inp creation failed');
-                    }
-                    console.log('runran')
-                })
-            
-            /*console.log('what the heck')
-    
-            fetch('data/Example1x.out')
-                .then(response => response.blob())
-                .then((data) => {
-                    //console.log(data);
-        
-                    input = new d3.swmmresult();
-                    val = input.parse('data/out.out');
-        
-                    //console.log('--------------------------')
-                    for(let i = 1; !!val[i]; i++){
-                        //console.log(val[i].LINK["1"][3]);
-                        dataObj.push(new DataElement(i, val[i].LINK["1"][3]));
-                    }
-                    //console.log('--------------------------')
-                
-                    // Create a new chartSpecs object and populate it with the data.
-                    theseSpecs = new ChartSpecs(dataObj);
-    
-                    // Prepare the chart and draw it.
-                    representData(viz_svg01, theseSpecs);
-    
-                    // If the user changes the selection on the dropdown selection box, adjust the curve function of the chart line.
-                    $('#formControlSelector').on('change', function(event){
-                        // Get the input from the drop down.
-                        userVal = $(event.currentTarget).prop('value');
-    
-                        drawLine(theseSpecs, d3[userVal])
-                    })
-                })  */
+    console.log('refreshbutton clicked')
+    // Create a set of dataElements.
+
+    //Get the input file for parsing:
+    // Since we are running a model, it would be a good idea to
+    // instead, write the current model objects into a string field,
+    // then send that string field to the executable.
+    // --1: How does save translate the model to a string:
+    //   A: Via svg.save() in swmm.js
+    // --2: Can I modify svg.save to instead call a string creation function.
+    //      This function can then be called by this click event as well, so no files
+    //      need to be saved (though it would be a good idea to save a file before you run it, right?)
+    // --3: New function is called svg.dataToInpString().
+    // --4: How can I send the inpString to the swmm_run file? it looks like inpText can be used for that.
+    fetch('data/tendays.inp')
+        .then(response => response.text())
+        .then((data) => {
+            inpText = swmmjs.svg.dataToInpString();
+
+            try
+            {
+                FS.createPath('/', '/', true, true);
+                FS.ignorePermissions = true;
+                var f = FS.findObject('input.inp');
+                if (f) {
+                    FS.unlink('input.inp');
+                }
+                FS.createDataFile('/', 'input.inp', inpText, true, true);
+
+                const swmm_run = Module.cwrap('swmm_run', 'number', ['string', 'string', 'string']);
+                data = swmm_run("/input.inp", "data/Example1x.rpt", "data/out.out")
+
+                let rpt = Module.intArrayToString(FS.findObject('data/Example1x.rpt').contents);
+                document.getElementById('rptFile').innerHTML = rpt;
+            } catch (e) {
+                console.log('/input.inp creation failed');
+            }
+            console.log('runran')
+    })
 }
