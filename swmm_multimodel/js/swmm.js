@@ -633,6 +633,7 @@ d3.inp = function() {
         // Enable clicking to create conduits
         $('#addConduit').click(function(e){
             // Set the edit mode to 'createConduit'
+            $('#addConduit').addClass('sidebar-selected');
             swmmjs.model.clickEffect = 'createConduit'
             // idlist keeps track of which nodes are used to create the conduit.
             let idlist = [];
@@ -653,12 +654,14 @@ d3.inp = function() {
             d3.selectAll('.node_').on('click', function(){
                 // Get the first circle child of this element
                 let child = this.firstChild;
+                $(this).addClass('selected');
                 idlist.push({ID: this.id, x: $(child).attr('cx'), y: $(child).attr('cy')})
                 
                 // If there are more than two objects in idlist, end the edit and create the conduit
                 if(idlist.length >= 2){
                     // Remove the click effect from the nodes
                     d3.selectAll('.node_').on('click', null);
+                    $('.node_').removeClass('selected');
 
                     // Create a CONDUITS object.
                     // Create a new id
@@ -701,6 +704,7 @@ d3.inp = function() {
 
                     // Change back to an editing environment
                     swmmjs.model.clickEffect = 'edit';
+                    $('#addConduit').removeClass('sidebar-selected');
                 }
             })
         })

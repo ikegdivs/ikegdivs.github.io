@@ -68,3 +68,7 @@ main {
     background-color: lightgray;
     color: blue;
 }
+
+.selected * {
+    fill: rgba(125, 125, 0, 0.5);
+}
