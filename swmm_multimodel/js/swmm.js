@@ -532,7 +532,7 @@ d3.inp = function() {
         // Enable clicking to create junctions
         $('#addJunction').click(function(e){
             // Set the click effect to 'createJunction'
-            $('#addJunction').css('background-color', 'red');
+            $('#addJunction').addClass('sidebar-selected');
             swmmjs.model.clickEffect = 'createJunction';
 
             let svg = d3.select('#svgSimple');
@@ -563,13 +563,13 @@ d3.inp = function() {
                 // If the model is not in create junction mode, return.
                 if(swmmjs.model.clickEffect !== 'createJunction'){
                     // Remove this click effect.
-                    $('#addJunction').css('background-color', 'white');
+                $('#addJunction').removeClass('sidebar-selected');
                     svg.on('click', null);
                     return;
                 // Change the model click effect to edit.
                 } else {
                     swmmjs.model.clickEffect = 'edit';
-                    $('#addJunction').css('background-color', 'white');
+                    $('#addJunction').removeClass('sidebar-selected');
                 }
 
                 let xy = d3.mouse(this);
@@ -599,28 +599,12 @@ d3.inp = function() {
                     }
                 }
 
-                
                 swmmjs.model.JUNCTIONS[id] = {Description: 'Desc', Invert: 0, Dmax: 0, Dinit: 0, Dsurch: 0, Aponded: 0}
 
-                //let id = swmmjs.model.JUNCTIONS.length - 1;
                 swmmjs.model['COORDINATES'][id] = [];
-
 
                 swmmjs.model['COORDINATES'][id]['x'] = Math.floor(xy1[0])
                 swmmjs.model['COORDINATES'][id]['y'] = Math.floor(svg.top - xy1[1])
-
-                // This function is used by the function filtered() below to 
-                /*function getJunctionx(d) {
-                    pos = swmmjs.model.COORDINATES.map(function(e) { return e.x; }).indexOf(d.x)
-                    return typeof swmmjs.model.JUNCTIONS[pos] !== 'undefined'
-                }*/
-
-                // Match the junction ID to the COORDINATE ID
-                /*var filtered = swmmjs.model.COORDINATES.reduce((acc, next, i) => {
-                    return getJunctionx(next) && (acc[i] = swmmjs.model.COORDINATES[i]), acc
-                }, []);*/
-
-                //junctionData = filtered;
 
                 let jnodes = d3.select('#svgSimple').select('g').selectAll('.gjunction')
 			    color = (swmmjs.INPUT === swmmjs.mode ? swmmjs.defaultColor: nodeColors[r(v)]);
@@ -642,7 +626,7 @@ d3.inp = function() {
 
                 swmmjs.model.clickEffect = 'edit';
                 svg.on('click', null);
-                $('#addJunction').css('background-color', 'white');
+                $('#addJunction').removeClass('sidebar-selected');
             })
         })
 
