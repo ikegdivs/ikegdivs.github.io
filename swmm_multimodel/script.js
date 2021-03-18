@@ -245,7 +245,8 @@ document.addEventListener("DOMContentLoaded", function() {
         xhr.onload = function(e) {
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem
             $('#remoteModalOutput').text('XX12');
-            window.requestFileSystem(TEMPORARY, 1024*1024, function(fs){
+            window.requestFileSystem(TEMPORARY, 0, function(fs){
+            //window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, function(fs){
                 $('#remoteModalOutput').text('XX13');
                 fs.root.getFile('input.inp', {create: true}, function(fileEntry){
                     $('#remoteModalOutput').text('XX14');
