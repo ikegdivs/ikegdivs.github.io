@@ -231,6 +231,34 @@ document.addEventListener("DOMContentLoaded", function() {
         fr.readAsText(fileList[0]);
     }
 
+    // Listen for requests to request an .inp file from a server.
+    const serverRequestElement = document.getElementById("nav-file-server");
+    serverRequestElement.addEventListener('click', handleServerFiles, false);
+    function handleServerFiles() {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://raw.githubusercontent.com/ikegdivs/ikegdivs.github.io/main/swmm_multimodel/data/input.inp', true);
+        xhr.responseType = 'text';
+
+        xhr.onload = function(e) {
+            window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem
+            window.requestFileSystem(TEMPORARY, 1024*1024, function(fs){
+                fs.root.getFile('input.inp', {create: true}, function(fileEntry){
+                    fileEntry.createWriter(function(writer) {
+                        writer.onwrite = function(e){}
+                        writer.onerror = function(e){}
+
+                        let blob = xhr.response
+                        processInput(blob);
+
+                        writer.write(blob);
+                    })
+                })
+            })
+        }
+
+        xhr.send();
+    }
+
     // Listen for requests to save an .inp file.
     const saveElement = document.getElementById("save");
     saveElement.addEventListener('click', saveFile, false);
