@@ -251,6 +251,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         let blob = xhr.response
                         processInput(blob);
+                        $('#remoteModalOutput').text('XXX');
                     })
                 })
             })
