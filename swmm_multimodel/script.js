@@ -249,8 +249,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         let blob = xhr.response
                         processInput(blob);
-
-                        writer.write(blob);
                     })
                 })
             })
