@@ -240,18 +240,23 @@ document.addEventListener("DOMContentLoaded", function() {
         let xhr = new XMLHttpRequest();
         xhr.open('GET', 'https://raw.githubusercontent.com/ikegdivs/ikegdivs.github.io/main/swmm_multimodel/data/input.inp', true);
         xhr.responseType = 'text';
+        $('#remoteModalOutput').text('XX10');
 
         xhr.onload = function(e) {
             window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem
+            $('#remoteModalOutput').text('XX12');
             window.requestFileSystem(TEMPORARY, 1024*1024, function(fs){
+                $('#remoteModalOutput').text('XX13');
                 fs.root.getFile('input.inp', {create: true}, function(fileEntry){
+                    $('#remoteModalOutput').text('XX14');
                     fileEntry.createWriter(function(writer) {
                         writer.onwrite = function(e){}
                         writer.onerror = function(e){}
 
                         let blob = xhr.response
+                        $('#remoteModalOutput').text('XX15');
                         processInput(blob);
-                        $('#remoteModalOutput').text('XXX');
+                        $('#remoteModalOutput').text('XX16');
                     })
                 })
             })
