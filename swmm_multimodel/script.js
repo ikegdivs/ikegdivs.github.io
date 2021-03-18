@@ -235,6 +235,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const serverRequestElement = document.getElementById("nav-file-server");
     serverRequestElement.addEventListener('click', handleServerFiles, false);
     function handleServerFiles() {
+        // Show the modal.
+        $('#remote-modal').modal('toggle');
         let xhr = new XMLHttpRequest();
         xhr.open('GET', 'https://raw.githubusercontent.com/ikegdivs/ikegdivs.github.io/main/swmm_multimodel/data/input.inp', true);
         xhr.responseType = 'text';
