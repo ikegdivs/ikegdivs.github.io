@@ -6,6 +6,7 @@
     <title>SWMM-js</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/node_modules/tabulator-tables/dist/css/tabulator.min.css">
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="dashboard.css">
@@ -3639,16 +3640,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a id="addJunction" class="nav-link" href="#" >
-                    Add Junction
-                </a>
-            </li>
-            <li class="nav-item">
-                <a id="addConduit" class="nav-link" href="#" >
-                    Add Conduit
-                </a>
-              </li>
-            <li class="nav-item">
                 <a id="pmTitle" class="nav-link" href="#" >
                     Title/Notes
                 </a>
@@ -3887,10 +3878,12 @@
                 </a>
             </div>
         </div>
-        <button id="btnPMAdd">+</button>
-        <button id="btnPMDelete">-</button>
-        <button id="btnPMEdit">0</button>
-        <button id="btnPMSort">X</button>
+        <div class="btn-group btn-group-sm d-flex" role="group">
+            <button class="btn btn-secondary" aria-label="Add Object" id="btnPMAdd"><i class="bi bi-plus-circle"></i></button>
+            <button class="btn btn-secondary" aria-label="Delete Object" id="btnPMDelete"><i class="bi bi-dash-circle"></i></button>
+            <button class="btn btn-secondary" aria-label="Edit Object" id="btnPMEdit"><i class="bi bi-pencil-square"></i></button>
+            <button class="btn btn-secondary" aria-label="Sort Objects" id="btnPMSort"><i class="bi bi-sort-alpha-down"></i></button>
+        </div>
         <ul id="subselectlist" class="nav flex-column">
         </ul>
       </div>
