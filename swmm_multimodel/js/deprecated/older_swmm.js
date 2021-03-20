@@ -1422,7 +1422,38 @@ d3.inp = function() {
                 }
             })
         }
-     
+
+        function menuOptionsGeneral(){
+
+            // Show the modal.
+            $('myModal').modal('toggle');
+            let modalJSON = [];
+            modalJSON.push({inputName: 'INFILTRATION',      labelText: 'Infiltration',              inputType: 'text',  parentObject: 'OPTIONS'});
+            modalJSON.push({inputName: 'ALLOW_PONDING',     labelText: 'Allow Ponding',             inputType: 'text',  parentObject: 'OPTIONS'});
+            modalJSON.push({inputName: 'CONTROLS',          labelText: 'Report Control Actions',    inputType: 'text',  parentObject: 'REPORT'});
+            modalJSON.push({inputName: 'INPUT',             labelText: 'Report Input Summary',      inputType: 'text',  parentObject: 'REPORT'});
+            modalJSON.push({inputName: 'MIN_SLOPE',         labelText: 'Minimum Conduit Slope %',   inputType: 'text',  parentObject: 'OPTIONS'});
+            modalJSON.push({inputName: 'FLOW_ROUTING',      labelText: 'Routing Model',             inputType: 'text',  parentObject: 'OPTIONS'});
+            populateModal(modalJSON);
+        }
+
+        var modalEditJunction = function(id){
+            // Create object definitions to populate the modal
+            let modalJSON = [];
+            modalJSON.push({inputName: 'Description',   labelText: 'Description',    inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Node',       labelText: 'Tag',        inputType: 'text',   parentObject: 'TAGS'});
+            modalJSON.push({inputName: 'Inflows',   labelText: 'Inflows',    inputType: 'button', parentObject: '#modalInflows'});
+            modalJSON.push({inputName: 'Treatment', labelText: 'Treatment',  inputType: 'button', parentObject: 'JUNCTIONS'});
+
+            modalJSON.push({inputName: 'Invert',    labelText: 'Invert El.',     inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Dmax',      labelText: 'Max. Depth',     inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Dinit',     labelText: 'Initial Depth',  inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Dsurch',    labelText: 'Surcharge Depth',inputType: 'text', parentObject: 'JUNCTIONS'});
+            modalJSON.push({inputName: 'Aponded',   labelText: 'Ponded Area',    inputType: 'text', parentObject: 'JUNCTIONS'});
+            populateModalID(modalJSON, id);
+        }
+        
+
         // Translate a date from the datetime input format (yyyy-MM-dd) to model format (MM/DD/YYYY) 
         function untranslateDate(date){
             let thisDate = date.split('-');
@@ -1664,7 +1695,6 @@ d3.inp = function() {
 
             swmmjs.model['OPTIONS']['MIN_SLOPE'].Value = $('#general-minconduitslope').val();
         }
-
 
         // Establish HH:MM:SS styles for text timepickers
         let hhmmssitems = document.getElementsByClassName('texthhmmss');
@@ -2100,65 +2130,7 @@ d3.inp = function() {
             populateRaingagesList();
         }
 
-        /////////////////////////////////////////////////////////////
-        // Object ID Change Handlers
-        // changeD3ObjectID("1", "JUNCTIONS", $('#junctions-name').val())
-        /////////////////////////////////////////////////////////////
-        function changeD3ObjectID(id, section, newID){
-            // Copy the elements of the old object into a new object using the key name
-            Object.defineProperty(
-                swmmjs.model[section], 
-                newID, 
-                Object.getOwnPropertyDescriptor(swmmjs.model[section], id)
-            );
-            // Delete the old object
-            delete swmmjs.model[section][id]
-
-            // Change the id of the d3 element
-            d3.selectAll('[id="'+id+'"]').filter('.gjunction')
-                .attr('id', newID)
-                .select('.junction')
-                .attr('title', newID)
-                .attr('onclick', 'modalEditJunctions("'+newID+'");')
-        }
-
-        // changeObjectID("1", "COORDINATES", $('#junctions-name').val())
-        function changeObjectID(id, section, newID){
-            // Copy the elements of the old object into a new object using the key name
-            Object.defineProperty(
-                swmmjs.model[section], 
-                newID, 
-                Object.getOwnPropertyDescriptor(swmmjs.model[section], id)
-            );
-            // Delete the old object
-            delete swmmjs.model[secion][id];
-        }
-
-        /////////////////////////////////////////////////////////////
-        // Tag Change Handlers
-        // changeTags('Node', '2', $('#junctions-tag').val())
-        /////////////////////////////////////////////////////////////
-        function changeTags(tagType, id, newTag){
-            // If there are tags, and one of the tags has this id, use the tag
-            // Check for object.type='Node' and object.ID = itemID;
-            function tagQuery(thisObj){
-                return thisObj.Type===tagType && thisObj.ID === id; 
-            }
-            // For every tag element
-            let thisArray = Object.values(swmmjs.model['TAGS']);
-
-            // Find the tag that matches this RG id
-            let thisEl = thisArray.findIndex(tagQuery);
-            if(thisEl >= 0){
-                swmmjs.model['TAGS'][thisEl].Tag = newTag;
-            } else {
-                // If there is no tag with this value, and there is a value in the input, 
-                // create a new tag
-                if(newTag !== ''){
-                    swmmjs.model['TAGS'].push({'Type': tagType, 'ID': id, 'Tag': newTag})
-                }
-            }
-        }
+        
 
         /////////////////////////////////////////////////////////////
         // Junctions Modal 
@@ -2173,10 +2145,25 @@ d3.inp = function() {
 
             // If the user has changed the value
             if(id !== $('#junctions-name').val()) {
-                changeD3ObjectID(id, "JUNCTIONS", $('#junctions-name').val())
-                changeObjectID(id, "COORDINATES", $('#junctions-name').val())
-        
-                id = parseInt($('#junctions-name').val()).toString();
+                // Copy the elements of the old object into a new object using the key name
+                Object.defineProperty(
+                    swmmjs.model['JUNCTIONS'], 
+                    $('#junctions-name').val(), 
+                    Object.getOwnPropertyDescriptor(swmmjs.model['JUNCTIONS'], id)
+                );
+                // Delete the old object
+                delete swmmjs.model['JUNCTIONS'][id]
+
+                // Copy the elements of the old object into a new object using the key name
+                Object.defineProperty(
+                    swmmjs.model['COORDINATES'], 
+                    $('#junctions-name').val(), 
+                    Object.getOwnPropertyDescriptor(swmmjs.model['COORDINATES'], id)
+                );
+                // Delete the old object
+                delete swmmjs.model['COORDINATES'][id];
+
+                id = $('#junctions-name').val();
             }
 
             // If the are values in the x-coordinate/ycoordinate box, save them
@@ -2186,10 +2173,27 @@ d3.inp = function() {
                 swmmjs.model['COORDINATES'][id]['y'] = $('#junctions-ycoordinate').val()
             }
 
-            // Update any changes in tags
-            changeTags('Node', id, $('#junctions-tag').val())
+
+            // If there are tags, and one of the tags has this id, use the tag
+            // Check for object.type='Node' and object.ID = itemID;
+            function tagQuery(thisObj){
+                return thisObj.Type==='Node' && thisObj.ID === id; 
+            }
+            // For every tag element
+            let thisArray = Object.values(swmmjs.model['TAGS']);
+
+            // Find the tag that matches this RG id
+            let thisEl = thisArray.findIndex(tagQuery);
+            if(thisEl >= 0){
+                swmmjs.model['TAGS'][thisEl].Tag = $('#junctions-tag').val();
+            } else {
+                // If there is no tag with this value, and there is a value in the input, 
+                // create a new tag
+                if($('#junctions-tag').val() !== ''){
+                    swmmjs.model['TAGS'].push({'Type': 'Node', 'ID': id, 'Tag': $('#junctions-tag').val()})
+                }
+            }
             
-            // Update the base data
             swmmjs.model['JUNCTIONS'][id]['Description'] = $('#junctions-description').val()
             swmmjs.model['JUNCTIONS'][id]['Invert'] = $('#junctions-invertel').val()
             swmmjs.model['JUNCTIONS'][id]['Dmax'] = $('#junctions-maxdepth').val()
@@ -2218,10 +2222,25 @@ d3.inp = function() {
 
             // If the user has changed the value
             if(id !== $('#outfalls-name').val()) {
-                changeD3ObjectID(id, "OUTFALLS", $('#outfalls-name').val())
-                changeObjectID(id, "COORDINATES", $('#outfalls-name').val())
-        
-                id = parseInt($('#outfalls-name').val()).toString();
+                // Copy the elements of the old object into a new object using the key name
+                Object.defineProperty(
+                    swmmjs.model['OUTFALLS'], 
+                    $('#outfalls-name').val(), 
+                    Object.getOwnPropertyDescriptor(swmmjs.model['OUTFALLS'], id)
+                );
+                // Delete the old object
+                delete swmmjs.model['OUTFALLS'][id]
+
+                // Copy the elements of the old object into a new object using the key name
+                Object.defineProperty(
+                    swmmjs.model['COORDINATES'], 
+                    $('#outfalls-name').val(), 
+                    Object.getOwnPropertyDescriptor(swmmjs.model['COORDINATES'], id)
+                );
+                // Delete the old object
+                delete swmmjs.model['COORDINATES'][id];
+
+                id = $('#outfalls-name').val();
             }
 
             // If the are values in the x-coordinate/ycoordinate box, save them
@@ -2231,8 +2250,26 @@ d3.inp = function() {
                 swmmjs.model['COORDINATES'][id]['y'] = $('#outfalls-ycoordinate').val()
             }
 
-            // Update any changes in tags
-            changeTags('Node', id, $('#outfalls-tag').val())
+
+            // If there are tags, and one of the tags has this id, use the tag
+            // Check for object.type='Node' and object.ID = itemID;
+            function tagQuery(thisObj){
+                return thisObj.Type==='Node' && thisObj.ID === id; 
+            }
+            // For every tag element
+            let thisArray = Object.values(swmmjs.model['TAGS']);
+
+            // Find the tag that matches this RG id
+            let thisEl = thisArray.findIndex(tagQuery);
+            if(thisEl >= 0){
+                swmmjs.model['TAGS'][thisEl].Tag = $('#outfalls-tag').val();
+            } else {
+                // If there is no tag with this value, and there is a value in the input, 
+                // create a new tag
+                if($('#outfalls-tag').val() !== ''){
+                    swmmjs.model['TAGS'].push({'Type': 'Node', 'ID': id, 'Tag': $('#outfalls-tag').val()})
+                }
+            }
             
             swmmjs.model['OUTFALLS'][id]['Description'] = $('#outfalls-description').val()
             swmmjs.model['OUTFALLS'][id]['Inflows'] = $('#outfalls-inflows').val()
@@ -2246,239 +2283,6 @@ d3.inp = function() {
 
             // Refresh the Raingages list.
             populateOutfallsList();
-        }
-
-        /////////////////////////////////////////////////////////////
-        // Conduits Modal 
-        /////////////////////////////////////////////////////////////
-        
-        $('#save-modal-conduits').click(function(e){
-            saveModalConduits()
-        })
-
-        function saveModalConduits(){
-            // Reassign the id of the object if the user has changed the name value
-            id = $('#conduits-form-id').val();
-        
-            // If the user has changed the value
-            if(id !== $('#conduits-name').val()) {
-                changeD3ObjectID(id, "CONDUITS", $('#conduits-name').val())
-                changeObjectID(id, "XSECTIONS", $('#conduits-name').val())
-        
-                id = parseInt($('#conduits-name').val()).toString();
-            }
-
-            // Update any changes in tags
-            changeTags('Link', id, $('#conduits-tag').val())
-            
-            swmmjs.model['CONDUITS'][id]['FromNode'] = $('#conduits-inletnode').val()
-            swmmjs.model['CONDUITS'][id]['ToNode'] = $('#conduits-outletnode').val()
-            swmmjs.model['CONDUITS'][id]['Description'] = $('#conduits-description').val()
-            swmmjs.model['XSECTIONS'][id]['Shape'] = $('#conduits-shape').val()
-            swmmjs.model['XSECTIONS'][id]['Geom1'] = $('#conduits-maxdepth').val()
-            swmmjs.model['CONDUITS'][id]['Length'] = $('#conduits-length').val()
-            swmmjs.model['CONDUITS'][id]['Roughness'] = $('#conduits-roughness').val()
-            swmmjs.model['CONDUITS'][id]['InOffset'] = $('#conduits-inletoffset').val()
-            swmmjs.model['CONDUITS'][id]['OutOffset'] = $('#conduits-outletoffset').val()
-            swmmjs.model['CONDUITS'][id]['InitFlow'] = $('#conduits-initialflow').val()
-            swmmjs.model['CONDUITS'][id]['MaxFlow'] = $('#conduits-maximumflow').val()
-            // If there are no losses for this pipe, create some
-            if(typeof swmmjs.model.LOSSES[id] === 'undefined'){
-                swmmjs.model.LOSSES[id] = {Kin: 0, Kout: 0, Kavg: 0, FlapGate: 'NO', SeepRate: 0};
-            }
-            swmmjs.model['LOSSES'][id]['Kin'] = $('#conduits-entrylosscoeff').val()
-            swmmjs.model['LOSSES'][id]['Kout'] = $('#conduits-exitlosscoeff').val()
-            swmmjs.model['LOSSES'][id]['Kavg'] = $('#conduits-avglosscoeff').val()
-            swmmjs.model['LOSSES'][id]['SeepRate'] = $('#conduits-seepagelossrate').val()
-            swmmjs.model['LOSSES'][id]['FlapGate'] = $('#conduits-flapgate').val()
-        
-            // Close the modal.
-            $('#modalConduits').modal('toggle');
-        
-            // Refresh the Pumps list.
-            populateConduitsList();
-        }
-
-        // Clicking on a conduit in the map will open a modal
-        $('.link_').click(function(e){
-            if(this.classList.contains('gconduit')){
-                modalEditConduits(this.id);
-            }
-        })
-        
-        /////////////////////////////////////////////////////////////
-        // Pumps Modal 
-        /////////////////////////////////////////////////////////////
-
-        $('#save-modal-pumps').click(function(e){
-            saveModalPumps()
-        })
-        
-        function saveModalPumps(){
-            // Reassign the id of the object if the user has changed the name value
-            id = $('#pumps-form-id').val();
-        
-            // If the user has changed the value
-            if(id !== $('#pumps-name').val()) {
-                changeD3ObjectID(id, "PUMPS", $('#pumps-name').val())
-        
-                id = parseInt($('#pumps-name').val()).toString();
-            }
-
-            // Update any changes in tags
-            changeTags('Link', id, $('#pumps-tag').val())
-            
-            swmmjs.model['PUMPS'][id]['Description'] = $('#pumps-description').val()
-            swmmjs.model['PUMPS'][id]['Node1'] = $('#pumps-inletnode').val()
-            swmmjs.model['PUMPS'][id]['Node2'] = $('#pumps-outletnode').val()
-            swmmjs.model['PUMPS'][id]['Curve'] = $('#pumps-pumpcurve').val()
-            swmmjs.model['PUMPS'][id]['Status'] = $('#pumps-initialstatus').val()
-            swmmjs.model['PUMPS'][id]['Dstart'] = $('#pumps-startupdepth').val()
-            swmmjs.model['PUMPS'][id]['Doff'] = $('#pumps-shutoffdepth').val()
-        
-            // Close the modal.
-            $('#modalPumps').modal('toggle');
-        
-            // Refresh the Pumps list.
-            populatePumpsList();
-        }
-        
-        // Clicking on a pump in the map will open a modal
-        $('.link_').click(function(e){
-            if(this.classList.contains('gpump')){
-                modalEditPumps(this.id);
-            }
-        })
-
-        /////////////////////////////////////////////////////////////
-        // Orifices Modal 
-        /////////////////////////////////////////////////////////////
-
-        $('#save-modal-orifices').click(function(e){
-            saveModalOrifices()
-        })
-        
-        function saveModalOrifices(){
-            // Reassign the id of the object if the user has changed the name value
-            id = $('#orifices-form-id').val();
-        
-            // If the user has changed the value
-            if(id !== $('#orifices-name').val()) {
-                changeD3ObjectID(id, "ORIFICES", $('#orifices-name').val())
-                changeObjectID(id, "XSECTIONS", $('#orifices-name').val())
-        
-                id = parseInt($('#orifices-name').val()).toString();
-            }
-        
-            // Update any changes in tags
-            changeTags('Link', id, $('#orifices-tag').val())
-            
-            swmmjs.model['ORIFICES'][id]['FromNode'] = $('#orifices-inletnode').val()
-            swmmjs.model['ORIFICES'][id]['ToNode'] = $('#orifices-outletnode').val()
-            swmmjs.model['ORIFICES'][id]['Description'] = $('#orifices-description').val()
-            swmmjs.model['ORIFICES'][id]['Type'] = $('#orifices-type').val()
-            swmmjs.model['XSECTIONS'][id]['Shape'] = $('#orifices-shape').val()
-            swmmjs.model['XSECTIONS'][id]['Geom1'] = $('#orifices-height').val()
-            swmmjs.model['XSECTIONS'][id]['Geom2'] = $('#orifices-width').val()
-            swmmjs.model['ORIFICES'][id]['InletOffset'] = $('#orifices-inletoffset').val()
-            swmmjs.model['ORIFICES'][id]['Qcoeff'] = $('#orifices-dischargecoeff').val()
-            swmmjs.model['ORIFICES'][id]['Gated'] = $('#orifices-flapgate').val()
-            swmmjs.model['ORIFICES'][id]['CloseTime'] = $('#orifices-time').val()
-
-            // Close the modal.
-            $('#modalOrifices').modal('toggle');
-        
-            // Refresh the Orifices list.
-            populateOrificesList();
-        }
-        
-        // Clicking on a orifice in the map will open a modal
-        $('.link_').click(function(e){
-            if(this.classList.contains('gorifice')){
-                modalEditOrifices(this.id);
-            }
-        })
-
-        /////////////////////////////////////////////////////////////
-        // Weirs Modal 
-        /////////////////////////////////////////////////////////////
-
-        $('#save-modal-weirs').click(function(e){
-            saveModalWeirs()
-        })
-        
-        function saveModalWeirs(){
-            // Reassign the id of the object if the user has changed the name value
-            id = $('#orifices-form-id').val();
-        
-            // If the user has changed the value
-            if(id !== $('#weirs-name').val()) {
-                changeD3ObjectID(id, "WEIRS", $('#weirs-name').val())
-                changeObjectID(id, "XSECTIONS", $('#weirs-name').val())
-        
-                id = parseInt($('#weirs-name').val()).toString();
-            }
-        
-            // Update any changes in tags
-            changeTags('Link', id, $('#weirs-tag').val())
-            
-            swmmjs.model['WEIRS'][id]['FromNode'] = $('#weirs-inletnode').val()
-            swmmjs.model['WEIRS'][id]['ToNode'] = $('#weirs-outletnode').val()
-            swmmjs.model['WEIRS'][id]['Description'] = $('#weirs-description').val()
-            swmmjs.model['WEIRS'][id]['Type'] = $('#weirs-type').val()
-            swmmjs.model['XSECTIONS'][id]['Geom1'] = $('#weirs-height').val()
-            swmmjs.model['XSECTIONS'][id]['Geom2'] = $('#weirs-length').val()
-            swmmjs.model['XSECTIONS'][id]['Geom3'] = $('#weirs-sideslope').val()
-            swmmjs.model['WEIRS'][id]['CrestHt'] = $('#weirs-inletoffset').val()
-            swmmjs.model['WEIRS'][id]['Qcoeff'] = $('#weirs-dischargecoeff').val()
-            swmmjs.model['WEIRS'][id]['Gated'] = $('#weirs-flapgate').val()
-            swmmjs.model['WEIRS'][id]['EndCon'] = $('#weirs-endcontractions').val()
-            swmmjs.model['WEIRS'][id]['EndCoeff'] = $('#weirs-endcoeff').val()
-
-            // Close the modal.
-            $('#modalWeirs').modal('toggle');
-        
-            // Refresh the Weirs list.
-            populateWeirsList();
-        }
-
-        /////////////////////////////////////////////////////////////
-        // Outlets Modal 
-        /////////////////////////////////////////////////////////////
-
-        $('#save-modal-outlets').click(function(e){
-            saveModalOutlets()
-        })
-        
-        function saveModalOutlets(){
-            // Reassign the id of the object if the user has changed the name value
-            id = $('#outlets-form-id').val();
-        
-            // If the user has changed the value
-            if(id !== $('#outlets-name').val()) {
-                changeD3ObjectID(id, "OUTLETS", $('#outlets-name').val())
-        
-                id = parseInt($('#outlets-name').val()).toString();
-            }
-        
-            // Update any changes in tags
-            changeTags('Link', id, $('#outlets-tag').val())
-            
-            swmmjs.model['OUTLETS'][id]['FromNode'] = $('#outlets-inletnode').val()
-            swmmjs.model['OUTLETS'][id]['ToNode'] = $('#outlets-outletnode').val()
-            swmmjs.model['OUTLETS'][id]['Description'] = $('#outlets-description').val()
-            swmmjs.model['OUTLETS'][id]['CrestHt'] = $('#outlets-inletoffset').val()
-            swmmjs.model['OUTLETS'][id]['Gated'] = $('#outlets-flapgate').val()
-            swmmjs.model['OUTLETS'][id]['Type'] = $('#outlets-ratingcurve').val()
-            swmmjs.model['OUTLETS'][id]['Qcoeff'] = $('#outlets-functionalcurvecoefficient').val()
-            swmmjs.model['OUTLETS'][id]['Qexpon'] = $('#outlets-functionalcurveexponent').val()
-            swmmjs.model['OUTLETS'][id]['QTable'] = $('#outlets-tabularcurvename').val()
-
-            // Close the modal.
-            $('#modalOutlets').modal('toggle');
-        
-            // Refresh the Outlets list.
-            populateOutletsList();
         }
 
         /////////////////////////////////////////////////////////////
@@ -3106,7 +2910,7 @@ d3.inp = function() {
                 if (m && m.length && (8 === m.length || 9 === m.length)) {
                     section[key] = {FromNode: m[1], ToNode: m[2], 
                     Length: parseFloat(m[3]), Roughness: parseFloat(m[4]),
-                    InOffset: parseFloat(m[5]), OutOffset: parseFloat(m[6]), InitFlow: m[7], MaxFlow: m[8], Description: curDesc};
+                    InOffset: parseFloat(m[5]), OutOffset: parseFloat(m[6]), InitFlow: m[7], MaxFlow: m[8]};
                 }
             },
             SUBCATCHMENTS: function(section, key, line) {
@@ -3114,7 +2918,7 @@ d3.inp = function() {
                 if (m && m.length && 9 === m.length) {
                     section[key] = {RainGage: m[1], Outlet: parseFloat(m[2]), 
                     Area: parseFloat(m[3]), PctImperv: parseFloat(m[4]),
-                    Width: parseFloat(m[5]), PctSlope: parseFloat(m[6]), CurbLen: parseFloat(m[7]), SnowPack: m[8], Description: curDesc};
+                    Width: parseFloat(m[5]), PctSlope: parseFloat(m[6]), CurbLen: parseFloat(m[7]), SnowPack: m[8]};
                 }
             },
             SUBAREAS: function(section, key, line) {
@@ -3154,8 +2958,7 @@ d3.inp = function() {
                                         Curve: m[3].trim(), 
                                         Status: m[4].trim(), 
                                         Dstart: parseFloat(m[5]), 
-                                        Doff: parseFloat(m[6]),
-                                        Description: curDesc
+                                        Doff: parseFloat(m[6])
                 }
             },
             XSECTIONS: function(section, key, line) {
@@ -4070,8 +3873,8 @@ var swmmjs = function() {
                 inpString += ';' + model[secStr][entry].Description + '\n';
             }
             inpString += entry.padEnd(17, ' ');
-            inpString += model[secStr][entry].FromNode.toString().padEnd(17, ' ');
-            inpString += model[secStr][entry].ToNode.toString().padEnd(17, ' ');
+            inpString += model[secStr][entry].FromNode.padEnd(17, ' ');
+            inpString += model[secStr][entry].ToNode.padEnd(17, ' ');
             inpString += model[secStr][entry].Length.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].Roughness.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].InOffset.toString().padEnd(11, ' ');
@@ -4090,8 +3893,8 @@ var swmmjs = function() {
                 inpString += ';' + model[secStr][entry].Description + '\n';
             }
             inpString += entry.padEnd(17, ' ');
-            inpString += model[secStr][entry].Node1.toString().padEnd(17, ' ');
-            inpString += model[secStr][entry].Node2.toString().padEnd(17, ' ');
+            inpString += model[secStr][entry].Node1.padEnd(17, ' ');
+            inpString += model[secStr][entry].Node2.padEnd(17, ' ');
             inpString += model[secStr][entry].Curve.padEnd(17, ' ');
             inpString += model[secStr][entry].Status.padEnd(9, ' ');
             inpString += model[secStr][entry].Dstart.toString().padEnd(9, ' ');
@@ -4315,7 +4118,7 @@ var swmmjs = function() {
 
 	    var el = d3.select('#svgSimple').select('g'),
 		    model = swmmjs.model,		
-		    linksections = ['CONDUITS', 'PUMPS', 'ORIFICES', 'WEIRS', 'OUTLETS'],
+		    linksections = ['CONDUITS', 'PUMPS'],
 		    step = $('#time').val(),
 		    nodeResult = $('#nodeResult').val().toUpperCase(),
 		    linkResult = $('#linkResult').val().toUpperCase();
@@ -4398,8 +4201,8 @@ var swmmjs = function() {
             if (model[s]) {
                 for (var link in model[s]) {
                     var l = model[s][link],
-                        node1 = l.FromNode || l.Node1 || false,
-                        node2 = l.ToNode || l.Node2 || false,
+                        node1 = l.FromNode || false,
+                        node2 = l.ToNode || false,
                         c1 = model.COORDINATES[node1] || false,
                         c2 = model.COORDINATES[node2] || false,
                         v = (swmmjs.results[step] ? ( swmmjs.results[step]['LINK'] ? (swmmjs.results[step]['LINK'][link] ? swmmjs.results[step]['LINK'][link][linkResult] : 0) : 0 ) : 0),
@@ -4421,7 +4224,7 @@ var swmmjs = function() {
                                 d = d + ' L ' + p.x + ' ' + (svg.top - p.y);
                             }
                             d = d + ' L ' + c2.x + ' ' + (svg.top - c2.y);
-                            el.append('g').attr('id', link).attr('class', 'link_ gvertice').append('path')
+                            el.append('g').attr('id', 'id'+link).attr('class', 'link_ gvertice').append('path')
                                 .attr('stroke', color)
                                 .attr('fill', 'none')
                                 .attr('d', d)
@@ -4433,9 +4236,9 @@ var swmmjs = function() {
                             // If this conduit is already a vertice, just update the vertice object with 
                             // the conduit attributes:
                             if(model['VERTICES'][link]){
-                                d3.select('[id="'+link+'"]')
+                                d3.select('#id'+link)
                                     .attr('class', 'link_ gconduit')
-                                d3.select('[id="'+link+'"].gconduit').select('path')
+                                d3.select('#id'+link+'.gconduit').select('path')
                                     .attr('title', link)
                                     .attr('onclick', 'modalEditConduits('+link+');')
                                     .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
@@ -4444,7 +4247,7 @@ var swmmjs = function() {
                                     .attr('class', 'conduit')
                                     .attr('stroke-width', svg.strokeWidth)
                             } else {
-                                el.append('g').attr('id', link).attr('class', 'link_ gconduit').append('line')
+                                el.append('g').attr('id', 'id'+link).attr('class', 'link_ gconduit').append('line')
                                     .attr('x1', c1.x)
                                     .attr('y1', svg.top - c1.y)
                                     .attr('x2', c2.x)
@@ -4460,20 +4263,19 @@ var swmmjs = function() {
                             
                         } else if ('PUMPS' === s) {
                             // line
-                            el.append('g').attr('id', link).attr('class', 'link_ gpump').append('line')
+                            el.append('g').attr('id', 'id'+link).attr('class', 'link_ PUMP').append('line')
                                 .attr('x1', c1.x)
                                 .attr('y1', svg.top - c1.y)
                                 .attr('x2', c2.x)
                                 .attr('y2', svg.top - c2.y)
                                 .attr('title', link)
-                                .attr('onclick', 'modalEditPumps('+link+');')
-                                .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
-                                .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                                .on('mouseover', swmmjs.svg.tooltip)
+                                .on('mouseout', swmmjs.svg.clearTooltips)
                                 .attr('stroke', color)
-                                .attr('class', 'pump')
+                                .attr('class', 'conduit')
                                 .attr('stroke-width', svg.strokeWidth);
                             // pump
-                            /*el.append('g').attr('id', 'id'+link).attr('class', 'link_ gpump1').append('circle')
+                            el.append('g').attr('id', 'id'+link).attr('class', 'link_ gpump1').append('circle')
                                 .attr('cx', centerx)
                                 .attr('cy', svg.top - centery)
                                 .attr('r', svg.nodeSize)
@@ -4488,7 +4290,7 @@ var swmmjs = function() {
                                 .attr('data-y', centery)
                                 .attr('transform', transform)
                                 .attr('class', 'pump2')
-                                .attr('style', 'fill:'+color+';');*/
+                                .attr('style', 'fill:'+color+';');
                         }
                     }
                 }
@@ -5215,27 +5017,6 @@ var modalEditStorageunits = function(id){
     }
 }
 
-/////////////////////////////////////////////////////////////
-// Tag Retriever
-// getTag('Node', '2', $('#junctions-tag'))
-/////////////////////////////////////////////////////////////
-function getTag(tagType, id, el){
-    // If there are tags, and one of the tags has this id, use the tag
-    // Check for object.type='Node' and object.ID = itemID;
-    function tagQuery(thisObj){
-        return thisObj.Type===tagType && thisObj.ID === id; 
-    }
-    // For every tag element
-    let thisArray = Object.values(swmmjs.model['TAGS']);
-
-    // Find the tag that matches this RG id
-    let thisEl = thisArray.findIndex(tagQuery);
-    if(thisEl >= 0){
-        el.val(swmmjs.model['TAGS'][thisEl].Tag);
-    } else {
-        el.val('');
-    }
-}
 
 /////////////////////////////////////////////////////////////
 // Junctions Modal 
@@ -5264,8 +5045,21 @@ var modalEditJunctions = function(id){
             $('#junctions-ycoordinate').val(swmmjs.model['COORDINATES'][id]['y'])
         }
 
-        // Get any tags for this object
-        getTag('Node', id.toString(), $('#junctions-tag'))
+        // If there are tags, and one of the tags has this id, use the tag
+        // Check for object.type='Node' and object.ID = itemID;
+        function tagQuery(thisObj){
+            return thisObj.Type==='Node' && thisObj.ID === id; 
+        }
+        // For every tag element
+        let thisArray = Object.values(swmmjs.model['TAGS']);
+
+        // Find the tag that matches this RG id
+        let thisEl = thisArray.findIndex(tagQuery);
+        if(thisEl >= 0){
+            $('#junctions-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+        } else {
+            $('#junctions-tag').val('');
+        }
 
         $('#junctions-name').val(id)
         $('#junctions-description').val(swmmjs.model['JUNCTIONS'][id]['Description'])
@@ -5297,8 +5091,21 @@ var modalEditSubcatchments = function(id){
         swmmjs.model['SUBCATCHMENTS'] = [];
     } else {
         $('#subcatchments-name').val(id)
-        
-        getTag('Subcatch', id.toString(), $('#subcatchments-tag'))
+        // If there are tags, and one of the tags has this Subcatchment id, use the tag
+        // Check for object.type='Subcatch' and object.ID = itemID;
+        function tagQuery(thisObj){
+            return thisObj.Type==='Subcatch' && thisObj.ID === id; 
+        }
+        // For every tag element
+        let thisArray = Object.values(swmmjs.model['TAGS']);
+
+        // Find the tag that matches this RG id
+        let thisEl = thisArray.findIndex(tagQuery);
+        if(thisEl >= 0){
+            $('#subcatchments-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+        } else {
+            $('#subcatchments-tag').val('');
+        }
 
         $('#subcatchments-description').val(swmmjs.model['SUBCATCHMENTS'][id]['Description'])
         $('#subcatchments-raingage').val(swmmjs.model['SUBCATCHMENTS'][id]['RainGage'])
@@ -5315,6 +5122,8 @@ var modalEditSubcatchments = function(id){
         $('#subcatchments-subarearouting').val(swmmjs.model['SUBAREAS'][id]['RouteTo'])
         $('#subcatchments-pctrouted').val(swmmjs.model['SUBAREAS'][id]['PctRouted'])
         $('#subcatchments-curblength').val(swmmjs.model['SUBCATCHMENTS'][id]['CurbLen'])
+        
+
     }
 }
 
@@ -5397,6 +5206,13 @@ function saveModalSubcatchments(){
     swmmjs.model.clicEffect = 'edit';
 }
 
+// Clicking on a polygon in the map will open a modal
+/*$('.polygon_').click(function(e){
+    if(this.classList.contains('gpolygon')){
+        modalEditSubcatchments(this.id);
+    }
+})*/
+
 /////////////////////////////////////////////////////////////
 // Project Summary Modal 
 /////////////////////////////////////////////////////////////
@@ -5464,6 +5280,8 @@ var modalReportStatus = function(){
     // Show the modal.
     $('#modalReportStatus').modal('toggle');
     $('#reportStatusTextbox').text(document.getElementById('rptFile').innerHTML)
+    //if(typeof swmmjs.model['RAINGAGES'] !== 'undefined')
+    //$('#summary-raingages').val(Object.keys(swmmjs.model['RAINGAGES']).length)
 }
 
 /////////////////////////////////////////////////////////////
@@ -5486,8 +5304,21 @@ var modalEditConduits = function(id){
     if(typeof swmmjs.model['CONDUITS'] === 'undefined'){
         swmmjs.model['CONDUITS'] = [];
     } else {
-        // Get any tags for this object
-        getTag('Link', id.toString(), $('#conduits-tag'))
+        // If there are tags, and one of the tags has this id, use the tag
+        // Check for object.type='Link' and object.ID = itemID;
+        function tagQuery(thisObj){
+            return thisObj.Type==='Link' && thisObj.ID === id; 
+        }
+        // For every tag element
+        let thisArray = Object.values(swmmjs.model['TAGS']);
+
+        // Find the tag that matches this RG id
+        let thisEl = thisArray.findIndex(tagQuery);
+        if(thisEl >= 0){
+            $('#conduits-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+        } else {
+            $('#conduits-tag').val('');
+        }
 
         $('#conduits-name').val(id)
         $('#conduits-inletnode').val(swmmjs.model['CONDUITS'][id]['FromNode'])
@@ -5513,6 +5344,21 @@ var modalEditConduits = function(id){
     }
 }
 
+$('#save-modal-conduits').click(function(e){
+    saveModalConduits()
+})
+
+function saveModalConduits(){
+    // Show the modal.
+    $('#modalConduits').modal('toggle');
+}
+
+// Clicking on a conduit in the map will open a modal
+$('.link_').click(function(e){
+    if(this.classList.contains('gconduit')){
+        modalEditConduits(this.id);
+    }
+})
 
 /////////////////////////////////////////////////////////////
 // Pumps Modal 
@@ -5534,8 +5380,21 @@ var modalEditPumps = function(id){
     if(typeof swmmjs.model['PUMPS'] === 'undefined'){
         swmmjs.model['PUMPS'] = [];
     } else {
-        // Get any tags for this object
-        getTag('Link', id.toString(), $('#pumps-tag'))
+        // If there are tags, and one of the tags has this id, use the tag
+        // Check for object.type='Link' and object.ID = itemID;
+        function tagQuery(thisObj){
+            return thisObj.Type==='Link' && thisObj.ID === id; 
+        }
+        // For every tag element
+        let thisArray = Object.values(swmmjs.model['TAGS']);
+
+        // Find the tag that matches this RG id
+        let thisEl = thisArray.findIndex(tagQuery);
+        if(thisEl >= 0){
+            $('#pumps-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+        } else {
+            $('#pumps-tag').val('');
+        }
 
         $('#pumps-name').val(id)
         $('#pumps-inletnode').val(swmmjs.model['PUMPS'][id]['Node1'])
@@ -5549,117 +5408,65 @@ var modalEditPumps = function(id){
     }
 }
 
-/////////////////////////////////////////////////////////////
-// Orifices Modal 
-/////////////////////////////////////////////////////////////
+$('#save-modal-pumps').click(function(e){
+    saveModalPumps()
+})
 
-var modalEditOrifices = function(id){
-    // If the model is not in edit mode, return
-    if(swmmjs.model.clickEffect !== 'edit'){
-        return;
+function saveModalPumps(){
+    // Reassign the id of the object if the user has changed the name value
+    id = $('#pumps-form-id').val();
+
+    // If the user has changed the value
+    if(id !== $('#pumps-name').val()) {
+        // Copy the elements of the old object into a new object using the key name
+        Object.defineProperty(
+            swmmjs.model['PUMPS'], 
+            $('#pumps-name').val(), 
+            Object.getOwnPropertyDescriptor(swmmjs.model['PUMPS'], id)
+        );
+        // Delete the old object
+        delete swmmjs.model['PUMPS'][id]
+
+        id = $('#pumps-name').val();
     }
 
-    // Show the modal.
-    $('#modalOrifices').modal('toggle');
+    // If there are tags, and one of the tags has this id, use the tag
+    // Check for object.type='Node' and object.ID = itemID;
+    function tagQuery(thisObj){
+        return thisObj.Type==='Link' && thisObj.ID === id; 
+    }
+    // For every tag element
+    let thisArray = Object.values(swmmjs.model['TAGS']);
 
-    // Retain the original ID for editing purposes.
-    $('#orifices-form-id').val(id);
-
-    // Make sure to check if the ORIFICES object exists.
-    if(typeof swmmjs.model['ORIFICES'] === 'undefined'){
-        swmmjs.model['ORIFICES'] = [];
+    // Find the tag that matches this RG id
+    let thisEl = thisArray.findIndex(tagQuery);
+    if(thisEl >= 0){
+        swmmjs.model['TAGS'][thisEl].Tag = $('#pumps-tag').val();
     } else {
-        // Get any tags for this object
-        getTag('Link', id.toString(), $('#orifices-tag'))
-
-        $('#orifices-name').val(id)
-        $('#orifices-inletnode').val(swmmjs.model['ORIFICES'][id]['FromNode'])
-        $('#orifices-outletnode').val(swmmjs.model['ORIFICES'][id]['ToNode'])
-        $('#orifices-description').val(swmmjs.model['ORIFICES'][id]['Description'])
-        $('#orifices-type').val(swmmjs.model['ORIFICES'][id]['Type'])
-        $('#orifices-shape').val(swmmjs.model['XSECTIONS'][id]['Shape'])
-        $('#orifices-height').val(swmmjs.model['XSECTIONS'][id]['Geom1'])
-        $('#orifices-width').val(swmmjs.model['XSECTIONS'][id]['Geom2'])
-        $('#orifices-inletoffset').val(swmmjs.model['ORIFICES'][id]['InletOffset'])
-        $('#orifices-dischargecoeff').val(swmmjs.model['ORIFICES'][id]['Qcoeff'])
-        $('#orifices-flapgate').val(swmmjs.model['ORIFICES'][id]['Gated'])
-        $('#orifices-time').val(swmmjs.model['ORIFICES'][id]['CloseTime'])
-        
+        // If there is no tag with this value, and there is a value in the input, 
+        // create a new tag
+        if($('#pumps-tag').val() !== ''){
+            swmmjs.model['TAGS'].push({'Type': 'Link', 'ID': id, 'Tag': $('#pumps-tag').val()})
+        }
     }
+    
+    swmmjs.model['PUMPS'][id]['Description'] = $('#pumps-description').val()
+    swmmjs.model['PUMPS'][id]['Node1'] = $('#pumps-inletnode').val()
+    swmmjs.model['PUMPS'][id]['Node2'] = $('#pumps-outletnode').val()
+    swmmjs.model['PUMPS'][id]['Curve'] = $('#pumps-pumpcurve').val()
+    swmmjs.model['PUMPS'][id]['Dsurch'] = $('#pumps-surchargedepth').val()
+    swmmjs.model['PUMPS'][id]['Aponded'] = $('#pumps-pondedarea').val()
+
+    // Close the modal.
+    $('#modalPumps').modal('toggle');
+
+    // Refresh the Raingages list.
+    populatePumpsList();
 }
 
-/////////////////////////////////////////////////////////////
-// Weirs Modal 
-/////////////////////////////////////////////////////////////
-
-var modalEditWeirs = function(id){
-    // If the model is not in edit mode, return
-    if(swmmjs.model.clickEffect !== 'edit'){
-        return;
+// Clicking on a pump in the map will open a modal
+$('.link_').click(function(e){
+    if(this.classList.contains('gpump')){
+        modalEditPumps(this.id);
     }
-
-    // Show the modal.
-    $('#modalWeirs').modal('toggle');
-
-    // Retain the original ID for editing purposes.
-    $('#weirs-form-id').val(id);
-
-    // Make sure to check if the WEIRS object exists.
-    if(typeof swmmjs.model['WEIRS'] === 'undefined'){
-        swmmjs.model['WEIRS'] = [];
-    } else {
-        // Get any tags for this object
-        getTag('Link', id.toString(), $('#weirs-tag'))
-
-        $('#weirs-name').val(id)
-        $('#weirs-inletnode').val(swmmjs.model['WEIRS'][id]['FromNode'])
-        $('#weirs-outletnode').val(swmmjs.model['WEIRS'][id]['ToNode'])
-        $('#weirs-description').val(swmmjs.model['WEIRS'][id]['Description'])
-        $('#weirs-type').val(swmmjs.model['WEIRS'][id]['Type'])
-        $('#weirs-height').val(swmmjs.model['XSECTIONS'][id]['Geom1'])
-        $('#weirs-length').val(swmmjs.model['XSECTIONS'][id]['Geom2'])
-        $('#weirs-sideslope').val(swmmjs.model['XSECTIONS'][id]['Geom3'])
-        $('#weirs-inletoffset').val(swmmjs.model['WEIRS'][id]['CrestHt'])
-        $('#weirs-dischargecoeff').val(swmmjs.model['WEIRS'][id]['Qcoeff'])
-        $('#weirs-flapgate').val(swmmjs.model['WEIRS'][id]['Gated'])
-        $('#weirs-endcontractions').val(swmmjs.model['WEIRS'][id]['EndCon'])
-        $('#weirs-endcoeff').val(swmmjs.model['WEIRS'][id]['EndCoeff'])
-        
-    }
-}
-
-/////////////////////////////////////////////////////////////
-// Outlets Modal 
-/////////////////////////////////////////////////////////////
-
-var modalEditOutlets = function(id){
-    // If the model is not in edit mode, return
-    if(swmmjs.model.clickEffect !== 'edit'){
-        return;
-    }
-
-    // Show the modal.
-    $('#modalOutlets').modal('toggle');
-
-    // Retain the original ID for editing purposes.
-    $('#outlets-form-id').val(id);
-
-    // Make sure to check if the OUTLETS object exists.
-    if(typeof swmmjs.model['OUTLETS'] === 'undefined'){
-        swmmjs.model['OUTLETS'] = [];
-    } else {
-        // Get any tags for this object
-        getTag('Link', id.toString(), $('#outlets-tag'))
-
-        $('#outlets-name').val(id)
-        $('#outlets-inletnode').val(swmmjs.model['OUTLETS'][id]['FromNode'])
-        $('#outlets-outletnode').val(swmmjs.model['OUTLETS'][id]['ToNode'])
-        $('#outlets-description').val(swmmjs.model['OUTLETS'][id]['Description'])
-        $('#outlets-inletoffset').val(swmmjs.model['OUTLETS'][id]['CrestHt'])
-        $('#outlets-flapgate').val(swmmjs.model['OUTLETS'][id]['Gated'])
-        $('#outlets-ratingcurve').val(swmmjs.model['OUTLETS'][id]['Type'])
-        $('#outlets-functionalcurvecoefficient').val(swmmjs.model['OUTLETS'][id]['Qcoeff'])
-        $('#outlets-functionalcurveexponent').val(swmmjs.model['OUTLETS'][id]['Qexpon'])
-        $('#outlets-tabularcurvename').val(swmmjs.model['OUTLETS'][id]['QTable'])
-    }
-}
+})
