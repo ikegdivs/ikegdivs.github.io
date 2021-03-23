@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 description = info[0].Description;
             })
         //Get the input file for parsing:
-        fetch('data/Example1x.inp')
+        /*fetch('data/Example1x.inp')
             .then(response => response.text())
             .then((data) => {
                 //console.log(data);
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     drawLine(theseSpecs, d3[userVal])
                 })
-        })
+        })*/
     }
 
     // Listen for requests to open the default file.
@@ -355,14 +355,13 @@ function drawLine(theseSpecs, curveType){
         .call(d3.axisBottom(theseSpecs.scaleX))
 }
 
+const swmm_run = Module.cwrap('swmm_run', 'number', ['string', 'string', 'string']);
 
 function runModelClick(){
     // dataObj is an array of dataElement objects.
     dataObj = [];
     let viz_svg01 = d3.select("#viz_svg01");
     let inpText = null;
-
-    console.log('refreshbutton clicked')
     // Create a set of dataElements.
 
     //Get the input file for parsing:
@@ -391,8 +390,8 @@ function runModelClick(){
                 }
                 FS.createDataFile('/', 'input.inp', inpText, true, true);
 
-                const swmm_run = Module.cwrap('swmm_run', 'number', ['string', 'string', 'string']);
-                data = swmm_run("/input.inp", "data/Example1x.rpt", "data/out.out")
+                //data = swmm_run("/input.inp", "data/Example1x.rpt", "data/out.out")
+                swmm_run("/input.inp", "data/Example1x.rpt", "data/out.out")
 
                 let rpt = Module.intArrayToString(FS.findObject('data/Example1x.rpt').contents);
                 document.getElementById('rptFile').innerHTML = rpt;

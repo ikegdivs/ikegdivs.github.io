@@ -50,6 +50,10 @@ input[type="file"] {
     overflow-y: scroll;
 }
 
+#sidebarMenu .nav-item:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
 ::-webkit-scrollbar {
     width: 1px;
 }

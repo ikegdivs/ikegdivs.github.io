@@ -36,6 +36,30 @@ function drawTimeseries(){
     })*/
 }
 
+function doStuff(location, theseSpecs){
+    // Create the viewbox. This viewbox helps define the visible portions
+    // of the chart, but it also helps when making the chart responsive.
+    location.attr('viewBox', ` 0 0 ${theseSpecs.xScaleWidth + theseSpecs.chartBodyX + theseSpecs.textBuffer} ${theseSpecs.yScaleHeight + theseSpecs.textBuffer + theseSpecs.topMargin}`);
+
+    // Add groups to the svg for the body of the chart, the x axis, and the y axis.
+    body = location.append('g')
+        .attr('id', 'chartBody')
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.topMargin})`);
+    location.append('g')
+        .attr('id', 'yAxis')
+        .call(d3.axisLeft(theseSpecs.scaleY))
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.topMargin})`);
+    location.append('g')
+        .attr('id', 'xAxis')
+        .call(d3.axisBottom(theseSpecs.scaleX))
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.yScaleHeight + theseSpecs.topMargin})`);
+
+    // Create the location for the line
+    body.append('path')
+
+    drawLine(theseSpecs, d3.curveLinear);
+}
+
 // representData draws the chart
 // location is an svg where the chart will be drawn.
 // theseSpecs is an object of class ChartSpecs
@@ -598,6 +622,49 @@ d3.inp = function() {
 
             return id;
         }
+
+        // Clicking on the chart button creates the intro modal interface for time series plotting
+        // This is not the same as "Time Series", which is an input object type.
+        // This is for viewing results.
+        $('#btnPMChart').click(function(e){
+            // Show the modal.
+            $('#modalTSPlotSelection').modal('toggle');
+        })
+
+        // When results target has been fully identified by the user,
+        // clicking this button will show a time-based plot of the results for that object.
+        $('#modal-timepatterns-display').click(function(e){
+            // Show the modal
+            $('#modalTSPlot').modal('toggle');
+
+            /*fetch('data/Example1x.out')
+                .then(response => response.blob())
+                .then((data) => {
+                    //console.log(data);*/
+
+                    let dataObj = [];
+                    let viz_svg01 = d3.select("#viz_svgTS");
+        
+                    input = new d3.swmmresult();
+                    val = input.parse('data/out.out');
+        
+                    //console.log('--------------------------')
+                    for(let i = 1; !!val[i]; i++){
+                        //console.log(val[i].LINK["1"][3]);
+                        dataObj.push(new DataElement('00:'+i.toString().padStart(2, '0'), val[i].LINK["1"][3]));
+                    }
+                    //console.log('--------------------------')
+                
+                    // Create a new chartSpecs object and populate it with the data.
+                    theseSpecs = new ChartSpecs(dataObj);
+    
+                    // Prepare the chart and draw it.
+                    representData(viz_svg01, theseSpecs);
+                    //doStuff(viz_svg01, theseSpecs);
+                //})
+        })
+
+        
         
         // Enable clicking to create junctions
         $('#btnPMAdd').click(function(e){
@@ -900,22 +967,6 @@ d3.inp = function() {
                         // Create a CONDUITS object.
                         // Create a new id
                         let id = getUniqueLinkID();
-                        // The next id will be the next available integer from a set
-                        // That excludes all values from CONDUITS.Conduit 
-                        // This should likely be a function that is called by all of the methods that may create a new
-                        // link value
-                        /*let numlist = [];
-                        // Push indexes from CONDUITS to numlist
-                        swmmjs.model.CONDUITS.forEach(function(value, i){
-                            numlist.push(i);
-                        })
-
-                        // Get the first integer that is not in numlist
-                        for(let i = 1; id === 0; i++){
-                            if(numlist.indexOf(i) === -1){
-                                id = i;
-                            }
-                        }*/
 
                         // Create the conduit
                         swmmjs.model['CONDUITS'][id] = {FromNode: idlist[0].ID, InOffset: 0, InitFlow: 0, Length: 400, MaxFlow: 0, OutOffset: 0, Roughness: 0.01, ToNode: idlist[1].ID};
@@ -984,7 +1035,7 @@ d3.inp = function() {
                         .attr('y1', idlist[0].y)
                         .attr('x2', idlist[1].x)
                         .attr('y2', idlist[1].y)
-                        .attr('onclick', 'modalEditPumps('+id+');')
+                        .attr('onclick', 'modalEditPumps("'+id+'");')
                         .attr('title', id)
                         .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                         .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
@@ -997,7 +1048,174 @@ d3.inp = function() {
                     }
                 })
             }
-            
+
+            if($('#subselectcaption').text() === 'Orifices'){
+                swmmjs.model.clickEffect = 'createOrifice'
+                // idlist keeps track of which nodes are used to create the link.
+                let idlist = [];
+
+                let svg = d3.select('#svgSimple');
+
+                // When a user clicks on a node, push the id of the node to the idlist
+                d3.selectAll('.node_').on('click', function(){
+                    // Get the first circle child of this element
+                    let child = this.firstChild;
+                    $(this).addClass('selected');
+                    idlist.push({ID: this.id, x: $(child).attr('data-x'), y: $(child).attr('data-y')})
+                    
+                    // If there are more than two objects in idlist, end the edit and create the link
+                    if(idlist.length >= 2){
+                        // Remove the click effect from the nodes
+                        d3.selectAll('.node_').on('click', null);
+                        $('.node_').removeClass('selected');
+
+                        // Create a ORIFICE object.
+                        // Create a new id
+                        let id = getUniqueLinkID();
+
+                        // Create the link
+                        swmmjs.model['ORIFICES'][id] = {FromNode: idlist[0].ID, 
+                                                        ToNode: idlist[1].ID, 
+                                                        Description: '', 
+                                                        Type: 'SIDE', 
+                                                        InletOffset: 0, 
+                                                        Qcoeff: 0, 
+                                                        Gated: 'NO',
+                                                        CloseTime: 0};
+
+                        swmmjs.model['XSECTIONS'][id] = {Shape: 'CIRCULAR', Geom1: 1.5, Geom2: 0, Geom3: 0, Geom4: 0, Barrels: 1}
+                            
+                        // Add the link to the map
+                        d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'link_ gorifice').append('line')
+                        .attr('x1', idlist[0].x)
+                        .attr('y1', idlist[0].y)
+                        .attr('x2', idlist[1].x)
+                        .attr('y2', idlist[1].y)
+                        .attr('onclick', 'modalEditOrifices("'+id+'");')
+                        .attr('title', id)
+                        .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                        .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                        .attr('class', 'orifice')
+                        .attr('stroke', color)
+                        .attr('stroke-width', 45);
+
+                        // Change back to an editing environment
+                        swmmjs.model.clickEffect = 'edit';
+                    }
+                })
+            }
+
+            if($('#subselectcaption').text() === 'Weirs'){
+                swmmjs.model.clickEffect = 'createWeir'
+                // idlist keeps track of which nodes are used to create the link.
+                let idlist = [];
+
+                let svg = d3.select('#svgSimple');
+
+                // When a user clicks on a node, push the id of the node to the idlist
+                d3.selectAll('.node_').on('click', function(){
+                    // Get the first circle child of this element
+                    let child = this.firstChild;
+                    $(this).addClass('selected');
+                    idlist.push({ID: this.id, x: $(child).attr('data-x'), y: $(child).attr('data-y')})
+                    
+                    // If there are more than two objects in idlist, end the edit and create the link
+                    if(idlist.length >= 2){
+                        // Remove the click effect from the nodes
+                        d3.selectAll('.node_').on('click', null);
+                        $('.node_').removeClass('selected');
+
+                        // Create a WEIR object.
+                        // Create a new id
+                        let id = getUniqueLinkID();
+
+                        // Create the link
+                        swmmjs.model['WEIRS'][id] = {FromNode: idlist[0].ID, 
+                                                        ToNode: idlist[1].ID, 
+                                                        Description: '', 
+                                                        Type: 'TRANSVERSE', 
+                                                        CrestHt: 0,
+                                                        Qcoeff: 0,
+                                                        Gated: 'NO',
+                                                        EndCon: 0,
+                                                        EndCoeff: 0};
+
+                        swmmjs.model['XSECTIONS'][id] = {Shape: 'CIRCULAR', Geom1: 1.5, Geom2: 0, Geom3: 0, Geom4: 0, Barrels: 1}
+                            
+                        // Add the link to the map
+                        d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'link_ gweir').append('line')
+                        .attr('x1', idlist[0].x)
+                        .attr('y1', idlist[0].y)
+                        .attr('x2', idlist[1].x)
+                        .attr('y2', idlist[1].y)
+                        .attr('onclick', 'modalEditWeirs("'+id+'");')
+                        .attr('title', id)
+                        .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                        .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                        .attr('class', 'weir')
+                        .attr('stroke', color)
+                        .attr('stroke-width', 45);
+
+                        // Change back to an editing environment
+                        swmmjs.model.clickEffect = 'edit';
+                    }
+                })
+            }
+
+            if($('#subselectcaption').text() === 'Outlets'){
+                swmmjs.model.clickEffect = 'createOutlet'
+                // idlist keeps track of which nodes are used to create the link.
+                let idlist = [];
+
+                let svg = d3.select('#svgSimple');
+
+                // When a user clicks on a node, push the id of the node to the idlist
+                d3.selectAll('.node_').on('click', function(){
+                    // Get the first circle child of this element
+                    let child = this.firstChild;
+                    $(this).addClass('selected');
+                    idlist.push({ID: this.id, x: $(child).attr('data-x'), y: $(child).attr('data-y')})
+                    
+                    // If there are more than two objects in idlist, end the edit and create the link
+                    if(idlist.length >= 2){
+                        // Remove the click effect from the nodes
+                        d3.selectAll('.node_').on('click', null);
+                        $('.node_').removeClass('selected');
+
+                        // Create a OUTLET object.
+                        // Create a new id
+                        let id = getUniqueLinkID();
+
+                        // Create the link
+                        swmmjs.model['OUTLETS'][id] = {FromNode: idlist[0].ID, 
+                                                        ToNode: idlist[1].ID, 
+                                                        Description: '', 
+                                                        CrestHt: 0,
+                                                        Gated: 'NO',
+                                                        Type: 'TABULAR/DEPTH', 
+                                                        Qcoeff: 0,
+                                                        Qexpon: 0,
+                                                        QTable: '*'};
+
+                        // Add the link to the map
+                        d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'link_ goutlet').append('line')
+                        .attr('x1', idlist[0].x)
+                        .attr('y1', idlist[0].y)
+                        .attr('x2', idlist[1].x)
+                        .attr('y2', idlist[1].y)
+                        .attr('onclick', 'modalEditOutlets("'+id+'");')
+                        .attr('title', id)
+                        .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                        .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                        .attr('class', 'outlet')
+                        .attr('stroke', color)
+                        .attr('stroke-width', 45);
+
+                        // Change back to an editing environment
+                        swmmjs.model.clickEffect = 'edit';
+                    }
+                })
+            }
         })
 
 
@@ -1307,6 +1525,10 @@ d3.inp = function() {
         }
 
         $('#pmOrifices').click(function(e){
+            populateOrificesList();
+        })
+
+        function populateOrificesList(){
             // Place 'Options' in the subselectcaption text.
             $('#subselectcaption').text('Orifices');
             let listJSON = [];
@@ -1319,9 +1541,13 @@ d3.inp = function() {
             }
 
             populateSelectList(listJSON);
-        })
+        }
 
         $('#pmWeirs').click(function(e){
+            populateWeirsList();
+        })
+
+        function populateWeirsList(){
             // Place 'Options' in the subselectcaption text.
             $('#subselectcaption').text('Weirs');
             let listJSON = [];
@@ -1334,9 +1560,13 @@ d3.inp = function() {
             }
 
             populateSelectList(listJSON);
-        })
+        }
 
         $('#pmOutlets').click(function(e){
+            populateOutletsList();
+        })
+
+        function populateOutletsList(){
             // Place 'Options' in the subselectcaption text.
             $('#subselectcaption').text('Outlets');
             let listJSON = [];
@@ -1349,7 +1579,7 @@ d3.inp = function() {
             }
 
             populateSelectList(listJSON);
-        })
+        }
 
         $('#pmTimeSeries').click(function(e){
             populateTimeseriesList();
@@ -3158,6 +3388,103 @@ d3.inp = function() {
                                         Description: curDesc
                 }
             },
+/*
+[ORIFICES]
+;;Orifice        From Node        To Node          Type         CrestHt    Qcoeff     Gated    CloseTime 
+;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- ----------
+3                9                19               SIDE         3          0.65       NO       4         
+*/
+            ORIFICES: function(section, key, line) {
+                var m = [];
+                line = key + line;
+                m.push(line)
+                m.push(line.slice(17,34))
+                m.push(line.slice(34,51))
+                m.push(line.slice(51,64))
+                m.push(line.slice(64,75))
+                m.push(line.slice(75,86))
+                m.push(line.slice(86,95))
+                m.push(line.slice(95, line.length))
+                if (m && m.length)
+                        section[key] = {FromNode: parseFloat(m[1]), 
+                                        ToNode: parseFloat(m[2]), 
+                                        Type: m[3].trim(), 
+                                        CrestHt: parseFloat(m[4]), 
+                                        Qcoeff: parseFloat(m[5]), 
+                                        Gated: m[6].trim(),
+                                        CloseTime: parseFloat(m[7]),
+                                        Description: curDesc
+                }
+            },
+/*
+[WEIRS]
+;;Weir           From Node        To Node          Type         CrestHt    Qcoeff     Gated    EndCon   EndCoeff  
+;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- -------- ----------
+9                20               24               SIDEFLOW     4          3.33       YES      1        6         
+*/
+            WEIRS: function(section, key, line) {
+                var m = [];
+                line = key + line;
+                m.push(line)
+                m.push(line.slice(17,34))
+                m.push(line.slice(34,51))
+                m.push(line.slice(51,64))
+                m.push(line.slice(64,75))
+                m.push(line.slice(75,86))
+                m.push(line.slice(86,95))
+                m.push(line.slice(95,104))
+                m.push(line.slice(104, line.length))
+                if (m && m.length)
+                        section[key] = {FromNode: parseFloat(m[1]), 
+                                        ToNode: parseFloat(m[2]), 
+                                        Type: m[3].trim(), 
+                                        CrestHt: parseFloat(m[4]), 
+                                        Qcoeff: parseFloat(m[5]), 
+                                        Gated: m[6].trim(),
+                                        EndCon: parseFloat(m[7]),
+                                        EndCoeff: parseFloat(m[8]),
+                                        Description: curDesc
+                }
+            },
+
+/*
+[OUTLETS]
+;;Outlet         From Node        To Node          CrestHt    Type            QTable/Qcoeff    Qexpon     Gated   
+;;-------------- ---------------- ---------------- ---------- --------------- ---------------- ---------- --------
+17               21               16               1          TABULAR/DEPTH   curve22                     YES     
+
+*/
+            OUTLETS: function(section, key, line) {
+                var m = [];
+                line = key + line;
+                m.push(line)
+                m.push(line.slice(17,34))
+                m.push(line.slice(34,51))
+                m.push(line.slice(51,62))
+                m.push(line.slice(62,78))
+                m.push(line.slice(78,95))
+                m.push(line.slice(95,106))
+                m.push(line.slice(106, line.length))
+                if (m && m.length){
+                        let outletTableName = '*';
+                        let outletCoeff = 0;
+                        if(m[4].trim() === 'TABULAR/HEAD' || m[4].trim() === 'TABULAR/DEPTH'){
+                            outletTableName = m[5].trim();
+                        } else {
+                            outletCoeff = parseFloat(m[5]);
+                        }
+                        section[key] = {FromNode: parseFloat(m[1]), 
+                                        ToNode: parseFloat(m[2]), 
+                                        CrestHt: parseFloat(m[3]), 
+                                        Type: m[4].trim(),
+                                        Qcoeff: outletCoeff, 
+                                        QTable: outletTableName,
+                                        Qexpon: parseFloat(m[6]),
+                                        Gated: m[7].trim(),
+                                        Description: curDesc
+                        }
+                }
+            },
             XSECTIONS: function(section, key, line) {
                 var m = line.match(/\s*([^\s;]+)\s+([^\s;]+)\s+([0-9\.]+)\s+([^\s;]+)\s+([^\s;]+)\s+([0-9\.]+).*/);
                 if (m && m.length && 7 === m.length) {
@@ -4100,6 +4427,89 @@ var swmmjs = function() {
         }
         inpString += '\n';
 
+        /*
+        [ORIFICES]
+        ;;Orifice        From Node        To Node          Type         CrestHt    Qcoeff     Gated    CloseTime 
+        ;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- ----------
+        3                9                19               SIDE         3          0.65       NO       4         
+        */
+        secStr = 'ORIFICES';
+        inpString +='[ORIFICES]\n;;Orifice        From Node        To Node          Type         CrestHt    Qcoeff     Gated    CloseTime \n;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- ----------\n'        
+        for (let entry in model[secStr]) {
+            // If there is a description, save it.
+            if(typeof model[secStr][entry].Description !== 'undefined' && model[secStr][entry].Description.length > 0){
+                inpString += ';' + model[secStr][entry].Description + '\n';
+            }
+            inpString += entry.padEnd(17, ' ');
+            inpString += model[secStr][entry].FromNode.toString().padEnd(17, ' ');
+            inpString += model[secStr][entry].ToNode.toString().padEnd(17, ' ');
+            inpString += model[secStr][entry].Type.padEnd(13, ' ');
+            inpString += model[secStr][entry].CrestHt.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].Qcoeff.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].Gated.padEnd(9, ' ');
+            inpString += model[secStr][entry].CloseTime.toString().padEnd(10, ' ');
+            inpString += '\n';
+        }
+        inpString += '\n';
+        /*
+        [WEIRS]
+        ;;Weir           From Node        To Node          Type         CrestHt    Qcoeff     Gated    EndCon   EndCoeff  
+        ;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- -------- ----------
+        9                20               24               SIDEFLOW     4          3.33       YES      1        6         
+        */
+
+        secStr = 'WEIRS';
+        inpString +='[WEIRS]\n;;Weir           From Node        To Node          Type         CrestHt    Qcoeff     Gated    EndCon   EndCoeff  \n;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- -------- ----------\n'        
+        for (let entry in model[secStr]) {
+            // If there is a description, save it.
+            if(typeof model[secStr][entry].Description !== 'undefined' && model[secStr][entry].Description.length > 0){
+                inpString += ';' + model[secStr][entry].Description + '\n';
+            }
+            inpString += entry.padEnd(17, ' ');
+            inpString += model[secStr][entry].FromNode.toString().padEnd(17, ' ');
+            inpString += model[secStr][entry].ToNode.toString().padEnd(17, ' ');
+            inpString += model[secStr][entry].Type.padEnd(13, ' ');
+            inpString += model[secStr][entry].CrestHt.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].Qcoeff.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].Gated.toString().padEnd(9, ' ');
+            inpString += model[secStr][entry].EndCon.toString().padEnd(9, ' ');
+            inpString += model[secStr][entry].EndCoeff.toString().padEnd(10, ' ');
+            inpString += '\n';
+        }
+        inpString += '\n';
+
+            /*
+            [OUTLETS]
+            ;;Outlet         From Node        To Node          CrestHt    Type            QTable/Qcoeff    Qexpon     Gated   
+            ;;-------------- ---------------- ---------------- ---------- --------------- ---------------- ---------- --------
+            17               21               16               1          TABULAR/DEPTH   curve22                     YES     
+
+            */
+
+        secStr = 'OUTLETS';
+        inpString +='[OUTLETS]\n;;Outlet         From Node        To Node          CrestHt    Type            QTable/Qcoeff    Qexpon     Gated   \n;;-------------- ---------------- ---------------- ---------- --------------- ---------------- ---------- --------\n'        
+        for (let entry in model[secStr]) {
+            // If there is a description, save it.
+            if(typeof model[secStr][entry].Description !== 'undefined' && model[secStr][entry].Description.length > 0){
+                inpString += ';' + model[secStr][entry].Description + '\n';
+            }
+            inpString += entry.padEnd(17, ' ');
+            inpString += model[secStr][entry].FromNode.toString().padEnd(17, ' ');
+            inpString += model[secStr][entry].ToNode.toString().padEnd(17, ' ');
+            inpString += model[secStr][entry].CrestHt.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].Type.toString().padEnd(16, ' ');
+            // If the type is TABULAR/DEPTH or TABULAR/HEAD, then QTable is in QTable/Qcoeff, else, Qcoeff is in QTable/Qcoeff
+            if(model[secStr][entry].Type === 'TABULAR/DEPTH' || model[secStr][entry].Type === 'TABULAR/HEAD'){
+                inpString += model[secStr][entry].QTable.toString().padEnd(17, ' ');
+            } else {
+                inpString += model[secStr][entry].Qcoeff.toString().padEnd(17, ' ');
+            }
+            inpString += model[secStr][entry].Qexpon.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].Gated.toString().padEnd(8, ' ');
+            inpString += '\n';
+        }
+        inpString += '\n';
+
         secStr = 'XSECTIONS';
         inpString +='[XSECTIONS]\n;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels   \n;;-------------- ------------ ---------------- ---------- ---------- ---------- ----------\n'        
         for (let entry in model[secStr]) {
@@ -4489,6 +4899,48 @@ var swmmjs = function() {
                                 .attr('transform', transform)
                                 .attr('class', 'pump2')
                                 .attr('style', 'fill:'+color+';');*/
+                        } else if ('ORIFICES' === s) {
+                            // line
+                            el.append('g').attr('id', link).attr('class', 'link_ gorifice').append('line')
+                                .attr('x1', c1.x)
+                                .attr('y1', svg.top - c1.y)
+                                .attr('x2', c2.x)
+                                .attr('y2', svg.top - c2.y)
+                                .attr('title', link)
+                                .attr('onclick', 'modalEditOrifices('+link+');')
+                                .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                                .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                                .attr('stroke', color)
+                                .attr('class', 'orifice')
+                                .attr('stroke-width', svg.strokeWidth);
+                        } else if ('WEIRS' === s) {
+                            // line
+                            el.append('g').attr('id', link).attr('class', 'link_ gweir').append('line')
+                                .attr('x1', c1.x)
+                                .attr('y1', svg.top - c1.y)
+                                .attr('x2', c2.x)
+                                .attr('y2', svg.top - c2.y)
+                                .attr('title', link)
+                                .attr('onclick', 'modalEditWeirs('+link+');')
+                                .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                                .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                                .attr('stroke', color)
+                                .attr('class', 'weir')
+                                .attr('stroke-width', svg.strokeWidth);
+                        } else if ('OUTLETS' === s) {
+                            // line
+                            el.append('g').attr('id', link).attr('class', 'link_ goutlet').append('line')
+                                .attr('x1', c1.x)
+                                .attr('y1', svg.top - c1.y)
+                                .attr('x2', c2.x)
+                                .attr('y2', svg.top - c2.y)
+                                .attr('title', link)
+                                .attr('onclick', 'modalEditOutlets('+link+');')
+                                .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                                .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                                .attr('stroke', color)
+                                .attr('class', 'outlet')
+                                .attr('stroke-width', svg.strokeWidth);
                         }
                     }
                 }
@@ -4562,7 +5014,7 @@ var swmmjs = function() {
                     .attr('fill', color);
             }
 	    }
-
+/*
         // Render Title
             if (model.TITLE){
                 var c = model.TITLE[0];
@@ -4624,7 +5076,7 @@ var swmmjs = function() {
         for (var Gage in model['SYMBOLS']) {
             var l = model['SYMBOLS'][Gage]
         }
-	    
+*/	    
 	    // Render labels
 	    for (var label in model['LABELS']) {
 		var l = model['LABELS'][label],

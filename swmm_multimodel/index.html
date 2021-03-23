@@ -3625,6 +3625,88 @@
     </div>
 </div>
 
+<!--Time Series Plot Selection Modal-->
+<div id="modalTSPlotSelection" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tsplotselection-modalTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tsplotselection-modalTitle">Time Series Plot Selection</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="tsplotselection-form" novalidate="">
+                    <p class="modalinfo" id="tsplotselection-form-id"></p>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="tsplotselection-startdate-label" for="tsplotselection-startdate">Start Date</label>
+                            <input class="form-control modaledit" id="tsplotselection-startdate" name="tsplotselection-startdate" type="date">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="tsplotselection-starttime-label" for="tsplotselection-starttime">Start Time</label>
+                            <input class="form-control modaledit" id="tsplotselection-starttime" name="tsplotselection-starttime" type="time">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="tsplotselection-enddate-label" for="tsplotselection-enddate">End Date</label>
+                            <input class="form-control modaledit" id="tsplotselection-enddate" name="tsplotselection-enddate" type="date">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+
+                        <div class="col-md-6 mb-6">
+                            <label class="modallabel" id="tsplotselection-endtime-label" for="tsplotselection-endtime">End Time</label>
+                            <input class="form-control modaledit" id="tsplotselection-endtime" name="tsplotselection-endtime" type="time">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label class="modallabel" id="tsplotselection-enddate-label" for="tsplotselection-enddate">Data Series</label>
+                            <div class="btn-group btn-group-sm d-flex" role="group">
+                                <button class="btn btn-secondary" aria-label="Add Object" id="btnTSPAdd"><i class="bi bi-plus-circle"></i></button>
+                                <button class="btn btn-secondary" aria-label="Delete Object" id="btnTSPDelete"><i class="bi bi-dash-circle"></i></button>
+                                <button class="btn btn-secondary" aria-label="Edit Object" id="btnTSPEdit"><i class="bi bi-pencil-square"></i></button>
+                            </div>
+                            <input class="form-control modaledit" id="tsplotselection-text" name="tsplotselection-text" type="text">
+                            <div class="valid-tooltip">Valid entry</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+                <button type="button" id="modal-timepatterns-display" class="btn btn-primary">Display Chart</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Time Series Plot: Not for Time Series objects! This is for charting results.-->
+<div id="modalTSPlot" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTSPlotTitle" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class= "modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTSPlotTitle">Graph</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <svg id="viz_svgTS"></svg>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--Project window-->
 <div class="container-fluid">
   <div class="row">
@@ -3882,7 +3964,7 @@
             <button class="btn btn-secondary" aria-label="Add Object" id="btnPMAdd"><i class="bi bi-plus-circle"></i></button>
             <button class="btn btn-secondary" aria-label="Delete Object" id="btnPMDelete"><i class="bi bi-dash-circle"></i></button>
             <button class="btn btn-secondary" aria-label="Edit Object" id="btnPMEdit"><i class="bi bi-pencil-square"></i></button>
-            <button class="btn btn-secondary" aria-label="Sort Objects" id="btnPMSort"><i class="bi bi-sort-alpha-down"></i></button>
+            <button class="btn btn-secondary" aria-label="Chart Objects" id="btnPMChart"><i class="bi bi-sort-alpha-down"></i></button>
         </div>
         <ul id="subselectlist" class="nav flex-column">
         </ul>
