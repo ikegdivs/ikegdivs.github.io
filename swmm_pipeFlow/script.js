@@ -270,8 +270,6 @@ $('#refreshButton').click(function(){
                     }
                     console.log('runran')
                 })
-            
-            console.log('what the heck')
     
             
     

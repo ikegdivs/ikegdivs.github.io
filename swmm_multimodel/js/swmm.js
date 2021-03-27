@@ -588,6 +588,25 @@ d3.inp = function() {
             return id;
         }
 
+        // When creating new raingages, you will need a unique node id
+        function getUniqueRaingageID(){
+            let id = 0;
+            let idList = [];
+            // Push indexes from JUNCTIONS to numlist
+            swmmjs.model.RAINGAGES.forEach(function(value, i){
+                idList.push(i);
+            })
+
+            // Get the first integer that is not in numlist
+            for(let i = 1; id === 0; i++){
+                if(idList.indexOf(i) === -1){
+                    id = i;
+                }
+            }
+
+            return id;
+        }
+
         // When creating new nodes, you will need a unique node id
         function getUniqueLinkID(){
             let id = 0;
@@ -636,61 +655,105 @@ d3.inp = function() {
         $('#modal-timepatterns-display').click(function(e){
             // Show the modal
             $('#modalTSPlot').modal('toggle');
+            let dataObj = [];
+            let viz_svg01 = d3.select("#viz_svgTS");
 
-            /*fetch('data/Example1x.out')
-                .then(response => response.blob())
-                .then((data) => {
-                    //console.log(data);*/
+            input = new d3.swmmresult();
+            val = input.parse('data/out.out');
 
-                    let dataObj = [];
-                    let viz_svg01 = d3.select("#viz_svgTS");
+            for(let i = 1; !!val[i]; i++){
+                dataObj.push(new DataElement('00:'+i.toString().padStart(2, '0'), val[i].LINK["1"][3]));
+            }
         
-                    input = new d3.swmmresult();
-                    val = input.parse('data/out.out');
-        
-                    //console.log('--------------------------')
-                    for(let i = 1; !!val[i]; i++){
-                        //console.log(val[i].LINK["1"][3]);
-                        dataObj.push(new DataElement('00:'+i.toString().padStart(2, '0'), val[i].LINK["1"][3]));
-                    }
-                    //console.log('--------------------------')
-                
-                    // Create a new chartSpecs object and populate it with the data.
-                    theseSpecs = new ChartSpecs(dataObj);
-    
-                    // Prepare the chart and draw it.
-                    representData(viz_svg01, theseSpecs);
-                    //doStuff(viz_svg01, theseSpecs);
-                //})
+            // Create a new chartSpecs object and populate it with the data.
+            theseSpecs = new ChartSpecs(dataObj);
+
+            // Prepare the chart and draw it.
+            representData(viz_svg01, theseSpecs);
         })
 
-        
-        
-        // Enable clicking to create junctions
+        // Enable clicking to create entities
         $('#btnPMAdd').click(function(e){
             let svg = d3.select('#svgSimple');
 
-            let coords = d3.values(swmmjs.model.COORDINATES),
-            x = function(c) {
-                return c.x
-            },
-            y = function(c) {
-                return c.y
-            };
-            svg.minx = d3.min(coords, x);
-            svg.maxx = d3.max(coords, x);
-            svg.miny = d3.min(coords, y);
-            svg.maxy = d3.max(coords, y);
-            
-            if (!svg.minx || !svg.maxx || !svg.miny || !svg.maxy)
-                return;
-            
-            let height = (svg.maxy - svg.miny),
-                width = (svg.maxx - svg.minx),
-                scale = width * 0.1;
-            
-            svg.strokeWidth = height / 200;
-            svg.top = svg.maxy + scale;
+            // switch statements on the current target of the subselectcaption div
+            if($('#subselectcaption').text() === 'Rain Gages'){
+                // Set the click effect to 'createJunction'
+                swmmjs.model.clickEffect = 'createRaingage';
+
+                svg.on('click', function() {
+                    // If the model is not in create junction mode, return.
+                    if(swmmjs.model.clickEffect !== 'createRaingage'){
+                        svg.on('click', null);
+                        return;
+                    // Change the model click effect to edit.
+                    } else {
+                        swmmjs.model.clickEffect = 'edit';
+                    }
+
+                    let xy = d3.mouse(this);
+                    let transform = d3.zoomTransform(svg.node());
+                    let xy1 = transform.invert(xy);
+                    let id = 0;
+
+                    // Create a new id
+                    id = getUniqueRaingageID();
+
+                    swmmjs.model.RAINGAGES[id] = {Description: '', Format: 'INTENSITY', Interval: '1:00', SCF: 1.0, Source: 'TIMESERIES', SeriesName: '*', FileName: '*', StationID: '*', RainUnits: 'IN'}
+
+                    swmmjs.model['SYMBOLS'][id] = [];
+                    swmmjs.model['SYMBOLS'][id]['XCoord'] = Math.floor(xy1[0])
+                    swmmjs.model['SYMBOLS'][id]['YCoord'] = Math.floor(swmmjs.svg.top - xy1[1])
+
+                    d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'symbol_ graingage').append('circle')
+                        .attr('cx', xy1[0])
+                        .attr('cy', xy1[1])
+                        .attr('r', swmmjs.svg.nodeSize)
+                        .attr('data-x', xy1[0])
+                        .attr('data-y', xy1[1])
+                        .attr('onclick', 'modalEditRaingages('+id+');')
+                        .attr('title', id)
+                        .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                        .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                        .attr('class', 'raingage')
+                        .attr('fill', 'rgba(125, 125, 255, 1)');
+
+
+
+
+/*
+                        el.append('g').attr('id', symbol).attr('class', 'node_ graingage').append('circle')
+                        .attr('cx', c.XCoord)
+                        .attr('cy', swmmjs.svg.top - c.YCoord)
+                        .attr('r', swmmjs.svg.nodeSize)
+                        .attr('data-x', c.XCoord)
+                        .attr('data-y', swmmjs.svg.top - c.YCoord)
+                        .attr('title', symbol)
+                        .attr('onclick', 'modalEditRaingages("'+symbol+'");')
+                        .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                        .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                        .attr('class', 'raingage')
+                        .attr('fill', 'rgba(125, 125, 255, 1)');
+*/
+
+
+
+
+
+
+
+
+
+
+                        
+                    // Spawn an editing window for the junction object
+                    modalEditRaingages(id);
+
+                    swmmjs.model.clickEffect = 'edit';
+                    svg.on('click', null);
+                    populateRaingagesList();
+                })
+            }
 
             // switch statements on the current target of the subselectcaption div
             if($('#subselectcaption').text() === 'Junctions'){
@@ -719,7 +782,7 @@ d3.inp = function() {
 
                     swmmjs.model['COORDINATES'][id] = [];
                     swmmjs.model['COORDINATES'][id]['x'] = Math.floor(xy1[0])
-                    swmmjs.model['COORDINATES'][id]['y'] = Math.floor(svg.top - xy1[1])
+                    swmmjs.model['COORDINATES'][id]['y'] = Math.floor(swmmjs.svg.top - xy1[1])
 
                     color = (swmmjs.INPUT === swmmjs.mode ? swmmjs.defaultColor: nodeColors[r(v)]);
                     d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'node_ gjunction').append('circle')
@@ -770,7 +833,7 @@ d3.inp = function() {
 
                     swmmjs.model['COORDINATES'][id] = [];
                     swmmjs.model['COORDINATES'][id]['x'] = Math.floor(xy1[0])
-                    swmmjs.model['COORDINATES'][id]['y'] = Math.floor(svg.top - xy1[1])
+                    swmmjs.model['COORDINATES'][id]['y'] = Math.floor(swmmjs.svg.top - xy1[1])
 
                     color = (swmmjs.INPUT === swmmjs.mode ? swmmjs.defaultColor: nodeColors[r(v)]);
                     d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'node_ goutfall').append('polygon')
@@ -780,7 +843,7 @@ d3.inp = function() {
                     .attr('title', id)
                     .attr('data-x', xy1[0])
                     .attr('data-y', xy1[1])
-                    .attr('data-y0', svg.top - xy1[1])
+                    .attr('data-y0', swmmjs.svg.top - xy1[1])
                     .attr('onclick', 'modalEditOutfalls('+id+');')
                     .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                     .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
@@ -848,7 +911,7 @@ d3.inp = function() {
                     .attr('title', id)
                     .attr('data-x', xy1[0])
                     .attr('data-y', xy1[1])
-                    .attr('data-y0', svg.top - xy1[1])
+                    .attr('data-y0', swmmjs.svg.top - xy1[1])
                     .attr('onclick', 'modalEditDividers('+id+');')
                     .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                     .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
@@ -916,7 +979,7 @@ d3.inp = function() {
                     .attr('title', id)
                     .attr('data-x', xy1[0])
                     .attr('data-y', xy1[1])
-                    .attr('data-y0', svg.top - xy1[1])
+                    .attr('data-y0', swmmjs.svg.top - xy1[1])
                     .attr('onclick', 'modalEditStorageunits('+id+');')
                     .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                     .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
@@ -1214,6 +1277,70 @@ d3.inp = function() {
                         // Change back to an editing environment
                         swmmjs.model.clickEffect = 'edit';
                     }
+                })
+            }
+
+            // switch statements on the current target of the subselectcaption div
+            if($('#subselectcaption').text() === 'Subcatchments'){
+                // Set the click effect to 'createSubcatchment'
+                swmmjs.model.clickEffect = 'createSubcatchment';
+
+                svg.on('click', function() {
+                    // If the model is not in create subcatchment mode, return.
+                    if(swmmjs.model.clickEffect !== 'createSubcatchment'){
+                        svg.on('click', null);
+                        return;
+                    // Change the model click effect to edit.
+                    } else {
+                        swmmjs.model.clickEffect = 'edit';
+                    }
+
+                    let xy = d3.mouse(this);
+                    let transform = d3.zoomTransform(svg.node());
+                    let xy1 = transform.invert(xy);
+                    let id = 0;
+
+                    // Create a new id
+                    id = getUniqueNodeID();
+
+                    swmmjs.model.SUBCATCHMENTS[id] = {Description: '', RainGage: '*', Outlet: '*', Area: 5, Width: 500, PctSlope: 0.5, PctImperv: 25, CurbLen: 0, SnowPack: ''}
+
+                    swmmjs.model.SUBAREAS[id] = {NImperv: 0.01, NPerv: 0.1, SImperv: 0.05, SPerv: 0.05, PctZero: 25, RouteTo: 'OUTLET', PctRouted: 100}
+                    
+                    swmmjs.model['Polygons'][id] = [];
+
+                    swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] - swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] + swmmjs.svg.nodeSize})
+                    swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] + swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] + swmmjs.svg.nodeSize})
+                    swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] + swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] - swmmjs.svg.nodeSize})
+                    swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] - swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] - swmmjs.svg.nodeSize})
+
+
+                    d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'polygon_ gpolygon').append('polygon')
+                    .attr('points', 
+                        (xy1[0] - swmmjs.svg.nodeSize) + ' ' + (xy1[1] + swmmjs.svg.nodeSize) + ' ' +
+                        (xy1[0] + swmmjs.svg.nodeSize) + ' ' + (xy1[1] + swmmjs.svg.nodeSize) + ' ' +
+                        (xy1[0] + swmmjs.svg.nodeSize) + ' ' + (xy1[1] - swmmjs.svg.nodeSize) + ' ' +
+                        (xy1[0] - swmmjs.svg.nodeSize) + ' ' + (xy1[1] - swmmjs.svg.nodeSize)
+                        )
+                    .attr('title', id)
+                    //.attr('data-x', xy1[0])
+                    //.attr('data-y', xy1[1])
+                    //.attr('data-y0', svg.top - xy1[1])
+                    .attr('onclick', 'modalEditSubcatchments("'+id+'");')
+                    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                    .attr('class', 'polygon')
+                    .attr('fill', 'transparent')
+                    .attr("stroke-width", 7)
+                    .attr("stroke", 'rgba(0, 0, 0, 1');
+
+                        
+                    // Spawn an editing window for the junction object
+                    modalEditSubcatchments(id);
+
+                    swmmjs.model.clickEffect = 'edit';
+                    svg.on('click', null);
+                    populateSubcatchmentsList();
                 })
             }
         })
@@ -2213,50 +2340,6 @@ d3.inp = function() {
         // Rain Gages Modal 
         /////////////////////////////////////////////////////////////
 
-        var modalEditRaingages = function(id){
-            // Show the modal.
-            $('#modalRaingages').modal('toggle');
-
-            // Retain the original ID for editing purposes.
-            $('#raingages-form-id').val(id);
-
-            // Make sure to check if the RAINGAGES object exists.
-            if(typeof swmmjs.model['RAINGAGES'] === 'undefined'){
-                swmmjs.model['RAINGAGES'] = [];
-            } else {
-                $('#raingages-name').val(id)
-                // If there are symbols, and one of the symbols has this RG id, use the xy position of that
-                if(typeof swmmjs.model['SYMBOLS'] !== 'undefined' && typeof swmmjs.model['SYMBOLS'][id] !== 'undefined'){
-                    $('#raingages-xcoordinate').val(swmmjs.model['SYMBOLS'][id]['XCoord'])
-                    $('#raingages-ycoordinate').val(swmmjs.model['SYMBOLS'][id]['YCoord'])
-                }
-
-                // If there are tags, and one of the tags has this RG id, use the tag
-                // Check for object.type='Node' and object.ID = itemID;
-                function tagQuery(thisObj){
-                    return thisObj.Type==='Gage' && thisObj.ID === id; 
-                }
-                // For every tag element
-                let thisArray = Object.values(swmmjs.model['TAGS']);
-
-                // Find the tag that matches this RG id
-                let thisEl = thisArray.findIndex(tagQuery);
-                if(thisEl >= 0){
-                    $('#raingages-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
-                } else {
-                    $('#raingages-tag').val('');
-                }
-
-
-                $('#raingages-description').val(swmmjs.model['RAINGAGES'][id]['Description'])
-                $('#raingages-rainformat').val(swmmjs.model['RAINGAGES'][id]['Format'])
-                $('#raingages-timeinterval').val(swmmjs.model['RAINGAGES'][id]['Interval'])
-                $('#raingages-snowcatchfactor').val(swmmjs.model['RAINGAGES'][id]['SCF'])
-                $('#raingages-datasource').val(swmmjs.model['RAINGAGES'][id]['Source'])
-                $('#raingages-timeseriesname').val(swmmjs.model['RAINGAGES'][id]['Source'])
-            }
-        }
-
         $('#save-modal-raingages').click(function(e){
             saveModalRaingages()
         })
@@ -2321,7 +2404,10 @@ d3.inp = function() {
             swmmjs.model['RAINGAGES'][id]['Interval'] = $('#raingages-timeinterval').val()
             swmmjs.model['RAINGAGES'][id]['SCF'] = $('#raingages-snowcatchfactor').val()
             swmmjs.model['RAINGAGES'][id]['Source'] = $('#raingages-datasource').val()
-            swmmjs.model['RAINGAGES'][id]['Source'] = $('#raingages-timeseriesname').val()
+            swmmjs.model['RAINGAGES'][id]['SeriesName'] = $('#raingages-timeseriesname').val()
+            swmmjs.model['RAINGAGES'][id]['FileName'] = $('#raingages-datafilename').val()
+            swmmjs.model['RAINGAGES'][id]['StationID'] = $('#raingages-stationid').val()
+            swmmjs.model['RAINGAGES'][id]['RainUnits'] = $('#raingages-rainunits').val()
 
             // Close the modal.
             $('#modalRaingages').modal('toggle');
@@ -2712,6 +2798,89 @@ d3.inp = function() {
         }
 
         /////////////////////////////////////////////////////////////
+        // Subcatchments Modal 
+        /////////////////////////////////////////////////////////////
+
+        $('#save-modal-subcatchments').click(function(e){
+            saveModalSubcatchments()
+        })
+
+        function saveModalSubcatchments(){
+            // Reassign the id of the subcatchment if the user has changed the name value
+            id = $('#subcatchments-form-id').val();
+        
+            // If the user has changed the value
+            if(id !== $('#subcatchments-name').val()) {
+                // Copy the elements of the old object into a new object using the key name
+                Object.defineProperty(
+                    swmmjs.model['SUBCATCHMENTS'], 
+                    $('#subcatchments-name').val(), 
+                    Object.getOwnPropertyDescriptor(swmmjs.model['SUBCATCHMENTS'], id)
+                );
+                // Delete the old object
+                delete swmmjs.model['SUBCATCHMENTS'][id]
+        
+                // Copy the elements of the old object into a new object using the key name
+                Object.defineProperty(
+                    swmmjs.model['SUBAREAS'], 
+                    $('#subcatchments-name').val(), 
+                    Object.getOwnPropertyDescriptor(swmmjs.model['SUBAREAS'], id)
+                );
+                // Delete the old object
+                delete swmmjs.model['SUBAREAS'][id]
+        
+                id = $('#subcatchments-name').val();
+            }
+        
+            // If there are tags, and one of the tags has this subcatchment id, use the tag
+            // Check for object.type='Node' and object.ID = itemID;
+            function tagQuery(thisObj){
+                return thisObj.Type==='Subcatch' && thisObj.ID === id; 
+            }
+            // For every tag element
+            let thisArray = Object.values(swmmjs.model['TAGS']);
+        
+            // Find the tag that matches this RG id
+            let thisEl = thisArray.findIndex(tagQuery);
+            if(thisEl >= 0){
+                swmmjs.model['TAGS'][thisEl].Tag = $('#subcatchments-tag').val();
+            } else {
+                // If there is no tag with this value, and there is a value in the input, 
+                // create a new tag
+                if($('#subcatchments-tag').val() !== ''){
+                    swmmjs.model['TAGS'][Object.keys(swmmjs.model['TAGS']).length] = {Type: 'Subcatch', ID: id, Tag: $('#subcatchments-tag').val()}
+                }
+            }
+            
+            swmmjs.model['SUBCATCHMENTS'][id]['Description'] = $('#subcatchments-description').val()
+            swmmjs.model['SUBCATCHMENTS'][id]['RainGage'] = $('#subcatchments-raingage').val()
+            swmmjs.model['SUBCATCHMENTS'][id]['Outlet'] =$('#subcatchments-outlet').val()
+            swmmjs.model['SUBCATCHMENTS'][id]['Area'] = $('#subcatchments-area').val()
+            swmmjs.model['SUBCATCHMENTS'][id]['Width'] = $('#subcatchments-width').val()
+            swmmjs.model['SUBCATCHMENTS'][id]['PctSlope'] = $('#subcatchments-pctslope').val()
+            swmmjs.model['SUBCATCHMENTS'][id]['PctImperv'] = $('#subcatchments-pctimperv').val()
+            swmmjs.model['SUBAREAS'][id]['NImperv'] = $('#subcatchments-nimperv').val()
+            swmmjs.model['SUBAREAS'][id]['NPerv'] = $('#subcatchments-nperv').val()
+            swmmjs.model['SUBAREAS'][id]['SImperv'] = $('#subcatchments-dstoreimperv').val()
+            swmmjs.model['SUBAREAS'][id]['SPerv'] = $('#subcatchments-dstoreperv').val()
+            swmmjs.model['SUBAREAS'][id]['PctZero'] = $('#subcatchments-pctzeroimperv').val()
+            swmmjs.model['SUBAREAS'][id]['RouteTo'] = $('#subcatchments-subarearouting').val()
+            swmmjs.model['SUBAREAS'][id]['PctRouted'] = $('#subcatchments-pctrouted').val()
+            swmmjs.model['SUBCATCHMENTS'][id]['CurbLen'] = $('#subcatchments-curblength').val()
+            swmmjs.model['SUBCATCHMENTS'][id]['SnowPack'] = $('#subcatchments-snowpack').val()
+        
+            
+            // Close the modal.
+            $('#modalSubcatchments').modal('toggle');
+        
+            // Refresh the Project menu list.
+            populateSubcatchmentsList();
+        
+            // Set the clickEffect to 'edit'
+            swmmjs.model.clicEffect = 'edit';
+        }
+
+        /////////////////////////////////////////////////////////////
         // Pollutants Modal 
         /////////////////////////////////////////////////////////////
 
@@ -3096,8 +3265,6 @@ d3.inp = function() {
         }
     }
 
-    
-
     /////////////////////////////////////////////////////////////
     // .inp parsing function.
     /////////////////////////////////////////////////////////////
@@ -3148,9 +3315,10 @@ d3.inp = function() {
                         section[key] = {Value: m[1].trim()};
             },
             RAINGAGES: function(section, key, line) {
-                    var m = line.match(/\s+([a-zA-Z0-9\.]+)\s+([:0-9\.]+)\s+([0-9\.]+)\s+([\sA-Za-z0-9\.]+)/);
+                    var m = line.match(/\s+([a-zA-Z0-9\.]+)\s+([:0-9\.]+)\s+([0-9\.]+)\s+([A-Za-z0-9\.]+)\s+([A-Za-z0-9\.]+)/);
                     if (m && m.length)
-                        section[key] = {Format: m[1], Interval: m[2], SCF: m[3], Source: m[4], Description: curDesc};
+                        section[key] = {Format: m[1], Interval: m[2], SCF: m[3], Source: m[4], SeriesName: m[5], Description: curDesc};
+                        //swmmjs.model.RAINGAGES[id] = {Description: '', Format: 'INTENSITY', Interval: '1:00', SCF: 1.0, Source: 'TIMESERIES', SeriesName: '*', FileName: '*', StationID: '*', RainUnits: 'IN'}
             },
             INFILTRATION: function(section, key, line) {
                     var m = line.match(/\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)\s+([0-9\.]+)/);
@@ -3388,12 +3556,12 @@ d3.inp = function() {
                                         Description: curDesc
                 }
             },
-/*
-[ORIFICES]
-;;Orifice        From Node        To Node          Type         CrestHt    Qcoeff     Gated    CloseTime 
-;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- ----------
-3                9                19               SIDE         3          0.65       NO       4         
-*/
+            /*
+            [ORIFICES]
+            ;;Orifice        From Node        To Node          Type         CrestHt    Qcoeff     Gated    CloseTime 
+            ;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- ----------
+            3                9                19               SIDE         3          0.65       NO       4         
+            */
             ORIFICES: function(section, key, line) {
                 var m = [];
                 line = key + line;
@@ -3416,12 +3584,12 @@ d3.inp = function() {
                                         Description: curDesc
                 }
             },
-/*
-[WEIRS]
-;;Weir           From Node        To Node          Type         CrestHt    Qcoeff     Gated    EndCon   EndCoeff  
-;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- -------- ----------
-9                20               24               SIDEFLOW     4          3.33       YES      1        6         
-*/
+            /*
+            [WEIRS]
+            ;;Weir           From Node        To Node          Type         CrestHt    Qcoeff     Gated    EndCon   EndCoeff  
+            ;;-------------- ---------------- ---------------- ------------ ---------- ---------- -------- -------- ----------
+            9                20               24               SIDEFLOW     4          3.33       YES      1        6         
+            */
             WEIRS: function(section, key, line) {
                 var m = [];
                 line = key + line;
@@ -3447,13 +3615,12 @@ d3.inp = function() {
                 }
             },
 
-/*
-[OUTLETS]
-;;Outlet         From Node        To Node          CrestHt    Type            QTable/Qcoeff    Qexpon     Gated   
-;;-------------- ---------------- ---------------- ---------- --------------- ---------------- ---------- --------
-17               21               16               1          TABULAR/DEPTH   curve22                     YES     
-
-*/
+            /*
+            [OUTLETS]
+            ;;Outlet         From Node        To Node          CrestHt    Type            QTable/Qcoeff    Qexpon     Gated   
+            ;;-------------- ---------------- ---------------- ---------- --------------- ---------------- ---------- --------
+            17               21               16               1          TABULAR/DEPTH   curve22                     YES     
+            */
             OUTLETS: function(section, key, line) {
                 var m = [];
                 line = key + line;
@@ -3587,9 +3754,6 @@ d3.inp = function() {
                                         Ecleaning: parseFloat(m[6]) || 0,
                                         Ebmp: m[7].trim()};
             },    
-
-
-
             TIMESERIES: function(section, key, line) {
                 var m = [];
                 line = key + line;
@@ -3659,9 +3823,9 @@ d3.inp = function() {
             }
                 // add other if neccesary
         },
-        model = {   CONDUITS: [], PUMPS: [], ORIFICES: [], WEIRS: [], OUTLETS: [], 
-                    TRANSECTS: [], CONTROLS: [], COORDINATES: [], LABELS: [], 
-                    JUNCTIONS: [], STORAGE: [], OUTFALLS: [], DIVIDERS: [], 
+        model = {   SUBCATCHMENTS: [], SUBAREAS: [], CONDUITS: [], XSECTIONS: [], LOSSES: [],  PUMPS: [], ORIFICES: [], WEIRS: [], OUTLETS: [], 
+                    TRANSECTS: [], CONTROLS: [], COORDINATES: [], Polygons: [], LABELS: [], 
+                    JUNCTIONS: [], STORAGE: [], OUTFALLS: [], DIVIDERS: [], RAINGAGES: [],
                     clickEffect: 'edit'},
         lines = text.split(/\r\n|\r|\n/),
             section = null;
@@ -4137,8 +4301,7 @@ var swmmjs = function() {
 
     // Render the map
     swmmjs.svg = function() {
-	    var svg = function() {
-	};
+	    var svg = function() {};
 	
 	// ======================================================================================================
 	// This product includes color specifications and designs 
@@ -4151,7 +4314,6 @@ var swmmjs = function() {
 	// ======================================================================================================
 
 	svg.width = window.innerWidth || document.documentElement.clientWidth || d.getElementsByTagName('body')[0].clientWidth;
-	svg.height = 500;
 	svg.nodemap = {};
 	svg.lastNodeId = 0;
 	svg.links = [];
@@ -4250,8 +4412,9 @@ var swmmjs = function() {
             inpString += entry.padEnd(17, ' ');
             inpString += model[secStr][entry].Format.padEnd(10, ' ');
             inpString += model[secStr][entry].Interval.padEnd(7, ' ');
-            inpString += model[secStr][entry].SCF.padEnd(7, ' ');
-            inpString += model[secStr][entry].Source.padEnd(31, ' ');
+            inpString += model[secStr][entry].SCF.toString().padEnd(7, ' ');
+            inpString += model[secStr][entry].Source.padEnd(11, ' ');
+            inpString += model[secStr][entry].SeriesName.padEnd(11, ' ');
             inpString += '\n';
         }
         inpString += '\n';
@@ -4730,11 +4893,18 @@ var swmmjs = function() {
 		    nodeResult = $('#nodeResult').val().toUpperCase(),
 		    linkResult = $('#linkResult').val().toUpperCase();
 	    svg.removeAll(el);
-            if (!el._groups[0][0]) { 
-                // nothing found 
-                d3.select('#svgSimple').append('g');
-                el = d3.select('#svgSimple').select('g');
-            }
+
+        if (!el._groups[0][0]) { 
+            // nothing found 
+            d3.select('#svgSimple').append('g');
+            el = d3.select('#svgSimple').select('g');
+            // Create the default view object
+            /*el.append('rect')
+                .attr('width', '1000')
+                .attr('height', '1000')
+                .attr('fill', 'rgba(0, 0, 0, 0)')
+                .attr('stroke', 'rgba(0, 0, 0, 0)')*/
+        }
 
 	    if ('object' !== typeof model.COORDINATES)
 		return;
@@ -4751,8 +4921,12 @@ var swmmjs = function() {
             svg.miny = d3.min(coords, y);
             svg.maxy = d3.max(coords, y);
             
-            if (!svg.minx || !svg.maxx || !svg.miny || !svg.maxy)
-                return;
+            if (!svg.minx || !svg.maxx || !svg.miny || !svg.maxy){
+                svg.minx = 0;
+                svg.maxx = 1000;
+                svg.miny = 0;
+                svg.maxy = 1000;
+            }
             
             var height = (svg.maxy - svg.miny),
                 width = (svg.maxx - svg.minx),
@@ -5002,10 +5176,10 @@ var swmmjs = function() {
             } else if (model.JUNCTIONS[coordinate])  {
                 el.append('g').attr('id',coordinate).attr('class', 'node_ gjunction').append('circle')
                     .attr('cx', c.x)
-                    .attr('cy', svg.top - c.y)
-                    .attr('r', svg.nodeSize)
+                    .attr('cy', swmmjs.svg.top - c.y)
+                    .attr('r', swmmjs.svg.nodeSize)
                     .attr('data-x', c.x)
-                    .attr('data-y', svg.top - c.y)
+                    .attr('data-y', swmmjs.svg.top - c.y)
                     .attr('onclick', 'modalEditJunctions('+coordinate+');')
                     .attr('title', coordinate)
                     .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
@@ -5014,114 +5188,71 @@ var swmmjs = function() {
                     .attr('fill', color);
             }
 	    }
-/*
-        // Render Title
-            if (model.TITLE){
-                var c = model.TITLE[0];
+
+        for (var symbol in model.SYMBOLS)
+	    {
+            var c = model.SYMBOLS[symbol]
+            if (model.RAINGAGES[symbol]) {
+                el.append('g').attr('id', symbol).attr('class', 'node_ graingage').append('circle')
+                    .attr('cx', c.XCoord)
+                    .attr('cy', swmmjs.svg.top - c.YCoord)
+                    .attr('r', swmmjs.svg.nodeSize)
+                    .attr('data-x', c.XCoord)
+                    .attr('data-y', swmmjs.svg.top - c.YCoord)
+                    .attr('title', symbol)
+                    .attr('onclick', 'modalEditRaingages("'+symbol+'");')
+                    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                    .attr('class', 'raingage')
+                    .attr('fill', 'rgba(125, 125, 255, 1)');
             }
-        // Render Options
-            for (var Option in model['OPTIONS']) {
-                var l = model['OPTIONS'][Option]
-            }
-        // Render Evaporation
-            for (var Evaporation in model['EVAPORATION']) {
-                var l = model['EVAPORATION'][Evaporation]
-            }
-        // Render Raingages
-            for (var Raingage in model['RAINGAGES']) {
-                var l = model['RAINGAGES'][Raingage]
-            }
-        
-        // Render Infiltration
-            for (var Subcatchment in model['INFILTRATION']) {
-                var l = model['INFILTRATION'][Subcatchment]
-            }
-        // Render Outfalls
-            for (var Outfall in model['OUTFALLS']) {
-                var l = model['OUTFALLS'][Outfall]
-            }
-        // Render Pollutants
-            for (var Pollutant in model['POLLUTANTS']) {
-                var l = model['POLLUTANTS'][Pollutant]
-            }
-        // Render Landuses
-        for (var Landuse in model['LANDUSES']) {
-            var l = model['LANDUSES'][Landuse]
         }
-        // Render Coverages
-        for (var Coverage in model['COVERAGES']) {
-            var l = model['COVERAGES'][Coverage]
-        }
-        // Render Loadings
-        for (var Loading in model['LOADINGS']) {
-            var l = model['LOADINGS'][Loading]
-        }
-        // Render Buildup
-        for (var LandUse in model['BUILDUP']) {
-            var l = model['BUILDUP'][LandUse]
-        }
-        // Render Washoff
-        for (var LandUse in model['WASHOFF']) {
-            var l = model['WASHOFF'][LandUse]
-        }
-        // Render Time Series
-        for (var TimeSeries in model['TIMESERIES']) {
-            var l = model['TIMESERIES'][TimeSeries]
-        }
-        // Render Reporting Options
-        for (var Option in model['REPORT']) {
-            var l = model['REPORT'][Option]
-        }
-        // Render SYMBOLS
-        for (var Gage in model['SYMBOLS']) {
-            var l = model['SYMBOLS'][Gage]
-        }
-*/	    
+
 	    // Render labels
 	    for (var label in model['LABELS']) {
 		var l = model['LABELS'][label],
 			t = (l['label'] ? l['label'] : '');
                 if (t !== '') {
                     el.append('g').append('text')
-                            .attr('x', (l['x']?l['x']:0) - svg.nodeSize * t.length / 3)
-                            .attr('y', svg.top - (l['y']?l['y']:0) + svg.nodeSize * 2)
+                            .attr('x', (l['x']?l['x']:0) - swmmjs.svg.nodeSize * t.length / 3)
+                            .attr('y', swmmjs.svg.top - (l['y']?l['y']:0) + swmmjs.svg.nodeSize * 2)
                             .text(t)
 			    .attr('data-x', l['x'])
 			    .attr('data-y', l['y'])
 			    .attr('data-label', t)
-                            .attr('style', 'font-family: Verdana, Arial, sans; font-size:' + (svg.nodeSize * 2) + 'px;')
+                            .attr('style', 'font-family: Verdana, Arial, sans; font-size:' + (swmmjs.svg.nodeSize * 2) + 'px;')
                             .attr('class', 'label')
                             .attr('fill', swmmjs.defaultColor);
                 }
 	    }
             
-            var vis = d3.select('#svgSimple');
+        var vis = d3.select('#svgSimple');
 
-            // zoom behaviour
-            var zoom = d3.zoom().scaleExtent([0.1, 50]);
-            zoom.on('zoom', function() { swmmjs.currentScale = d3.event.transform.k; swmmjs.applyScale(svg); });
-            vis.call(zoom);
+        // zoom behaviour
+        var zoom = d3.zoom().scaleExtent([0.1, 50]);
+        zoom.on('zoom', function() { swmmjs.currentScale = d3.event.transform.k; swmmjs.applyScale(svg); });
+        vis.call(zoom);
 
-            swmmjs.applyScale(svg);
+        swmmjs.applyScale(svg);
+        
+        vis.on('mousemove', function() {
+            swmmjs.currentPosition = [d3.event.pageX, d3.event.pageY]; // log the mouse x,y position
+            let svgEl = document.getElementById('svgSimple');
+            let pt = svgEl.createSVGPoint();
+            pt.x = d3.event.pageX;
+            pt.y = d3.event.pageY;
+            let globalPoint = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+            document.getElementById('xy').innerHTML = 'X: ' + (pt.x) + ', Y: ' + (pt.y);
+
+            var xy = d3.mouse(this);
+            var transform = d3.zoomTransform(vis.node());
+            let xy1 = transform.invert(xy);
             
-            vis.on('mousemove', function() {
-                swmmjs.currentPosition = [d3.event.pageX, d3.event.pageY]; // log the mouse x,y position
-                let svgEl = document.getElementById('svgSimple');
-                let pt = svgEl.createSVGPoint();
-                pt.x = d3.event.pageX;
-                pt.y = d3.event.pageY;
-                let globalPoint = pt.matrixTransform(svgEl.getScreenCTM().inverse());
-                document.getElementById('xy').innerHTML = 'X: ' + (pt.x) + ', Y: ' + (pt.y);
+            document.getElementById('xy2').innerHTML = 'X: ' + (xy1[0]).toFixed(0) + ', Y: ' + (svg.top - xy1[1]).toFixed(0);
+        });
 
-                var xy = d3.mouse(this);
-                var transform = d3.zoomTransform(vis.node());
-                let xy1 = transform.invert(xy);
-                
-                document.getElementById('xy2').innerHTML = 'X: ' + (xy1[0]).toFixed(0) + ', Y: ' + (svg.top - xy1[1]).toFixed(0);
-            });
     };
 
-        
         return svg;
     };
     
@@ -5203,9 +5334,9 @@ var swmmjs = function() {
 	    }));
 	    svg = swmmjs.svg;
             
-            if (nodeResult === '') {
-                swmmjs.mode = swmmjs.INPUT;
-            }
+        if (nodeResult === '') {
+            swmmjs.mode = swmmjs.INPUT;
+        }
             
 	    svg.render();
 	    d3.select('#legend ul').remove();
@@ -5534,7 +5665,7 @@ var modalEditDividers = function(id){
     // Retain the original ID for editing purposes.
     $('#dividers-form-id').val(id);
 
-    // Make sure to check if the OUTFALLS object exists.
+    // Make sure to check if the DIVIDERS object exists.
     if(typeof swmmjs.model['DIVIDERS'] === 'undefined'){
         swmmjs.model['DIVIDERS'] = [];
     } else {
@@ -5767,86 +5898,8 @@ var modalEditSubcatchments = function(id){
         $('#subcatchments-subarearouting').val(swmmjs.model['SUBAREAS'][id]['RouteTo'])
         $('#subcatchments-pctrouted').val(swmmjs.model['SUBAREAS'][id]['PctRouted'])
         $('#subcatchments-curblength').val(swmmjs.model['SUBCATCHMENTS'][id]['CurbLen'])
+        $('#subcatchments-snowpack').val(swmmjs.model['SUBCATCHMENTS'][id]['SnowPack'])
     }
-}
-
-$('#save-modal-subcatchments').click(function(e){
-    saveModalSubcatchments()
-})
-
-function saveModalSubcatchments(){
-    
-    // Reassign the id of the subcatchment if the user has changed the name value
-    id = $('#subcatchments-form-id').val();
-
-    // If the user has changed the value
-    if(id !== $('#subcatchments-name').val()) {
-        // Copy the elements of the old object into a new object using the key name
-        Object.defineProperty(
-            swmmjs.model['SUBCATCHMENTS'], 
-            $('#subcatchments-name').val(), 
-            Object.getOwnPropertyDescriptor(swmmjs.model['SUBCATCHMENTS'], id)
-        );
-        // Delete the old object
-        delete swmmjs.model['SUBCATCHMENTS'][id]
-
-        // Copy the elements of the old object into a new object using the key name
-        Object.defineProperty(
-            swmmjs.model['SUBAREAS'], 
-            $('#subcatchments-name').val(), 
-            Object.getOwnPropertyDescriptor(swmmjs.model['SUBAREAS'], id)
-        );
-        // Delete the old object
-        delete swmmjs.model['SUBAREAS'][id]
-
-        id = $('#subcatchments-name').val();
-    }
-
-    // If there are tags, and one of the tags has this subcatchment id, use the tag
-    // Check for object.type='Node' and object.ID = itemID;
-    function tagQuery(thisObj){
-        return thisObj.Type==='Subcatch' && thisObj.ID === id; 
-    }
-    // For every tag element
-    let thisArray = Object.values(swmmjs.model['TAGS']);
-
-    // Find the tag that matches this RG id
-    let thisEl = thisArray.findIndex(tagQuery);
-    if(thisEl >= 0){
-        swmmjs.model['TAGS'][thisEl].Tag = $('#subcatchments-tag').val();
-    } else {
-        // If there is no tag with this value, and there is a value in the input, 
-        // create a new tag
-        if($('#subcatchments-tag').val() !== ''){
-            swmmjs.model['TAGS'][Object.keys(swmmjs.model['TAGS']).length] = {Type: 'Subcatch', ID: id, Tag: $('#subcatchments-tag').val()}
-        }
-    }
-    
-    swmmjs.model['SUBCATCHMENTS'][id]['Description'] = $('#subcatchments-description').val()
-    swmmjs.model['SUBCATCHMENTS'][id]['RainGage'] = $('#subcatchments-raingage').val()
-    swmmjs.model['SUBCATCHMENTS'][id]['Outlet'] =$('#subcatchments-outlet').val()
-    swmmjs.model['SUBCATCHMENTS'][id]['Area'] = $('#subcatchments-area').val()
-    swmmjs.model['SUBCATCHMENTS'][id]['Width'] = $('#subcatchments-width').val()
-    swmmjs.model['SUBCATCHMENTS'][id]['PctSlope'] = $('#subcatchments-pctslope').val()
-    swmmjs.model['SUBCATCHMENTS'][id]['PctImperv'] = $('#subcatchments-pctimperv').val()
-    swmmjs.model['SUBAREAS'][id]['NImperv'] = $('#subcatchments-nimperv').val()
-    swmmjs.model['SUBAREAS'][id]['NPerv'] = $('#subcatchments-nperv').val()
-    swmmjs.model['SUBAREAS'][id]['SImperv'] = $('#subcatchments-dstoreimperv').val()
-    swmmjs.model['SUBAREAS'][id]['SPerv'] = $('#subcatchments-dstoreperv').val()
-    swmmjs.model['SUBAREAS'][id]['PctZero'] = $('#subcatchments-pctzeroimperv').val()
-    swmmjs.model['SUBAREAS'][id]['RouteTo'] = $('#subcatchments-subarearouting').val()
-    swmmjs.model['SUBAREAS'][id]['PctRouted'] = $('#subcatchments-pctrouted').val()
-    swmmjs.model['SUBCATCHMENTS'][id]['CurbLen'] = $('#subcatchments-curblength').val()
-
-    
-    // Close the modal.
-    $('#modalSubcatchments').modal('toggle');
-
-    // Refresh the Project menu list.
-    populateSubcatchmentsList();
-
-    // Set the clickEffect to 'edit'
-    swmmjs.model.clicEffect = 'edit';
 }
 
 /////////////////////////////////////////////////////////////
@@ -6113,5 +6166,55 @@ var modalEditOutlets = function(id){
         $('#outlets-functionalcurvecoefficient').val(swmmjs.model['OUTLETS'][id]['Qcoeff'])
         $('#outlets-functionalcurveexponent').val(swmmjs.model['OUTLETS'][id]['Qexpon'])
         $('#outlets-tabularcurvename').val(swmmjs.model['OUTLETS'][id]['QTable'])
+    }
+}
+
+/////////////////////////////////////////////////////////////
+// Rain Gages Modal 
+/////////////////////////////////////////////////////////////
+
+var modalEditRaingages = function(id){
+    // Show the modal.
+    $('#modalRaingages').modal('toggle');
+
+    // Retain the original ID for editing purposes.
+    $('#raingages-form-id').val(id);
+
+    // Make sure to check if the RAINGAGES object exists.
+    if(typeof swmmjs.model['RAINGAGES'] === 'undefined'){
+        swmmjs.model['RAINGAGES'] = [];
+    } else {
+        $('#raingages-name').val(id)
+        // If there are symbols, and one of the symbols has this RG id, use the xy position of that
+        if(typeof swmmjs.model['SYMBOLS'] !== 'undefined' && typeof swmmjs.model['SYMBOLS'][id] !== 'undefined'){
+            $('#raingages-xcoordinate').val(swmmjs.model['SYMBOLS'][id]['XCoord'])
+            $('#raingages-ycoordinate').val(swmmjs.model['SYMBOLS'][id]['YCoord'])
+        }
+
+        // If there are tags, and one of the tags has this RG id, use the tag
+        // Check for object.type='Node' and object.ID = itemID;
+        function tagQuery(thisObj){
+            return thisObj.Type==='Gage' && thisObj.ID === id; 
+        }
+        // For every tag element
+        let thisArray = Object.values(swmmjs.model['TAGS']);
+
+        // Find the tag that matches this RG id
+        let thisEl = thisArray.findIndex(tagQuery);
+        if(thisEl >= 0){
+            $('#raingages-tag').val(swmmjs.model['TAGS'][thisEl].Tag);
+        } else {
+            $('#raingages-tag').val('');
+        }
+
+        $('#raingages-description').val(swmmjs.model['RAINGAGES'][id]['Description'])
+        $('#raingages-rainformat').val(swmmjs.model['RAINGAGES'][id]['Format'])
+        $('#raingages-timeinterval').val(swmmjs.model['RAINGAGES'][id]['Interval'])
+        $('#raingages-snowcatchfactor').val(swmmjs.model['RAINGAGES'][id]['SCF'])
+        $('#raingages-datasource').val(swmmjs.model['RAINGAGES'][id]['Source'])
+        $('#raingages-timeseriesname').val(swmmjs.model['RAINGAGES'][id]['SeriesName'])
+        $('#raingages-datafilename').val(swmmjs.model['RAINGAGES'][id]['FileName'])
+        $('#raingages-stationid').val(swmmjs.model['RAINGAGES'][id]['StationID'])
+        $('#raingages-rainunits').val(swmmjs.model['RAINGAGES'][id]['RainUnits'])
     }
 }
