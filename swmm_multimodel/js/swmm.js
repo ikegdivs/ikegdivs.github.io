@@ -642,6 +642,24 @@ d3.inp = function() {
             return id;
         }
 
+        function getUniqueTimeseriesID(){
+            let id = 0;
+            let idList = [];
+            // Push indexes from TIMESERIES to numlist
+            swmmjs.model.TIMESERIES.forEach(function(value, i){
+                idList.push(value.TimeSeries);
+            })
+
+            // Get the first integer that is not in numlist
+            for(let i = 1; id === 0; i++){
+                if(idList.indexOf(i) === -1 && idList.indexOf(i.toString()) === -1){
+                    id = i;
+                }
+            }
+
+            return id;
+        }
+
         // Clicking on the chart button creates the intro modal interface for time series plotting
         // This is not the same as "Time Series", which is an input object type.
         // This is for viewing results.
@@ -649,6 +667,38 @@ d3.inp = function() {
             // Show the modal.
             $('#modalTSPlotSelection').modal('toggle');
         })
+
+        // Changing the tsplotselection-objecttype should fill the selection dropdown with available ids,
+        // as well as filling the tsplotselection-variable drop down
+        $('#tsplotselection-objecttype').on('change', function(){
+            input = new d3.swmmresult();
+            val = input.parse('data/out.out');
+            let objectType = $('#tsplotselection-objecttype').val();
+            let selected = 'selected'
+            let objectVarType = 0;
+            $('#tsplotselection-objectname').empty();
+            Object.entries(val[1][objectType]).forEach(el => {
+                // populate #tsplotselection-objectname with <option> elements
+                $('#tsplotselection-objectname').append('<option value="'+el[0]+'" '+selected+'>'+el[0]+'</option>')
+                selected = '';
+            })
+
+            selected = 'selected'
+            $('#tsplotselection-variable').empty();
+            if( $('#tsplotselection-objecttype').val() === 'SUBCATCH'){
+                objectVarType = 0
+            } else if($('#tsplotselection-objecttype').val() === 'NODE'){
+                objectVarType = 1
+            } else if($('#tsplotselection-objecttype').val() === 'LINK'){
+                objectVarType = 2
+            }
+            Object.entries(input.VARCODE[objectVarType]).forEach(el => {
+                // populate #tsplotselection-variable with <option> elements
+                $('#tsplotselection-variable').append('<option value="'+el[0]+'" '+selected+'>'+el[1]+'</option>')
+                selected = '';
+            })
+        })
+
 
         // When results target has been fully identified by the user,
         // clicking this button will show a time-based plot of the results for that object.
@@ -661,8 +711,11 @@ d3.inp = function() {
             input = new d3.swmmresult();
             val = input.parse('data/out.out');
 
+            let objectName = document.getElementById('tsplotselection-objectname').value;
+            let objectType = document.getElementById('tsplotselection-objecttype').value;
+            let variable = document.getElementById('tsplotselection-variable').value;
             for(let i = 1; !!val[i]; i++){
-                dataObj.push(new DataElement('00:'+i.toString().padStart(2, '0'), val[i].LINK["1"][3]));
+                dataObj.push(new DataElement('00:'+i.toString().padStart(2, '0'), val[i][objectType][parseInt(objectName)][parseInt(variable)]));
             }
         
             // Create a new chartSpecs object and populate it with the data.
@@ -718,34 +771,6 @@ d3.inp = function() {
                         .attr('class', 'raingage')
                         .attr('fill', 'rgba(125, 125, 255, 1)');
 
-
-
-
-/*
-                        el.append('g').attr('id', symbol).attr('class', 'node_ graingage').append('circle')
-                        .attr('cx', c.XCoord)
-                        .attr('cy', swmmjs.svg.top - c.YCoord)
-                        .attr('r', swmmjs.svg.nodeSize)
-                        .attr('data-x', c.XCoord)
-                        .attr('data-y', swmmjs.svg.top - c.YCoord)
-                        .attr('title', symbol)
-                        .attr('onclick', 'modalEditRaingages("'+symbol+'");')
-                        .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
-                        .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                        .attr('class', 'raingage')
-                        .attr('fill', 'rgba(125, 125, 255, 1)');
-*/
-
-
-
-
-
-
-
-
-
-
-                        
                     // Spawn an editing window for the junction object
                     modalEditRaingages(id);
 
@@ -1230,8 +1255,6 @@ d3.inp = function() {
                 // idlist keeps track of which nodes are used to create the link.
                 let idlist = [];
 
-                let svg = d3.select('#svgSimple');
-
                 // When a user clicks on a node, push the id of the node to the idlist
                 d3.selectAll('.node_').on('click', function(){
                     // Get the first circle child of this element
@@ -1280,150 +1303,114 @@ d3.inp = function() {
                 })
             }
 
+            // clearEditLayer is used to remove nodes and lines that are used for the express purpose of creating new 
+            // geospatial object.s
+            function clearEditLayer(){
+                $('.tempNode').remove();
+                $('.tempLine').remove();
+            }
+
             // switch statements on the current target of the subselectcaption div
             if($('#subselectcaption').text() === 'Subcatchments'){
                 // Set the click effect to 'createSubcatchment'
                 swmmjs.model.clickEffect = 'createSubcatchment';
+                // pointList keeps track of the points that have been created to make this polygon
+                let pointList = [];
 
+                // When a user clicks on the svg, create a temporary point and add the position to the pointlist. 
+                // If there are more than two points in pointList, create a line using the points in pointlist.  
+                // If the user clicks on the first point again: 
+                //   -- if there are only two points in point list
+                //     -- else push the points to swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] - swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] + swmmjs.svg.nodeSize}).
+                //   -- delete temporary points and lines, set clickEffect to 'edit'
                 svg.on('click', function() {
-                    // If the model is not in create subcatchment mode, return.
+                    // If the model is not in create subcatchment mode, 
+                    // delete the temporary polygon and return.
                     if(swmmjs.model.clickEffect !== 'createSubcatchment'){
+                        clearEditLayer();
                         svg.on('click', null);
                         return;
-                    // Change the model click effect to edit.
-                    } else {
-                        swmmjs.model.clickEffect = 'edit';
                     }
 
+                    // Add a point to pointList and to the svg 
                     let xy = d3.mouse(this);
                     let transform = d3.zoomTransform(svg.node());
                     let xy1 = transform.invert(xy);
-                    let id = 0;
-
-                    // Create a new id
-                    id = getUniqueNodeID();
-
-                    swmmjs.model.SUBCATCHMENTS[id] = {Description: '', RainGage: '*', Outlet: '*', Area: 5, Width: 500, PctSlope: 0.5, PctImperv: 25, CurbLen: 0, SnowPack: ''}
-
-                    swmmjs.model.SUBAREAS[id] = {NImperv: 0.01, NPerv: 0.1, SImperv: 0.05, SPerv: 0.05, PctZero: 25, RouteTo: 'OUTLET', PctRouted: 100}
                     
-                    swmmjs.model['Polygons'][id] = [];
+                    pointList.push({x: xy1[0], y: xy1[1]})
 
-                    swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] - swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] + swmmjs.svg.nodeSize})
-                    swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] + swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] + swmmjs.svg.nodeSize})
-                    swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] + swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] - swmmjs.svg.nodeSize})
-                    swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] - swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] - swmmjs.svg.nodeSize})
+                    d3.select('#svgSimple').select('g').append('g').attr('class', 'tempNode').append('circle')
+                        .attr('cx', xy1[0])
+                        .attr('cy', xy1[1])
+                        .attr('r', swmmjs.svg.nodeSize)
+                        .attr('data-x', xy1[0])
+                        .attr('data-y', xy1[1])
+                        .attr('class', 'tempNodeObj')
+                        .attr('fill', 'rgba(125, 255, 125, 1)');
 
+                    // If that is the only point in pointList, set that point's onClick function to 'completePolygon'.
+                    if(pointList.length === 1){
+                        // completePolygon takes all of the points in the pointList and creates a new polygon
+                        d3.select('.tempNodeObj').on('click', 
+                            function (){
+                                if(pointList.length > 2){
+                                    // Create a new id
+                                    id = getUniqueNodeID();
 
-                    d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'polygon_ gpolygon').append('polygon')
-                    .attr('points', 
-                        (xy1[0] - swmmjs.svg.nodeSize) + ' ' + (xy1[1] + swmmjs.svg.nodeSize) + ' ' +
-                        (xy1[0] + swmmjs.svg.nodeSize) + ' ' + (xy1[1] + swmmjs.svg.nodeSize) + ' ' +
-                        (xy1[0] + swmmjs.svg.nodeSize) + ' ' + (xy1[1] - swmmjs.svg.nodeSize) + ' ' +
-                        (xy1[0] - swmmjs.svg.nodeSize) + ' ' + (xy1[1] - swmmjs.svg.nodeSize)
-                        )
-                    .attr('title', id)
-                    //.attr('data-x', xy1[0])
-                    //.attr('data-y', xy1[1])
-                    //.attr('data-y0', svg.top - xy1[1])
-                    .attr('onclick', 'modalEditSubcatchments("'+id+'");')
-                    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
-                    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                    .attr('class', 'polygon')
-                    .attr('fill', 'transparent')
-                    .attr("stroke-width", 7)
-                    .attr("stroke", 'rgba(0, 0, 0, 1');
+                                    swmmjs.model.SUBCATCHMENTS[id] = {Description: '', RainGage: '*', Outlet: '*', Area: 5, Width: 500, PctSlope: 0.5, PctImperv: 25, CurbLen: 0, SnowPack: ''}
 
-                        
-                    // Spawn an editing window for the junction object
-                    modalEditSubcatchments(id);
+                                    swmmjs.model.SUBAREAS[id] = {NImperv: 0.01, NPerv: 0.1, SImperv: 0.05, SPerv: 0.05, PctZero: 25, RouteTo: 'OUTLET', PctRouted: 100}
+                                    
+                                    swmmjs.model['Polygons'][id] = [];
 
-                    swmmjs.model.clickEffect = 'edit';
-                    svg.on('click', null);
-                    populateSubcatchmentsList();
-                })
-            }
-        })
+                                    // For every point in pointList, push to 'Polygons'
+                                    let points = '';
+                                    pointList.forEach(function(el){
+                                        swmmjs.model['Polygons'][id].push({Subcatchment: id, x: el.x - swmmjs.svg.nodeSize, y: swmmjs.svg.top - el.y + swmmjs.svg.nodeSize})
+                                        points += el.x + ' ' + (el.y) + ' ';
+                                    })
 
-
-        // Enable clicking to create conduits
-        /*$('#addConduit').click(function(e){
-            // Set the edit mode to 'createConduit'
-            $('#addConduit').addClass('sidebar-selected');
-            swmmjs.model.clickEffect = 'createConduit'
-            // idlist keeps track of which nodes are used to create the conduit.
-            let idlist = [];
-
-            let svg = d3.select('#svgSimple');
-
-            // Prepare to click only on nodes to create a junction.
-            // The UI should stay in createConduit mode until the
-            // complete link has been created.
-
-            // 1: user clicks on a node
-            // 2: Node is given a class of 'usnode' (changes node color)
-            // 3: user clicks on a second node
-            // 4: using the usnode and dsnode, add an entry into the CONDUITS array.
-
-            // When a user clicks on a node, push the id of the node to the idlist
-            //$('.node_').click(function(e){
-            d3.selectAll('.node_').on('click', function(){
-                // Get the first circle child of this element
-                let child = this.firstChild;
-                $(this).addClass('selected');
-                idlist.push({ID: this.id, x: $(child).attr('data-x'), y: $(child).attr('data-y')})
+                                    // Create the subcatchment object.
+                                    d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'polygon_ gpolygon').append('polygon')
+                                        .attr('points', points)
+                                        .attr('title', id)
+                                        .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
+                                        .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
+                                        .attr('onclick', 'modalEditSubcatchments("'+id+'");')
+                                        .attr('class', 'polygon')
+                                        .attr('fill', 'transparent')
+                                        .attr("stroke-width", 7)
+                                        .attr("stroke", 'rgba(0, 0, 0, 1');
                 
-                // If there are more than two objects in idlist, end the edit and create the conduit
-                if(idlist.length >= 2){
-                    // Remove the click effect from the nodes
-                    d3.selectAll('.node_').on('click', null);
-                    $('.node_').removeClass('selected');
-
-                    // Create a CONDUITS object.
-                    // Create a new id
-                    let id = 0;
-                    // The next id will be the next available integer from a set
-                    // That excludes all values from CONDUITS.Conduit 
-                    // This should likely be a function that is called by all of the methods that may create a new
-                    // link value
-                    let numlist = [];
-                    // Push indexes from CONDUITS to numlist
-                    swmmjs.model.CONDUITS.forEach(function(value, i){
-                        numlist.push(i);
-                    })
-
-                    // Get the first integer that is not in numlist
-                    for(let i = 1; id === 0; i++){
-                        if(numlist.indexOf(i) === -1){
-                            id = i;
-                        }
+                                    // Spawn an editing window for the junction object
+                                    modalEditSubcatchments(id);
+                
+                                    swmmjs.model.clickEffect = 'edit';
+                                    svg.on('click', null);
+                                    populateSubcatchmentsList();
+                                    clearEditLayer();
+                                } else {
+                                    // If there are less than 3 points to the polygon, return.
+                                    return;
+                                }
+                            }
+                        )
                     }
+                })
+            } 
 
-                    // Create the conduit
-                    swmmjs.model['CONDUITS'][id] = {FromNode: idlist[0].ID, InOffset: 0, InitFlow: 0, Length: 400, MaxFlow: 0, OutOffset: 0, Roughness: 0.01, ToNode: idlist[1].ID};
-                         
-                    swmmjs.model['XSECTIONS'][id] = {Shape: 'CIRCULAR', Geom1: 1.5, Geom2: 0, Geom3: 0, Geom4: 0, Barrels: 1}
-                    swmmjs.model['LOSSES'][id] = {Kin: 0, Kout: 0, Kavg: 0, FlapGate: 'NO', SeepRate: 0};
-                    // Add the conduit to the map
-                    d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'link_ gconduit').append('line')
-                    .attr('x1', idlist[0].x)
-                    .attr('y1', idlist[0].y)
-                    .attr('x2', idlist[1].x)
-                    .attr('y2', idlist[1].y)
-                    .attr('onclick', 'modalEditConduits('+id+');')
-                    .attr('title', id)
-                    .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
-                    .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                        .attr('class', 'conduit')
-                    .attr('stroke', color)
-                    .attr('stroke-width', 45);
+            if($('#subselectcaption').text() === 'Time Series'){
+                // Create a time series object
+                swmmjs.model.clickEffect = 'edit'
+                id = getUniqueTimeseriesID();
+                
+                swmmjs.model['TIMESERIES'].push({TimeSeries:id, Value: 0, Date: '', Time: '00:00'})
 
-                    // Change back to an editing environment
-                    swmmjs.model.clickEffect = 'edit';
-                    $('#addConduit').removeClass('sidebar-selected');
-                }
-            })
-        })*/
+                // open the Time Series modal using the new id
+                modalEditTimeseries(id);
+            }
+
+        })
 
         //Bind project elements for click response.
         $('#pmTitle').click(function(e){
@@ -3230,6 +3217,14 @@ d3.inp = function() {
             modalDisplayTimeseries();
         })
 
+        // Clicking on the timeseries-create-row button will create a new row in the given timeseries
+        $('#timeseries-create-row').click(function(e){
+            let table = Tabulator.prototype.findTable('#tableTimeseries')[0];
+            id = $('#timeseries-name').val()
+
+            table.addRow(Object.assign({}, {Date: '', Time: '00:00', Value: 0}))
+        })
+
         function modalDisplayTimeseries(){
             // Show the modal.
             $('#modalTimeserieschart').modal('toggle');
@@ -3244,12 +3239,8 @@ d3.inp = function() {
             id = $('#timeseries-form-id').val();
             // On save:
             // - 1: delete the timeseries entries where el.TimeSeries === id
-            //swmmjs.model['TIMESERIES'].forEach(function(el){
-            for(let i = swmmjs.model['TIMESERIES'].length - 1; i >=0; i--){
-                if(swmmjs.model['TIMESERIES'][i].TimeSeries === id){
-                    swmmjs.model['TIMESERIES'].splice(i, 1);
-                }
-            }
+            swmmjs.model['TIMESERIES'] = swmmjs.model['TIMESERIES'].filter(item => item.TimeSeries.toString() !== id.toString())
+
             // - 2: for every row in the '#tableTimeseries' table
             let table = Tabulator.prototype.findTable('#tableTimeseries')[0];
             id = $('#timeseries-name').val()
@@ -3824,8 +3815,8 @@ d3.inp = function() {
                 // add other if neccesary
         },
         model = {   SUBCATCHMENTS: [], SUBAREAS: [], CONDUITS: [], XSECTIONS: [], LOSSES: [],  PUMPS: [], ORIFICES: [], WEIRS: [], OUTLETS: [], 
-                    TRANSECTS: [], CONTROLS: [], COORDINATES: [], Polygons: [], LABELS: [], 
-                    JUNCTIONS: [], STORAGE: [], OUTFALLS: [], DIVIDERS: [], RAINGAGES: [],
+                    TRANSECTS: [], CONTROLS: [], COORDINATES: [], Polygons: [], LABELS: [], SYMBOLS: [],
+                    JUNCTIONS: [], STORAGE: [], OUTFALLS: [], DIVIDERS: [], RAINGAGES: [], TIMESERIES: [],
                     clickEffect: 'edit'},
         lines = text.split(/\r\n|\r|\n/),
             section = null;
@@ -3888,7 +3879,7 @@ d3.swmmresult = function() {
             4: 'Outlet'}
     };
             
-    VARCODE = { 
+    swmmresult.VARCODE = { 
         0: {0: 'Rainfall',
             1: 'Snow_depth',
             2: 'Evaporation_loss',
@@ -4184,7 +4175,7 @@ d3.swmmresult = function() {
                 
                 for (var j = 0; j < this.SWMM_Nsubcatch; j++) {
                     el = [];
-                    for (var k = 0; k < this.SubcatchVars ; k++) { //2 = 1 number of subcatchment variables + 1 polluants
+                    for (var k = 0; k < this.SubcatchVars ; k++) { //2 = 1 number of subcatchment variables + 1 pollutants
                         no = er.getswmmresultoffset(SUBCATCH, j, k, i);
                         el.push(er.readFloat(c, no, RECORDSIZE));
                     }
@@ -4445,7 +4436,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].SPerv.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].PctZero.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].RouteTo.padEnd(11, ' ');
-            inpString += model[secStr][entry].PctRouted.padEnd(11, ' ');
+            inpString += model[secStr][entry].PctRouted.toString().padEnd(11, ' ');
             inpString += '\n';
         }
         inpString += '\n';
