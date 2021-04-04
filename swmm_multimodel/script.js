@@ -3,7 +3,8 @@
 class DataElement{
     constructor(cat, y){
         // cat: a category, numeric value.
-        this.cat = new Date(2000, 0, 1, cat.split(':')[0], cat.split(':')[1]);
+        //this.cat = new Date(2000, 0, 1, cat.split(':')[0], cat.split(':')[1]);
+        this.cat = cat;
         // y: independent numeric value.
         this.y = y;
     }
@@ -26,7 +27,7 @@ class ChartSpecs {
         // The number of tick marks on the x axis.
         this.numTicks = 5;
         // The amount of space to allocate for text,e etc. on the x and y axes.
-        this.textBuffer = 20;
+        this.textBuffer = 60;
         this.topMargin = 10;
     }
     
@@ -60,6 +61,12 @@ document.addEventListener("DOMContentLoaded", function() {
     let fileName = null;
     let authorName = null;
     let description = null;
+
+    
+    /////////////////////////////////////////////
+    // Cover modal: for project intros, demos, etc.
+    /////////////////////////////////////////////
+    $('#modalCover').modal('toggle');
 
     /////////////////////////////////////////////
     // Visualization elements - temporary
@@ -383,7 +390,6 @@ function representData(location, theseSpecs){
         .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.topMargin})`);
     location.append('g')
         .attr('id', 'xAxis')
-        .call(d3.axisBottom(theseSpecs.scaleX))
         .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.yScaleHeight + theseSpecs.topMargin})`);
 
     // Create the location for the line
@@ -426,7 +432,33 @@ function drawLine(theseSpecs, curveType){
 
     // Update the x axis.
     d3.selectAll('#xAxis')
-        .call(d3.axisBottom(theseSpecs.scaleX))
+        .call(
+            d3.axisBottom(theseSpecs.scaleX)
+            .ticks(5)
+            .tickFormat(d3.timeFormat('%Y-%m-%d %H:%M'))
+        )
+        .selectAll('text')
+        //split the date and time onto two lines for the xAxis
+        .call(function(t){
+            t.each(function(d){
+                let self = d3.select(this);
+                var s = self.text().split(' ');
+                self.text('');
+                self.append('tspan')
+                    .attr('x', 0)
+                    .attr('dy', 0)
+                    .text(s[0]);
+                self.append('tspan')
+                    .attr('x', '-2em')
+                    .attr('dy', '1em')
+                    .text(s[1]);
+            })
+        })
+        .style('text-anchor', 'end')
+        .attr('dx', '-0.8em')
+        .attr('dy', '0.15em')
+        .attr('transform', 'rotate(-65)');
+
 }
 
 const swmm_run = Module.cwrap('swmm_run', 'number', ['string', 'string', 'string']);
@@ -475,3 +507,4 @@ function runModelClick(){
             console.log('runran')
     })
 }
+

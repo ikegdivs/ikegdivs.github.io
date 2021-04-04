@@ -36,6 +36,7 @@ function drawTimeseries(){
     })*/
 }
 
+/*
 function doStuff(location, theseSpecs){
     // Create the viewbox. This viewbox helps define the visible portions
     // of the chart, but it also helps when making the chart responsive.
@@ -58,12 +59,12 @@ function doStuff(location, theseSpecs){
     body.append('path')
 
     drawLine(theseSpecs, d3.curveLinear);
-}
+}*/
 
 // representData draws the chart
 // location is an svg where the chart will be drawn.
 // theseSpecs is an object of class ChartSpecs
-function representData(location, theseSpecs){
+/*function representData(location, theseSpecs){
     // Create the viewbox. This viewbox helps define the visible portions
     // of the chart, but it also helps when making the chart responsive.
     location.attr('viewBox', ` 0 0 ${theseSpecs.xScaleWidth + theseSpecs.chartBodyX + theseSpecs.textBuffer} ${theseSpecs.yScaleHeight + theseSpecs.textBuffer + theseSpecs.topMargin}`);
@@ -78,19 +79,22 @@ function representData(location, theseSpecs){
         .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.topMargin})`);
     location.append('g')
         .attr('id', 'xAxis')
-        .call(d3.axisBottom(theseSpecs.scaleX))
-        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.yScaleHeight + theseSpecs.topMargin})`);
+        .call(
+            d3.axisBottom(theseSpecs.scaleX)
+                .tickFormat(d3.timeFormat('%b'))
+        )
+        .attr('transform', `translate(${theseSpecs.chartBodyX}, ${theseSpecs.yScaleHeight + theseSpecs.topMargin})`)
 
     // Create the location for the line
     body.append('path')
 
     drawLine(theseSpecs, d3.curveLinear);
-}
+}*/
 
 // drawLine creates the line.
 // theseSpecs: an object of class ChartSpecs
 // curveType: a d3 curve type
-function drawLine(theseSpecs, curveType){
+/*function drawLine(theseSpecs, curveType){
     // Create the line
     let line = d3.line()
         .x(function(d) { return theseSpecs.scaleX(d.cat); })
@@ -121,8 +125,10 @@ function drawLine(theseSpecs, curveType){
 
     // Update the x axis.
     d3.selectAll('#xAxis')
-        .call(d3.axisBottom(theseSpecs.scaleX))
-}
+        .call(d3.axisBottom(theseSpecs.scaleX)
+            .tickFormat(d3.timeFormat('%b'))
+        )
+}*/
 
 
 
@@ -372,188 +378,9 @@ d3.inp = function() {
             })
         }
 
-        //Add input and label elements to modal using an ID structure.
-        // For modals that do not use an ID strcture, try populateModal().
-        // Input to this function is an array of objects of the format:
-        //
-        // [{inputName: 'Invert',           The name of the variable when accessed through the parent object.
-        //   labelText: 'Invert',           The text that will show in the label for the input.
-        //   inputType: 'text',             The type of data that is expected for the input object.
-        //   parentObject: 'JUNCTIONS'}]    The name of the parent object.
-        // To use this structure, call swmmjs.model.[parentObject][itemID][inputName]
-        function populateSecondaryModalID(inputArray, itemID){
-            // iterator
-            let index = 0;
-            // parent element is the modal dialog
-            let parent = document.getElementById('generalModal2');
-            // current row element
-            let thisRow = null;
-            // current column element.
-            let thisCol = null;
-            // generic element
-            let thisEl = null;
-
-            if(!parent){
-                console.log('Could not populate general modal');
-                return null;
-            }
-
-            // Remove save button event listeners via cloning
-            $('#save-general-modal2').off();
-            let oEl = document.getElementById('save-general-modal2');
-            let nEl = oEl.cloneNode(true);
-            oEl.parentNode.replaceChild(nEl, oEl);
-            // Clean up the modal
-            while(parent.firstChild){
-                parent.removeChild(parent.firstChild);
-            }
-
-            // Add an input element
-            thisEl = parent.appendChild(document.createElement('p'));
-            thisEl.classList.add('modalinfo')
-            thisEl.id = 'testid2';
-            thisEl.innerText = itemID; 
-
-            // For every entry in the inputArray
-            inputArray.forEach(item => {
-                // Create the modalLabelId and modalEditId strings
-                let modalLabelId = 'modal2label' + (index + 1).toString().padStart(2, '0');
-                let modalEditId =  'modal2edit' + (index + 1).toString().padStart(2, '0');
-
-                // If this is the first entry in this row, create the form-row object
-                if(index % 2 == 0){
-                    thisRow = parent.appendChild(document.createElement('div'));
-                    thisRow.classList.add('form-row');
-                }
-
-                // Add a column div
-                thisCol = thisRow.appendChild(document.createElement('div'));
-                thisCol.classList.add('col-md-6');
-                thisCol.classList.add('mb-6');
-
-                // Add a label element
-                thisEl = thisCol.appendChild(document.createElement('label'));
-                thisEl.classList.add('modallabel');
-                thisEl.id = modalLabelId;
-                thisEl.setAttribute('for', modalEditId);
-                thisEl.innerText = item.labelText;
-
-                // Add an input element
-                thisEl = thisCol.appendChild(document.createElement('input'));
-                thisEl.classList.add('form-control')
-                thisEl.classList.add('modaledit')
-                thisEl.id = modalEditId;
-                thisEl.setAttribute('name', modalEditId);
-                thisEl.setAttribute('type', item.inputType);
-                
-                // If type is 'text', just place the value into the text box.
-                thisEl.value = swmmjs.model[item.parentObject][itemID][item.inputName];
-
-                // Add a tooltip element
-                thisEl = thisCol.appendChild(document.createElement('div'));
-                thisEl.classList.add('valid-tooltip');
-                thisEl.innerText = 'Valid entry';
-
-                // Save the values if the 'Save' button is clicked.
-                document.getElementById('save-general-modal').addEventListener('click', ()=>{
-                    if(swmmjs.model[item.parentObject][itemID][item.inputName]){
-                        swmmjs.model[item.parentObject][itemID][item.inputName] = document.getElementById(modalEditId).value;
-                    }
-                })
-
-                // Increase the iterator.
-                index++;
-            })
-        }
-
-        //Add input and label elements to modal using an ID structure.
-        // Input to this function is an array of objects of the format:
-        //
-        // [{inputName: 'Invert',           The name of the variable when accessed through the parent object.
-        //   labelText: 'Invert',           The text that will show in the label for the input.
-        //   inputType: 'text',             The type of data that is expected for the input object.
-        //   parentObject: 'JUNCTIONS'}]    The name of the parent object.
-        // To use this structure, call swmmjs.model.[parentObject][inputName]
-        function populateModal(inputArray){
-            // iterator
-            let index = 0;
-            // parent element is the modal dialog
-            let parent = document.getElementById('generalModal');
-            // current row element
-            let thisRow = null;
-            // current column element.
-            let thisCol = null;
-            // generic element
-            let thisEl = null;
-            let oEl = document.getElementById('save-general-modal');
-            let nEl = oEl.cloneNode(true);
-
-            if(!parent){
-                console.log('Could not populate general modal');
-                return null;
-            }
-
-            // Remove save button event listeners via cloning
-            $('#save-general-modal').off();
-            oEl.parentNode.replaceChild(nEl, oEl);
-            // Clean up the modal
-            while(parent.firstChild){
-                parent.removeChild(parent.firstChild);
-            }
-
-            // Add an input element
-            thisEl = parent.appendChild(document.createElement('p'));
-            thisEl.classList.add('modalinfo')
-
-            // For every entry in the inputArray
-            inputArray.forEach(item => {
-                // Create the modalLabelId and modalEditId strings
-                let modalLabelId = 'modallabel' + (index + 1).toString().padStart(2, '0');
-                let modalEditId =  'modaledit' + (index + 1).toString().padStart(2, '0');
-
-                // If this is the first entry in this row, create the form-row object
-                if(index % 2 == 0){
-                    thisRow = parent.appendChild(document.createElement('div'));
-                    thisRow.classList.add('form-row');
-                }
-
-                // Add a column div
-                thisCol = thisRow.appendChild(document.createElement('div'));
-                thisCol.classList.add('col-md-6');
-                thisCol.classList.add('mb-6');
-
-                // Add a label element
-                thisEl = thisCol.appendChild(document.createElement('label'));
-                thisEl.classList.add('modallabel');
-                thisEl.id = modalLabelId;
-                thisEl.setAttribute('for', modalEditId);
-                thisEl.innerText = item.labelText;
-
-                // Add an input element
-                thisEl = thisCol.appendChild(document.createElement('input'));
-                thisEl.classList.add('form-control')
-                thisEl.classList.add('modaledit')
-                thisEl.id = modalEditId;
-                thisEl.setAttribute('name', modalEditId);
-                thisEl.setAttribute('type', item.inputType);
-                thisEl.value = swmmjs.model[item.parentObject][item.inputName].Value
-
-                // Add a tooltip element
-                thisEl = thisCol.appendChild(document.createElement('div'));
-                thisEl.classList.add('valid-tooltip');
-                thisEl.innerText = 'Valid entry';
-
-                // Save the values if the 'Save' button is clicked.
-                document.getElementById('save-general-modal').addEventListener('click', ()=>{
-                    swmmjs.model[item.parentObject][item.inputName].Value = document.getElementById(modalEditId).value;
-                })
-
-                // Increase the iterator.
-                index++;
-            })
-        }
-
-        // When creating new nodes, you will need a unique node id
+        // When creating new nodes, you will need a unique node id. A node id is shared among the following different sets:
+        // JUNCTIONS< SUBCATCHMENTS, OUTFALLS, DIVIDERS, and STORAGE, with the ability to expand to others.
+        // This will return an integer node id.
         function getUniqueNodeID(){
             let id = 0;
             let idList = [];
@@ -642,6 +469,7 @@ d3.inp = function() {
             return id;
         }
 
+        // Timeseries ID is a unique ID for just TIMESERIES sets.
         function getUniqueTimeseriesID(){
             let id = 0;
             let idList = [];
@@ -652,6 +480,8 @@ d3.inp = function() {
 
             // Get the first integer that is not in numlist
             for(let i = 1; id === 0; i++){
+                // Since timeSeries might be a string, test for both the string and integer 
+                // cases: this seems sloppy, it should all be updated when the IDs arent stored as integers in the HTML.
                 if(idList.indexOf(i) === -1 && idList.indexOf(i.toString()) === -1){
                     id = i;
                 }
@@ -668,23 +498,61 @@ d3.inp = function() {
             $('#modalTSPlotSelection').modal('toggle');
         })
 
+        // Clicking on the delete button deletes the currently selected object, if there is one.
+        $('#btnPMDelete').click(function(e){
+            // for each object that is selected, remove the associated data
+            $('.selected').each(function(index, value){
+                // Remove the in-memory object.
+                let id = $(value).attr('id')
+                if($(value).hasClass('gjunction')){
+                    delete swmmjs.model['JUNCTIONS'][id]
+                }
+                if($(value).hasClass('graingage')){
+                    delete swmmjs.model['RAINGAGES'][id]
+                }
+
+                // if the object that was removed was a node, check to see if there is a
+                // link attached to the node, and remove that link from the svg as well.
+                // This will essentially be a filter based on upstream or downstream node,
+                // then foreach in that filter, 'delete swmmjs.model['LINKTYPE'][id]'
+            })
+            // Remove the graphic object
+            $('.selected').remove();
+
+            
+            // return the context to edit
+            switchContext('edit');
+        })
+
         // Changing the tsplotselection-objecttype should fill the selection dropdown with available ids,
         // as well as filling the tsplotselection-variable drop down
         $('#tsplotselection-objecttype').on('change', function(){
             input = new d3.swmmresult();
+            // data/out.out is the default location of the internally managed output file.
+            // This should be changed to a model-specific variable.  Keep in mind that there
+            // will be the option to load in an .out file without having an associated inp file.
             val = input.parse('data/out.out');
             let objectType = $('#tsplotselection-objecttype').val();
+            // Use this variable to identify the appropriate object in the list as selected.
             let selected = 'selected'
+            // objectVarType is used to identify whether the user has selected subcatchments, nodes, or links. 
             let objectVarType = 0;
+            // Clean out the select list for the object name before filling it up.
             $('#tsplotselection-objectname').empty();
+
+            // Refill the object name select list. This list is for the user to identify the ID of the 
+            // object(s) that will be charted.
             Object.entries(val[1][objectType]).forEach(el => {
                 // populate #tsplotselection-objectname with <option> elements
                 $('#tsplotselection-objectname').append('<option value="'+el[0]+'" '+selected+'>'+el[0]+'</option>')
                 selected = '';
             })
 
+            // Reset the 'selected' variable.
             selected = 'selected'
+            // Clean out the select list for the variable type before filling it up.
             $('#tsplotselection-variable').empty();
+            // The variable types are dependent upon type of object that was selected.
             if( $('#tsplotselection-objecttype').val() === 'SUBCATCH'){
                 objectVarType = 0
             } else if($('#tsplotselection-objecttype').val() === 'NODE'){
@@ -692,6 +560,8 @@ d3.inp = function() {
             } else if($('#tsplotselection-objecttype').val() === 'LINK'){
                 objectVarType = 2
             }
+            // Refill the variable select list. This list is for the user to identify the type
+            // of information that will be charted.
             Object.entries(input.VARCODE[objectVarType]).forEach(el => {
                 // populate #tsplotselection-variable with <option> elements
                 $('#tsplotselection-variable').append('<option value="'+el[0]+'" '+selected+'>'+el[1]+'</option>')
@@ -702,20 +572,54 @@ d3.inp = function() {
 
         // When results target has been fully identified by the user,
         // clicking this button will show a time-based plot of the results for that object.
-        $('#modal-timepatterns-display').click(function(e){
+        $('#modal-tsplotselection-display').click(function(e){
             // Show the modal
             $('#modalTSPlot').modal('toggle');
             let dataObj = [];
+            // Identify where the chart will be drawn.
             let viz_svg01 = d3.select("#viz_svgTS");
 
+            // Get the swmmresult.  This should be redone once I can actually drag in single variables instead of 
+            // reading the whole file into objects.
             input = new d3.swmmresult();
+            // Once again, this should be a model-associated constant.
             val = input.parse('data/out.out');
 
+            // Get the ID and type of the object that will be charted, and get the type of information that is necessary as well.
             let objectName = document.getElementById('tsplotselection-objectname').value;
             let objectType = document.getElementById('tsplotselection-objecttype').value;
             let variable = document.getElementById('tsplotselection-variable').value;
+            // Create the absolute minimum required to build a chart.  This is embarassing: find the actual start times
+            // and end times of the model, utilize the user requested start and end time, and clean up the presentation as well:
+            // Better date/time axis, Use a title and a legend, maybe make the modal larger.
+            
+            // First: Utilize the start and end times of the model, along with the time step in order to create the fully realized chart.
+            // These values are controlled in the 'Dates' editor and the 'Time Steps' editor.
+            /*
+            $('#dates-startdateanalysis').val(translateDate(swmmjs.model['OPTIONS']['START_DATE'].Value))
+            $('#dates-starttimeanalysis').val(swmmjs.model['OPTIONS']['START_TIME'].Value)
+            $('#dates-startdatereport').val(translateDate(swmmjs.model['OPTIONS']['REPORT_START_DATE'].Value))
+            $('#dates-starttimereport').val(swmmjs.model['OPTIONS']['REPORT_START_TIME'].Value)
+            */
+           /*
+            $('#timesteps-reportingperiod').val(swmmjs.model['OPTIONS']['REPORT_STEP'].Value)
+           */
+            let reportStartDate = swmmjs.model['OPTIONS']['REPORT_START_DATE'].Value;
+            let reportStartTime = swmmjs.model['OPTIONS']['REPORT_START_TIME'].Value;
+            let reportStep =      swmmjs.model['OPTIONS']['REPORT_STEP'].Value
+
+            // Create a date object using the reportStartDate and reportStartTime.
+            let thisDateStep = moment(reportStartDate + ' ' + reportStartTime);
+            // Create a duration object using reportStep.
+            let stepDuration = moment.duration(reportStep)
+            // For every step, increase the time by the value of reportStep.
             for(let i = 1; !!val[i]; i++){
-                dataObj.push(new DataElement('00:'+i.toString().padStart(2, '0'), val[i][objectType][parseInt(objectName)][parseInt(variable)]));
+                // Use the incremented date object 
+                let thisDate = moment(new Date(thisDateStep));
+                //dataObj.push(new DataElement('00:'+i.toString().padStart(2, '0'), val[i][objectType][parseInt(objectName)][parseInt(variable)]));
+                dataObj.push(new DataElement(thisDate._d, val[i][objectType][parseInt(objectName)][parseInt(variable)]));
+                // increment thisDateStep
+                thisDateStep.add(stepDuration)
             }
         
             // Create a new chartSpecs object and populate it with the data.
@@ -725,14 +629,23 @@ d3.inp = function() {
             representData(viz_svg01, theseSpecs);
         })
 
+        // Enable clicking to select entities
+        // The click effect on an svg object should not immediately call edit.
+        // Instead it should check the clickEffect value, then operate based upon that value.
+        $('#btnPMSelect').click(function(e){
+            switchContext('select');
+        })
+
         // Enable clicking to create entities
         $('#btnPMAdd').click(function(e){
+            // I'm not certain this should be hardcoded. This should likely be a per-model unique 
+            // svg that is created on demand for every view window.
             let svg = d3.select('#svgSimple');
 
             // switch statements on the current target of the subselectcaption div
             if($('#subselectcaption').text() === 'Rain Gages'){
                 // Set the click effect to 'createJunction'
-                swmmjs.model.clickEffect = 'createRaingage';
+                switchContext('createRaingage');
 
                 svg.on('click', function() {
                     // If the model is not in create junction mode, return.
@@ -741,7 +654,7 @@ d3.inp = function() {
                         return;
                     // Change the model click effect to edit.
                     } else {
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
 
                     let xy = d3.mouse(this);
@@ -761,7 +674,7 @@ d3.inp = function() {
                     d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'symbol_ graingage').append('circle')
                         .attr('cx', xy1[0])
                         .attr('cy', xy1[1])
-                        .attr('r', swmmjs.svg.nodeSize)
+                        .attr('r', swmmjs.svg.nodeSize/transform.k)
                         .attr('data-x', xy1[0])
                         .attr('data-y', xy1[1])
                         .attr('onclick', 'modalEditRaingages('+id+');')
@@ -774,7 +687,7 @@ d3.inp = function() {
                     // Spawn an editing window for the junction object
                     modalEditRaingages(id);
 
-                    swmmjs.model.clickEffect = 'edit';
+                    switchContext('edit');
                     svg.on('click', null);
                     populateRaingagesList();
                 })
@@ -783,7 +696,7 @@ d3.inp = function() {
             // switch statements on the current target of the subselectcaption div
             if($('#subselectcaption').text() === 'Junctions'){
                 // Set the click effect to 'createJunction'
-                swmmjs.model.clickEffect = 'createJunction';
+                switchContext('createJunction');
 
                 svg.on('click', function() {
                     // If the model is not in create junction mode, return.
@@ -792,7 +705,7 @@ d3.inp = function() {
                         return;
                     // Change the model click effect to edit.
                     } else {
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
 
                     let xy = d3.mouse(this);
@@ -813,20 +726,21 @@ d3.inp = function() {
                     d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'node_ gjunction').append('circle')
                         .attr('cx', xy1[0])
                         .attr('cy', xy1[1])
-                        .attr('r', swmmjs.svg.nodeSize)
+                        .attr('r', swmmjs.svg.nodeSize/transform.k)
                         .attr('data-x', xy1[0])
                         .attr('data-y', xy1[1])
-                        .attr('onclick', 'modalEditJunctions('+id+');')
+                        .attr('onclick', 'modalEditJunctions("'+id+'");')
                         .attr('title', id)
                         .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                         .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
                             .attr('class', 'junction')
                         .attr('fill', color);
                         
+                    //swmmjs.applyScale(svg)
                     // Spawn an editing window for the junction object
                     modalEditJunctions(id);
 
-                    swmmjs.model.clickEffect = 'edit';
+                    switchContext('edit');
                     svg.on('click', null);
                     populateJunctionsList();
                 })
@@ -834,7 +748,7 @@ d3.inp = function() {
 
             if($('#subselectcaption').text() === 'Outfalls'){
                 // Set the click effect to 'createOutfall'
-                swmmjs.model.clickEffect = 'createOutfall';
+                switchContext('createOutfall');
 
                 svg.on('click', function() {
                     // If the model is not in create outfall mode, return.
@@ -843,7 +757,7 @@ d3.inp = function() {
                         return;
                     // Change the model click effect to edit.
                     } else {
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
 
                     let xy = d3.mouse(this);
@@ -862,9 +776,9 @@ d3.inp = function() {
 
                     color = (swmmjs.INPUT === swmmjs.mode ? swmmjs.defaultColor: nodeColors[r(v)]);
                     d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'node_ goutfall').append('polygon')
-                    .attr('points', (xy1[0] - swmmjs.svg.nodeSize) + ' ' + (xy1[1] - swmmjs.svg.nodeSize) + ' ' +
-                    (xy1[0] + swmmjs.svg.nodeSize) + ' ' + (xy1[1] - swmmjs.svg.nodeSize) + ' ' +
-                    xy1[0] + ' ' + (xy1[1] + swmmjs.svg.nodeSize))
+                    .attr('points', (xy1[0] - swmmjs.svg.nodeSize/transform.k) + ' ' + (xy1[1] - swmmjs.svg.nodeSize/transform.k) + ' ' +
+                    (xy1[0] + swmmjs.svg.nodeSize/transform.k) + ' ' + (xy1[1] - swmmjs.svg.nodeSize/transform.k) + ' ' +
+                    xy1[0] + ' ' + (xy1[1] + swmmjs.svg.nodeSize/transform.k))
                     .attr('title', id)
                     .attr('data-x', xy1[0])
                     .attr('data-y', xy1[1])
@@ -878,7 +792,7 @@ d3.inp = function() {
                     // Spawn an editing window for the junction object
                     modalEditOutfalls(id);
 
-                    swmmjs.model.clickEffect = 'edit';
+                    switchContext('edit');
                     svg.on('click', null);
                     
                     // Refresh the selection list
@@ -888,7 +802,7 @@ d3.inp = function() {
 
             if($('#subselectcaption').text() === 'Dividers'){
                 // Set the click effect to 'createDivider'
-                swmmjs.model.clickEffect = 'createDivider';
+                switchContext('createDivider');
 
                 svg.on('click', function() {
                     // If the model is not in create divider mode, return.
@@ -897,7 +811,7 @@ d3.inp = function() {
                         return;
                     // Change the model click effect to edit.
                     } else {
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
 
                     let xy = d3.mouse(this);
@@ -928,10 +842,10 @@ d3.inp = function() {
                         
                     d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'node_ gdivider').append('polygon')
                     .attr('points', 
-                        xy1[0]                         + ' ' + (xy1[1] - swmmjs.svg.nodeSize) + ' ' +
-                        (xy1[0] - swmmjs.svg.nodeSize) + ' ' + (xy1[1]) + ' ' +
-                        xy1[0]                         + ' ' + (xy1[1] + swmmjs.svg.nodeSize) + ' ' +
-                        (xy1[0] + swmmjs.svg.nodeSize) + ' ' + (xy1[1])
+                        xy1[0]                         + ' ' + (xy1[1] - swmmjs.svg.nodeSize/transform.k) + ' ' +
+                        (xy1[0] - swmmjs.svg.nodeSize/transform.k) + ' ' + (xy1[1]) + ' ' +
+                        xy1[0]                         + ' ' + (xy1[1] + swmmjs.svg.nodeSize/transform.k) + ' ' +
+                        (xy1[0] + swmmjs.svg.nodeSize/transform.k) + ' ' + (xy1[1])
                         )
                     .attr('title', id)
                     .attr('data-x', xy1[0])
@@ -946,7 +860,7 @@ d3.inp = function() {
                     // Spawn an editing window for the junction object
                     modalEditDividers(id);
 
-                    swmmjs.model.clickEffect = 'edit';
+                    switchContext('edit');
                     svg.on('click', null);
                     
                     // Refresh the selection list
@@ -956,7 +870,7 @@ d3.inp = function() {
 
             if($('#subselectcaption').text() === 'Storage Units'){
                 // Set the click effect to 'createDivider'
-                swmmjs.model.clickEffect = 'createStorage';
+                switchContext('createStorage');
 
                 svg.on('click', function() {
                     // If the model is not in create storage mode, return.
@@ -965,7 +879,7 @@ d3.inp = function() {
                         return;
                     // Change the model click effect to edit.
                     } else {
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
 
                     let xy = d3.mouse(this);
@@ -996,10 +910,10 @@ d3.inp = function() {
                         
                     d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'node_ gstorage').append('polygon')
                     .attr('points', 
-                        (xy1[0] - swmmjs.svg.nodeSize) + ' ' + (xy1[1] + swmmjs.svg.nodeSize) + ' ' +
-                        (xy1[0] + swmmjs.svg.nodeSize) + ' ' + (xy1[1] + swmmjs.svg.nodeSize) + ' ' +
-                        (xy1[0] + swmmjs.svg.nodeSize) + ' ' + (xy1[1] - swmmjs.svg.nodeSize) + ' ' +
-                        (xy1[0] - swmmjs.svg.nodeSize) + ' ' + (xy1[1] - swmmjs.svg.nodeSize)
+                        (xy1[0] - swmmjs.svg.nodeSize/transform.k) + ' ' + (xy1[1] + swmmjs.svg.nodeSize/transform.k) + ' ' +
+                        (xy1[0] + swmmjs.svg.nodeSize/transform.k) + ' ' + (xy1[1] + swmmjs.svg.nodeSize/transform.k) + ' ' +
+                        (xy1[0] + swmmjs.svg.nodeSize/transform.k) + ' ' + (xy1[1] - swmmjs.svg.nodeSize/transform.k) + ' ' +
+                        (xy1[0] - swmmjs.svg.nodeSize/transform.k) + ' ' + (xy1[1] - swmmjs.svg.nodeSize/transform.k)
                         )
                     .attr('title', id)
                     .attr('data-x', xy1[0])
@@ -1014,7 +928,7 @@ d3.inp = function() {
                     // Spawn an editing window for the junction object
                     modalEditStorageunits(id);
 
-                    swmmjs.model.clickEffect = 'edit';
+                    switchContext('edit');
                     svg.on('click', null);
                     
                     // Refresh the selection list
@@ -1023,7 +937,7 @@ d3.inp = function() {
             }
 
             if($('#subselectcaption').text() === 'Conduits'){
-                swmmjs.model.clickEffect = 'createConduit'
+                switchContext('createConduit')
                 // idlist keeps track of which nodes are used to create the conduit.
                 let idlist = [];
 
@@ -1043,14 +957,14 @@ d3.inp = function() {
                 d3.selectAll('.node_').on('click', function(){
                     // Get the first circle child of this element
                     let child = this.firstChild;
-                    $(this).addClass('selected');
+                    $(this).addClass('createLineFirstNode');
                     idlist.push({ID: this.id, x: $(child).attr('data-x'), y: $(child).attr('data-y')})
                     
                     // If there are more than two objects in idlist, end the edit and create the conduit
                     if(idlist.length >= 2){
                         // Remove the click effect from the nodes
                         d3.selectAll('.node_').on('click', null);
-                        $('.node_').removeClass('selected');
+                        $('.node_').removeClass('createLineFirstNode');
 
                         // Create a CONDUITS object.
                         // Create a new id
@@ -1061,28 +975,30 @@ d3.inp = function() {
                             
                         swmmjs.model['XSECTIONS'][id] = {Shape: 'CIRCULAR', Geom1: 1.5, Geom2: 0, Geom3: 0, Geom4: 0, Barrels: 1}
                         swmmjs.model['LOSSES'][id] = {Kin: 0, Kout: 0, Kavg: 0, FlapGate: 'NO', SeepRate: 0};
+                        
                         // Add the conduit to the map
+                        let transform = d3.zoomTransform(svg.node());
                         d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'link_ gconduit').append('line')
                         .attr('x1', idlist[0].x)
                         .attr('y1', idlist[0].y)
                         .attr('x2', idlist[1].x)
                         .attr('y2', idlist[1].y)
-                        .attr('onclick', 'modalEditConduits('+id+');')
+                        .attr('onclick', 'modalEditConduits("'+id+'");')
                         .attr('title', id)
                         .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                         .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
                             .attr('class', 'conduit')
-                        .attr('stroke', color)
-                        .attr('stroke-width', 45);
+                        .attr('stroke', '#636363')
+                        .attr('stroke-width', 45/transform.k);
 
                         // Change back to an editing environment
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
                 })
             }
 
             if($('#subselectcaption').text() === 'Pumps'){
-                swmmjs.model.clickEffect = 'createPump'
+                switchContext('createPump')
                 // idlist keeps track of which nodes are used to create the link.
                 let idlist = [];
 
@@ -1118,6 +1034,7 @@ d3.inp = function() {
                         swmmjs.model['PUMPS'][id] = {Node1: idlist[0].ID, Node2: idlist[1].ID, Description: '', Curve: '*', Status: 'OFF', Dstart: 0, Doff: 0};
                             
                         // Add the link to the map
+                        let transform = d3.zoomTransform(svg.node());
                         d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'link_ gpump').append('line')
                         .attr('x1', idlist[0].x)
                         .attr('y1', idlist[0].y)
@@ -1128,17 +1045,17 @@ d3.inp = function() {
                         .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                         .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
                         .attr('class', 'pump')
-                        .attr('stroke', color)
-                        .attr('stroke-width', 45);
+                        .attr('stroke', '#eeaa99')
+                        .attr('stroke-width', 45/transform.k);
 
                         // Change back to an editing environment
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
                 })
             }
 
             if($('#subselectcaption').text() === 'Orifices'){
-                swmmjs.model.clickEffect = 'createOrifice'
+                switchContext('createOrifice')
                 // idlist keeps track of which nodes are used to create the link.
                 let idlist = [];
 
@@ -1162,6 +1079,7 @@ d3.inp = function() {
                         let id = getUniqueLinkID();
 
                         // Create the link
+                        let transform = d3.zoomTransform(svg.node());
                         swmmjs.model['ORIFICES'][id] = {FromNode: idlist[0].ID, 
                                                         ToNode: idlist[1].ID, 
                                                         Description: '', 
@@ -1184,17 +1102,17 @@ d3.inp = function() {
                         .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                         .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
                         .attr('class', 'orifice')
-                        .attr('stroke', color)
-                        .attr('stroke-width', 45);
+                        .attr('stroke', '#aaee99')
+                        .attr('stroke-width', 45/transform.k);
 
                         // Change back to an editing environment
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
                 })
             }
 
             if($('#subselectcaption').text() === 'Weirs'){
-                swmmjs.model.clickEffect = 'createWeir'
+                switchContext('createWeir')
                 // idlist keeps track of which nodes are used to create the link.
                 let idlist = [];
 
@@ -1218,11 +1136,12 @@ d3.inp = function() {
                         let id = getUniqueLinkID();
 
                         // Create the link
+                        let transform = d3.zoomTransform(svg.node());
                         swmmjs.model['WEIRS'][id] = {FromNode: idlist[0].ID, 
                                                         ToNode: idlist[1].ID, 
                                                         Description: '', 
                                                         Type: 'TRANSVERSE', 
-                                                        CrestHt: 0,
+                                                        InletOffset: 0,
                                                         Qcoeff: 0,
                                                         Gated: 'NO',
                                                         EndCon: 0,
@@ -1241,17 +1160,17 @@ d3.inp = function() {
                         .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                         .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
                         .attr('class', 'weir')
-                        .attr('stroke', color)
-                        .attr('stroke-width', 45);
+                        .attr('stroke', '#99aaee')
+                        .attr('stroke-width', 45/transform.k);
 
                         // Change back to an editing environment
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
                 })
             }
 
             if($('#subselectcaption').text() === 'Outlets'){
-                swmmjs.model.clickEffect = 'createOutlet'
+                switchContext('createOutlet')
                 // idlist keeps track of which nodes are used to create the link.
                 let idlist = [];
 
@@ -1276,7 +1195,7 @@ d3.inp = function() {
                         swmmjs.model['OUTLETS'][id] = {FromNode: idlist[0].ID, 
                                                         ToNode: idlist[1].ID, 
                                                         Description: '', 
-                                                        CrestHt: 0,
+                                                        InletOffset: 0,
                                                         Gated: 'NO',
                                                         Type: 'TABULAR/DEPTH', 
                                                         Qcoeff: 0,
@@ -1284,6 +1203,7 @@ d3.inp = function() {
                                                         QTable: '*'};
 
                         // Add the link to the map
+                        let transform = d3.zoomTransform(svg.node());
                         d3.select('#svgSimple').select('g').append('g').attr('id', id).attr('class', 'link_ goutlet').append('line')
                         .attr('x1', idlist[0].x)
                         .attr('y1', idlist[0].y)
@@ -1294,11 +1214,11 @@ d3.inp = function() {
                         .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                         .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
                         .attr('class', 'outlet')
-                        .attr('stroke', color)
-                        .attr('stroke-width', 45);
+                        .attr('stroke', '#ee99ee')
+                        .attr('stroke-width', 45/transform.k);
 
                         // Change back to an editing environment
-                        swmmjs.model.clickEffect = 'edit';
+                        switchContext('edit');
                     }
                 })
             }
@@ -1313,7 +1233,7 @@ d3.inp = function() {
             // switch statements on the current target of the subselectcaption div
             if($('#subselectcaption').text() === 'Subcatchments'){
                 // Set the click effect to 'createSubcatchment'
-                swmmjs.model.clickEffect = 'createSubcatchment';
+                switchContext('createSubcatchment');
                 // pointList keeps track of the points that have been created to make this polygon
                 let pointList = [];
 
@@ -1321,7 +1241,7 @@ d3.inp = function() {
                 // If there are more than two points in pointList, create a line using the points in pointlist.  
                 // If the user clicks on the first point again: 
                 //   -- if there are only two points in point list
-                //     -- else push the points to swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] - swmmjs.svg.nodeSize, y: swmmjs.svg.top - xy1[1] + swmmjs.svg.nodeSize}).
+                //     -- else push the points to swmmjs.model['Polygons'][id].push({Subcatchment: id, x: xy1[0] - swmmjs.svg.nodeSize/transform.k, y: swmmjs.svg.top - xy1[1] + swmmjs.svg.nodeSize/transform.k}).
                 //   -- delete temporary points and lines, set clickEffect to 'edit'
                 svg.on('click', function() {
                     // If the model is not in create subcatchment mode, 
@@ -1342,7 +1262,7 @@ d3.inp = function() {
                     d3.select('#svgSimple').select('g').append('g').attr('class', 'tempNode').append('circle')
                         .attr('cx', xy1[0])
                         .attr('cy', xy1[1])
-                        .attr('r', swmmjs.svg.nodeSize)
+                        .attr('r', swmmjs.svg.nodeSize/transform.k)
                         .attr('data-x', xy1[0])
                         .attr('data-y', xy1[1])
                         .attr('class', 'tempNodeObj')
@@ -1366,7 +1286,7 @@ d3.inp = function() {
                                     // For every point in pointList, push to 'Polygons'
                                     let points = '';
                                     pointList.forEach(function(el){
-                                        swmmjs.model['Polygons'][id].push({Subcatchment: id, x: el.x - swmmjs.svg.nodeSize, y: swmmjs.svg.top - el.y + swmmjs.svg.nodeSize})
+                                        swmmjs.model['Polygons'][id].push({Subcatchment: id, x: el.x - swmmjs.svg.nodeSize/transform.k, y: swmmjs.svg.top - el.y + swmmjs.svg.nodeSize/transform.k})
                                         points += el.x + ' ' + (el.y) + ' ';
                                     })
 
@@ -1380,12 +1300,12 @@ d3.inp = function() {
                                         .attr('class', 'polygon')
                                         .attr('fill', 'transparent')
                                         .attr("stroke-width", 7)
-                                        .attr("stroke", 'rgba(0, 0, 0, 1');
+                                        .attr("stroke", '#636363');
                 
                                     // Spawn an editing window for the junction object
                                     modalEditSubcatchments(id);
                 
-                                    swmmjs.model.clickEffect = 'edit';
+                                    switchContext('edit');
                                     svg.on('click', null);
                                     populateSubcatchmentsList();
                                     clearEditLayer();
@@ -1401,7 +1321,7 @@ d3.inp = function() {
 
             if($('#subselectcaption').text() === 'Time Series'){
                 // Create a time series object
-                swmmjs.model.clickEffect = 'edit'
+                switchContext('edit')
                 id = getUniqueTimeseriesID();
                 
                 swmmjs.model['TIMESERIES'].push({TimeSeries:id, Value: 0, Date: '', Time: '00:00'})
@@ -2732,7 +2652,7 @@ d3.inp = function() {
             swmmjs.model['XSECTIONS'][id]['Geom1'] = $('#weirs-height').val()
             swmmjs.model['XSECTIONS'][id]['Geom2'] = $('#weirs-length').val()
             swmmjs.model['XSECTIONS'][id]['Geom3'] = $('#weirs-sideslope').val()
-            swmmjs.model['WEIRS'][id]['CrestHt'] = $('#weirs-inletoffset').val()
+            swmmjs.model['WEIRS'][id]['InletOffset'] = $('#weirs-inletoffset').val()
             swmmjs.model['WEIRS'][id]['Qcoeff'] = $('#weirs-dischargecoeff').val()
             swmmjs.model['WEIRS'][id]['Gated'] = $('#weirs-flapgate').val()
             swmmjs.model['WEIRS'][id]['EndCon'] = $('#weirs-endcontractions').val()
@@ -2770,7 +2690,7 @@ d3.inp = function() {
             swmmjs.model['OUTLETS'][id]['FromNode'] = $('#outlets-inletnode').val()
             swmmjs.model['OUTLETS'][id]['ToNode'] = $('#outlets-outletnode').val()
             swmmjs.model['OUTLETS'][id]['Description'] = $('#outlets-description').val()
-            swmmjs.model['OUTLETS'][id]['CrestHt'] = $('#outlets-inletoffset').val()
+            swmmjs.model['OUTLETS'][id]['InletOffset'] = $('#outlets-inletoffset').val()
             swmmjs.model['OUTLETS'][id]['Gated'] = $('#outlets-flapgate').val()
             swmmjs.model['OUTLETS'][id]['Type'] = $('#outlets-ratingcurve').val()
             swmmjs.model['OUTLETS'][id]['Qcoeff'] = $('#outlets-functionalcurvecoefficient').val()
@@ -2864,7 +2784,7 @@ d3.inp = function() {
             populateSubcatchmentsList();
         
             // Set the clickEffect to 'edit'
-            swmmjs.model.clicEffect = 'edit';
+            switchContext('edit');
         }
 
         /////////////////////////////////////////////////////////////
@@ -3568,7 +3488,7 @@ d3.inp = function() {
                         section[key] = {FromNode: parseFloat(m[1]), 
                                         ToNode: parseFloat(m[2]), 
                                         Type: m[3].trim(), 
-                                        CrestHt: parseFloat(m[4]), 
+                                        InletOffset: parseFloat(m[4]), 
                                         Qcoeff: parseFloat(m[5]), 
                                         Gated: m[6].trim(),
                                         CloseTime: parseFloat(m[7]),
@@ -3597,7 +3517,7 @@ d3.inp = function() {
                         section[key] = {FromNode: parseFloat(m[1]), 
                                         ToNode: parseFloat(m[2]), 
                                         Type: m[3].trim(), 
-                                        CrestHt: parseFloat(m[4]), 
+                                        InletOffset: parseFloat(m[4]), 
                                         Qcoeff: parseFloat(m[5]), 
                                         Gated: m[6].trim(),
                                         EndCon: parseFloat(m[7]),
@@ -3633,7 +3553,7 @@ d3.inp = function() {
                         }
                         section[key] = {FromNode: parseFloat(m[1]), 
                                         ToNode: parseFloat(m[2]), 
-                                        CrestHt: parseFloat(m[3]), 
+                                        InletOffset: parseFloat(m[3]), 
                                         Type: m[4].trim(),
                                         Qcoeff: outletCoeff, 
                                         QTable: outletTableName,
@@ -4598,7 +4518,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].FromNode.toString().padEnd(17, ' ');
             inpString += model[secStr][entry].ToNode.toString().padEnd(17, ' ');
             inpString += model[secStr][entry].Type.padEnd(13, ' ');
-            inpString += model[secStr][entry].CrestHt.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].InletOffset.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].Qcoeff.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].Gated.padEnd(9, ' ');
             inpString += model[secStr][entry].CloseTime.toString().padEnd(10, ' ');
@@ -4623,7 +4543,7 @@ var swmmjs = function() {
             inpString += model[secStr][entry].FromNode.toString().padEnd(17, ' ');
             inpString += model[secStr][entry].ToNode.toString().padEnd(17, ' ');
             inpString += model[secStr][entry].Type.padEnd(13, ' ');
-            inpString += model[secStr][entry].CrestHt.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].InletOffset.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].Qcoeff.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].Gated.toString().padEnd(9, ' ');
             inpString += model[secStr][entry].EndCon.toString().padEnd(9, ' ');
@@ -4650,7 +4570,7 @@ var swmmjs = function() {
             inpString += entry.padEnd(17, ' ');
             inpString += model[secStr][entry].FromNode.toString().padEnd(17, ' ');
             inpString += model[secStr][entry].ToNode.toString().padEnd(17, ' ');
-            inpString += model[secStr][entry].CrestHt.toString().padEnd(11, ' ');
+            inpString += model[secStr][entry].InletOffset.toString().padEnd(11, ' ');
             inpString += model[secStr][entry].Type.toString().padEnd(16, ' ');
             // If the type is TABULAR/DEPTH or TABULAR/HEAD, then QTable is in QTable/Qcoeff, else, Qcoeff is in QTable/Qcoeff
             if(model[secStr][entry].Type === 'TABULAR/DEPTH' || model[secStr][entry].Type === 'TABULAR/HEAD'){
@@ -4963,7 +4883,7 @@ var swmmjs = function() {
                             .attr('class', 'polygon')
                             .attr('fill', 'transparent')
                             .attr("stroke-width", 7)
-                            .attr("stroke", color);
+                            .attr("stroke", '#636363');
             }
         }
 
@@ -5032,7 +4952,6 @@ var swmmjs = function() {
                                     .attr('class', 'conduit')
                                     .attr('stroke-width', svg.strokeWidth)
                             }
-                            
                         } else if ('PUMPS' === s) {
                             // line
                             el.append('g').attr('id', link).attr('class', 'link_ gpump').append('line')
@@ -5044,7 +4963,7 @@ var swmmjs = function() {
                                 .attr('onclick', 'modalEditPumps('+link+');')
                                 .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                                 .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                                .attr('stroke', color)
+                                .attr('stroke', '#eeaa99')
                                 .attr('class', 'pump')
                                 .attr('stroke-width', svg.strokeWidth);
                             // pump
@@ -5075,7 +4994,7 @@ var swmmjs = function() {
                                 .attr('onclick', 'modalEditOrifices('+link+');')
                                 .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                                 .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                                .attr('stroke', color)
+                                .attr('stroke', '#aaee99')
                                 .attr('class', 'orifice')
                                 .attr('stroke-width', svg.strokeWidth);
                         } else if ('WEIRS' === s) {
@@ -5089,7 +5008,7 @@ var swmmjs = function() {
                                 .attr('onclick', 'modalEditWeirs('+link+');')
                                 .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                                 .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                                .attr('stroke', color)
+                                .attr('stroke', '#99aaee')
                                 .attr('class', 'weir')
                                 .attr('stroke-width', svg.strokeWidth);
                         } else if ('OUTLETS' === s) {
@@ -5103,7 +5022,7 @@ var swmmjs = function() {
                                 .attr('onclick', 'modalEditOutlets('+link+');')
                                 .attr('onmouseover', 'swmmjs.svg.tooltip(evt.target)')
                                 .attr('onmouseout', 'swmmjs.svg.clearTooltips(evt.target)')
-                                .attr('stroke', color)
+                                .attr('stroke', '#ee99ee')
                                 .attr('class', 'outlet')
                                 .attr('stroke-width', svg.strokeWidth);
                         }
@@ -5249,19 +5168,35 @@ var swmmjs = function() {
     
     swmmjs.applyScale = function(svg) {
         var scaleFactor = 1;
-        //vertice
+        // vertices
         d3.select('#svgSimple > g').selectAll('.vertice').each(function() { 
             this.setAttribute('stroke-width', scaleFactor * svg.strokeWidth / swmmjs.currentScale );
         });
-        //conduit
+        // conduits
         d3.select('#svgSimple > g').selectAll('.conduit').each(function() { 
             this.setAttribute('stroke-width', scaleFactor * svg.strokeWidth / swmmjs.currentScale );
         });
-        //junction
+        // pumps
+        d3.select('#svgSimple > g').selectAll('.pump').each(function() { 
+            this.setAttribute('stroke-width', scaleFactor * svg.strokeWidth / swmmjs.currentScale );
+        });
+        // orifices
+        d3.select('#svgSimple > g').selectAll('.orifice').each(function() { 
+            this.setAttribute('stroke-width', scaleFactor * svg.strokeWidth / swmmjs.currentScale );
+        });
+        // Weirs
+        d3.select('#svgSimple > g').selectAll('.weir').each(function() { 
+            this.setAttribute('stroke-width', scaleFactor * svg.strokeWidth / swmmjs.currentScale );
+        });
+        // Outlets
+        d3.select('#svgSimple > g').selectAll('.outlet').each(function() { 
+            this.setAttribute('stroke-width', scaleFactor * svg.strokeWidth / swmmjs.currentScale );
+        });
+        // junctions
         d3.select('#svgSimple > g').selectAll('.junction').each(function() { 
             this.setAttribute('r', svg.nodeSize / swmmjs.currentScale );
         });
-        //outfall
+        // outfalls
         d3.select('#svgSimple > g').selectAll('.outfall').each(function() { 
             this.setAttribute('points', (parseFloat(this.dataset.x) - 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' + 
                                 (parseFloat(svg.top) - parseFloat(this.dataset.y0) - 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' +
@@ -5270,23 +5205,42 @@ var swmmjs = function() {
                                 parseFloat(this.dataset.x) + ' ' + 
                                 (parseFloat(svg.top) - parseFloat(this.dataset.y0) + 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale));
         });
-        //storage
-        d3.select('#svgSimple > g').selectAll('.storage').each(function() { 
-            this.setAttribute('height', svg.nodeSize / swmmjs.currentScale * 2);
-            this.setAttribute('width', svg.nodeSize / swmmjs.currentScale * 2);
-            this.setAttribute('x', parseFloat(this.dataset.x) - svg.nodeSize / swmmjs.currentScale);
-            this.setAttribute('y', svg.top - parseFloat(this.dataset.y0) - svg.nodeSize / swmmjs.currentScale);
-        });
-        //pump
-        d3.select('#svgSimple > g').selectAll('.pump1').each(function() { 
+        // storage
+        d3.select('#svgSimple > g').selectAll('.storage').each(function() {
+            this.setAttribute('points', 
+                            (parseFloat(this.dataset.x) - 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' 
+                            + (parseFloat(svg.top) - parseFloat(this.dataset.y0) - 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' +
+                            (parseFloat(this.dataset.x) + 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' 
+                            + (parseFloat(svg.top) - parseFloat(this.dataset.y0) - 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' +
+                            (parseFloat(this.dataset.x) + 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' 
+                            + (parseFloat(svg.top) - parseFloat(this.dataset.y0) + 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' +
+                            (parseFloat(this.dataset.x) - 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' 
+                            + (parseFloat(svg.top) - parseFloat(this.dataset.y0) + 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale)
+                        )
+        } )
+        // dividers
+        d3.select('#svgSimple > g').selectAll('.divider').each(function() {
+            this.setAttribute('points', 
+                            (parseFloat(this.dataset.x) - 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' 
+                            + (parseFloat(svg.top) - parseFloat(this.dataset.y0)) + ' ' +
+                            (parseFloat(this.dataset.x)) + ' ' 
+                            + (parseFloat(svg.top) - parseFloat(this.dataset.y0) - 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' +
+                            (parseFloat(this.dataset.x) + 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale) + ' ' 
+                            + (parseFloat(svg.top) - parseFloat(this.dataset.y0)) + ' ' +
+                            (parseFloat(this.dataset.x)) + ' ' 
+                            + (parseFloat(svg.top) - parseFloat(this.dataset.y0) + 1.5 * scaleFactor * svg.nodeSize / swmmjs.currentScale)
+                        )
+        } )
+        //pumps
+        /*d3.select('#svgSimple > g').selectAll('.pump1').each(function() { 
             this.setAttribute('r', svg.nodeSize / swmmjs.currentScale );
         });
         d3.select('#svgSimple > g').selectAll('.pump2').each(function() { 
             this.setAttribute('width', svg.nodeSize / swmmjs.currentScale * 1.5);
             this.setAttribute('height', svg.nodeSize / swmmjs.currentScale );
             this.setAttribute('y', svg.top - parseFloat(this.dataset.y) - svg.nodeSize / swmmjs.currentScale);
-        });
-        //label
+        });*/
+        // labels
         d3.select('#svgSimple > g').selectAll('.label').each(function() { 
             this.setAttribute('x', (parseFloat(this.dataset.x)?parseFloat(this.dataset.x):0) - svg.nodeSize / swmmjs.currentScale * this.dataset.label.length / 3);
             this.setAttribute('y', svg.top - (parseFloat(this.dataset.y)?parseFloat(this.dataset.y):0) + svg.nodeSize / swmmjs.currentScale * 2);
@@ -5816,6 +5770,15 @@ function getTag(tagType, id, el){
 /////////////////////////////////////////////////////////////
 
 var modalEditJunctions = function(id){
+    // Replace modal call with swmmjs.model.clickEffect switch.
+    // Test if clickEffect is 'select', if it is, toggle select on the object and return.
+    if(swmmjs.model.clickEffect === 'select'){
+        //$('[id="'+id+'"].raingage').toggleClass('selected');
+        $('#svgSimple g *').removeClass('selected')
+        $('.gjunction[id="'+id+'"]').addClass('selected');
+        return;
+    }
+
     // If the model is not in edit mode, return
     if(swmmjs.model.clickEffect !== 'edit'){
         return;
@@ -6115,7 +6078,7 @@ var modalEditWeirs = function(id){
         $('#weirs-height').val(swmmjs.model['XSECTIONS'][id]['Geom1'])
         $('#weirs-length').val(swmmjs.model['XSECTIONS'][id]['Geom2'])
         $('#weirs-sideslope').val(swmmjs.model['XSECTIONS'][id]['Geom3'])
-        $('#weirs-inletoffset').val(swmmjs.model['WEIRS'][id]['CrestHt'])
+        $('#weirs-inletoffset').val(swmmjs.model['WEIRS'][id]['InletOffset'])
         $('#weirs-dischargecoeff').val(swmmjs.model['WEIRS'][id]['Qcoeff'])
         $('#weirs-flapgate').val(swmmjs.model['WEIRS'][id]['Gated'])
         $('#weirs-endcontractions').val(swmmjs.model['WEIRS'][id]['EndCon'])
@@ -6151,7 +6114,7 @@ var modalEditOutlets = function(id){
         $('#outlets-inletnode').val(swmmjs.model['OUTLETS'][id]['FromNode'])
         $('#outlets-outletnode').val(swmmjs.model['OUTLETS'][id]['ToNode'])
         $('#outlets-description').val(swmmjs.model['OUTLETS'][id]['Description'])
-        $('#outlets-inletoffset').val(swmmjs.model['OUTLETS'][id]['CrestHt'])
+        $('#outlets-inletoffset').val(swmmjs.model['OUTLETS'][id]['InletOffset'])
         $('#outlets-flapgate').val(swmmjs.model['OUTLETS'][id]['Gated'])
         $('#outlets-ratingcurve').val(swmmjs.model['OUTLETS'][id]['Type'])
         $('#outlets-functionalcurvecoefficient').val(swmmjs.model['OUTLETS'][id]['Qcoeff'])
@@ -6165,6 +6128,15 @@ var modalEditOutlets = function(id){
 /////////////////////////////////////////////////////////////
 
 var modalEditRaingages = function(id){
+    // Replace modal call with swmmjs.model.clickEffect switch.
+    // Test if clickEffect is 'select', if it is, toggle select on the object and return.
+    if(swmmjs.model.clickEffect === 'select'){
+        //$('[id="'+id+'"].raingage').toggleClass('selected');
+        $('#svgSimple g *').removeClass('selected')
+        $('.graingage[id="'+id+'"]').addClass('selected');
+        return;
+    }
+
     // Show the modal.
     $('#modalRaingages').modal('toggle');
 
@@ -6208,4 +6180,19 @@ var modalEditRaingages = function(id){
         $('#raingages-stationid').val(swmmjs.model['RAINGAGES'][id]['StationID'])
         $('#raingages-rainunits').val(swmmjs.model['RAINGAGES'][id]['RainUnits'])
     }
+}
+
+// switchContext manages changes to the clickEffect of the model.
+function switchContext(newContext){
+    // Reset any conditions that may be left over from the previous context.
+    // Remove any selections.
+    $('#svgSimple g *').removeClass('selected')
+    // Delete any temporary creation objects
+    // First node selected when creating a link
+    $('#svgSimple g *').removeClass('createLineFirstNode')
+    // Nodes and line created when drawing a polygon
+    $('.tempNode').remove();
+    $('.tempLine').remove();
+
+    swmmjs.model.clickEffect = newContext;
 }
