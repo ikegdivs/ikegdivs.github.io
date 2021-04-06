@@ -29,6 +29,10 @@ class ChartSpecs {
         // The amount of space to allocate for text,e etc. on the x and y axes.
         this.textBuffer = 60;
         this.topMargin = 10;
+
+        // Take calcs out of loop functions.
+        this.theMax = 0;
+        this.theExtents;
     }
     
     // The maximum value of the independent variable.
@@ -40,14 +44,23 @@ class ChartSpecs {
     get scaleY() {
         return d3.scaleLinear()
             .range([this.yScaleHeight, 0])
-            .domain([0, this.maxVal]);
+            .domain([0, this.theMax]);
     }
 
     // To create a scaling X function for the chart, use this getter.
     get scaleX() {
         return d3.scaleTime()
             .range([0, this.xScaleWidth])
-            .domain(d3.extent(this.data, d=>d.cat))
+            //.domain(d3.extent(this.data, d=>d.cat))
+            .domain(this.theExtents)
+    }
+
+    setMax(){
+        this.theMax = d3.max(this.data, d=>d.y);
+    }
+
+    setExtents(){
+        this.theExtents = d3.extent(this.data, d=>d.cat)
     }
 }
 
@@ -401,7 +414,7 @@ function representData(location, theseSpecs){
 // drawLine creates the line.
 // theseSpecs: an object of class ChartSpecs
 // curveType: a d3 curve type
-function drawLine(theseSpecs, curveType){
+/*function drawLine(theseSpecs, curveType){
     // Create the line
     let line = d3.line()
         .x(function(d) { return theseSpecs.scaleX(d.cat); })
@@ -425,6 +438,57 @@ function drawLine(theseSpecs, curveType){
     // Remove any unnecesary objects.
     join.exit()
         .remove()
+
+    // Update the y axis.
+    d3.selectAll('#yAxis')
+        .call(d3.axisLeft(theseSpecs.scaleY))
+
+    // Update the x axis.
+    d3.selectAll('#xAxis')
+        .call(
+            d3.axisBottom(theseSpecs.scaleX)
+            .ticks(5)
+            .tickFormat(d3.timeFormat('%Y-%m-%d %H:%M'))
+        )
+        .selectAll('text')
+        //split the date and time onto two lines for the xAxis
+        .call(function(t){
+            t.each(function(d){
+                let self = d3.select(this);
+                var s = self.text().split(' ');
+                self.text('');
+                self.append('tspan')
+                    .attr('x', 0)
+                    .attr('dy', 0)
+                    .text(s[0]);
+                self.append('tspan')
+                    .attr('x', '-2em')
+                    .attr('dy', '1em')
+                    .text(s[1]);
+            })
+        })
+        .style('text-anchor', 'end')
+        .attr('dx', '-0.8em')
+        .attr('dy', '0.15em')
+        .attr('transform', 'rotate(-65)');
+
+}*/
+
+function drawLine(theseSpecs, curveType){
+    theseSpecs.setMax();
+    theseSpecs.setExtents();
+    // Create the line
+    let line = d3.line()
+        .x(function(d) { return theseSpecs.scaleX(d.cat); })
+        .y(function(d) { return theseSpecs.scaleY(d.y); })
+        .curve(curveType)
+
+    // Create a join on 'path' and the data
+    let join = d3.selectAll('#chartBody')
+        .append('path')
+        .attr('d', line(theseSpecs.data))
+        .attr('stroke', 'black')
+        .style('fill', 'none')
 
     // Update the y axis.
     d3.selectAll('#yAxis')

@@ -583,7 +583,8 @@ d3.inp = function() {
             // reading the whole file into objects.
             input = new d3.swmmresult();
             // Once again, this should be a model-associated constant.
-            val = input.parse('data/out.out');
+            val = input.parseSingle('data/out.out', 0, 'NODE', 'x');
+            //val = input.parse('data/out.out');
 
             // Get the ID and type of the object that will be charted, and get the type of information that is necessary as well.
             let objectName = document.getElementById('tsplotselection-objectname').value;
@@ -1362,9 +1363,9 @@ d3.inp = function() {
             let listJSON = [];
             listJSON.push({labelText: 'Temperature',    elementId: 'subselectlist-temperature', function: modalEditTemperature});
             listJSON.push({labelText: 'Evaporation',    elementId: 'subselectlist-evaporation', function: modalEditEvaporation});
-            listJSON.push({labelText: 'Wind Speed',    elementId: 'subselectlist-windspeed'});
-            listJSON.push({labelText: 'Snow Melt',    elementId: 'subselectlist-snowmelt'});
-            listJSON.push({labelText: 'Areal Depletion',    elementId: 'subselectlist-arealdepletion'});
+            listJSON.push({labelText: 'Wind Speed',    elementId: 'subselectlist-windspeed', function: modalEditWindspeed});
+            listJSON.push({labelText: 'Snow Melt',    elementId: 'subselectlist-snowmelt', function: modalEditSnowmelt});
+            listJSON.push({labelText: 'Areal Depletion',    elementId: 'subselectlist-arealdepletion', function: modalEditArealdepletion});
 
             populateSelectList(listJSON);
         })
@@ -2241,6 +2242,75 @@ d3.inp = function() {
         function saveModalEvaporation(){
             // Show the modal.
             $('#modalEvaporation').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Windspeed Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditWindspeed = function(id){
+            // Show the modal.
+            $('#modalWindspeed').modal('toggle');
+
+            // Make sure to check if the EVAPORATION object exists.
+            if(typeof swmmjs.model['WINDSPEED'] === 'undefined'){
+                swmmjs.model['WINDSPEED'] = [];
+            }
+        }
+
+        $('#save-modal-windspeed').click(function(e){
+            saveModalWindspeed()
+        })
+
+        function saveModalWindspeed(){
+            // Show the modal.
+            $('#modalWindspeed').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Snowmelt Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditSnowmelt = function(id){
+            // Show the modal.
+            $('#modalSnowmelt').modal('toggle');
+
+            // Make sure to check if the SNOWMELT object exists.
+            if(typeof swmmjs.model['SNOWMELT'] === 'undefined'){
+                swmmjs.model['SNOWMELT'] = [];
+            }
+        }
+
+        $('#save-modal-windspeed').click(function(e){
+            saveModalWindspeed()
+        })
+
+        function saveModalWindspeed(){
+            // Show the modal.
+            $('#modalWindspeed').modal('toggle');
+        }
+
+        /////////////////////////////////////////////////////////////
+        // Arealdepletion Modal 
+        /////////////////////////////////////////////////////////////
+
+        var modalEditArealdepletion = function(id){
+            // Show the modal.
+            $('#modalArealdepletion').modal('toggle');
+
+            // Make sure to check if the AREALDEPLETION object exists.
+            if(typeof swmmjs.model['AREALDEPLETION'] === 'undefined'){
+                swmmjs.model['AREALDEPLETION'] = [];
+            }
+        }
+
+        $('#save-modal-arealdepletion').click(function(e){
+            saveModalArealdepletion()
+        })
+
+        function saveModalArealdepletion(){
+            // Show the modal.
+            $('#modalArealdepletion').modal('toggle');
         }
 
         /////////////////////////////////////////////////////////////
@@ -4120,6 +4190,342 @@ d3.swmmresult = function() {
                     for (var k = 0; k < this.LinkVars; k++) {
                         no = er.getswmmresultoffset(LINK, j, k, i);
                         el.push(er.readFloat(c, no, RECORDSIZE));
+                    }
+                    vals[variables['LINK']['items'][j]] = el;
+                }
+                r[i]['LINK'] = vals;
+
+                vals = {};
+                el = [];
+                for (var k = 0; k < this.SysVars; k++) {
+                    no = er.getswmmresultoffset(SYS, j, k, i);
+                    el.push(er.readFloat(c, no, RECORDSIZE));
+                }
+                r[i]['SYS'] = el;
+
+                this.StartPosResult = no + RECORDSIZE;
+            }
+        }
+        
+        return r;
+    };
+
+    // parseSingle operates like parse, but only retrieves values for a specific element.
+    // Input:
+    //    objType: string indicating the node, link, subcatchment, or pollutant
+    //             "LINK", "NODE", "SUBCATCH", "POLLUT"
+    //    objID:   string indicating the ID of the object to be examined.
+    swmmresult.parseSingle = function(filename, size, objType, objID) {
+        console.log('Parsing swmm results...')
+	    var c = (FS.findObject(filename) ? FS.findObject(filename).contents : (typeof filename === "object"? filename : undefined)),
+		r = {},
+		er = swmmresult;
+        
+        this.offsetOID = 0;
+
+        this.SWMM_Nperiods = 0,              // number of reporting periods
+        this.SWMM_FlowUnits = 0,             // flow units code
+        this.SWMM_Nsubcatch = 0,             // number of subcatchments
+        this.SWMM_Nnodes = 0,                // number of drainage system nodes
+        this.SWMM_Nlinks = 0,                // number of drainage system links
+        this.SWMM_Npolluts = 0,              // number of pollutants tracked
+        this.SWMM_StartDate = new Date(),              // start date of simulation
+        this.SWMM_ReportStep = 0;            // reporting time step (seconds)	
+        
+        this.SubcatchVars = 0,               // number of subcatch reporting variable
+        this.NodeVars = 0,                   // number of node reporting variables
+        this.LinkVars = 0,                   // number of link reporting variables
+        this.SysVars = 0,                    // number of system reporting variables
+        this.StartPos = 0,                   // file position where results start
+        this.BytesPerPeriod = 0;             // bytes used for results in each period
+        
+        var
+            magic1, magic2, errCode, version;
+        var
+            offset, offset0;
+            
+        var stat = null;
+        try {
+            if (c)
+                stat = FS.stat(filename);
+        } catch (e) {
+            stat = size || "undefined";
+            console.log(e);
+        }
+        
+        if (stat) {
+            var size = (stat.size ? stat.size : stat);
+            if (size < 14*RECORDSIZE) {
+                return 1;
+            }
+            this.offsetOID = er.readInt(c, size-6*RECORDSIZE, RECORDSIZE);
+            offset0 = er.readInt(c, size-5*RECORDSIZE, RECORDSIZE);
+            this.StartPos = er.readInt(c, size-4*RECORDSIZE, RECORDSIZE);
+            this.SWMM_Nperiods = er.readInt(c, size-3*RECORDSIZE, RECORDSIZE);
+            errCode = er.readInt(c, size-2*RECORDSIZE, RECORDSIZE);
+            magic2 = er.readInt(c, size-RECORDSIZE, RECORDSIZE);
+            magic1 = er.readInt(c, 0, RECORDSIZE);
+            
+            if (magic1 !== magic2) return 1;
+            else if (errCode !== 0) return 1;
+            else if (this.SWMM_Nperiods===0) return 1;
+            
+            version = er.readInt(c, RECORDSIZE, RECORDSIZE);
+            this.SWMM_FlowUnits = er.readInt(c, 2*RECORDSIZE, RECORDSIZE);
+            this.SWMM_Nsubcatch = er.readInt(c, 3*RECORDSIZE, RECORDSIZE);
+            this.SWMM_Nnodes = er.readInt(c, 4*RECORDSIZE, RECORDSIZE);
+            this.SWMM_Nlinks = er.readInt(c, 5*RECORDSIZE, RECORDSIZE);
+            this.SWMM_Npolluts = er.readInt(c, 6*RECORDSIZE, RECORDSIZE);
+            
+            // Skip over saved subcatch/node/link input values
+            offset = (this.SWMM_Nsubcatch+2) * RECORDSIZE     // Subcatchment area
+                       + (3*this.SWMM_Nnodes+4) * RECORDSIZE  // Node type, invert & max depth
+                       + (5*this.SWMM_Nlinks+6) * RECORDSIZE; // Link type, z1, z2, max depth & length
+            offset = offset0 + offset;
+
+            this.SubcatchVars = er.readInt(c, offset, RECORDSIZE);
+            this.NodeVars = er.readInt(c, offset + (this.SubcatchVars*RECORDSIZE), RECORDSIZE);
+            this.LinkVars = er.readInt(c, offset + (this.SubcatchVars*RECORDSIZE) + (this.NodeVars*RECORDSIZE), RECORDSIZE);
+            this.SysVars = er.readInt(c, offset + (this.SubcatchVars*RECORDSIZE) + (this.NodeVars*RECORDSIZE) + (this.LinkVars*RECORDSIZE), RECORDSIZE);
+            
+            offset = this.StartPos - 3*RECORDSIZE;
+            var days = (er.readInt(c, offset, 2*RECORDSIZE)+1);
+            this.SWMM_StartDate = new Date('12/31/1899');
+            this.SWMM_StartDate = new Date(this.SWMM_StartDate.setDate(this.SWMM_StartDate.getDate() + days));
+            this.SWMM_ReportStep = er.readInt(c, offset + 2*RECORDSIZE, RECORDSIZE);
+            
+            this.SubcatchVars = (8 + this.SWMM_Npolluts);
+            this.NodeVars = (6 + this.SWMM_Npolluts);
+            this.LinkVars = (5 + this.SWMM_Npolluts);
+            this.SysVars = 15;
+            
+            this.BytesPerPeriod = RECORDSIZE*(2 + 
+                    this.SWMM_Nsubcatch*this.SubcatchVars +
+                    this.SWMM_Nnodes*this.NodeVars +
+                    this.SWMM_Nlinks*this.LinkVars +
+                    this.SysVars); 
+            
+            var variables = {};
+            var nr = this.offsetOID;
+            // Object names
+            var subcatch = {}, node = {}, link = {}, pollut = {};
+            // If we are looking for a subcatchment object, get the data
+            for (var i =0; i< this.SWMM_Nsubcatch; i++) {
+                var no = er.readInt(c, nr, RECORDSIZE);
+                if(objType === 'SUBCATCH'){
+                    subcatch[i] = [ Module.intArrayToString(Array.prototype.slice.call(c,nr, nr + no + RECORDSIZE)).replace(/[^a-z0-9_\.]/gi, '') ];
+                }
+                nr = nr + no + RECORDSIZE;
+            }
+            variables['SUBCATCH'] = {};
+            variables['SUBCATCH']['items'] = subcatch;
+            
+            // If we are looking for a node object, get the data
+            for (var i =0; i< this.SWMM_Nnodes; i++) {
+                var no = er.readInt(c, nr, RECORDSIZE);
+                if(objType === 'NODE'){
+                    node[i] = [ Module.intArrayToString(Array.prototype.slice.call(c,nr, nr + no + RECORDSIZE)).replace(/[^a-z0-9_\.]/gi, '') ];
+                }
+                nr = nr + no + RECORDSIZE;
+            }
+            variables['NODE'] = {};
+            variables['NODE']['items'] = node;
+            
+            // If we are looking for a link object, get the data
+            for (var i =0; i< this.SWMM_Nlinks; i++) {
+                var no = er.readInt(c, nr, RECORDSIZE);
+                if(objType === 'LINK'){
+                    link[i] = [ Module.intArrayToString(Array.prototype.slice.call(c,nr, nr + no + RECORDSIZE)).replace(/[^a-z0-9_\.]/gi, '') ];
+                }
+                nr = nr + no + RECORDSIZE;
+            }
+            variables['LINK'] = {};
+            variables['LINK']['items'] = link;
+            
+            // If we are looking for a pollutant object, get the data
+            for (var i =0; i< this.SWMM_Npolluts; i++) {
+                var no = er.readInt(c, nr, RECORDSIZE);
+                if(objType === 'POLLUT'){
+                    pollut[i] = Module.intArrayToString(Array.prototype.slice.call(c,nr, nr + no + RECORDSIZE)).replace(/[^a-z0-9_\.]/gi, '');
+                }
+                nr = nr + no + RECORDSIZE;
+            }
+            variables['POLLUT'] = {};
+            variables['POLLUT']['items'] = pollut;
+            
+            while (nr<offset0) {
+                var nm = er.readInt(c, nr, RECORDSIZE);
+                variables.nm = nm;
+                nr = nr + RECORDSIZE;
+            }
+            // Object properties
+            nr = offset0;
+            
+            var vals = [];
+            
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            variables['SUBCATCH']['init'] = vals;
+            
+            vals = [];
+            for (var i =0; i< this.SWMM_Nsubcatch; i++) {
+                if(objType === 'SUBCATCH'){
+                    var no = er.readInt(c, nr, RECORDSIZE);
+                    vals.push(no);
+                }
+
+                nr = nr + RECORDSIZE;
+            }
+            variables['SUBCATCH']['properties'] = vals;
+            
+            vals = [];
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            variables['NODE']['init'] = vals;
+            
+            vals = [];
+            for (var i =0; i< this.SWMM_Nnodes; i++) {
+                var el = {};
+                var val = [];
+                if(objType === 'NODE'){
+                    var no = er.readInt(c, nr, RECORDSIZE);
+                    val.push(no);
+                }
+                nr = nr + RECORDSIZE;
+                if(objType === 'NODE'){
+                    no = er.readFloat(c, nr, RECORDSIZE);
+                    val.push(no);
+                }
+                nr = nr + RECORDSIZE;
+                if(objType === 'NODE'){
+                    no = er.readFloat(c, nr, RECORDSIZE);
+                    val.push(no);
+                }
+                nr = nr + RECORDSIZE;
+                el[variables['NODE']['items'][i]] = val;
+                vals.push(el);
+            }
+            variables['NODE']['properties'] = vals;
+
+            vals = [];
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            no = er.readInt(c, nr, RECORDSIZE);
+            nr = nr + RECORDSIZE;
+            vals.push(no);
+            variables['LINK']['init'] = vals;
+
+            vals = [];
+            for (var i =0; i< this.SWMM_Nlinks; i++) {
+                var el = {};
+                var val = [];
+                if(objType === 'LINK'){
+                    var no = er.readInt(c, nr, RECORDSIZE);
+                    val.push(no);
+                }
+                nr = nr + RECORDSIZE;
+                if(objType === 'LINK'){
+                    no = er.readFloat(c, nr, RECORDSIZE);
+                    val.push(no);
+                }
+                nr = nr + RECORDSIZE;
+                if(objType === 'LINK'){
+                    no = er.readFloat(c, nr, RECORDSIZE);
+                    val.push(no);
+                }
+                nr = nr + RECORDSIZE;
+                if(objType === 'LINK'){
+                    no = er.readFloat(c, nr, RECORDSIZE);
+                    val.push(no);
+                }
+                nr = nr + RECORDSIZE;
+                
+                if(objType === 'LINK'){
+                    no = er.readFloat(c, nr, RECORDSIZE);
+                    val.push(no);
+                }
+                nr = nr + RECORDSIZE;
+                el[variables['LINK']['items'][i]] = val;
+                vals.push(el);
+            }
+            variables['LINK']['properties'] = vals;
+            
+            r['objects'] = variables;
+            
+            //reporting variables - 
+            //SubcatchVars = 8;
+            //NodeVars = 6;
+            //LinkVars = 5;
+            this.StartPosResult = this.StartPos;
+            for (var i = 1; i <= this.SWMM_Nperiods; i++) {
+                r[i] = {};
+                var no = undefined;
+                var vals = {};
+                var el = [];
+                
+                this.StartPosResult += 2*RECORDSIZE;
+                
+                for (var j = 0; j < this.SWMM_Nsubcatch; j++) {
+                    el = [];
+                    for (var k = 0; k < this.SubcatchVars ; k++) { //2 = 1 number of subcatchment variables + 1 pollutants
+                        no = er.getswmmresultoffset(SUBCATCH, j, k, i);
+                        
+                        if(objType === 'SUBCATCH'){
+                            el.push(er.readFloat(c, no, RECORDSIZE));
+                        }
+                    }
+                    vals[variables['SUBCATCH']['items'][j]] = el;
+                }
+                r[i]['SUBCATCH'] = vals;
+
+                vals = {};
+                for (var j = 0; j <  this.SWMM_Nnodes; j++) {
+                    el = [];
+                    for (var k = 0; k < this.NodeVars; k++) {
+                        no = er.getswmmresultoffset(NODE, j, k, i);
+                        if(objType === 'NODE'){
+                            el.push(er.readFloat(c, no, RECORDSIZE));
+                        }
+                    }
+                    vals[variables['NODE']['items'][j]] = el;
+                }
+                r[i]['NODE'] = vals;
+
+                vals = {};
+                for (var j = 0; j <  this.SWMM_Nlinks; j++) {
+                    el = [];
+                    for (var k = 0; k < this.LinkVars; k++) {
+                        no = er.getswmmresultoffset(LINK, j, k, i);
+                        if(objType === 'LINK'){
+                            el.push(er.readFloat(c, no, RECORDSIZE));
+                        }
                     }
                     vals[variables['LINK']['items'][j]] = el;
                 }
